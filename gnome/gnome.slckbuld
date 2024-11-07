@@ -34,57 +34,132 @@ GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
 rm -fr "$GNOME_BUILD_DIR"
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
 
-# Set $PKG to a private dir for the modular package build:
-PKG=$GNOME_BUILD_DIR/package-${MODPKG}
-rm -rf $PKG
-mkdir -p $PKG
-
-# Extract source archive
 extract_archive() {
-  local src_archive
-  src_archive=$(find "$CWD/src" -name "$1" | tail -1)
-  tar -xf "$src_archive" -C "$GNOME_BUILD_DIR" || return 1
+  # Find the archive first:
+  local src_archive=$(find $CWD/src -name "$1" | tail -1)
+  if [ -z "$src_archive" ]; then
+    echo "Error: Archive not found."
+    return 1
+  fi
+
+  if [ $(tar -tf "$src_archive" | grep -o '^[^/]\+' | sort -u | wc -l) -eq 1 ]; then
+    # Archive contains one toplevel directory, good. Ensure this directory
+    # becomes '$(pkgbase $1)':
+    tar -xf "$src_archive" || return 1
+    local topdir="$(tar -tf "$src_archive" | grep -o '^[^/]\+' | sort -u)"
+    if [ "$topdir" != "$(pkgbase $1)" ]; then
+      mv "$topdir" "$(pkgbase $1)"
+    fi
+  else
+    # No toplevel directory found, create one:
+    mkdir -p "$(pkgbase $1)"
+    tar -C "$(pkgbase $1)" -xf "$src_archive" || return 1
+  fi
 }
 
-# Pre-check for GNOME packages
+fix_perms() {
+  local target_dir=$1
+  [ -z "$target_dir" ] && target_dir="."
+
+  chown -R root:root "$target_dir"
+  find "$target_dir" \
+   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+   -exec chmod 755 {} \+ -o \
+   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+   -exec chmod 644 {} \+
+}
+
+strip_binaries() {
+  local target_dir=$1
+  [ -z "$target_dir" ] && target_dir="."
+
+  find "$target_dir" | xargs file | grep "executable" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find "$target_dir" | xargs file | grep "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
+  find "$target_dir" | xargs file | grep "current ar archive" | grep ELF | cut -f 1 -d : | xargs strip -g 2> /dev/null
+  
+  # Strip rpaths:
+  for file in $(find "$target_dir" | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null); do
+    if [ -n "$(patchelf --print-rpath "$file" 2> /dev/null)" ]; then
+      patchelf --remove-rpath "$file"
+    fi
+  done
+}
+
+process_man_pages() {
+  # Compress and symlink the man pages if needed:
+  if [ -d "usr/man" ]; then
+    ( cd usr/man
+      for manpagedir in $(find . -type d -name "man*"); do
+        ( cd "$manpagedir"
+          for eachpage in $(find . -type l -maxdepth 1); do
+            ln -s "$(readlink "$eachpage").gz" "$eachpage.gz"
+            rm "$eachpage"
+          done
+          gzip -9 *.*
+        )
+      done
+    )
+  fi
+}
+
+process_info_pages() {
+  # Compress info pages and remove "dir" file from the package:
+  if [ -d "usr/info" ]; then
+    ( cd usr/info
+      rm -f dir
+      gzip -9 *
+    )
+  fi
+}
+
+no_usr_share_doc() {
+  # If there are docs, move them:
+  if [ -d "usr/share/doc" ]; then
+    mkdir -p usr/doc
+    mv usr/share/doc/* usr/doc
+    rmdir usr/share/doc
+  fi
+}
+
 precheck() {
-  # See if the sources we have match the module components we want to build:
+  # Initialize return value
   RETVAL=0
 
-  for SRCFILE in $(find $CWD/src -name "*.tar.?z*" |grep -vE ".asc$|.sig$") ; do
-    # Check if the source tarball is mentioned in pkgsrc/
-    # meaning its package will get a different name:
-    ###################################################################
-    # USE OF THIS FEATURE SHOULD BE RESERVED FOR CASES WHERE THERE IS #
-    # A VERY GOOD RATIONALE - KEEPING UPSTREAM NAMES IS PREFERRED     #
-    ###################################################################
-    PKGSRC=$(echo $SRCFILE |rev |cut -f2- -d- |cut -f1,2 -d/ |rev)
+  # Check if the source files match the module components we want to build:
+  for SRCFILE in $(find $CWD/src -name "*.tar.?z*" | grep -vE ".asc$|.sig$"); do
+    # Check if the source tarball is mentioned in pkgsrc
+    # This feature should be reserved for cases where a different package name is needed
+    PKGSRC=$(echo $SRCFILE | rev | cut -f2- -d- | cut -f1,2 -d/ | rev)
     PKGBASE=$(basename $(grep -lw $PKGSRC $CWD/pkgsrc/* 2>/dev/null) 2>/dev/null)
+    
+    # If PKGBASE is empty, derive it from the source filename
     if [ -z "$PKGBASE" ]; then
-      PKGBASE=$(echo $(basename $SRCFILE) |rev |cut -f2- -d- |rev)
+      PKGBASE=$(echo $(basename $SRCFILE) | rev | cut -f2- -d- | rev)
     fi
-    # We now have the package base name and we can start looking:
+
+    # Check for the package in modules
     PKGTGT=$(grep -w ${PKGBASE}$ modules/*)
-    if [ -n "$(echo $PKGTGT |cut -d: -f2- |grep "^ *#")" ]; then
+    if [ -n "$(echo $PKGTGT | cut -d: -f2- | grep "^ *#")" ]; then
       echo "Source file '$(basename $SRCFILE)' is commented out: ($PKGTGT) !"
-    elif cat package-blacklist |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+    elif cat package-blacklist | grep -v "^ *#" | grep -wq ${PKGBASE}$ ; then
       echo "Source file '$(basename $SRCFILE)' is on the package-blacklist ($PKGBASE) !"
-    elif ! cat modules/* |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+    elif ! cat modules/* | grep -v "^ *#" | grep -wq ${PKGBASE}$ ; then
       echo "Source file '$(basename $SRCFILE)' is not mentioned in 'modules' ($PKGBASE) !"
       RETVAL=1
     fi
   done
 
-  # Do we have duplicate package names?
-  PKGDUP="$(cat $CWD/modules/* |grep -v "^ *#" |grep -v "^$" |sort |uniq -d)"
-  if [ -n "$PKGDUP" ] ; then
+  # Check for duplicate package names
+  PKGDUP=$(cat $CWD/modules/* | grep -v "^ *#" | grep -v "^$" | sort | uniq -d)
+  if [ -n "$PKGDUP" ]; then
     echo "Multiply-defined package names: '$(echo $PKGDUP)'"
     RETVAL=1
   fi
   unset PKGDUP
 
-  for MODPKG in $(cat $CWD/modules/* | grep -v "^ *#") ; do
-    # First find out if the pkg source is different from the actual pkg name:
+  # Check each module package for correct source tarball and slack-desc file
+  for MODPKG in $(cat $CWD/modules/* | grep -v "^ *#"); do
+    # Determine if the module source is different from the package name
     if [ -f $CWD/pkgsrc/$MODPKG ]; then
       MODBASE=$(basename $(cat $CWD/pkgsrc/$MODPKG))
       MODLOC=$(dirname $(cat $CWD/pkgsrc/$MODPKG))/
@@ -92,10 +167,12 @@ precheck() {
       MODBASE=$MODPKG
       MODLOC=""
     fi
-    MODSRC="$(find $CWD/src/$MODLOC -name $MODBASE-*.tar.* |grep -vE ".asc$|.sig$" |grep -E "$MODBASE-[^-]+.tar.*$|$MODBASE-[0-9].+.tar.*$")"
-    if [ -z "$MODSRC" ] ; then
+
+    # Find the matching source tarball for the module
+    MODSRC=$(find $CWD/src/$MODLOC -name $MODBASE-*.tar.* | grep -vE ".asc$|.sig$" | grep -E "$MODBASE-[^-]+.tar.*$|$MODBASE-[0-9].+.tar.*$")
+    if [ -z "$MODSRC" ]; then
       echo "Module '$MODPKG' does not have a matching source tarball ($MODLOC$MODBASE)!"
-      if [ "$CHECKOUT" = "yes" -o "$CHECKOUT" = "YES" ]; then
+      if [ "$CHECKOUT" = "yes" ] || [ "$CHECKOUT" = "YES" ]; then
         THEDATE=$(date +%Y%m%d)
         echo "Checking out ${MODLOC}:${MODBASE} at date ${THEDATE}."
         $CWD/plasma_checkout.sh -c -d ${THEDATE} -o $CWD/src ${MODLOC}:${MODBASE}
@@ -108,73 +185,21 @@ precheck() {
         RETVAL=1
       fi
     fi
-    # A missing slack-desc counts as fatal:
-    if [ -z "$(find $CWD/slack-desc -name ${MODPKG})" ] ; then
+
+    # Check for the existence of a slack-desc file, this is fatal if missing
+    if [ -z "$(find $CWD/slack-desc -name ${MODPKG})" ]; then
       echo "Module '$MODPKG' does not have a slack-desc file !"
       RETVAL=1
     fi
   done
 
+  # If no errors, proceed with the build
   if [ $RETVAL -eq 0 ]; then
     echo "Check complete, build starts in ${GRACETME} seconds.."
     sleep ${GRACETME}
   else
     echo "Precheck failed with error code '$RETVAL'."
     exit 1
-  fi
-}
-
-# Function to fix permissions
-fix_perms() {
-  target_dir=$1
-  [ -z "$target_dir" ] && target_dir='.'
-  chown -R root:root "$target_dir"
-  find "$target_dir" \
-   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-   -exec chmod 755 {} \+ -o \
-   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \+
-  # Also strip rpaths:
-  for file in $(find $target_dir | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null) ; do
-    if [ ! "$(patchelf --print-rpath $file 2> /dev/null)" = "" ]; then
-      patchelf --remove-rpath $file
-    fi
-  done
-}
-
-process_man_pages() {
-  # Compress and if needed symlink the man pages:
-  if [ -d usr/man ]; then
-    ( cd usr/man
-      for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.*
-      )
-      done
-    )
-  fi
-}
-
-process_info_pages() {
-  # Compress info pages and purge "dir" file from the package:
-  if [ -d usr/info ]; then
-    ( cd usr/info
-      rm -f dir
-      gzip -9 *
-    )
-  fi
-}
-
-no_usr_share_doc() {
-  # If there are docs, move them:
-  if [ -d usr/share/doc ]; then
-    mkdir -p usr/doc
-    mv usr/share/doc/* usr/doc
-    rmdir usr/share/doc
   fi
 }
 
