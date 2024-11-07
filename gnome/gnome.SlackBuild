@@ -9,6 +9,7 @@ PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
 SKIPBUILT=${SKIPBUILT:-"yes"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
+GNOME=${GNOME:-"47"}
 
 # GNOME Download base URI
 GNOME_DOWNLOAD_URI="https://download.gnome.org/sources"
@@ -198,7 +199,7 @@ download_and_build_gnome_pkg() {
   echo "Building $pkg_name version $pkg_version"
 
   # Formulate download URL based on package name and version
-  local download_url="${GNOME_DOWNLOAD_URI}/${pkg_name}/${pkg_version}/${pkg_name}-${pkg_version}.tar.xz"
+  local download_url="${GNOME_DOWNLOAD_URI}/${pkg_name}/${GNOME}/${pkg_name}-${pkg_version}.tar.xz"
   local src_path="$CWD/src/${pkg_name}-${pkg_version}.tar.xz"
 
   # Download source if missing
