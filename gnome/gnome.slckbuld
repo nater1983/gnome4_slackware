@@ -47,6 +47,8 @@ gnome_source=$(basename $(find $CWD/src/$PKGLOC -name "$PKGSRC-*.tar.?z*" |grep 
       continue
 fi
 
+MODULAR_PACKAGE_VERSION=$(echo $gnome_source | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+
 # Extract source archive
 extract_archive() {
   local src_archive
