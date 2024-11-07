@@ -35,7 +35,7 @@ rm -fr "$GNOME_BUILD_DIR"
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
 
 # Set $PKG to a private dir for the modular package build:
-PKG=$GNOME_BUILD_DIR/package-$pkg_name
+PKG=$GNOME_BUILD_DIR/package-${pkg_name}
 rm -rf $PKG
 mkdir -p $PKG
 
