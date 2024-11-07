@@ -77,6 +77,42 @@ fix_perms() {
   done
 }
 
+process_man_pages() {
+  # Compress and if needed symlink the man pages:
+  if [ -d usr/man ]; then
+    ( cd usr/man
+      for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.*
+      )
+      done
+    )
+  fi
+}
+
+process_info_pages() {
+  # Compress info pages and purge "dir" file from the package:
+  if [ -d usr/info ]; then
+    ( cd usr/info
+      rm -f dir
+      gzip -9 *
+    )
+  fi
+}
+
+no_usr_share_doc() {
+  # If there are docs, move them:
+  if [ -d usr/share/doc ]; then
+    mkdir -p usr/doc
+    mv usr/share/doc/* usr/doc
+    rmdir usr/share/doc
+  fi
+}
+
 # Download and build function for GNOME packages
 download_and_build_gnome_pkg() {
   local pkg_name=$1
