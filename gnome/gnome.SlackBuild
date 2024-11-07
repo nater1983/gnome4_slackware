@@ -409,6 +409,7 @@ do
   else
     if [ -z "$PRINT_PACKAGE_NAME" ]; then
       echo "${module} failed to build."
+      find ${SLACK_GNOME_BUILD_DIR}/$(echo $module |cut -f1 -d:) -type d -mindepth 1 -maxdepth 1 |xargs rm -rf
     fi
     if [ "$EXITFAIL" = "yes" ]; then
       exit 1
