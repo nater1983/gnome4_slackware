@@ -7,3 +7,6 @@ cat $CWD/post-install/gdm/gdm-autologin.pam > $PKG/etc/pam.d/gdm-autologin
 cat $CWD/post-install/gdm/gdm-password.pam > $PKG/etc/pam.d/gdm-password
 cat $CWD/post-install/gdm/gdm-launch-environment.pam > $PKG/etc/pam.d/gdm-launch-environment
 cat $CWD/post-install/gdm/wayland-session > $PKG/etc/gdm/wayland-session
+
+# Handle /etc/gdm/custom.conf a little nicer:
+mv $PKG/etc/gdm/{custom.conf,custom.conf.new}
