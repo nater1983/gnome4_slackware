@@ -1,0 +1,11 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+  -Dgtk-doc=false \
+  -Dintrospection=true \
+# not sure why this is necessary
+sed -i "/^ COMMAND = \\/usr\\/bin\\/g-ir-scanner/s/-lyaml//" build.ninja
