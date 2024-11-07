@@ -19,13 +19,19 @@ def get_pkg_version(project_name):
 
 # Function to check if tarball is available on GNOME's downloads server using GET request
 def check_tarball_availability(project_name, pkg_version):
-    # Handle .0 removal for the directory path but keep it for the filename
-    if pkg_version.endswith(".0"):
-        major_version = pkg_version[:-2]  # Remove the last two characters ".0"
-        tarball_url = f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz"  # Use original version for filename
+    version_parts = pkg_version.split(".")
+
+    if len(version_parts) == 3:
+        # For version like 3.54.1 (major.minor.patch)
+        major_minor_version = f"{version_parts[0]}.{version_parts[1]}"  # e.g., 3.54
+        tarball_url = f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz"  # full version for filename
+    elif len(version_parts) == 2:
+        # For version like 47.1 (major.minor)
+        major_version = version_parts[0]  # e.g., 47
+        tarball_url = f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz"  # full version for filename
     else:
-        major_version = pkg_version  # No change if there's no ".0"
-        tarball_url = f"{downloads_base_url}/{project_name}/{major_version[:2]}/{project_name}-{pkg_version}.tar.xz"  # Use version for filename
+        print(f"Invalid version format for {pkg_version}")
+        return None
 
     print(f"Checking URL: {tarball_url}")  # Debugging line to print the URL
     
@@ -83,3 +89,4 @@ if tarball_url:
     download_tarball(tarball_url, src_directory)
 else:
     print(f"Tarball for {project_name} version {pkg_version} not found on GNOME's downloads server.\n")
+
