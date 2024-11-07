@@ -16,5 +16,5 @@ cd build
     -Dsysconfsubdir=/etc/gdm \
     -Dgdm-xsession=true \
     -Dx11-support=true \
-    -Dinitial-vt=7 \
+    -Dinitial-vt=7
     ..
