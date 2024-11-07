@@ -37,10 +37,43 @@ extract_archive() {
   # Find the archive first:
   local src_archive=$(find $CWD/src -name "$1" | tail -1)
   if [ -z "$src_archive" ]; then
-    echo "Error: Archive not found."
-    return 1
+    echo "Archive not found, proceeding to download."
+
+    # Extract the package name and version from a file (e.g., .SlackBuild or another file)
+    local pkg_name=$(basename "$1" | sed 's/\.[^.]*$//')  # Extract package name from the filename
+    local version_file="$CWD/version/$pkg_name"   # Example: version file containing the version number
+    
+    if [ ! -f "$version_file" ]; then
+      echo "Error: Version file $version_file not found."
+      return 1
+    fi
+    
+    # Read the version from the file
+    local pkg_version=$(cat "$version_file")
+    if [ -z "$pkg_version" ]; then
+      echo "Error: Version is empty in $version_file."
+      return 1
+    fi
+
+    echo "Downloading $pkg_name version $pkg_version"
+
+    # Formulate download URL based on version from the version file
+    local download_url="https://download.gnome.org/sources/${pkg_name}/${pkg_version}/${pkg_name}-${pkg_version}.tar.xz"
+    local src_path="$CWD/src/${pkg_name}-${pkg_version}.tar.xz"
+
+    # Download the source archive
+    wget "$download_url" -O "$src_path"
+    if [ $? -ne 0 ]; then
+      echo "Failed to download $pkg_name version $pkg_version."
+      return 1
+    fi
+    echo "$pkg_name version $pkg_version downloaded successfully."
+
+    # Set the downloaded archive as the source
+    src_archive="$src_path"
   fi
 
+  # Extract the archive
   if [ $(tar -tf "$src_archive" | grep -o '^[^/]\+' | sort -u | wc -l) -eq 1 ]; then
     # Archive contains one toplevel directory, good. Ensure this directory
     # becomes '$(pkgbase $1)':
