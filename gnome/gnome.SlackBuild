@@ -270,7 +270,7 @@ fi
 
 # Get rid of zero-length junk files:
 find $PKG/usr/doc/${pkg_name}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
-rmdir --verbose $PKG/usr/doc/${pkg_name}-$pkg_version 2> /dev/null
+#rmdir --verbose $PKG/usr/doc/${pkg_name}-$pkg_version 2> /dev/null
 
 # Strip binaries if needed:
 if [ ! -r $CWD/nostrip/${pkg_name} ]; then
