@@ -313,12 +313,110 @@ if [ -d $GNOME_BUILD_DIR/${pkg_name}/package-${PKGNAME} ]; then
 fi
 }
 
-# Example usage
-if [ "$1" = "precheck" ]; then
-  precheck
-elif [ "$1" ]; then
-  download_and_build_gnome_pkg "$1"
+# Process the module queue. Format is:
+# module[:subpackage[,subpackage]] [module...]
+deterministic_build() {
+  RET=0
+  for ENTRY in $1 ; do
+    GNOME_MOD=$(echo "$ENTRY": | cut -f1 -d:)
+    GNOME_PKGS=$(echo "$ENTRY": | cut -f2 -d:)
+    if [ -z "$GNOME_PKGS" ]; then
+      if [ -z "$PRINT_PACKAGE_NAME" ]; then
+        echo "** SlackBuild building '$GNOME_MOD'"
+      fi
+      build_mod_pkg $GNOME_MOD
+      let RET=$RET+$?
+    else
+      if [ "${GNOME_PKGS: -1}" = "," ]; then
+        # Last character is a ','. Expand the list with all subsequent packages.
+        START_PKG=$(echo $GNOME_PKGS |rev |cut -d, -f2 |rev)
+        MOD_LIST=$(cat modules/$GNOME_MOD |grep -v "^ *#" |grep -v "^$" |tr '\n' ',')
+        GNOME_PKGS="${GNOME_PKGS}${MOD_LIST/#?*,${START_PKG},/}"
+        if [ -z "$PRINT_PACKAGE_NAME" ]; then
+          echo "** SlackBuild expanding '$ENTRY' to '$GNOME_MOD:$GNOME_PKGS'"
+        fi
+      fi
+      for GNOME_PKG in $(echo $GNOME_PKGS |tr ',' ' ') ; do
+        if [ -z "$PRINT_PACKAGE_NAME" ]; then
+          echo "** SlackBuild building '$GNOME_MOD:$GNOME_PKG'"
+        fi
+        build_mod_pkg $GNOME_MOD $GNOME_PKG
+        let RET=$RET+$?
+      done
+    fi
+  done
+
+  return $RET
+}
+
+# MAIN PART #
+
+# Import the build configuration options for as far as they are not already set:
+[ -r ./gnome.options ] && . ./gnome.options
+
+# This avoids compiling a version number into GNOME's .la files:
+QTDIR=/usr/lib${LIBDIRSUFFIX}/qt5 ; export QTDIR
+
+# Get the GNOME environment variables:
+[ -d post-install/gnome ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gnome/profile.d/gnome.sh)
+
+# Build/install gnome-common before compiling certain GNOME modules like gedit.
+# Build/install libsoup before compiling webkitgtk.
+# Build/install libcanberra before compiling gnome-shell.
+# Build/install gobject-introspection before compiling pygobject.
+GNOMEMODS=" \
+  gnome-common \
+  gtk3 \
+  gedit \
+  libsoup \
+  webkitgtk \
+  gnome-shell \
+  gobject-introspection \
+  pygobject \
+  glib \
+  cairo \
+  pango \
+  atk \
+  libsoup \
+  gio \
+  "
+
+# Allow for specification of individual packages to be built:
+if [ -z "$1" ]; then
+  MODQUEUE=$GNOMEMODS
 else
-  echo "Usage: $0 <pkg_name> or $0 precheck"
-  exit 1
+  MODQUEUE="$*"
 fi
+
+# If requested, check if
+# sources, module definitions and slack-desc are complete and matching:
+if [ "$PRECHECK" = "yes" -o "$PRECHECK" = "YES" ]; then
+  precheck
+fi
+
+# And finally, start working!
+for module in \
+  $MODQUEUE ;
+do
+  if [ -z "$PRINT_PACKAGE_NAME" ]; then
+    echo "SlackBuild processing module '$module'"
+  fi
+  deterministic_build $module
+  if [ $? = 0 ]; then
+    # Success!
+    if [ "$CLEANUP" = "yes" -o "$CLEANUP" = "YES" ]; then
+      # Clean out package and build directories:
+      find ${SLACK_GNOME_BUILD_DIR}/$(echo $module |cut -f1 -d:) -type d -mindepth 1 -maxdepth 1 |xargs rm -rf
+    fi
+  else
+    if [ -z "$PRINT_PACKAGE_NAME" ]; then
+      echo "${module} failed to build."
+    fi
+    if [ "$EXITFAIL" = "yes" ]; then
+      exit 1
+    fi
+  fi
+  cd - > /dev/null
+done
+
+exit 0
