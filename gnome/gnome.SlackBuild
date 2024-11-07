@@ -354,11 +354,8 @@ deterministic_build() {
 # Import the build configuration options for as far as they are not already set:
 [ -r ./gnome.options ] && . ./gnome.options
 
-# This avoids compiling a version number into GNOME's .la files:
-QTDIR=/usr/lib${LIBDIRSUFFIX}/qt5 ; export QTDIR
-
 # Get the GNOME environment variables:
-[ -d post-install/gnome ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gnome/profile.d/gnome.sh)
+#[ -d post-install/gnome ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gnome/profile.d/gnome.sh)
 
 # Build/install gnome-common before compiling certain GNOME modules like gedit.
 # Build/install libsoup before compiling webkitgtk.
