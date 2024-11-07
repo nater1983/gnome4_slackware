@@ -381,6 +381,9 @@ build_mod_pkg() {
         cat $CWD/doinst.sh/${PKGNAME} \
           | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
           >> $PKG/install/doinst.sh
+      else
+        cat $CWD/doinst.sh/generic \
+          >> $PKG/install/doinst.sh
       fi
 
       # If this is a modular package, build it here:
@@ -392,8 +395,14 @@ build_mod_pkg() {
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
+          if [ -f $CWD/slack-required/${PKGNAME} ]; then cat $CWD/slack-required/${PKGNAME} > $PKG/install/slack-required; fi
+          if [ -f $CWD/slack-suggests/${PKGNAME} ]; then cat $CWD/slack-suggests/${PKGNAME} > $PKG/install/slack-suggests; fi
+          if [ -f $CWD/slack-conflicts/${PKGNAME} ]; then cat $CWD/slack-conflicts/${PKGNAME} > $PKG/install/slack-conflicts; fi
         else
           touch $PKG/install/slack-desc-missing
+          touch $PKG/install/slack-required
+          touch $PKG/install/slack-suggests
+          touch $PKG/install/slack-conflicts
         fi
         if [ -r $CWD/build/${PKGNAME} ]; then
           MODBUILD=$(cat $CWD/build/${PKGNAME})
