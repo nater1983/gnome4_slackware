@@ -218,13 +218,13 @@ download_and_build_gnome_pkg() {
   # Check if we need to skip the package due to nomake file
   if ! grep -wq "^${pkg_name}$" "${CWD}/nomake"; then
     # Run cmake, using custom cmake script if needed:
-    if [ -r "$CWD/cmake/${pkg_name}" ]; then
-      echo "Using custom CMake script for $pkg_name"
-      . "$CWD/cmake/${pkg_name}"
+    if [ -r "$CWD/meson/${pkg_name}" ]; then
+      echo "Using custom Meson script for $pkg_name"
+      . "$CWD/meson/${pkg_name}"
     else
       # This is the default CMake script
-      echo "Using default CMake script"
-      . "$CWD/cmake/cmake"
+      echo "Using default Meson script"
+      . "$CWD/meson/meson"
     fi
 
     # Run make, using custom make script if needed:
