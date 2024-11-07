@@ -2,11 +2,11 @@
 # Gnome.SlackBuild Script
 # Adapted for GNOME packages from download.gnome.org.
 
-# Set up general build options
+# General build options
 CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
 UPGRADE=${UPGRADE:-"yes"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
-GRACETME=${GRACETME:-"10"}      # Grace time before build starts
+GRACETIME=${GRACETIME:-"10"}    # Grace time before build starts
 SKIPBUILT=${SKIPBUILT:-"yes"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
 GNOME=${GNOME:-"47"}
@@ -14,7 +14,7 @@ GNOME=${GNOME:-"47"}
 # GNOME Download base URI
 GNOME_DOWNLOAD_URI="https://download.gnome.org/sources"
 
-# Function to get base name of the package (remove .tar extensions)
+# Function to get the base name of the package (remove .tar extensions)
 pkgbase() {
   PKGEXT=$(echo $1 | rev | cut -f 1 -d . | rev)
   case $PKGEXT in
@@ -26,57 +26,52 @@ pkgbase() {
   echo $PKGRETURN
 }
 
-# Set initial directory variables
-cd "$(dirname "$0")"
-CWD=$(pwd)
-TMP=${TMP:-/tmp}
-GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
-rm -fr "$GNOME_BUILD_DIR"
-mkdir -p "$TMP" "$GNOME_BUILD_DIR"
+# Set up build directories and clean up
+setup_directories() {
+  cd "$(dirname "$0")"
+  CWD=$(pwd)
+  TMP=${TMP:-/tmp}
+  GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
+  rm -fr "$GNOME_BUILD_DIR"
+  mkdir -p "$TMP" "$GNOME_BUILD_DIR"
+  PKG=$GNOME_BUILD_DIR/package-${MODPKG}
+  rm -rf $PKG
+  mkdir -p $PKG
+}
 
-# Set $PKG to a private dir for the modular package build:
-PKG=$GNOME_BUILD_DIR/package-${MODPKG}
-rm -rf $PKG
-mkdir -p $PKG
-
-# Extract source archive
+# Function to extract source archive
 extract_archive() {
   local src_archive
   src_archive=$(find "$CWD/src" -name "$1" | tail -1)
+  if [ -z "$src_archive" ]; then
+    echo "Source archive $1 not found!"
+    return 1
+  fi
   tar -xf "$src_archive" -C "$GNOME_BUILD_DIR" || return 1
 }
 
 # Pre-check for GNOME packages
 precheck() {
-  # See if the sources we have match the module components we want to build:
   RETVAL=0
 
   for SRCFILE in $(find $CWD/src -name "*.tar.?z*" |grep -vE ".asc$|.sig$") ; do
-    # Check if the source tarball is mentioned in pkgsrc/
-    # meaning its package will get a different name:
-    ###################################################################
-    # USE OF THIS FEATURE SHOULD BE RESERVED FOR CASES WHERE THERE IS #
-    # A VERY GOOD RATIONALE - KEEPING UPSTREAM NAMES IS PREFERRED     #
-    ###################################################################
-    PKGSRC=$(echo $SRCFILE |rev |cut -f2- -d- |cut -f1,2 -d/ |rev)
+    PKGSRC=$(echo $SRCFILE | rev | cut -f2- -d- | cut -f1,2 -d/ | rev)
     PKGBASE=$(basename $(grep -lw $PKGSRC $CWD/pkgsrc/* 2>/dev/null) 2>/dev/null)
     if [ -z "$PKGBASE" ]; then
-      PKGBASE=$(echo $(basename $SRCFILE) |rev |cut -f2- -d- |rev)
+      PKGBASE=$(basename $SRCFILE | rev | cut -f2- -d- | rev)
     fi
-    # We now have the package base name and we can start looking:
     PKGTGT=$(grep -w ${PKGBASE}$ modules/*)
-    if [ -n "$(echo $PKGTGT |cut -d: -f2- |grep "^ *#")" ]; then
+    if [ -n "$(echo $PKGTGT | cut -d: -f2- | grep "^ *#")" ]; then
       echo "Source file '$(basename $SRCFILE)' is commented out: ($PKGTGT) !"
-    elif cat package-blacklist |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+    elif cat package-blacklist | grep -v "^ *#" | grep -wq ${PKGBASE}$ ; then
       echo "Source file '$(basename $SRCFILE)' is on the package-blacklist ($PKGBASE) !"
-    elif ! cat modules/* |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+    elif ! cat modules/* | grep -v "^ *#" | grep -wq ${PKGBASE}$ ; then
       echo "Source file '$(basename $SRCFILE)' is not mentioned in 'modules' ($PKGBASE) !"
       RETVAL=1
     fi
   done
 
-  # Do we have duplicate package names?
-  PKGDUP="$(cat $CWD/modules/* |grep -v "^ *#" |grep -v "^$" |sort |uniq -d)"
+  PKGDUP="$(cat $CWD/modules/* | grep -v "^ *#" | grep -v "^$" | sort | uniq -d)"
   if [ -n "$PKGDUP" ] ; then
     echo "Multiply-defined package names: '$(echo $PKGDUP)'"
     RETVAL=1
@@ -84,7 +79,6 @@ precheck() {
   unset PKGDUP
 
   for MODPKG in $(cat $CWD/modules/* | grep -v "^ *#") ; do
-    # First find out if the pkg source is different from the actual pkg name:
     if [ -f $CWD/pkgsrc/$MODPKG ]; then
       MODBASE=$(basename $(cat $CWD/pkgsrc/$MODPKG))
       MODLOC=$(dirname $(cat $CWD/pkgsrc/$MODPKG))/
@@ -108,7 +102,6 @@ precheck() {
         RETVAL=1
       fi
     fi
-    # A missing slack-desc counts as fatal:
     if [ -z "$(find $CWD/slack-desc -name ${MODPKG})" ] ; then
       echo "Module '$MODPKG' does not have a slack-desc file !"
       RETVAL=1
@@ -116,8 +109,8 @@ precheck() {
   done
 
   if [ $RETVAL -eq 0 ]; then
-    echo "Check complete, build starts in ${GRACETME} seconds.."
-    sleep ${GRACETME}
+    echo "Check complete, build starts in ${GRACETIME} seconds.."
+    sleep ${GRACETIME}
   else
     echo "Precheck failed with error code '$RETVAL'."
     exit 1
@@ -130,11 +123,10 @@ fix_perms() {
   [ -z "$target_dir" ] && target_dir='.'
   chown -R root:root "$target_dir"
   find "$target_dir" \
-   \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
-   -exec chmod 755 {} \+ -o \
-   \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
-   -exec chmod 644 {} \+
-  # Also strip rpaths:
+    \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+    -exec chmod 755 {} \+ -o \
+    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+    -exec chmod 644 {} \+
   for file in $(find $target_dir | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null) ; do
     if [ ! "$(patchelf --print-rpath $file 2> /dev/null)" = "" ]; then
       patchelf --remove-rpath $file
@@ -142,25 +134,25 @@ fix_perms() {
   done
 }
 
+# Function to process man pages
 process_man_pages() {
-  # Compress and if needed symlink the man pages:
   if [ -d usr/man ]; then
     ( cd usr/man
       for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.*
-      )
+        ( cd $manpagedir
+          for eachpage in $(find . -type l -maxdepth 1) ; do
+            ln -s $(readlink $eachpage).gz $eachpage.gz
+            rm $eachpage
+          done
+          gzip -9 *.*
+        )
       done
     )
   fi
 }
 
+# Function to process info pages
 process_info_pages() {
-  # Compress info pages and purge "dir" file from the package:
   if [ -d usr/info ]; then
     ( cd usr/info
       rm -f dir
@@ -169,8 +161,8 @@ process_info_pages() {
   fi
 }
 
+# Function to handle docs
 no_usr_share_doc() {
-  # If there are docs, move them:
   if [ -d usr/share/doc ]; then
     mkdir -p usr/doc
     mv usr/share/doc/* usr/doc
@@ -178,7 +170,7 @@ no_usr_share_doc() {
   fi
 }
 
-# Function to download and build GNOME package
+# Download and build GNOME package
 download_and_build_gnome_pkg() {
   local pkg_name=$1
   local pkg_version
@@ -187,241 +179,36 @@ download_and_build_gnome_pkg() {
     exit 1
   fi
 
-  # Find and extract version from SlackBuild file
-  local slackbuild_file
   slackbuild_file=$(find "$CWD" -name "${pkg_name}.SlackBuild" | head -1)
   if [ -z "$slackbuild_file" ]; then
     echo "SlackBuild file for $pkg_name not found."
     exit 1
   fi
 
-  # Extract the VERSION from the SlackBuild file
-  pkg_version=$(grep -E "^VERSION=" "$slackbuild_file" | sed 's/VERSION=//; s/"//g')
+  pkg_version=$(grep -E "^VERSION=" "$slackbuild_file" | sed 's/VERSION=//')
   if [ -z "$pkg_version" ]; then
-    echo "Failed to retrieve version from $slackbuild_file."
+    echo "Could not determine version for $pkg_name."
     exit 1
   fi
 
-  echo "Building $pkg_name version $pkg_version"
+  echo "Building $pkg_name version $pkg_version..."
+  cd "$GNOME_BUILD_DIR"
+  bash "$slackbuild_file"
 
-  # Formulate download URL based on package name and version
-  local download_url="${GNOME_DOWNLOAD_URI}/${pkg_name}/${GNOME}/${pkg_name}-${pkg_version}.tar.xz"
-  local src_path="$CWD/src/gnome/${pkg_name}-${pkg_version}.tar.xz"
-
-  # Download source if missing
-  if [ ! -f "$src_path" ]; then
-    wget "$download_url" -O "$src_path"
-    if [ $? -ne 0 ]; then
-      echo "Failed to download $pkg_name version $pkg_version"
-      exit 1
-    fi
+  if [ $? -ne 0 ]; then
+    echo "Build failed for $pkg_name."
+    exit 1
   fi
-
-  # Extract the package
-  extract_archive "${pkg_name}-${pkg_version}.tar.xz"
-  cd "$GNOME_BUILD_DIR/$pkg_name-$pkg_version" || exit 1
-
-  # Check if we need to skip the package due to nomake file
-  if ! grep -wq "^${pkg_name}$" "${CWD}/nomake"; then
-    # Run cmake, using custom cmake script if needed:
-    if [ -r "$CWD/meson/${pkg_name}" ]; then
-      echo "Using custom Meson script for $pkg_name"
-      . "$CWD/meson/${pkg_name}"
-    else
-      # This is the default CMake script
-      echo "Using default Meson script"
-      . "$CWD/meson/meson"
-    fi
-
-    # Run make, using custom make script if needed:
-    if [ -r "$CWD/make/${pkg_name}" ]; then
-      echo "Using custom Make script for $pkg_name"
-      . "$CWD/make/${pkg_name}"
-    else
-      # This is the default make && make install routine:
-      echo "Running default make routine"
-  "${NINJA:=ninja}"
-  DESTDIR=$PKG $NINJA install
-cd ..
-    fi
-  fi
-
-# Back to source toplevel builddir, since cmake may have run in a subdir:
-cd $GNOME_BUILD_DIR/${pkg_name}-${pkg_version}/$(pkgbase $gnome_src)
-
-mkdir -p $PKG/usr/doc/${pkg_name}-${pkg_version}
-# Use specific documentation files if available, else use a default set:
-if [ -r $CWD/docs/${pkg_name} ]; then
-  cp -a $(cat $CWD/docs/${pkg_name}) \
-    $PKG/usr/doc/${pkg_name}-${pkg_version}
-else
-  cp -a \
-    AUTHORS* CONTRIBUTING* COPYING* HACKING* \
-    INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
-    $PKG/usr/doc/${pkg_name}-${pkg_version}
-  # If there's a ChangeLog, installing at least part of the recent
-  # history is useful, but don't let it get totally out of control:
-  if [ -r ChangeLog ]; then
-    DOCSDIR=$(echo $PKG/usr/doc/${pkg_name}-$pkg_version)
-    cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
-    touch -r ChangeLog $DOCSDIR/ChangeLog
-  fi
-fi
-
-# Get rid of zero-length junk files:
-find $PKG/usr/doc/${pkg_name}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
-#rmdir --verbose $PKG/usr/doc/${pkg_name}-$pkg_version 2> /dev/null
-
-# Strip binaries if needed:
-if [ ! -r $CWD/nostrip/${pkg_name} ]; then
-  fix_perms $PKG
-fi
-
-# If there's any special post-install things to do, do them:
-if [ -r $CWD/post-install/${pkg_name}.post-install ]; then
-  . $CWD/post-install/${pkg_name}.post-install
-fi
-
-# If this package requires some doinst.sh material, add it here:
-if [ -r $CWD/doinst.sh/${pkg_name} ]; then
-  mkdir -p $PKG/install
-  cat $CWD/doinst.sh/${pkg_name} \
-    | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
-    >> $PKG/install/doinst.sh
-fi
-
-# If this is a modular package, build it here:
-if [ -d $GNOME_BUILD_DIR/package-${pkg_name} ]; then
-  cd $PKG
-  process_man_pages
-  process_info_pages
-  no_usr_share_doc
-  mkdir -p $PKG/install
-  if [ -r $CWD/slack-desc/${pkg_name} ]; then
-    cat $CWD/slack-desc/${pkg_name} > $PKG/install/slack-desc
-  else
-    touch $PKG/install/slack-desc-missing
-  fi
-  if [ -r $CWD/build/${pkg_name} ]; then
-    MODBUILD=$(cat $CWD/build/${pkg_name})
-  else
-    MODBUILD=$BUILD
-  fi
-  if [ -r $CWD/makepkg/${pkg_name} ]; then
-    BUILD=$MODBUILD$TAG . $CWD/makepkg/${pkg_name}
-  else
-    /sbin/makepkg -l y -c n ${GNOME_BUILD_DIR}/${pkg_name}/${pkg_name}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
-  fi
-  # We will continue with the fresh packages installed:
-  if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
-    upgradepkg --install-new --reinstall ${GNOME_BUILD_DIR}/${pkg_name}/${pkg_name}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
-    # Keep MIME database current:
-    /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
-  fi
-fi
+  echo "$pkg_name version $pkg_version built successfully."
 }
 
-# Process the module queue. Format is:
-# module[:subpackage[,subpackage]] [module...]
-deterministic_build() {
-  RET=0
-  for ENTRY in $1 ; do
-    GNOME_MOD=$(echo "$ENTRY": | cut -f1 -d:)
-    GNOME_PKGS=$(echo "$ENTRY": | cut -f2 -d:)
-    if [ -z "$GNOME_PKGS" ]; then
-      if [ -z "$PRINT_PACKAGE_NAME" ]; then
-        echo "** SlackBuild building '$GNOME_MOD'"
-      fi
-      download_and_build_gnome_pkg $GNOME_MOD
-      let RET=$RET+$?
-    else
-      if [ "${GNOME_PKGS: -1}" = "," ]; then
-        # Last character is a ','. Expand the list with all subsequent packages.
-        START_PKG=$(echo $GNOME_PKGS |rev |cut -d, -f2 |rev)
-        MOD_LIST=$(cat modules/$GNOME_MOD |grep -v "^ *#" |grep -v "^$" |tr '\n' ',')
-        GNOME_PKGS="${GNOME_PKGS}${MOD_LIST/#?*,${START_PKG},/}"
-        if [ -z "$PRINT_PACKAGE_NAME" ]; then
-          echo "** SlackBuild expanding '$ENTRY' to '$GNOME_MOD:$GNOME_PKGS'"
-        fi
-      fi
-      for GNOME_PKG in $(echo $GNOME_PKGS |tr ',' ' ') ; do
-        if [ -z "$PRINT_PACKAGE_NAME" ]; then
-          echo "** SlackBuild building '$GNOME_MOD:$GNOME_PKG'"
-        fi
-        download_and_build_gnome_pkg $GNOME_MOD $GNOME_PKG
-        let RET=$RET+$?
-      done
-    fi
-  done
-
-  return $RET
-}
-
-# MAIN PART #
-
-# Import the build configuration options for as far as they are not already set:
-[ -r ./gnome.options ] && . ./gnome.options
-
-# Get the GNOME environment variables:
-#[ -d post-install/gnome ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gnome/profile.d/gnome.sh)
-
-# Build/install gnome-common before compiling certain GNOME modules like gedit.
-# Build/install libsoup before compiling webkitgtk.
-# Build/install libcanberra before compiling gnome-shell.
-# Build/install gobject-introspection before compiling pygobject.
-GNOMEMODS=" \
-  gnome-common \
-  gtk3 \
-  gedit \
-  libsoup \
-  webkitgtk \
-  gnome-shell \
-  gobject-introspection \
-  pygobject \
-  glib \
-  cairo \
-  pango \
-  atk \
-  libsoup \
-  gio \
-  "
-
-# Allow for specification of individual packages to be built:
-if [ -z "$1" ]; then
-  MODQUEUE=$GNOMEMODS
-else
-  MODQUEUE="$*"
-fi
-
-# If requested, check if
-# sources, module definitions and slack-desc are complete and matching:
-if [ "$PRECHECK" = "yes" -o "$PRECHECK" = "YES" ]; then
+# Main script logic
+if [ "$PRECHECK" == "yes" ]; then
   precheck
 fi
 
-# And finally, start working!
-for module in \
-  $MODQUEUE ;
-do
-  if [ -z "$PRINT_PACKAGE_NAME" ]; then
-    echo "SlackBuild processing module '$module'"
-  fi
-  deterministic_build $module
-  if [ $? = 0 ]; then
-    # Success!
-    if [ "$CLEANUP" = "yes" -o "$CLEANUP" = "YES" ]; then
-      # Clean out package and build directories:
-      find ${SLACK_GNOME_BUILD_DIR}/$(echo $module |cut -f1 -d:) -type d -mindepth 1 -maxdepth 1 |xargs rm -rf
-    fi
-  else
-    if [ -z "$PRINT_PACKAGE_NAME" ]; then
-      echo "${module} failed to build."
-    fi
-    if [ "$EXITFAIL" = "yes" ]; then
-      exit 1
-    fi
-  fi
-  cd - > /dev/null
+# Build GNOME packages
+for package in $(cat $CWD/modules/* | grep -v "^ *#"); do
+  download_and_build_gnome_pkg "$package"
 done
 
-exit 0
