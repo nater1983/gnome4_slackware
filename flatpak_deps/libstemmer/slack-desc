@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
           |-----handy-ruler------------------------------------------------------|
-libstemmer: libstemmer (stemming library supporting multiple languages)
+libstemmer: libstemmer (C stemming algorithm library)
 libstemmer:
 libstemmer: All you need to include the snowball stemming algorithms into a
 libstemmer: C project.
-libstemmer:
-libstemmer: Homepage: https://snowballstem.org/
-libstemmer:
-libstemmer:
-libstemmer:
-libstemmer:
-libstemmer:
+libstemmer: Snowball provides algorithms for several (mainly European) languages.
+libstemmer: It also provides access to the classic Porter stemming algorithm for
+libstemmer: English: although this has been superseded by an improved algorithm,
+libstemmer: the original algorithm may be of interest to information retrieval
+libstemmer: researchers wishing to reproduce results of earlier experiments.
+libstemmer
+libstemmer: Homepage: https://dev.gentoo.org/~graaff/libstemmer_c-20140325.tgz

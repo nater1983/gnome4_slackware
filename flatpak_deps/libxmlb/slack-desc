@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
        |-----handy-ruler------------------------------------------------------|
-libxmlb: libxmlb (A library to help create and query binary XML blobs)
+libxmlb: libxmlb (XML)
 libxmlb:
-libxmlb: A library to help create and query binary XML blobs
-libxmlb:
-libxmlb:
-libxmlb: https://github.com/hughsie/libxmlb
-libxmlb:
+libxmlb: The libxmlb library takes XML source, and converts it to a structured
+libxmlb: binary representation with a deduplicated string table -- where the
+libxmlb: strings have the NULs included.
 libxmlb:
 libxmlb:
 libxmlb:
+libxmlb:
+libxmlb: 
 libxmlb:
