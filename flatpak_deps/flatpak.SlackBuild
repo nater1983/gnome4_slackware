@@ -11,9 +11,6 @@ TMP=${TMP:-/tmp}
 # Set the config option variables if they are not already set:
 [ -r ./flatpak.options ] && . ./flatpak.options
 
-# Avoid conflict with older versions of Qt that are installed:
-#QTDIR=/usr/lib${LIBDIRSUFFIX}/qt6 ; export QTDIR
-
 ALLDEPS=" \
   xdg-desktop-portal-gtk \
   xdg-dbus-proxy \
@@ -21,7 +18,7 @@ ALLDEPS=" \
   gcab \
   appstream-glib \
   libxmlb \
-  Appstream \
+  AppStream \
   libostree \
   bubblewrap \
   flatpak \
