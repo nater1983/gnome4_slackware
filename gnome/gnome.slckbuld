@@ -422,34 +422,35 @@ download_and_build_gnome_pkg() {
   )
 }
 
-# Process the module queue. Format is:
+# Process the module queue for GNOME and KDE. Format is:
 # module[:subpackage[,subpackage]] [module...]
 deterministic_build() {
   RET=0
   for ENTRY in $1 ; do
-    GNOME_MOD=$(echo "$ENTRY": | cut -f1 -d:)
-    GNOME_PKGS=$(echo "$ENTRY": | cut -f2 -d:)
-    if [ -z "$GNOME_PKGS" ]; then
+    MODULE=$(echo "$ENTRY": | cut -f1 -d:)
+    PKGS=$(echo "$ENTRY": | cut -f2 -d:)
+
+    if [ -z "$PKGS" ]; then
       if [ -z "$PRINT_PACKAGE_NAME" ]; then
-        echo "** SlackBuild building '$GNOME_MOD'"
+        echo "** SlackBuild building '$MODULE'"
       fi
-      download_and_build_gnome_pkg $GNOME_MOD
+      build_mod_pkg $MODULE
       let RET=$RET+$?
     else
-      if [ "${GNOME_PKGS: -1}" = "," ]; then
+      if [ "${PKGS: -1}" = "," ]; then
         # Last character is a ','. Expand the list with all subsequent packages.
-        START_PKG=$(echo $GNOME_PKGS |rev |cut -d, -f2 |rev)
-        MOD_LIST=$(cat modules/$GNOME_MOD |grep -v "^ *#" |grep -v "^$" |tr '\n' ',')
-        GNOME_PKGS="${GNOME_PKGS}${MOD_LIST/#?*,${START_PKG},/}"
+        START_PKG=$(echo $PKGS |rev |cut -d, -f2 |rev)
+        MOD_LIST=$(cat modules/$MODULE |grep -v "^ *#" |grep -v "^$" |tr '\n' ',')
+        PKGS="${PKGS}${MOD_LIST/#?*,${START_PKG},/}"
         if [ -z "$PRINT_PACKAGE_NAME" ]; then
-          echo "** SlackBuild expanding '$ENTRY' to '$GNOME_MOD:$GNOME_PKGS'"
+          echo "** SlackBuild expanding '$ENTRY' to '$MODULE:$PKGS'"
         fi
       fi
-      for GNOME_PKG in $(echo $GNOME_PKGS |tr ',' ' ') ; do
+      for PKG in $(echo $PKGS |tr ',' ' ') ; do
         if [ -z "$PRINT_PACKAGE_NAME" ]; then
-          echo "** SlackBuild building '$GNOME_MOD:$GNOME_PKG'"
+          echo "** SlackBuild building '$MODULE:$PKG'"
         fi
-        download_and_build_gnome_pkg $GNOME_MOD $GNOME_PKG
+        build_mod_pkg $MODULE $PKG
         let RET=$RET+$?
       done
     fi
@@ -463,28 +464,25 @@ deterministic_build() {
 # Import the build configuration options for as far as they are not already set:
 [ -r ./gnome.options ] && . ./gnome.options
 
-# Get the GNOME environment variables:
-#[ -d post-install/gnome ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gnome/profile.d/gnome.sh)
+# This avoids compiling a version number into GNOME's .la files:
+GTKDIR=/usr/lib${LIBDIRSUFFIX}/gtk-3.0 ; export GTKDIR
+GNOMEVARS=/usr/lib${LIBDIRSUFFIX}/gnome ; export GNOMEVARS
 
-# Build/install gnome-common before compiling certain GNOME modules like gedit.
-# Build/install libsoup before compiling webkitgtk.
-# Build/install libcanberra before compiling gnome-shell.
-# Build/install gobject-introspection before compiling pygobject.
+# Get the GNOME environment variables:
+[ -d post-install/gservice ] && eval $(sed -e "s#/lib#/lib${LIBDIRSUFFIX}#" ./post-install/gservice/profile.d/gnome.sh)
+
+# Build/install libgnome before compiling gnome-shell.
+# Build/install libgtk before compiling gnome-terminal.
+# Build/install gnome-shell before compiling gnome-settings-daemon.
 GNOMEMODS=" \
-  gnome-common \
-  gtk3 \
-  gedit \
-  libsoup \
-  webkitgtk \
+  gnome:libgnome \
   gnome-shell \
-  gobject-introspection \
-  pygobject \
-  glib \
-  cairo \
-  pango \
-  atk \
-  libsoup \
-  gio \
+  gnome:gnome-terminal \
+  gnome-settings-daemon \
+  gnome-extra:gtk3,gnome-icon-theme \
+  gnome-extra:gnome-software,gnome-control-center \
+  gnome-extra:gnome-calculator \
+  gnome \
   "
 
 # Allow for specification of individual packages to be built:
@@ -494,8 +492,7 @@ else
   MODQUEUE="$*"
 fi
 
-# If requested, check if
-# sources, module definitions and slack-desc are complete and matching:
+# If requested, check if sources, module definitions, and slack-desc are complete and matching:
 if [ "$PRECHECK" = "yes" -o "$PRECHECK" = "YES" ]; then
   precheck
 fi
