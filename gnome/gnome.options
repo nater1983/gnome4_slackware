@@ -1,5 +1,5 @@
 # Set default arch/build.  A default version is not needed since
-# package versions are determined by their source tarvall.
+# package versions are determined by their source tarball.
 
 [ -z $BUILD ] && export BUILD=1
 [ -z $TAG ] && export TAG=_gfs
