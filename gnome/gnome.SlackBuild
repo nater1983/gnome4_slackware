@@ -34,7 +34,7 @@ setup_directories() {
   GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
   rm -fr "$GNOME_BUILD_DIR"
   mkdir -p "$TMP" "$GNOME_BUILD_DIR"
-  PKG=$GNOME_BUILD_DIR/package-${MODPKG}
+  PKG=$GNOME_BUILD_DIR/package-${MODBASE}
   rm -rf $PKG
   mkdir -p $PKG
 }
