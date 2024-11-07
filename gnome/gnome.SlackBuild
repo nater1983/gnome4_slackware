@@ -58,7 +58,7 @@ extract_archive() {
     echo "Downloading $pkg_name version $pkg_version"
 
     # Formulate download URL based on version from the version file
-    local download_url="https://download.gnome.org/sources/${pkg_name}/${pkg_version}/${pkg_name}-${pkg_version}.tar.xz"
+    local download_url="https://download.gnome.org/sources/${pkg_name}/${GNOME}/${pkg_name}-${pkg_version}.tar.xz"
     local src_path="$CWD/src/${pkg_name}-${pkg_version}.tar.xz"
 
     # Download the source archive
