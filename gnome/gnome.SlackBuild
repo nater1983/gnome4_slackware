@@ -9,7 +9,6 @@ PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
 SKIPBUILT=${SKIPBUILT:-"no"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
-CHECKOUT=${CHECKOUT:-"yes"} # don't let the script checkout missing sources.
 GNOME=${GNOME:-"47"}
 
 # GNOME Download base URI
@@ -33,12 +32,6 @@ cd $(dirname $0) ; CWD=$(pwd)
 TMP=${TMP:-/tmp}
 GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
-
-download_archive() {
-  echo "Running download.py with arguments: $@"
-  # Run download.py script and pass all arguments to it
-  python3 "$CWD/download.py" "$@" || return 1
-}
 
 extract_archive() {
   # Find the archive first:
@@ -177,11 +170,11 @@ precheck() {
       if [ "$CHECKOUT" = "yes" ] || [ "$CHECKOUT" = "YES" ]; then
         THEDATE=$(date +%Y%m%d)
         echo "Checking out ${MODLOC}:${MODBASE} at date ${THEDATE}."
-        $CWD/download.py ${MODLOC}:${MODBASE}
+        $CWD/plasma_checkout.sh -c -d ${THEDATE} -o $CWD/src ${MODLOC}:${MODBASE}
         RETVAL=$?
         if [ $RETVAL -ne 0 ]; then
           echo "Error while checking out '$MODPKG' ($MODLOC/$MODBASE) !"
-        #  mv $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz.failed
+          mv $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz.failed
         fi
       else
         RETVAL=1
