@@ -40,7 +40,7 @@ extract_archive() {
     echo "Archive not found, proceeding to download."
 
     # Extract the package name and version from a file (e.g., .SlackBuild or another file)
-    local pkg_name=$(basename "$1" | sed 's/\.[^.]*$//')  # Extract package name from the filename
+    local pkg_name=$(basename "$1")
     local version_file="$CWD/version/$pkg_name"   # Example: version file containing the version number
     
     if [ ! -f "$version_file" ]; then
