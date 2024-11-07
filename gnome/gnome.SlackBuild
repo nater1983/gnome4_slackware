@@ -69,6 +69,12 @@ fix_perms() {
    -exec chmod 755 {} \+ -o \
    \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
    -exec chmod 644 {} \+
+  # Also strip rpaths:
+  for file in $(find $target_dir | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null) ; do
+    if [ ! "$(patchelf --print-rpath $file 2> /dev/null)" = "" ]; then
+      patchelf --remove-rpath $file
+    fi
+  done
 }
 
 # Download and build function for GNOME packages
