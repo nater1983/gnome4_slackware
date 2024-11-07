@@ -50,3 +50,8 @@ gnome-session
 libdaemon
 openrc-settingsd
 gdm
+gnome-menus
+gnome-shell-extensions
+p7zip
+jq
+gnome-browser-connector
