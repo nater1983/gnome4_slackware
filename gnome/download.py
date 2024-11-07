@@ -83,4 +83,3 @@ if tarball_url:
     download_tarball(tarball_url, src_directory)
 else:
     print(f"Tarball for {project_name} version {pkg_version} not found on GNOME's downloads server.\n")
-
