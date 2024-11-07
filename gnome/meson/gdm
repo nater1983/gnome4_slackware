@@ -3,6 +3,8 @@ cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
   meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
     -Ddbus-sys="/usr/share/dbus-1/system.d" \
     -Ddefault-pam-config=none \
     -Dpam-mod-dir="/lib${LIBDIRSUFFIX}/security" \
