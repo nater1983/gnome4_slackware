@@ -306,7 +306,6 @@ build_mod_pkg() {
       fi 
 
       rm -rf $(pkgbase $gnome_src)
-      download_archive $gnome_src || exit 1
       extract_archive $gnome_src || exit 1
       cd $(pkgbase $gnome_src) || exit 1
 
@@ -435,6 +434,7 @@ deterministic_build() {
     if [ -z "$PKGS" ]; then
       if [ -z "$PRINT_PACKAGE_NAME" ]; then
         echo "** SlackBuild building '$MODULE'"
+      download_archive $gnome_src || exit 1
       fi
       build_mod_pkg $MODULE
       let RET=$RET+$?
