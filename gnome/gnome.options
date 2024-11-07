@@ -53,6 +53,11 @@ fi
 NUMJOBS=${NUMJOBS:-" -j $(expr $(nproc) + 1) "}
 export NUMJOBS
 
+# Additional cmake flags that are spanned across the KDE modules
+# Do not use "final build" unless we build an actual release.
+export GNOME_OPT_ARGS=" \
+ "
+
 # Webkit 4.1 specific flags:
 export WEB_41_ARGS=(
   -DPORT=GTK
