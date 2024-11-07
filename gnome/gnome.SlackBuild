@@ -41,18 +41,76 @@ extract_archive() {
 
 # Pre-check for GNOME packages
 precheck() {
+  # See if the sources we have match the module components we want to build:
   RETVAL=0
-  for SRCFILE in $(find "$CWD/src" -name "*.tar.?z*" | grep -vE ".asc$|.sig$"); do
-    PKGBASE=$(pkgbase "$SRCFILE")
-    if ! grep -wq "${PKGBASE}$" modules/* ; then
-      echo "Source file '$(basename "$SRCFILE")' is not mentioned in 'modules' ($PKGBASE)!"
+
+  for SRCFILE in $(find $CWD/src -name "*.tar.?z*" |grep -vE ".asc$|.sig$") ; do
+    # Check if the source tarball is mentioned in pkgsrc/
+    # meaning its package will get a different name:
+    ###################################################################
+    # USE OF THIS FEATURE SHOULD BE RESERVED FOR CASES WHERE THERE IS #
+    # A VERY GOOD RATIONALE - KEEPING UPSTREAM NAMES IS PREFERRED     #
+    ###################################################################
+    PKGSRC=$(echo $SRCFILE |rev |cut -f2- -d- |cut -f1,2 -d/ |rev)
+    PKGBASE=$(basename $(grep -lw $PKGSRC $CWD/pkgsrc/* 2>/dev/null) 2>/dev/null)
+    if [ -z "$PKGBASE" ]; then
+      PKGBASE=$(echo $(basename $SRCFILE) |rev |cut -f2- -d- |rev)
+    fi
+    # We now have the package base name and we can start looking:
+    PKGTGT=$(grep -w ${PKGBASE}$ modules/*)
+    if [ -n "$(echo $PKGTGT |cut -d: -f2- |grep "^ *#")" ]; then
+      echo "Source file '$(basename $SRCFILE)' is commented out: ($PKGTGT) !"
+    elif cat package-blacklist |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+      echo "Source file '$(basename $SRCFILE)' is on the package-blacklist ($PKGBASE) !"
+    elif ! cat modules/* |grep -v "^ *#" |grep -wq ${PKGBASE}$ ; then
+      echo "Source file '$(basename $SRCFILE)' is not mentioned in 'modules' ($PKGBASE) !"
+      RETVAL=1
+    fi
+  done
+
+  # Do we have duplicate package names?
+  PKGDUP="$(cat $CWD/modules/* |grep -v "^ *#" |grep -v "^$" |sort |uniq -d)"
+  if [ -n "$PKGDUP" ] ; then
+    echo "Multiply-defined package names: '$(echo $PKGDUP)'"
+    RETVAL=1
+  fi
+  unset PKGDUP
+
+  for MODPKG in $(cat $CWD/modules/* | grep -v "^ *#") ; do
+    # First find out if the pkg source is different from the actual pkg name:
+    if [ -f $CWD/pkgsrc/$MODPKG ]; then
+      MODBASE=$(basename $(cat $CWD/pkgsrc/$MODPKG))
+      MODLOC=$(dirname $(cat $CWD/pkgsrc/$MODPKG))/
+    else
+      MODBASE=$MODPKG
+      MODLOC=""
+    fi
+    MODSRC="$(find $CWD/src/$MODLOC -name $MODBASE-*.tar.* |grep -vE ".asc$|.sig$" |grep -E "$MODBASE-[^-]+.tar.*$|$MODBASE-[0-9].+.tar.*$")"
+    if [ -z "$MODSRC" ] ; then
+      echo "Module '$MODPKG' does not have a matching source tarball ($MODLOC$MODBASE)!"
+      if [ "$CHECKOUT" = "yes" -o "$CHECKOUT" = "YES" ]; then
+        THEDATE=$(date +%Y%m%d)
+        echo "Checking out ${MODLOC}:${MODBASE} at date ${THEDATE}."
+        $CWD/plasma_checkout.sh -c -d ${THEDATE} -o $CWD/src ${MODLOC}:${MODBASE}
+        RETVAL=$?
+        if [ $RETVAL -ne 0 ]; then
+          echo "Error while checking out '$MODPKG' ($MODLOC/$MODBASE) !"
+          mv $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz $CWD/src/$MODLOC/${MODBASE}-${THEDATE}git.tar.xz.failed
+        fi
+      else
+        RETVAL=1
+      fi
+    fi
+    # A missing slack-desc counts as fatal:
+    if [ -z "$(find $CWD/slack-desc -name ${MODPKG})" ] ; then
+      echo "Module '$MODPKG' does not have a slack-desc file !"
       RETVAL=1
     fi
   done
 
   if [ $RETVAL -eq 0 ]; then
-    echo "Check complete, build starts in ${GRACETME} seconds..."
-    sleep "${GRACETME}"
+    echo "Check complete, build starts in ${GRACETME} seconds.."
+    sleep ${GRACETME}
   else
     echo "Precheck failed with error code '$RETVAL'."
     exit 1
