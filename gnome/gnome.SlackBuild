@@ -241,7 +241,7 @@ cd ..
   fi
 
 # Back to source toplevel builddir, since cmake may have run in a subdir:
-cd $GNOME_BUILD_DIR/${pkg_name}-${pkg_version/$(pkgbase $gnome_src)
+cd $GNOME_BUILD_DIR/${pkg_name}-${pkg_version}/$(pkgbase $gnome_src)
 
 mkdir -p $PKG/usr/doc/${PKGNAME}-${pkg_version}
 # Use specific documentation files if available, else use a default set:
