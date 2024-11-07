@@ -39,6 +39,14 @@ PKG=$GNOME_BUILD_DIR/package-${MODBASE}
 rm -rf $PKG
 mkdir -p $PKG
 
+gnome_source=$(basename $(find $CWD/src/$PKGLOC -name "$PKGSRC-*.tar.?z*" |grep -vE ".asc$|.sig$" |grep -E "$PKGSRC-[^-]+.tar.*$|$PKGSRC-[0-9].+.tar.*$") 2>/dev/null)
+ if [ "x$gnome_source" = "x" ]; then
+    if [ -z "$PRINT_PACKAGE_NAME" ]; then
+      echo "** Did not find '$PKGSRC' in src"
+    fi
+      continue
+fi
+
 # Extract source archive
 extract_archive() {
   local src_archive
