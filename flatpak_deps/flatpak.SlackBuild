@@ -2,6 +2,7 @@
 
 # Build (and install) all flatpak dependencies
 # Modified poorly from the KDE Slackware script by Jay Lanagan <j@lngn.net>
+# For GFS Gnome4
 
 # Set initial variables:
 CWD=$(pwd)
@@ -20,12 +21,10 @@ ALLDEPS=" \
   gcab \
   appstream-glib \
   libxmlb \
-  appstream \
+  Appstream \
   libostree \
   bubblewrap \
   flatpak \
-  discover \
-  flatpak-kcm \
   "
 
 # Allow for specification of individual packages to be built:
