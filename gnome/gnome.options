@@ -81,11 +81,11 @@ export WEB_60_ARGS=(
 	-DENABLE_INTROSPECTION=ON
 	-DENABLE_DOCUMENTATION=OFF
 	-DENABLE_BUBBLEWRAP_SANDBOX=ON
-  -DUSE_SYSTEM_MALLOC=on
+  	-DUSE_SYSTEM_MALLOC=on
 	-DUSE_GTK4=ON
-  -DUSE_JPEGXL=ON
-  -Wno-dev
-  -G Ninja
+  	-DUSE_JPEGXL=ON
+  	-Wno-dev
+  	-G Ninja
 )
 
 # Double-quoting required because $SLKCFLAGS contains spaces:
