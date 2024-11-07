@@ -242,6 +242,7 @@ build_mod_pkg() {
       if [ "x$gnome_src" = "x" ]; then
         if [ -z "$PRINT_PACKAGE_NAME" ]; then
           echo "** Did not find '$PKGSRC' in src"
+      download_archive $gnome_src || exit 1
         fi
         continue
       fi
@@ -434,7 +435,6 @@ deterministic_build() {
     if [ -z "$PKGS" ]; then
       if [ -z "$PRINT_PACKAGE_NAME" ]; then
         echo "** SlackBuild building '$MODULE'"
-      download_archive $gnome_src || exit 1
       fi
       build_mod_pkg $MODULE
       let RET=$RET+$?
