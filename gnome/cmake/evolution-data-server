@@ -22,5 +22,5 @@ cd cmake-build
  -DWITH_PHONENUMBER=OFF \
  -DWITH_SUNLDAP=ON \
  -DWITH_SYSTEMDUSERUNITDIR=no \
- -G Ninja
+ -G Ninja \
 ..
