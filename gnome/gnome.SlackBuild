@@ -33,6 +33,12 @@ TMP=${TMP:-/tmp}
 GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
 
+download_archive() {
+  echo "Running download.py with arguments: $@"
+  # Run download.py script and pass all arguments to it
+  python3 "$CWD/download.py" "$@" || return 1
+}
+
 extract_archive() {
   # Find the archive first:
   local src_archive=$(find $CWD/src -name ${1} |tail -1)
@@ -300,6 +306,7 @@ build_mod_pkg() {
       fi 
 
       rm -rf $(pkgbase $gnome_src)
+      download_archive $gnome_src || exit 1
       extract_archive $gnome_src || exit 1
       cd $(pkgbase $gnome_src) || exit 1
 
