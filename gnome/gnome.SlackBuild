@@ -9,6 +9,7 @@ PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
 SKIPBUILT=${SKIPBUILT:-"no"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
+CHECKOUT=${CHECKOUT:-"yes"} # don't let the script checkout missing sources.
 GNOME=${GNOME:-"47"}
 
 # GNOME Download base URI
