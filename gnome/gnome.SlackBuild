@@ -31,6 +31,7 @@ cd "$(dirname "$0")"
 CWD=$(pwd)
 TMP=${TMP:-/tmp}
 GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
+rm -fr "$GNOME_BUILD_DIR"
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
 
 # Extract source archive
