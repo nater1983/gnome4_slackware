@@ -268,7 +268,7 @@ rmdir --verbose $PKG/usr/doc/${PKGNAME}-$pkg_version 2> /dev/null
 
 # Strip binaries if needed:
 if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
-  strip_binaries $PKG
+  fix_perms $PKG
 fi
 
 # If there's any special post-install things to do, do them:
