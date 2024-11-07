@@ -234,8 +234,9 @@ download_and_build_gnome_pkg() {
     else
       # This is the default make && make install routine:
       echo "Running default make routine"
-      make $NUMJOBS || make || exit 1
-      make install DESTDIR="$GNOME_BUILD_DIR/pkg" || exit 1
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
     fi
   fi
 
