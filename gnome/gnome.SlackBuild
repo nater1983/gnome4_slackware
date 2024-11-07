@@ -237,6 +237,80 @@ download_and_build_gnome_pkg() {
       make install DESTDIR="$GNOME_BUILD_DIR/pkg" || exit 1
     fi
   fi
+
+# Back to source toplevel builddir, since cmake may have run in a subdir:
+cd $GNOME_BUILD_DIR/${pkg_name}/$(pkgbase $gnome_src)
+
+mkdir -p $PKG/usr/doc/${PKGNAME}-${pkg_version}
+# Use specific documentation files if available, else use a default set:
+if [ -r $CWD/docs/${PKGNAME} ]; then
+  cp -a $(cat $CWD/docs/${PKGNAME}) \
+    $PKG/usr/doc/${PKGNAME}-${pkg_version}
+else
+  cp -a \
+    AUTHORS* CONTRIBUTING* COPYING* HACKING* \
+    INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
+    $PKG/usr/doc/${PKGNAME}-${pkg_version}
+  # If there's a ChangeLog, installing at least part of the recent
+  # history is useful, but don't let it get totally out of control:
+  if [ -r ChangeLog ]; then
+    DOCSDIR=$(echo $PKG/usr/doc/${PKGNAME}-$pkg_version)
+    cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
+    touch -r ChangeLog $DOCSDIR/ChangeLog
+  fi
+fi
+
+# Get rid of zero-length junk files:
+find $PKG/usr/doc/${PKGNAME}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
+rmdir --verbose $PKG/usr/doc/${PKGNAME}-$pkg_version 2> /dev/null
+
+# Strip binaries if needed:
+if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
+  strip_binaries $PKG
+fi
+
+# If there's any special post-install things to do, do them:
+if [ -r $CWD/post-install/${PKGNAME}.post-install ]; then
+  . $CWD/post-install/${PKGNAME}.post-install
+fi
+
+# If this package requires some doinst.sh material, add it here:
+if [ -r $CWD/doinst.sh/${PKGNAME} ]; then
+  mkdir -p $PKG/install
+  cat $CWD/doinst.sh/${PKGNAME} \
+    | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
+    >> $PKG/install/doinst.sh
+fi
+
+# If this is a modular package, build it here:
+if [ -d $GNOME_BUILD_DIR/${pkg_name}/package-${PKGNAME} ]; then
+  cd $PKG
+  process_man_pages
+  process_info_pages
+  no_usr_share_doc
+  mkdir -p $PKG/install
+  if [ -r $CWD/slack-desc/${PKGNAME} ]; then
+    cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
+  else
+    touch $PKG/install/slack-desc-missing
+  fi
+  if [ -r $CWD/build/${PKGNAME} ]; then
+    MODBUILD=$(cat $CWD/build/${PKGNAME})
+  else
+    MODBUILD=$BUILD
+  fi
+  if [ -r $CWD/makepkg/${PKGNAME} ]; then
+    BUILD=$MODBUILD$TAG . $CWD/makepkg/${PKGNAME}
+  else
+    /sbin/makepkg -l y -c n ${GNOME_BUILD_DIR}/${pkg_name}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
+  fi
+  # We will continue with the fresh packages installed:
+  if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
+    upgradepkg --install-new --reinstall ${GNOME_BUILD_DIR}/${pkg_name}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
+    # Keep MIME database current:
+    /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
+  fi
+fi
 }
 
 # Example usage
