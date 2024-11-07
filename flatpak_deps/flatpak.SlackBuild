@@ -22,6 +22,7 @@ ALLDEPS=" \
   libostree \
   bubblewrap \
   flatpak \
+  gnome-software \
   "
 
 # Allow for specification of individual packages to be built:
