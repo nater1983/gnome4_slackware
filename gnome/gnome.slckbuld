@@ -180,145 +180,220 @@ no_usr_share_doc() {
 
 # Function to download and build GNOME package
 download_and_build_gnome_pkg() {
-  local PKGNAME=$1
-  local pkg_version
-  if [ -z "$PKGNAME" ]; then
-    echo "Specify a GNOME package to build."
-    exit 1
-  fi
+  gnome_module=$1
+  gnome_pkg=$2
 
-  # Find and extract version from SlackBuild file
-  local slackbuild_file
-  slackbuild_file=$(find "$CWD" -name "${PKGNAME}.SlackBuild" | head -1)
-  if [ -z "$slackbuild_file" ]; then
-    echo "SlackBuild file for $PKGNAME not found."
-    exit 1
-  fi
+  cd $CWD/modules
 
-  # Extract the VERSION from the SlackBuild file
-  pkg_version=$(grep -E "^VERSION=" "$slackbuild_file" | sed 's/VERSION=//; s/"//g')
-  if [ -z "$pkg_version" ]; then
-    echo "Failed to retrieve version from $slackbuild_file."
-    exit 1
-  fi
-
-  echo "Building $PKGNAME version $pkg_version"
-
-  # Formulate download URL based on package name and version
-  local download_url="${GNOME_DOWNLOAD_URI}/${PKGNAME}/${GNOME}/${PKGNAME}-${pkg_version}.tar.xz"
-  local src_path="$CWD/src/gnome/${PKGNAME}-${pkg_version}.tar.xz"
-
-  # Download source if missing
-  if [ ! -f "$src_path" ]; then
-    wget "$download_url" -O "$src_path"
-    if [ $? -ne 0 ]; then
-      echo "Failed to download $PKGNAME version $pkg_version"
-      exit 1
+  # See if $gnome_module is a module name like "gnome-frameworks":
+  if [ ! -z "$gnome_module" ]; then
+    if [ ! -f "$gnome_module" ]; then
+      echo "** '${gnome_module}' is not an existing module."
+      return
     fi
   fi
+  PKG=${SLACK_GNOME_BUILD_DIR}/${gnome_module}/package-${gnome_module}
+  rm -rf $PKG
+  mkdir -p $PKG
+  ( for PKGNAME in $(cat $gnome_module |grep -v "^$" |grep -v "^ *#") ; do
+      if grep -wq "^${PKGNAME}$" ${CWD}/package-blacklist ; then
+        if [ -z "$PRINT_PACKAGE_NAME" ]; then
+          echo "** '${PKGNAME}' is on the package blacklist."
+        fi
+        continue
+      fi
+      # Find the full source filename - yeah ugly, but I had two goals:
+      # 1- source tarball can be in a random subdirectory of src/
+      # 2- differentiate between e.g. 'gnome-shell' and 'gnome-settings-daemon'
+      if [ -f $CWD/pkgsrc/$PKGNAME ]; then
+        PKGSRC=$(basename $(cat $CWD/pkgsrc/$PKGNAME))
+        PKGLOC=$(dirname $(cat $CWD/pkgsrc/$PKGNAME))
+      else
+        PKGSRC=$PKGNAME
+        PKGLOC=""
+      fi
+      gnome_src=$(basename $(find $CWD/src/$PKGLOC -name "$PKGSRC-*.tar.?z*" |grep -vE ".asc$|.sig$" |grep -E "$PKGSRC-[^-]+.tar.*$|$PKGSRC-[0-9].+.tar.*$") 2>/dev/null)
+      if [ "x$gnome_src" = "x" ]; then
+        if [ -z "$PRINT_PACKAGE_NAME" ]; then
+          echo "** Did not find '$PKGSRC' in src"
+        fi
+        continue
+      fi
+      # Reset $PKGARCH to its initial value:
+      PKGARCH=$ARCH
+      # Perhaps $PKGARCH should be something different:
+      if grep -wq "^${PKGNAME}$" ${CWD}/noarch ; then
+        PKGARCH=noarch
+      fi 
+      cd $SLACK_GNOME_BUILD_DIR/${gnome_module}
+      # If $gnome_pkg is set, we only want to build one package:
+      if [ ! -z "$gnome_pkg" ]; then
+        if [ "$gnome_pkg" = "$PKGNAME" ]; then
+          # Set $PKG to a private dir for the modular package build:
+          PKG=$SLACK_GNOME_BUILD_DIR/${gnome_module}/package-$PKGNAME
+          rm -rf $PKG
+          mkdir -p $PKG
+        else
+          continue
+        fi
+      else
+        if [ -z "$PRINT_PACKAGE_NAME" ]; then
+          echo
+          echo "Building from source ${gnome_src}"
+          echo
+        fi
+      fi
 
-  # Extract the package
-  extract_archive "${PKGNAME}-${pkg_version}.tar.xz"
-  cd "$GNOME_BUILD_DIR/$PKGNAME-$pkg_version" || exit 1
+      # Set $PKG to a private dir for the modular package build:
+      PKG=$SLACK_GNOME_BUILD_DIR/${gnome_module}/package-$PKGNAME
+      rm -rf $PKG
+      mkdir -p $PKG
 
-  # Check if we need to skip the package due to nomake file
-  if ! grep -wq "^${PKGNAME}$" "${CWD}/nomake"; then
-    # Run cmake, using custom cmake script if needed:
-    if [ -r "$CWD/meson/${PKGNAME}" ]; then
-      echo "Using custom Meson script for $PKGNAME"
-      . "$CWD/meson/${PKGNAME}"
-    else
-      # This is the default CMake script
-      echo "Using default Meson script"
-      . "$CWD/meson/meson"
-    fi
+      # Let's figure out the version number on the modular package:
+      MODULAR_PACKAGE_VERSION=$(echo $gnome_src | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
 
-    # Run make, using custom make script if needed:
-    if [ -r "$CWD/make/${PKGNAME}" ]; then
-      echo "Using custom Make script for $PKGNAME"
-      . "$CWD/make/${PKGNAME}"
-    else
-      # This is the default make && make install routine:
-      echo "Running default make routine"
-  "${NINJA:=ninja}"
-  DESTDIR=$PKG $NINJA install
-cd ..
-    fi
-  fi
+      # If this variable is passed to the script, nothing will be built.
+      # Instead, a list of packages to be built will be output.
+      if [ ! -z "$PRINT_PACKAGE_NAME" ]; then
+        if [ -r $CWD/build/${PKGNAME} ]; then
+          MODBUILD=$(cat $CWD/build/${PKGNAME})
+        else
+          MODBUILD=$BUILD
+        fi
+        echo "${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz"
+        continue
+      fi
 
-# Back to source toplevel builddir, since cmake may have run in a subdir:
-cd $GNOME_BUILD_DIR/${PKGNAME}-${pkg_version}/$(pkgbase $gnome_src)
+      # If requested, skip packages that are already in the output directory:
+      if [ "$SKIPBUILT" = "yes" ]; then
+        # Construct the package name:
+        if [ -r $CWD/build/${PKGNAME} ]; then
+          MODBUILD=$(cat $CWD/build/${PKGNAME})
+        else
+          MODBUILD=$BUILD
+        fi
+        TESTPKGNAME="${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz"
+        if [ -r ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/$TESTPKGNAME -o -r ${SLACK_GNOME_BUILD_DIR}/$TESTPKGNAME ]; then
+          echo "** Skipping already built package $TESTPKGNAME."
+          continue
+        fi
+      fi 
 
-mkdir -p $PKG/usr/doc/${PKGNAME}-${pkg_version}
-# Use specific documentation files if available, else use a default set:
-if [ -r $CWD/docs/${PKGNAME} ]; then
-  cp -a $(cat $CWD/docs/${PKGNAME}) \
-    $PKG/usr/doc/${PKGNAME}-${pkg_version}
-else
-  cp -a \
-    AUTHORS* CONTRIBUTING* COPYING* HACKING* \
-    INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
-    $PKG/usr/doc/${PKGNAME}-${pkg_version}
-  # If there's a ChangeLog, installing at least part of the recent
-  # history is useful, but don't let it get totally out of control:
-  if [ -r ChangeLog ]; then
-    DOCSDIR=$(echo $PKG/usr/doc/${PKGNAME}-$pkg_version)
-    cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
-    touch -r ChangeLog $DOCSDIR/ChangeLog
-  fi
-fi
+      rm -rf $(pkgbase $gnome_src)
+      extract_archive $gnome_src || exit 1
+      cd $(pkgbase $gnome_src) || exit 1
 
-# Get rid of zero-length junk files:
-find $PKG/usr/doc/${PKGNAME}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
-#rmdir --verbose $PKG/usr/doc/${PKGNAME}-$pkg_version 2> /dev/null
+      fix_perms
 
-# Strip binaries if needed:
-if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
-  fix_perms $PKG
-fi
+      # If any patches are needed, call this script to apply them:
+      if [ -r $CWD/patch/${PKGNAME}.patch ]; then
+        . $CWD/patch/${PKGNAME}.patch || exit 1
+      fi
 
-# If there's any special post-install things to do, do them:
-if [ -r $CWD/post-install/${PKGNAME}.post-install ]; then
-  . $CWD/post-install/${PKGNAME}.post-install
-fi
+      # If there's any pre-install things to do, do them:
+      if [ -r $CWD/pre-install/${PKGNAME}.pre-install ]; then
+        . $CWD/pre-install/${PKGNAME}.pre-install
+      fi
 
-# If this package requires some doinst.sh material, add it here:
-if [ -r $CWD/doinst.sh/${PKGNAME} ]; then
-  mkdir -p $PKG/install
-  cat $CWD/doinst.sh/${PKGNAME} \
-    | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
-    >> $PKG/install/doinst.sh
-fi
+      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake ; then
+        # Run meson, using custom meson script if needed:
+        if [ -r $CWD/meson/${PKGNAME} ]; then
+          . $CWD/meson/${PKGNAME}
+        elif [ -r $CWD/meson/${gnome_module} ]; then
+          . $CWD/meson/${gnome_module}
+        else
+          # This is the default meson configure script:
+          . $CWD/meson/meson
+        fi
 
-# If this is a modular package, build it here:
-if [ -d $GNOME_BUILD_DIR/package-${PKGNAME} ]; then
-  cd $PKG
-  process_man_pages
-  process_info_pages
-  no_usr_share_doc
-  mkdir -p $PKG/install
-  if [ -r $CWD/slack-desc/${PKGNAME} ]; then
-    cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
-  else
-    touch $PKG/install/slack-desc-missing
-  fi
-  if [ -r $CWD/build/${PKGNAME} ]; then
-    MODBUILD=$(cat $CWD/build/${PKGNAME})
-  else
-    MODBUILD=$BUILD
-  fi
-  if [ -r $CWD/makepkg/${PKGNAME} ]; then
-    BUILD=$MODBUILD$TAG . $CWD/makepkg/${PKGNAME}
-  else
-    /sbin/makepkg -l y -c n ${GNOME_BUILD_DIR}/${PKGNAME}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
-  fi
-  # We will continue with the fresh packages installed:
-  if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
-    upgradepkg --install-new --reinstall ${GNOME_BUILD_DIR}/${PKGNAME}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
-    # Keep MIME database current:
-    /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
-  fi
-fi
+        # Run ninja, using custom ninja script if needed:
+        if [ -r $CWD/ninja/${PKGNAME} ]; then
+          . $CWD/ninja/${PKGNAME}
+        elif [ -r $CWD/ninja/${gnome_module} ]; then
+          . $CWD/ninja/${gnome_module}
+        else
+          # This is the default ninja build:
+          ninja $NUMJOBS || ninja || exit 1
+          ninja install DESTDIR=$PKG || exit 1
+        fi
+      fi
+
+      # Back to source toplevel builddir, since meson may have run in a subdir:
+      cd $SLACK_GNOME_BUILD_DIR/${gnome_module}/$(pkgbase $gnome_src)
+
+      mkdir -p $PKG/usr/doc/${PKGNAME}-${MODULAR_PACKAGE_VERSION}
+      # Use specific documentation files if available, else use a default set:
+      if [ -r $CWD/docs/${PKGNAME} ]; then
+        cp -a $(cat $CWD/docs/${PKGNAME}) \
+          $PKG/usr/doc/${PKGNAME}-${MODULAR_PACKAGE_VERSION}
+      else
+        cp -a \
+          AUTHORS* CONTRIBUTING* COPYING* HACKING* \
+          INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
+          $PKG/usr/doc/${PKGNAME}-${MODULAR_PACKAGE_VERSION}
+          # If there's a ChangeLog, installing at least part of the recent
+          # history is useful, but don't let it get totally out of control:
+          if [ -r ChangeLog ]; then
+            DOCSDIR=$(echo $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION)
+            cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
+            touch -r ChangeLog $DOCSDIR/ChangeLog
+          fi
+      fi
+
+      # Get rid of zero-length junk files:
+      find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
+      rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
+
+      # Strip binaries if needed:
+      if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
+        strip_binaries $PKG
+      fi
+
+      # If there's any special post-install things to do, do them:
+      if [ -r $CWD/post-install/${PKGNAME}.post-install ]; then
+        . $CWD/post-install/${PKGNAME}.post-install
+      fi
+
+      # If this package requires some doinst.sh material, add it here:
+      if [ -r $CWD/doinst.sh/${PKGNAME} ]; then
+        mkdir -p $PKG/install
+        cat $CWD/doinst.sh/${PKGNAME} \
+          | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
+          >> $PKG/install/doinst.sh
+      fi
+
+      # If this is a modular package, build it here:
+      if [ -d $SLACK_GNOME_BUILD_DIR/${gnome_module}/package-${PKGNAME} ]; then
+        cd $PKG
+        process_man_pages
+        process_info_pages
+        no_usr_share_doc          
+        mkdir -p $PKG/install
+        if [ -r $CWD/slack-desc/${PKGNAME} ]; then
+          cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
+        else
+          touch $PKG/install/slack-desc-missing
+        fi
+        if [ -r $CWD/build/${PKGNAME} ]; then
+          MODBUILD=$(cat $CWD/build/${PKGNAME})
+        else
+          MODBUILD=$BUILD
+        fi
+        if [ -r $CWD/makepkg/${PKGNAME} ]; then
+          BUILD=$MODBUILD$TAG . $CWD/makepkg/${PKGNAME}
+        else
+          /sbin/makepkg -l y -c n ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION |tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz
+        fi
+        # We will continue with the fresh packages installed:
+        if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
+          upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
+          # Keep MIME database current:
+          /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
+        fi
+      fi
+
+    done
+  )
 }
 
 # Process the module queue. Format is:
