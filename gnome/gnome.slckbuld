@@ -204,7 +204,7 @@ precheck() {
 }
 
 # Function to download and build GNOME package
-download_and_build_gnome_pkg() {
+build_mod_pkg() {
   gnome_module=$1
   gnome_pkg=$2
 
