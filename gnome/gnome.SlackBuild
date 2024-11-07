@@ -340,7 +340,7 @@ deterministic_build() {
         if [ -z "$PRINT_PACKAGE_NAME" ]; then
           echo "** SlackBuild building '$GNOME_MOD:$GNOME_PKG'"
         fi
-        build_mod_pkg $GNOME_MOD $GNOME_PKG
+        download_and_build_gnome_pkg $GNOME_MOD $GNOME_PKG
         let RET=$RET+$?
       done
     fi
