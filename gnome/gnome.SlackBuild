@@ -382,8 +382,8 @@ build_mod_pkg() {
           | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
           >> $PKG/install/doinst.sh
       else
-        cat $CWD/doinst.sh/generic \
-          >> $PKG/install/doinst.sh
+        cat $CWD/doinst.sh/${PKGNAME} \
+          > $PKG/install/doinst.sh
       fi
 
       # If this is a modular package, build it here:
