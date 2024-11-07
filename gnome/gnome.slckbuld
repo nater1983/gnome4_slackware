@@ -180,18 +180,18 @@ no_usr_share_doc() {
 
 # Function to download and build GNOME package
 download_and_build_gnome_pkg() {
-  local pkg_name=$1
+  local PKGNAME=$1
   local pkg_version
-  if [ -z "$pkg_name" ]; then
+  if [ -z "$PKGNAME" ]; then
     echo "Specify a GNOME package to build."
     exit 1
   fi
 
   # Find and extract version from SlackBuild file
   local slackbuild_file
-  slackbuild_file=$(find "$CWD" -name "${pkg_name}.SlackBuild" | head -1)
+  slackbuild_file=$(find "$CWD" -name "${PKGNAME}.SlackBuild" | head -1)
   if [ -z "$slackbuild_file" ]; then
-    echo "SlackBuild file for $pkg_name not found."
+    echo "SlackBuild file for $PKGNAME not found."
     exit 1
   fi
 
@@ -202,31 +202,31 @@ download_and_build_gnome_pkg() {
     exit 1
   fi
 
-  echo "Building $pkg_name version $pkg_version"
+  echo "Building $PKGNAME version $pkg_version"
 
   # Formulate download URL based on package name and version
-  local download_url="${GNOME_DOWNLOAD_URI}/${pkg_name}/${GNOME}/${pkg_name}-${pkg_version}.tar.xz"
-  local src_path="$CWD/src/gnome/${pkg_name}-${pkg_version}.tar.xz"
+  local download_url="${GNOME_DOWNLOAD_URI}/${PKGNAME}/${GNOME}/${PKGNAME}-${pkg_version}.tar.xz"
+  local src_path="$CWD/src/gnome/${PKGNAME}-${pkg_version}.tar.xz"
 
   # Download source if missing
   if [ ! -f "$src_path" ]; then
     wget "$download_url" -O "$src_path"
     if [ $? -ne 0 ]; then
-      echo "Failed to download $pkg_name version $pkg_version"
+      echo "Failed to download $PKGNAME version $pkg_version"
       exit 1
     fi
   fi
 
   # Extract the package
-  extract_archive "${pkg_name}-${pkg_version}.tar.xz"
-  cd "$GNOME_BUILD_DIR/$pkg_name-$pkg_version" || exit 1
+  extract_archive "${PKGNAME}-${pkg_version}.tar.xz"
+  cd "$GNOME_BUILD_DIR/$PKGNAME-$pkg_version" || exit 1
 
   # Check if we need to skip the package due to nomake file
-  if ! grep -wq "^${pkg_name}$" "${CWD}/nomake"; then
+  if ! grep -wq "^${PKGNAME}$" "${CWD}/nomake"; then
     # Run cmake, using custom cmake script if needed:
-    if [ -r "$CWD/meson/${pkg_name}" ]; then
-      echo "Using custom Meson script for $pkg_name"
-      . "$CWD/meson/${pkg_name}"
+    if [ -r "$CWD/meson/${PKGNAME}" ]; then
+      echo "Using custom Meson script for $PKGNAME"
+      . "$CWD/meson/${PKGNAME}"
     else
       # This is the default CMake script
       echo "Using default Meson script"
@@ -234,9 +234,9 @@ download_and_build_gnome_pkg() {
     fi
 
     # Run make, using custom make script if needed:
-    if [ -r "$CWD/make/${pkg_name}" ]; then
-      echo "Using custom Make script for $pkg_name"
-      . "$CWD/make/${pkg_name}"
+    if [ -r "$CWD/make/${PKGNAME}" ]; then
+      echo "Using custom Make script for $PKGNAME"
+      . "$CWD/make/${PKGNAME}"
     else
       # This is the default make && make install routine:
       echo "Running default make routine"
@@ -247,74 +247,74 @@ cd ..
   fi
 
 # Back to source toplevel builddir, since cmake may have run in a subdir:
-cd $GNOME_BUILD_DIR/${pkg_name}-${pkg_version}/$(pkgbase $gnome_src)
+cd $GNOME_BUILD_DIR/${PKGNAME}-${pkg_version}/$(pkgbase $gnome_src)
 
-mkdir -p $PKG/usr/doc/${pkg_name}-${pkg_version}
+mkdir -p $PKG/usr/doc/${PKGNAME}-${pkg_version}
 # Use specific documentation files if available, else use a default set:
-if [ -r $CWD/docs/${pkg_name} ]; then
-  cp -a $(cat $CWD/docs/${pkg_name}) \
-    $PKG/usr/doc/${pkg_name}-${pkg_version}
+if [ -r $CWD/docs/${PKGNAME} ]; then
+  cp -a $(cat $CWD/docs/${PKGNAME}) \
+    $PKG/usr/doc/${PKGNAME}-${pkg_version}
 else
   cp -a \
     AUTHORS* CONTRIBUTING* COPYING* HACKING* \
     INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
-    $PKG/usr/doc/${pkg_name}-${pkg_version}
+    $PKG/usr/doc/${PKGNAME}-${pkg_version}
   # If there's a ChangeLog, installing at least part of the recent
   # history is useful, but don't let it get totally out of control:
   if [ -r ChangeLog ]; then
-    DOCSDIR=$(echo $PKG/usr/doc/${pkg_name}-$pkg_version)
+    DOCSDIR=$(echo $PKG/usr/doc/${PKGNAME}-$pkg_version)
     cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
     touch -r ChangeLog $DOCSDIR/ChangeLog
   fi
 fi
 
 # Get rid of zero-length junk files:
-find $PKG/usr/doc/${pkg_name}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
-#rmdir --verbose $PKG/usr/doc/${pkg_name}-$pkg_version 2> /dev/null
+find $PKG/usr/doc/${PKGNAME}-$pkg_version -type f -size 0 -exec rm --verbose "{}" \+
+#rmdir --verbose $PKG/usr/doc/${PKGNAME}-$pkg_version 2> /dev/null
 
 # Strip binaries if needed:
-if [ ! -r $CWD/nostrip/${pkg_name} ]; then
+if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
   fix_perms $PKG
 fi
 
 # If there's any special post-install things to do, do them:
-if [ -r $CWD/post-install/${pkg_name}.post-install ]; then
-  . $CWD/post-install/${pkg_name}.post-install
+if [ -r $CWD/post-install/${PKGNAME}.post-install ]; then
+  . $CWD/post-install/${PKGNAME}.post-install
 fi
 
 # If this package requires some doinst.sh material, add it here:
-if [ -r $CWD/doinst.sh/${pkg_name} ]; then
+if [ -r $CWD/doinst.sh/${PKGNAME} ]; then
   mkdir -p $PKG/install
-  cat $CWD/doinst.sh/${pkg_name} \
+  cat $CWD/doinst.sh/${PKGNAME} \
     | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
     >> $PKG/install/doinst.sh
 fi
 
 # If this is a modular package, build it here:
-if [ -d $GNOME_BUILD_DIR/package-${pkg_name} ]; then
+if [ -d $GNOME_BUILD_DIR/package-${PKGNAME} ]; then
   cd $PKG
   process_man_pages
   process_info_pages
   no_usr_share_doc
   mkdir -p $PKG/install
-  if [ -r $CWD/slack-desc/${pkg_name} ]; then
-    cat $CWD/slack-desc/${pkg_name} > $PKG/install/slack-desc
+  if [ -r $CWD/slack-desc/${PKGNAME} ]; then
+    cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
   else
     touch $PKG/install/slack-desc-missing
   fi
-  if [ -r $CWD/build/${pkg_name} ]; then
-    MODBUILD=$(cat $CWD/build/${pkg_name})
+  if [ -r $CWD/build/${PKGNAME} ]; then
+    MODBUILD=$(cat $CWD/build/${PKGNAME})
   else
     MODBUILD=$BUILD
   fi
-  if [ -r $CWD/makepkg/${pkg_name} ]; then
-    BUILD=$MODBUILD$TAG . $CWD/makepkg/${pkg_name}
+  if [ -r $CWD/makepkg/${PKGNAME} ]; then
+    BUILD=$MODBUILD$TAG . $CWD/makepkg/${PKGNAME}
   else
-    /sbin/makepkg -l y -c n ${GNOME_BUILD_DIR}/${pkg_name}/${pkg_name}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
+    /sbin/makepkg -l y -c n ${GNOME_BUILD_DIR}/${PKGNAME}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
   fi
   # We will continue with the fresh packages installed:
   if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
-    upgradepkg --install-new --reinstall ${GNOME_BUILD_DIR}/${pkg_name}/${pkg_name}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
+    upgradepkg --install-new --reinstall ${GNOME_BUILD_DIR}/${PKGNAME}/${PKGNAME}-${pkg_version}-${PKGARCH}-${MODBUILD}${TAG}.txz
     # Keep MIME database current:
     /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
   fi
