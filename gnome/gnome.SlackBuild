@@ -34,6 +34,11 @@ GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
 rm -fr "$GNOME_BUILD_DIR"
 mkdir -p "$TMP" "$GNOME_BUILD_DIR"
 
+# Set $PKG to a private dir for the modular package build:
+PKG=$GNOME_BUILD_DIR/${pkg_name}/package-${pkg_name}
+rm -rf $PKG
+mkdir -p $PKG
+
 # Extract source archive
 extract_archive() {
   local src_archive
