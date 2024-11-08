@@ -1,0 +1,1 @@
+cp -a  g3doc/*  $PKG/usr/doc/$PRGNAM-$VERSION
