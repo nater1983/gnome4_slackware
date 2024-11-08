@@ -1,0 +1,188 @@
+From 33b4f4229c80bd9ceb0d4d4204fdbf3c10cd721f Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 8 Nov 2024 15:31:36 +0000
+Subject: [PATCH] Update 2 files
+
+- /meson.build
+- /meson_options.txt
+---
+ meson.build       | 94 +++++++++++++++++++++++++++++++++++++++++++++++
+ meson_options.txt | 64 ++++++++++++++++++++++++++++++++
+ 2 files changed, 158 insertions(+)
+ create mode 100644 meson.build
+ create mode 100644 meson_options.txt
+
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 0000000..3b17e17
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,94 @@
++## Copyright (C) 2024 by Nathaniel Russell <naterussell83@gmail.com>
++##
++## Permission to use, copy, modify, and/or distribute this
++## software for any purpose with or without fee is hereby granted.
++##
++## THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
++## WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
++## WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL
++## THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
++## CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
++## LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
++## NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
++## CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++
++# Define the project with the name 'gnome-menus' and version '3.36.0'
++project('gnome-menus', 'c', version: '3.36.0',
++  license: 'LGPL-2.1-or-later',
++  default_options: [
++    'buildtype=debugoptimized',
++    'warning_level=2',
++  ]
++)
++
++# Import the necessary modules for gettext and pkgconfig
++gettext = import('gettext')
++pkg = import('pkgconfig')
++
++# Define the gettext domain for translation
++gettext_domain = 'gnome-menus-3.0'
++
++# Define the version for libtool and other settings
++lib_menu_lt_version = '0:1:0'
++
++# Required dependencies
++gio_unix = dependency('gio-unix-2.0', version: '>= 2.29.15')
++
++# Set up compiler options for deprecation and debug flags
++enable_deprecation_flags = get_option('enable_deprecation_flags')
++enable_debug = get_option('enable_debug')
++
++if enable_deprecation_flags == 'yes'
++  disable_deprecated_flags = '-DDEPRECATED_DISABLE=1'
++else
++  disable_deprecated_flags = ''
++endif
++
++if enable_debug == 'yes'
++  debug_flags = '-DG_ENABLE_DEBUG'
++else
++  debug_flags = '-DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS'
++endif
++
++# Add debugging flags if enabled
++cflags = ['-DG_DISABLE_CAST_CHECKS', debug_flags]
++
++# Define the library target for 'gnome-menu'
++gnome_menu_lib = library('gnome-menu-3.0', 'libmenu/gnome-menu.c',
++  cflags: cflags,
++  dependencies: [gio_unix],
++  version: lib_menu_lt_version,
++  soversion: '0',
++  install: true
++)
++
++# Generate the pkg-config file for 'gnome-menu'
++gnome_menu_pc = pkg.generate(gnome_menu_lib,
++  name: 'gnome-menus',
++  url: 'https://github.com/gnome/gnome-menus',
++  description: 'GNOME menus library for handling applications and menus'
++)
++
++# Install header files
++install_headers('libmenu/gmenu-tree.h')
++
++# Testing setup (if needed)
++t = executable('self_test', 'test.c', link_with: gnome_menu_lib)
++test('self_test', t)
++
++# Summary print (optional)
++message('gnome-menus version: ' + meson.project_version())
++message('prefix: ' + get_option('prefix'))
++message('exec_prefix: ' + get_option('exec_prefix'))
++message('libdir: ' + get_option('libdir'))
++message('bindir: ' + get_option('bindir'))
++message('sbindir: ' + get_option('sbindir'))
++message('sysconfdir: ' + get_option('sysconfdir'))
++message('localstatedir: ' + get_option('localstatedir'))
++message('datadir: ' + get_option('datadir'))
++message('source code location: ' + meson.source_root())
++message('compiler: ' + meson.get_compiler('c').get_id())
++message('cflags: ' + cflags.join(' '))
++message('Maintainer mode: ' + (get_option('maintainer_mode') ? 'enabled' : 'disabled'))
++message('Use *_DISABLE_DEPRECATED: ' + enable_deprecation_flags)
++message('Turn on debugging: ' + enable_debug)
+diff --git a/meson_options.txt b/meson_options.txt
+new file mode 100644
+index 0000000..a9edd56
+--- /dev/null
++++ b/meson_options.txt
+@@ -0,0 +1,64 @@
++# meson_options.txt
++
++option('enable_deprecation_flags',
++  type: 'string',
++  choices: ['yes', 'no'],
++  value: 'no',
++  description: 'Use *_DISABLE_DEPRECATED flags (default: no)')
++
++option('enable_debug',
++  type: 'string',
++  choices: ['yes', 'no', 'minimum'],
++  value: 'no',
++  description: 'Turn on debugging (default: no). Options: "yes", "no", or "minimum"')
++
++option('maintainer_mode',
++  type: 'boolean',
++  value: false,
++  description: 'Enable maintainer mode (default: false)')
++
++option('prefix',
++  type: 'string',
++  value: '/usr/local',
++  description: 'Installation prefix')
++
++option('exec_prefix',
++  type: 'string',
++  value: '${prefix}',
++  description: 'Executable installation prefix')
++
++option('libdir',
++  type: 'string',
++  value: '${prefix}/lib',
++  description: 'Library directory')
++
++option('bindir',
++  type: 'string',
++  value: '${prefix}/bin',
++  description: 'Binary directory')
++
++option('sbindir',
++  type: 'string',
++  value: '${prefix}/sbin',
++  description: 'System binary directory')
++
++option('sysconfdir',
++  type: 'string',
++  value: '${prefix}/etc',
++  description: 'System configuration directory')
++
++option('localstatedir',
++  type: 'string',
++  value: '${prefix}/var',
++  description: 'Local state directory')
++
++option('datadir',
++  type: 'string',
++  value: '${prefix}/share',
++  description: 'Data directory')
++
++# Option for introspection support
++option('enable_introspection',
++  type: 'boolean',
++  value: true,
++  description: 'Build introspection support (default: true)')
+-- 
+GitLab
+
+
