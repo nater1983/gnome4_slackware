@@ -328,7 +328,7 @@ build_mod_pkg() {
         fi
       fi
 
-      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomeson ; then
+      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake ; then
         # Run cmake, using custom cmake script if needed:
         if [ -r $CWD/cmake/${PKGNAME} ]; then
           . $CWD/cmake/${PKGNAME}
