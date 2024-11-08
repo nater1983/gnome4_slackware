@@ -28,6 +28,7 @@ webkit2gtk4.1
 gtksourceview
 librest
 gnome-online-accounts
+libnma
 cups-pk-helper
 gnome-color-manager
 tecla
