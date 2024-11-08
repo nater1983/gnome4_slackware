@@ -322,8 +322,9 @@ build_mod_pkg() {
         elif [ -r $CWD/meson/${gnome_module} ]; then
           . $CWD/meson/${gnome_module}
         else
-          # This is the default configure script:
-          . $CWD/meson/meson
+          "${NINJA:=ninja}"
+          DESTDIR=$PKG $NINJA install
+          cd ..
         fi
  
         # Run make, using custom make script if needed:
@@ -333,9 +334,8 @@ build_mod_pkg() {
           . $CWD/make/${gnome_module}
         else
           # This is the default make && make install routine:
-          "${NINJA:=ninja}"
-          DESTDIR=$PKG $NINJA install
-          cd ..
+          make $NUMJOBS || make || exit 1
+          make install DESTDIR=$PKG || exit 1
         fi
       fi
 
