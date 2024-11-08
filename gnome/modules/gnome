@@ -28,7 +28,6 @@ webkit2gtk4.1
 gtksourceview5
 librest
 gnome-online-accounts
-libnma-gtk4
 cups-pk-helper
 gnome-color-manager
 tecla
@@ -36,9 +35,6 @@ webp-pixbuf-loader
 xdg-desktop-portal-gnome
 tecla
 gnome-control-center
-python3-hatch_vcs
-python3-hatch_fancy_pypi_readme
-python3-attrs
 libei
 mutter
 evolution-data-server
