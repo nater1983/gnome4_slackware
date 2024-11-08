@@ -371,6 +371,9 @@ build_mod_pkg() {
       find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
       rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
 
+      # And get rid of any .la files
+      rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
       # Strip binaries if needed:
       if [ ! -r $CWD/nostrip/${PKGNAME} ]; then
         strip_binaries $PKG
