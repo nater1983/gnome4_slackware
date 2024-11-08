@@ -4,7 +4,7 @@
 
 # Set up general build options
 CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
-UPGRADE=${UPGRADE:-"yes"}       # Upgrade package after successful build
+UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
 SKIPBUILT=${SKIPBUILT:-"no"}   # Skip already built packages
