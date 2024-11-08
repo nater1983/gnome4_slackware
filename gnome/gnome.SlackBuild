@@ -329,7 +329,7 @@ build_mod_pkg() {
         # Run cmake, using custom cmake script if needed:
         if [ -r $CWD/cmake/${PKGNAME} ]; then
           . $CWD/cmake/${PKGNAME}
-        elif [ -r $CWD/cmake/${kde_module} ]; then
+        elif [ -r $CWD/cmake/${gnome_module} ]; then
           . $CWD/cmake/${gnome_module}
         else
           # This is the default configure script:
