@@ -1,0 +1,25 @@
+mkdir cmake-build
+cd cmake-build
+  cmake ../.. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+     -DENABLE_ALARM_NOTIFY_MODULE=ON \
+     -DENABLE_AUTOAR=ON \
+     -DENABLE_CANBERRA=ON \
+     -DENABLE_GNOME_DESKTOP=ON \
+     -DENABLE_GTK_DOC=OFF \
+     -DENABLE_INSTALLED_TESTS=OFF \
+     -DENABLE_MAINTAINER_MODE=OFF \
+     -DENABLE_SCHEMAS_COMPILE=ON \
+     -DENABLE_SMIME=ON \
+     -DENABLE_YTNEF=ON \
+     -DENABLE_TEXT_HIGHLIGHT=ON \
+     -DENABLE_PST_IMPORT=ON \
+     -DENABLE_CONTACT_MAPS=OFF \
+     -DISO_CODES_PREFIX=/usr/share \
+     -DWITH_GLADE_CATALOG=OFF \
+     -DWITH_OPENLDAP=ON \
+     -DWITH_STATIC_LDAP=OFF \
+     -G Ninja
+      "${NINJA:=ninja}"
+      DESTDIR=$PKG $NINJA install
+    cd ..
