@@ -1,0 +1,13 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dgtk=enabled \
+    -Dgnome=disabled \
+    -Dgoa=enabled \
+    -Dalways_build_tests=false \
+    -Dgtk_doc=false \
+    -Dman=false
