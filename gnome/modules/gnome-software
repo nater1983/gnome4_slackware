@@ -11,5 +11,4 @@ flatpak
 xdg-desktop-portal-gtk
 appstream-glib
 libostree
-flatpak
 gnome-software
