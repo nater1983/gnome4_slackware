@@ -6,6 +6,5 @@
     -DHWY_ENABLE_CONTRIB:BOOL=ON \
     -DHWY_ENABLE_EXAMPLES:BOOL=ON \
     -DHWY_ENABLE_INSTALL:BOOL=ON
-        "${NINJA:=ninja}"
-      DESTDIR=$PKG $NINJA install
-    cd ..
+cmake --build build
+DESTDIR=$PKG cmake --install build
