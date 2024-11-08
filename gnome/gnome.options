@@ -103,6 +103,7 @@ export GNOME_BUILD_ARGS=(
     --mandir=/usr/man
     --prefix=/usr
     --sysconfdir=/etc
+    -Ddefault_library=shared
     -Dstrip=true
  )
 
