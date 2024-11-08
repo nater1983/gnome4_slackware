@@ -81,6 +81,13 @@ strip_binaries() {
 }
 
 process_man_pages() {
+  # Move usr/share/man to usr/man if it exists
+  if [ -d "usr/share/man" ]; then
+    mkdir -p usr/man
+    mv usr/share/man/* usr/man/
+    rmdir usr/share/man
+  fi
+
   # Compress and symlink the man pages if needed:
   if [ -d "usr/man" ]; then
     ( cd usr/man
