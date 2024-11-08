@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/gnome-session/0001-meson-add-elogind-support.patch
+patch -Np1 -i $CWD/patch/gnome-session/0002-gnome-session-add-profile-sourcing.patch
