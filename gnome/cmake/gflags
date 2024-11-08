@@ -5,3 +5,6 @@ cd cmake-build
     -DGFLAGS_BUILD_SHARED_LIBS:BOOL=ON \
     -DREGISTER_BUILD_DIR:BOOL=OFF \
     -DREGISTER_INSTALL_PREFIX:BOOL=OFF ..
+  make
+  make install DESTDIR=$PKG
+cd ..
