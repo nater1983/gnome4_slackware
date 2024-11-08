@@ -326,18 +326,30 @@ build_mod_pkg() {
           DESTDIR=$PKG $NINJA install
           cd ..
         fi
+      fi
 
-        # Run ninja, using custom make script if needed:
+      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomeson ; then
+        # Run cmake, using custom cmake script if needed:
+        if [ -r $CWD/cmake/${PKGNAME} ]; then
+          . $CWD/cmake/${PKGNAME}
+        elif [ -r $CWD/cmake/${gnome_module} ]; then
+          . $CWD/cmake/${gnome_module}
+        else
+          # This is the default configure script:
+          . $CWD/cmake/cmake
+        fi
+
+        # Run make, using custom make script if needed:
         if [ -r $CWD/make/${PKGNAME} ]; then
           . $CWD/make/${PKGNAME}
         elif [ -r $CWD/make/${gnome_module} ]; then
           . $CWD/make/${gnome_module}
         else
+          # This is the default make && make install routine:
           make $NUMJOBS || make || exit 1
           make install DESTDIR=$PKG || exit 1
         fi
       fi
-
       # Back to source toplevel builddir, since meson may have run in a subdir:
       cd $SLACK_GNOME_BUILD_DIR/${gnome_module}/$(pkgbase $gnome_src)
 
