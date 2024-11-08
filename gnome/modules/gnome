@@ -1,6 +1,6 @@
 gnome-desktop
 geoclue2
-geocode-glib2
+geocode-glib
 libgweather4
 gnome-settings-daemon
 colord-gtk
