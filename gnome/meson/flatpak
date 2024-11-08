@@ -1,0 +1,15 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dsystem_bubblewrap=/usr/bin/bwrap \
+    -Dsystem_dbus_proxy=/usr/bin/xdg-dbus-proxy \
+    -Dsystem_helper_user=flatpak \
+    -Ddbus_config_dir=/usr/share/dbus-1/system.d \
+    -Ddocbook_docs=disabled \
+    -Dgtkdoc=disabled \
+    -Dman=enabled \
+    -Dtests=false
