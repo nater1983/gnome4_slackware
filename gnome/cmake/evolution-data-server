@@ -23,3 +23,6 @@ cd cmake-build
     -DWITH_SUNLDAP=ON \
     -DWITH_SYSTEMDUSERUNITDIR=no \
     -G Ninja
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
