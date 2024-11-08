@@ -1,0 +1,6 @@
+mkdir -p $PKG/etc/X11/xinit
+install -vDm 0755 $CWD/post-install/gnome-session/xinitrc.gnome -t $PKG/etc/X11/xinit
+
+# Remove duplicate display manager entries:
+rm "$PKG/usr/share/wayland-sessions/gnome.desktop"
+rm "$PKG/usr/share/xsessions/gnome.desktop"
