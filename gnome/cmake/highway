@@ -7,4 +7,4 @@ cmake .. \
     -DHWY_ENABLE_EXAMPLES:BOOL=ON \
     -DHWY_ENABLE_INSTALL:BOOL=ON
 cmake --build ../build
-DESTDIR=$PKG cmake --install build
+DESTDIR=$PKG cmake --install ../build
