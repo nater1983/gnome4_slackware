@@ -4,10 +4,8 @@ import requests
 import sys
 import os
 
-# Base URL and GNOME version
 downloads_base_url = "https://download.gnome.org/sources"
 
-# Function to read the package version from the specified version file
 def get_pkg_version(project_name):
     version_file_path = os.path.join("version", project_name)
     try:
@@ -17,76 +15,77 @@ def get_pkg_version(project_name):
         print(f"Version file for {project_name} not found at {version_file_path}.")
         return None
 
-# Function to check if tarball is available on GNOME's downloads server using GET request
-def check_tarball_availability(project_name, pkg_version):
+def construct_tarball_urls(project_name, pkg_version):
+    """Construct URLs for major.minor, major.minor.patch, and major.minor.patch formats."""
     version_parts = pkg_version.split(".")
+    urls = []
 
-    if len(version_parts) == 3:
-        # For version like 3.54.1 (major.minor.patch)
-        major_minor_version = f"{version_parts[0]}.{version_parts[1]}"  # e.g., 3.54
-        tarball_url = f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz"  # full version for filename
-    elif len(version_parts) == 2:
-        # For version like 47.1 (major.minor)
-        major_version = version_parts[0]  # e.g., 47
-        tarball_url = f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz"  # full version for filename
+    if len(version_parts) == 2:  # e.g., 47.1
+        major_version = version_parts[0]
+        urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
+    elif len(version_parts) == 3:  # e.g., 47.1.1 or 3.54.1
+        if len(version_parts[0]) == 1:  # For cases like 3.54.1
+            major_minor_version = f"{version_parts[0]}.{version_parts[1]}"  # Combine major and minor version
+            urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
+        else:
+            major_version = version_parts[0]  # For cases like 47.1.1
+            urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
     else:
         print(f"Invalid version format for {pkg_version}")
-        return None
-
-    print(f"Checking URL: {tarball_url}")  # Debugging line to print the URL
     
-    response = requests.get(tarball_url)  # Use GET to check if the file exists and retrieve the response
-    print(f"Response Status Code: {response.status_code}")  # Print the response status code
+    return urls
 
-    if response.status_code == 200:
-        return tarball_url
-    else:
-        print(f"Error: {response.status_code} - {response.text}")  # Print any errors returned by the server
-        return None
+def check_tarball_availability(tarball_url):
+    try:
+        response = requests.head(tarball_url)
+        return response.status_code == 200
+    except requests.RequestException as e:
+        print(f"Failed to connect to {tarball_url}. Error: {e}")
+        return False
 
-# Function to download the tarball
 def download_tarball(tarball_url, target_directory):
-    tarball_name = tarball_url.split("/")[-1]
+    tarball_name = os.path.basename(tarball_url)
     tarball_path = os.path.join(target_directory, tarball_name)
-    response = requests.get(tarball_url, stream=True)
-    if response.status_code == 200:
-        with open(tarball_path, "wb") as file:
-            for chunk in response.iter_content(chunk_size=8192):
-                file.write(chunk)
-        print(f"Downloaded {tarball_name} to {target_directory}\n")
-    else:
-        print(f"Failed to download {tarball_name} from {tarball_url}")
+    if os.path.exists(tarball_path):
+        print(f"{tarball_name} already exists in {target_directory}. Skipping download.")
+        return
+    try:
+        with requests.get(tarball_url, stream=True) as response:
+            response.raise_for_status()
+            with open(tarball_path, "wb") as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    file.write(chunk)
+        print(f"Downloaded {tarball_name} to {target_directory}")
+    except requests.RequestException as e:
+        print(f"Failed to download {tarball_name} from {tarball_url}. Error: {e}")
 
-# Main execution
 if len(sys.argv) < 2:
-    print("Please provide a directory and project name in the format <directory>:<project_name>. Usage: python gnome.py <directory>:<project_name>")
+    print("Usage: python gnome.py <directory>:<project_name>")
     sys.exit(1)
 
-# Parse the directory and project name from the command-line argument
 arg = sys.argv[1]
 if ':' not in arg:
     print("Invalid format. Use <directory>:<project_name>.")
     sys.exit(1)
 
 directory, project_name = arg.split(':', 1)
-
-# Ensure the src directory exists for the specified project
 src_directory = os.path.join("src", directory)
 os.makedirs(src_directory, exist_ok=True)
 
-# Get the package version
 pkg_version = get_pkg_version(project_name)
-
 if not pkg_version:
-    print("Package version not specified or version file not found, exiting.")
     sys.exit(1)
 
-# Check for the tarball on the GNOME downloads server
-tarball_url = check_tarball_availability(project_name, pkg_version)
+# Construct URLs and attempt download for both formats
+urls = construct_tarball_urls(project_name, pkg_version)
+downloaded = False
 
-if tarball_url:
-    print(f"{project_name} download link: {tarball_url}\n")
-    download_tarball(tarball_url, src_directory)
-else:
-    print(f"Tarball for {project_name} version {pkg_version} not found on GNOME's downloads server.\n")
+for url in urls:
+    if check_tarball_availability(url):
+        print(f"{project_name} download link found: {url}")
+        download_tarball(url, src_directory)
+        downloaded = True
+        break
 
+if not downloaded:
+    print(f"Tarball for {project_name} version {pkg_version} not found on GNOME's downloads server.")
