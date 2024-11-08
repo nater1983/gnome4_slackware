@@ -1,0 +1,10 @@
+mkdir -p $PKG/var/lib/flatpak
+chmod +x $PKG/etc/profile.d/flatpak.sh
+mv -v $PKG/etc/profile.d/flatpak.sh $PKG/etc/profile.d/flatpak.sh.new
+mkdir -p $PKG/etc/xdg/autostart/
+install -vDm 0644 $CWD/flatpak/flatpak-autostart.desktop $PKG/etc/xdg/autostart/flatpak-autostart.desktop.new
+ 
+# Adding Flathub to package
+install -vDm 0644 $CWD/flatpak/flathub.desktop -t $PKG/usr/share/applications/
+install -vDm 0755 $CWD/flatpak/flathub -t $PKG/usr/bin/
+install -vDm 0644 $CWD/flatpak/flathub.png -t $PKG/usr/share/icons/hicolor/128x128/apps/
