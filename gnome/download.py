@@ -36,11 +36,16 @@ def construct_tarball_urls(project_name, pkg_version):
     return urls
 
 def check_tarball_availability(tarball_url):
+    """Check if the tarball is available using GET request."""
     try:
-        response = requests.head(tarball_url)
-        return response.status_code == 200
+        response = requests.get(tarball_url)
+        if response.status_code == 200:
+            return True
+        else:
+            print(f"Tarball not found: {tarball_url} (Status: {response.status_code})")
+            return False
     except requests.RequestException as e:
-        print(f"Failed to connect to {tarball_url}. Error: {e}")
+        print(f"Error checking URL {tarball_url}: {e}")
         return False
 
 def download_tarball(tarball_url, target_directory):
@@ -81,6 +86,7 @@ urls = construct_tarball_urls(project_name, pkg_version)
 downloaded = False
 
 for url in urls:
+    print(f"Checking tarball URL: {url}")  # Debugging line to print the URL
     if check_tarball_availability(url):
         print(f"{project_name} download link found: {url}")
         download_tarball(url, src_directory)
