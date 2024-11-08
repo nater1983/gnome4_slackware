@@ -1,7 +1,7 @@
 tgnome-desktop
 geoclue2
 geocode-glib
-libgweather4
+libgweather
 gnome-settings-daemon
 colord-gtk
 gsound
