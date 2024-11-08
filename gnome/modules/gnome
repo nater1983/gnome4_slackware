@@ -1,4 +1,4 @@
-tgnome-desktop
+gnome-desktop
 geoclue2
 geocode-glib
 libgweather
@@ -50,3 +50,4 @@ gnome-shell-extensions
 p7zip
 jq
 gnome-browser-connector
+highway
