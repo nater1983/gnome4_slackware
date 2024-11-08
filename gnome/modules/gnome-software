@@ -7,5 +7,6 @@ gcab
 fwupd
 flatpak
 xdg-desktop-portal-gtk
+appstream-glib
 libostree
 gnome-software
