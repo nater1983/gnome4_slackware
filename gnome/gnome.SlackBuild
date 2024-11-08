@@ -355,23 +355,24 @@ build_mod_pkg() {
 
       # Use PRGNAM if it is set; otherwise, default to PKGNAME
       DOCNAME="${PRGNAM:-$PKGNAME}"
+      PACKAGE_VERSION="${PKGVERSION:-$MODULAR_PACKAGE_VERSION}"
 
       # Create the documentation directory
-      mkdir -p "$PKG/usr/doc/${DOCNAME}-${MODULAR_PACKAGE_VERSION}"
+      mkdir -p "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
 
       # Use specific documentation files if available, else use a default set
       if [ -r "$CWD/docs/${DOCNAME}" ]; then
           cp -a $(cat "$CWD/docs/${DOCNAME}") \
-            "$PKG/usr/doc/${DOCNAME}-${MODULAR_PACKAGE_VERSION}"
+            "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
       else
           cp -a \
             AUTHORS* CONTRIBUTING* COPYING* HACKING* \
             INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
-            "$PKG/usr/doc/${DOCNAME}-${MODULAR_PACKAGE_VERSION}"
-    
+            "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
+
           # If there's a ChangeLog, include it with a limit of the most recent 1000 lines
           if [ -r ChangeLog ]; then
-              DOCSDIR="$PKG/usr/doc/${DOCNAME}-${MODULAR_PACKAGE_VERSION}"
+              DOCSDIR="$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
               head -n 1000 ChangeLog > "$DOCSDIR/ChangeLog"
               touch -r ChangeLog "$DOCSDIR/ChangeLog"
           fi
