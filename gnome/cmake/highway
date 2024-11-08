@@ -1,4 +1,4 @@
-cmake -B -S $TMP/$PRGNAM-$VERSION \
+cmake -B build -S $TMP/$PRGNAM-$VERSION \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DBUILD_SHARED_LIBS:BOOL=ON \
     -DBUILD_TESTING:BOOL=OFF \
@@ -6,5 +6,5 @@ cmake -B -S $TMP/$PRGNAM-$VERSION \
     -DHWY_ENABLE_CONTRIB:BOOL=ON \
     -DHWY_ENABLE_EXAMPLES:BOOL=ON \
     -DHWY_ENABLE_INSTALL:BOOL=ON
-cmake --build build
+cmake --build ../build
 DESTDIR=$PKG cmake --install build
