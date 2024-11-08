@@ -1,4 +1,5 @@
-  cmake .. \
+
+cmake -B build -S $CWD/ \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DBUILD_SHARED_LIBS:BOOL=ON \
     -DBUILD_TESTING:BOOL=OFF \
