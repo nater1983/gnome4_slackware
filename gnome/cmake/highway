@@ -1,0 +1,13 @@
+mkdir cmake-build
+cd cmake-build
+  cmake ../.. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DBUILD_SHARED_LIBS:BOOL=ON \
+    -DBUILD_TESTING:BOOL=OFF \
+    -DHWY_SYSTEM_GTEST:BOOL=ON \
+    -DHWY_ENABLE_CONTRIB:BOOL=ON \
+    -DHWY_ENABLE_EXAMPLES:BOOL=ON \
+    -DHWY_ENABLE_INSTALL:BOOL=ON
+        "${NINJA:=ninja}"
+      DESTDIR=$PKG $NINJA install
+    cd ..
