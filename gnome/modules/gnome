@@ -37,6 +37,7 @@ xdg-desktop-portal-gnome
 tecla
 gnome-control-center
 libei
+libdisplay-info
 mutter
 evolution-data-server
 gnome-autoar
