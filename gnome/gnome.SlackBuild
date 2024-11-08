@@ -418,11 +418,26 @@ build_mod_pkg() {
         else
           MODBUILD=$BUILD
         fi
-        if [ -r $CWD/makepkg/${PKGNAME} ]; then
-          BUILD=$MODBUILD$TAG . $CWD/makepkg/${PKGNAME}
+        if [ -r "$CWD/makepkg/${PKGNAME}" ]; then
+        # Source the file to retrieve PRGNAM or use grep/awk to extract it specifically
+          . "$CWD/makepkg/${PKGNAME}"
+    
+        # Ensure PRGNAM is set after sourcing
+        if [ -n "$PRGNAM" ]; then
+        BUILD="${MODBUILD}${TAG}"
+        echo "Using custom package name: $PRGNAM with build: $BUILD"
+        
+        # Use PRGNAM in the makepkg command with parsed package name
+          /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PRGNAM}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${BUILD}.txz"
         else
-          /sbin/makepkg -l y -c n ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION |tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz
+        echo "PRGNAM not found in $CWD/makepkg/${PKGNAME}"
+        exit 1
         fi
+        else
+        # Fallback to default makepkg process with original PKGNAME
+          /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz"
+        fi
+
         # We will continue with the fresh packages installed:
         if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
           upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
