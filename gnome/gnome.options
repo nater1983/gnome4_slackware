@@ -58,7 +58,7 @@ export NUMJOBS
 export GNOME_OPT_ARGS=" \
  "
 
-# Webkit 4.1 specific flags:
+# Gnome cmake specific flags:
 export GNOME_CMAKE_ARGS=(
  -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS"
  -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS"
