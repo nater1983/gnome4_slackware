@@ -342,10 +342,8 @@ build_mod_pkg() {
         elif [ -r $CWD/make/${gnome_module} ]; then
           . $CWD/make/${gnome_module}
         else
-          # This is the default ninja build:
-          "${NINJA:=ninja}"
-          DESTDIR=$PKG $NINJA install
-          cd ..
+          make $NUMJOBS || make || exit 1
+          make install DESTDIR=$PKG || exit 1
         fi
       fi
 
