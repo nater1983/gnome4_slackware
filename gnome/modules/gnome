@@ -1,4 +1,4 @@
-gnome-desktop
+tgnome-desktop
 geoclue2
 geocode-glib
 libgweather4
@@ -26,7 +26,7 @@ unifdef
 webkit2gtk6.0
 webkit2gtk4.1
 gtksourceview
-librest
+rest
 gnome-online-accounts
 libnma
 cups-pk-helper
@@ -50,3 +50,4 @@ gnome-shell-extensions
 p7zip
 jq
 gnome-browser-connector
+libdex
