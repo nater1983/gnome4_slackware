@@ -7,20 +7,23 @@ def download_tarball_from_gitlab(domain, namespace, repo_name, version, extract_
     # Prompt user for the subdirectory inside src/
     subdir = input(f"Enter the subdirectory within '{extract_dir}' where you want the tarball saved (e.g., {repo_name}): ")
 
-    # Generate both possible URLs: one with "v" prefix and one without
+    # Clean up the version string by removing unwanted backslashes and ensuring proper "v" prefix formatting
+    version_cleaned = version.replace("\\", "")  # Remove any escape characters
+
+    # Generate both possible URLs: with/without "v" prefix and .tar.xz or .tar.gz formats
     urls = [
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.xz",
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/downloads/{repo_name}-v{version}.tar.xz"
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/archive/{repo_name}-{version}.tar.xz",
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/archive/{repo_name}-v{version}.tar.xz"
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.gz",
-        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/downloads/{repo_name}-v{version}.tar.gz"
-        f"https://{domain}/{namespace}/{repo_name}/-/archive/{version}/{repo_name}-{version}.tar.gz",
-        f"https://{domain}/{namespace}/{repo_name}/-/archive/v{version}/{repo_name}-v{version}.tar.gz"
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version_cleaned}/downloads/{repo_name}-{version_cleaned}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version_cleaned}/downloads/{repo_name}-v{version_cleaned}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version_cleaned}/archive/{repo_name}-{version_cleaned}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version_cleaned}/archive/{repo_name}-v{version_cleaned}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version_cleaned}/downloads/{repo_name}-{version_cleaned}.tar.gz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version_cleaned}/downloads/{repo_name}-v{version_cleaned}.tar.gz",
+        f"https://{domain}/{namespace}/{repo_name}/-/archive/{version_cleaned}/{repo_name}-{version_cleaned}.tar.gz",
+        f"https://{domain}/{namespace}/{repo_name}/-/archive/v{version_cleaned}/{repo_name}-v{version_cleaned}.tar.gz"
     ]
 
-    # Construct the filename and path where the tarball will be saved
-    tarball_filename = f"{repo_name}-{version}.tar.xz"
+    # Determine the tarball filename based on the URLs being checked
+    tarball_filename = f"{repo_name}-{version_cleaned}.tar.xz" if "tar.xz" in urls[0] else f"{repo_name}-{version_cleaned}.tar.gz"
     tarball_path = os.path.join(extract_dir, subdir, tarball_filename)
 
     # Check if the tarball already exists in the specified subdirectory
@@ -48,14 +51,14 @@ def download_tarball_from_gitlab(domain, namespace, repo_name, version, extract_
             print(f"Failed to download tarball. HTTP Status Code: {response.status_code}")
 
     # If none of the URLs worked and no 200 status was received, print not found
-    print(f"Tarball for {repo_name} version {version} not found on GitLab.")
+    print(f"Tarball for {repo_name} version {version_cleaned} not found on GitLab.")
 
 if __name__ == "__main__":
     # Get dynamic input for project details
     domain = input("Enter the GitLab domain (e.g., gitlab.com or gitlab.freedesktop.org): ")
     namespace = input("Enter the GitLab namespace (e.g., emersion): ")
     repo_name = input("Enter the repository name (e.g., libdisplay-info): ")
-    version = input("Enter the version (e.g., 0.2.0): ")
+    version = input("Enter the version (e.g., 0.2.0 or v1.5.0): ")
 
     # Call the function with user input
     download_tarball_from_gitlab(domain, namespace, repo_name, version)
