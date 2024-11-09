@@ -22,11 +22,10 @@
     -DJPEGXL_FORCE_SYSTEM_HWY:BOOL='true' \
     -DJPEGXL_FORCE_SYSTEM_LCMS2:BOOL='true' \
     -DJPEGXL_ENABLE_SJPEG:BOOL='false' \
-    -DJPEGXL_STATIC:BOOL='false'
+    -DJPEGXL_STATIC:BOOL='false' \
     -DBUNDLE_LIBPNG_DEFAULT='NO' \
     -DBUILD_TESTING:BOOL='false' \
     -DINSTALL_GTEST:BOOL=OFF \
-
     -DENABLE_FUZZERS_DEFAULT:BOOL='false'
 make -C ../build
 make -C ../build install DESTDIR=$PKG
