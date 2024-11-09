@@ -1,4 +1,4 @@
-  cmake \
+  cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DAVIF_ENABLE_WERROR:BOOL=OFF \
     -DAVIF_CODEC_AOM:BOOL=ON \
