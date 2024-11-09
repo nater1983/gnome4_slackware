@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/webp-pixbuf-loader/1.patch
