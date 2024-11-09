@@ -7,11 +7,11 @@ def download_tarball_from_gitlab(domain, namespace, repo_name, version, extract_
     # Prompt user for the subdirectory inside src/
     subdir = input(f"Enter the subdirectory within '{extract_dir}' where you want the tarball saved (e.g., {repo_name}): ")
 
-    # Check if the domain is gitlab.com or gitlab.freedesktop.org and build the URL accordingly
-    if domain == "gitlab.freedesktop.org":
-        url = f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.xz"
-    else:
-        url = f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.xz"
+    # Generate both possible URLs: one with "v" prefix and one without
+    urls = [
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/downloads/{repo_name}-v{version}.tar.xz"
+    ]
 
     # Construct the filename and path where the tarball will be saved
     tarball_filename = f"{repo_name}-{version}.tar.xz"
@@ -20,24 +20,29 @@ def download_tarball_from_gitlab(domain, namespace, repo_name, version, extract_
     # Check if the tarball already exists in the specified subdirectory
     if os.path.exists(tarball_path):
         print(f"{tarball_filename} already exists in {os.path.join(extract_dir, subdir)}. Skipping download.")
-    else:
+        return
+
+    # Attempt to download the tarball, trying each URL in order
+    for url in urls:
         print(f"Checking tarball URL: {url}")
-        # Make a GET request to fetch the tarball
         response = requests.get(url, stream=True)
 
         if response.status_code == 200:
             # Ensure the specified subdirectory exists
             os.makedirs(os.path.join(extract_dir, subdir), exist_ok=True)
 
-            # Download the tarball if it does not exist
+            # Download the tarball
             with open(tarball_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
 
             print(f"Tarball downloaded successfully: {tarball_path}")
-        else:
+            return  # Exit the function after a successful download
+        elif response.status_code != 404:
             print(f"Failed to download tarball. HTTP Status Code: {response.status_code}")
 
+    # If none of the URLs worked and no 200 status was received, print not found
+    print(f"Tarball for {repo_name} version {version} not found on GitLab.")
 
 if __name__ == "__main__":
     # Get dynamic input for project details
