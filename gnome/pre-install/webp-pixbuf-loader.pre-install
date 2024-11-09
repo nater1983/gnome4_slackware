@@ -1,0 +1,1 @@
+sed -i '/gdk_pb_query_loaders/d' meson.build
