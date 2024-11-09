@@ -1,0 +1,33 @@
+#!/bin/bash 
+name=gnome-remote-desktop-daemon
+RDP_USER=$(whoami)  # Get the current logged-in user
+RDP_PASS="${RDP_USER}"  # Use the same name for the password
+
+start() {
+    echo "Starting $name Services: "
+    for i in {1..2}; do  # Loop twice
+        /usr/bin/grdctl rdp set-credentials "${RDP_USER}" "${RDP_PASS}"
+        /usr/bin/grdctl rdp disable-view-only
+        /usr/bin/grdctl rdp enable
+        /usr/libexec/$name > /dev/null 2>&1 &
+    done
+}
+
+
+stop() {
+    echo "Stopping $name Services: "
+    pkill -f "$name"
+}
+
+restart() {
+  stop
+  sleep 3
+  start
+}
+
+case "$1" in
+    start|stop|restart) "$1" ;;
+    *) echo "usage: $0 start|stop|restart" >&2
+       exit 1
+       ;;
+esac
