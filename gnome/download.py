@@ -16,7 +16,7 @@ def get_pkg_version(project_name):
         return None
 
 def construct_tarball_urls(project_name, pkg_version):
-    """Construct URLs for major.minor and major.minor.patch formats."""
+    """Construct URLs for major.minor, major.minor.patch, and major version folders."""
     version_parts = pkg_version.split(".")
     urls = []
 
@@ -24,14 +24,16 @@ def construct_tarball_urls(project_name, pkg_version):
         major_version = version_parts[0]
         major_minor_version = f"{version_parts[0]}.{version_parts[1]}"
         
-        # Add both major-only and major.minor version folders
+        # Add URLs for both major and major.minor version folders
         urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
         urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
 
     elif len(version_parts) == 3:  # e.g., 47.1.1 or 3.54.1
+        major_version = version_parts[0]
         major_minor_version = f"{version_parts[0]}.{version_parts[1]}"
         
-        # Use major.minor version as the folder
+        # Add URLs for both major and major.minor version folders
+        urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
         urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
     
     else:
