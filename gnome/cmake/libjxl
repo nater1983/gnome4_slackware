@@ -25,6 +25,8 @@
     -DJPEGXL_STATIC:BOOL='false'
     -DBUNDLE_LIBPNG_DEFAULT='NO' \
     -DBUILD_TESTING:BOOL='false' \
+    -DINSTALL_GTEST:BOOL=OFF \
+
     -DENABLE_FUZZERS_DEFAULT:BOOL='false'
 make -C ../build
 make -C ../build install DESTDIR=$PKG
