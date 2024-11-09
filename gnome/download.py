@@ -16,20 +16,16 @@ def get_pkg_version(project_name):
         return None
 
 def construct_tarball_urls(project_name, pkg_version):
-    """Construct URLs for major.minor, major.minor.patch, and major.minor.patch formats."""
+    """Construct URLs for major.minor and major.minor.patch formats."""
     version_parts = pkg_version.split(".")
     urls = []
 
-    if len(version_parts) == 2:  # e.g., 47.1
+    if len(version_parts) == 2:  # e.g., 47.1 or 1.6
         major_version = version_parts[0]
         urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
     elif len(version_parts) == 3:  # e.g., 47.1.1 or 3.54.1
-        if len(version_parts[0]) == 1:  # For cases like 3.54.1
-            major_minor_version = f"{version_parts[0]}.{version_parts[1]}"  # Combine major and minor version
-            urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
-        else:
-            major_version = version_parts[0]  # For cases like 47.1.1
-            urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
+        major_minor_version = f"{version_parts[0]}.{version_parts[1]}"
+        urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
     else:
         print(f"Invalid version format for {pkg_version}")
     
@@ -95,4 +91,3 @@ for url in urls:
 
 if not downloaded:
     print(f"Tarball for {project_name} version {pkg_version} not found on GNOME's downloads server.")
-
