@@ -1,10 +1,7 @@
-mkdir cmake-build
-cd cmake-build
-  cmake ../.. \
+  cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DGFLAGS_BUILD_SHARED_LIBS:BOOL=ON \
     -DREGISTER_BUILD_DIR:BOOL=OFF \
     -DREGISTER_INSTALL_PREFIX:BOOL=OFF ..
-  make
-  make install DESTDIR=$PKG
-cd ..
+make -C ../build
+make -C ../build install DESTDIR=$PKG
