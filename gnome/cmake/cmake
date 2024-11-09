@@ -1,5 +1,4 @@
-mkdir cmake-build
-cd cmake-build
-  cmake \
-    "${GNOME_CMAKE_ARGS[@]}" \
-    ..
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}"
+make -C ../build
+make -C ../build install DESTDIR=$PKG
