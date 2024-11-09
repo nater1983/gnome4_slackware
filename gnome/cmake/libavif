@@ -13,5 +13,5 @@
     -DAVIF_BUILD_GDK_PIXBUF=1 \
     -DAVIF_ENABLE_GTEST:BOOL=OFF \
     -DAVIF_BUILD_MAN_PAGES:BOOL=OFF
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make -C build
+make -C build install DESTDIR=$PKG
