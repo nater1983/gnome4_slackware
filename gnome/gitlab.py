@@ -11,6 +11,8 @@ def download_tarball_from_gitlab(domain, namespace, repo_name, version, extract_
     urls = [
         f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/downloads/{repo_name}-{version}.tar.xz",
         f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/downloads/{repo_name}-v{version}.tar.xz"
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/{version}/archive/{repo_name}-{version}.tar.xz",
+        f"https://{domain}/{namespace}/{repo_name}/-/releases/v{version}/archive/{repo_name}-v{version}.tar.xz"
     ]
 
     # Construct the filename and path where the tarball will be saved
