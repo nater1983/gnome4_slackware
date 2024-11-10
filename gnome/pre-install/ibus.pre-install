@@ -1,0 +1,14 @@
+zcat $CWD/pre-install/ibus/emoji-test.txt.gz > emoji-test.txt
+zcat $CWD/pre-install/ibus/NamesList.txt.gz > NamesList.txt
+zcat $CWD/pre-install/ibus/Blocks.txt.gz > Blocks.txt
+
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+# fix libdir
+sed -i "s|/lib/python|/lib$LIBDIRSUFFIX/python|g" ./configure
