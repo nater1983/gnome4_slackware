@@ -28,10 +28,10 @@ def construct_tarball_urls(project_name, pkg_version):
         urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
         urls.append(f"{downloads_base_url}/{project_name}/{major_minor_version}/{project_name}-{pkg_version}.tar.xz")
 
-    elif len(version_parts) == 3:  # e.g., 3.4.8 or 47.1.1
+elif len(version_parts) == 3:  # e.g., 3.4.8 or 47.1.1
         major_version = version_parts[0]
         major_minor_version = f"{version_parts[0]}.{version_parts[1]}"
-        major_minor_patch_version = f"{version_parts[0]}.{version_parts[1]}.{version_parts[2]}"
+        major_minor_patch_version = pkg_version
 
         # Add URLs for major, major.minor, and major.minor.patch version folders
         urls.append(f"{downloads_base_url}/{project_name}/{major_version}/{project_name}-{pkg_version}.tar.xz")
