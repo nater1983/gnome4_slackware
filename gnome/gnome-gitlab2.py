@@ -13,7 +13,7 @@ def print_debug(message):
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository without cloning it and filters out tags older than a year.
+    Fetches all tags from a GitLab repository without cloning it and filters out tags older than 9 months.
     """
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
@@ -41,13 +41,13 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         if response.status_code == 200:
             tags = response.json()
 
-            # Get the date one year ago with timezone awareness (UTC in this case)
-            one_year_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
+            # Get the date 9 months ago with timezone awareness (UTC in this case)
+            nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
 
-            # Filter tags by date, excluding tags older than one year
+            # Filter tags by date, excluding tags older than 9 months
             tags = [
                 tag for tag in tags
-                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > one_year_ago
+                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
             ]
 
             return tags
@@ -64,8 +64,12 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
 def parse_version(version_str):
     """
-    Parses a version string into a list of integers, handling missing components.
+    Parses a version string into a list of integers, handling missing components
+    and stripping a leading 'v' if present.
     """
+    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
+    version_str = version_str.lstrip('v')
+    
     parts = version_str.replace('_', '.').split('.')
     return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
 
