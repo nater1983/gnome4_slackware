@@ -1,16 +1,12 @@
 import os
 import sys
-import requests
 import urllib.parse
-
-# Mapping of project names for repositories that use a different name on GitLab
-PROJECT_NAME_MAP = {
-    'rest': 'librest',
-    # Add any other mappings here
-}
+import requests
 
 def print_debug(message):
-    """Print debug messages."""
+    """
+    Helper function to print debug messages.
+    """
     print(f"[DEBUG] {message}")
 
 def get_tags_from_gitlab(repo_url, access_token=None):
@@ -26,18 +22,11 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         base_api_url = "https://gitlab.gnome.org/api/v4"
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
 
-        # Check if the project name has a mapping in the dictionary
-        if project_path in PROJECT_NAME_MAP:
-            project_path = PROJECT_NAME_MAP[project_path]
-
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
 
         encoded_path = urllib.parse.quote(project_path, safe="")
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
-
-        # Debug: print the final URL to verify it's correct
-        print_debug(f"Fetching tags from: {tags_url}")
 
         headers = {}
         if access_token:
@@ -51,7 +40,6 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             return response.json()  # Returns a list of tag info
         else:
             print(f"Failed to fetch tags: {response.status_code}")
-            print(f"Error details: {response.text}")
             return []
 
     except requests.exceptions.RequestException as e:
@@ -63,52 +51,74 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
 def parse_version(version_str):
     """
-    Parses a version string into a list of integers, filling missing parts with zeros.
+    Parses a version string into a list of integers, handling missing components.
     """
     parts = version_str.replace('_', '.').split('.')
     return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
 
 def find_newer_version(current_version, tags):
     """
-    Finds the newer version from the list of tags, considering both major version changes
-    and updates within the current major version.
+    Finds the newest version from the tag list compared to the current version.
     """
-    # Parse the current version
     current_major, current_minor, current_patch = parse_version(current_version)
 
     version_dict = {}
     for tag in tags:
-        tag_major, tag_minor, tag_patch = parse_version(tag['name'])
-        if tag_major not in version_dict:
-            version_dict[tag_major] = []
-        version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
+        try:
+            tag_major, tag_minor, tag_patch = parse_version(tag['name'])
+            if tag_major not in version_dict:
+                version_dict[tag_major] = []
+            version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
+        except ValueError:
+            continue
 
-    # Debug: print the version dictionary for inspection
-    print_debug(f"Version dictionary: {version_dict}")
+    # Check if version_dict is empty
+    if not version_dict:
+        print("No valid tags found.")
+        return current_version  # Return the current version if no valid tags are found
 
-    # Find the latest major version
-    max_major = max(version_dict.keys()) if version_dict else 0
+    max_major = max(version_dict.keys())
     if max_major > current_major:
-        # New major version found, find the latest version within this major version
-        latest_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
+        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
     else:
-        # Within the same major version, find the latest version
-        latest_version = None
+        latest_version = current_version
         for tag_minor, tag_patch, tag_name in version_dict[current_major]:
             if (tag_minor > current_minor or
                 (tag_minor == current_minor and tag_patch > current_patch)):
-                if not latest_version or compare_versions(latest_version, tag_name):
+                if not latest_version or tag_name > latest_version:
                     latest_version = tag_name
 
     return latest_version
 
-def compare_versions(version1, version2):
+def get_version_from_file(project_name):
     """
-    Compares two version strings and returns True if version1 is newer than version2.
+    Retrieves the version from the version file for the project.
     """
-    v1_parts = parse_version(version1)
-    v2_parts = parse_version(version2)
-    return v1_parts > v2_parts
+    version_file_path = f"version/{project_name}"
+
+    if os.path.exists(version_file_path):
+        try:
+            with open(version_file_path, "r") as file:
+                version = file.read().strip()
+                return version
+        except Exception as e:
+            print(f"An error occurred while reading version file: {e}")
+            return None
+    else:
+        print(f"Version file for {project_name} not found.")
+        return None
+
+def update_version_file(project_name, new_version):
+    """
+    Updates the version file for the project with the new version.
+    """
+    version_file_path = f"version/{project_name}"
+    try:
+        with open(version_file_path, "w") as file:
+            file.write(new_version)
+        print(f"Updated version file: {version_file_path} to version {new_version}")
+    except Exception as e:
+        print(f"An error occurred while updating the version file: {e}")
 
 def process_version_files(version_dir):
     """
@@ -145,7 +155,7 @@ def process_version_files(version_dir):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python gnome-gitlab2.py <version_directory>")
+        print("Usage: python t.py <version_directory>")
         sys.exit(1)
 
     version_dir = sys.argv[1]
