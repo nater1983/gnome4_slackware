@@ -1,34 +1,36 @@
-import requests
-import urllib.parse
-import sys
 import os
+import sys
+import urllib.parse
+import requests
+from datetime import datetime, timedelta
+import pytz  # Required for timezone handling
 
-def fetch_tags(repo_url, access_token=None):
+def print_debug(message):
     """
-    Fetches all tags from a GitLab repository without cloning it.
+    Helper function to print debug messages.
+    """
+    print(f"[DEBUG] {message}")
+
+def get_tags_from_gitlab(repo_url, access_token=None):
+    """
+    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
+    but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
     """
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
-        
+
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
-        
-      # Check if it's under 'GNOME' or 'World' namespace
-        if "GNOME" in repo_url:
-            base_api_url = "https://gitlab.gnome.org/api/v4"
-        elif "World" in repo_url:
-            base_api_url = "https://gitlab.gnome.org/api/v4"
-        else:
-            raise ValueError("Unsupported GitLab namespace. Only GNOME and World are supported.")
-            
+
+        base_api_url = "https://gitlab.gnome.org/api/v4"
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
-        
+
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
-        
+
         encoded_path = urllib.parse.quote(project_path, safe="")
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
-        
+
         headers = {}
         if access_token:
             headers["Private-Token"] = access_token
@@ -36,13 +38,32 @@ def fetch_tags(repo_url, access_token=None):
         # Send the GET request to fetch the tags
         response = requests.get(tags_url, headers=headers)
 
-        # Debugging: print the raw response to help with troubleshooting
-        print(f"Response status code: {response.status_code}")
-        #print(f"Response content: {response.text}")  # This will show the raw content
-
         # Check if the request was successful
         if response.status_code == 200:
-            return response.json()  # Returns a list of tag info
+            tags = response.json()
+
+            # Get the date 9 months ago with timezone awareness (UTC in this case)
+            nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
+            three_years_ago = datetime.now(pytz.utc) - timedelta(days=4*365)
+
+            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
+            recent_tags = [
+                tag for tag in tags
+                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
+            ]
+
+            # If no tags are within the last 9 months, consider those from the last 3 years
+            if not recent_tags:
+                recent_tags = [
+                    tag for tag in tags
+                    if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
+                ]
+                if recent_tags:
+                    print_debug(f"No recent tags found. Using the latest tag from the last 3 years.")
+                else:
+                    print_debug(f"No valid tags found within the last 4 years.")
+            
+            return recent_tags
         else:
             print(f"Failed to fetch tags: {response.status_code}")
             return []
@@ -54,12 +75,57 @@ def fetch_tags(repo_url, access_token=None):
         print(f"ValueError: {ve}")
         return []
 
+def parse_version(version_str):
+    """
+    Parses a version string into a list of integers, handling missing components
+    and stripping a leading 'v' if present.
+    """
+    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
+    version_str = version_str.lstrip('v')
+    
+    parts = version_str.replace('_', '.').split('.')
+    return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
+
+def find_newer_version(current_version, tags):
+    """
+    Finds the newest version from the tag list compared to the current version.
+    """
+    current_major, current_minor, current_patch = parse_version(current_version)
+
+    version_dict = {}
+    for tag in tags:
+        try:
+            tag_major, tag_minor, tag_patch = parse_version(tag['name'])
+            if tag_major not in version_dict:
+                version_dict[tag_major] = []
+            version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
+        except ValueError:
+            continue
+
+    # Check if version_dict is empty
+    if not version_dict:
+        print("No valid tags found.")
+        return current_version  # Return the current version if no valid tags are found
+
+    max_major = max(version_dict.keys())
+    if max_major > current_major:
+        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
+    else:
+        latest_version = current_version
+        for tag_minor, tag_patch, tag_name in version_dict[current_major]:
+            if (tag_minor > current_minor or
+                (tag_minor == current_minor and tag_patch > current_patch)):
+                if not latest_version or tag_name > latest_version:
+                    latest_version = tag_name
+
+    return latest_version
+
 def get_version_from_file(project_name):
     """
     Retrieves the version from the version file for the project.
     """
     version_file_path = f"version/{project_name}"
-    
+
     if os.path.exists(version_file_path):
         try:
             with open(version_file_path, "r") as file:
@@ -71,74 +137,6 @@ def get_version_from_file(project_name):
     else:
         print(f"Version file for {project_name} not found.")
         return None
-
-def download_file(tag, project_name):
-    """
-    Downloads the file for the specified tag from the GitLab repository and saves it in the 'src/' directory.
-    """
-    os.makedirs("src", exist_ok=True)
-
-    download_url = f"https://gitlab.gnome.org/GNOME/{project_name}/-/archive/{tag}/{project_name}-{tag}.tar.gz"
-    print(f"Downloading file from: {download_url}")
-    response = requests.get(download_url)
-
-    if response.status_code == 200:
-        file_name = f"src/{project_name}-{tag}.tar.gz"
-        with open(file_name, "wb") as file:
-            file.write(response.content)
-        print(f"File downloaded to: {file_name}")
-    else:
-        print(f"Failed to download the file for tag {tag}")
-
-def print_tags_and_download_url(tags, project_name):
-    """
-    Prints the tag list and their download URLs.
-    """
-    if not tags:
-        print("No tags found.")
-        return
-
-    for tag in tags:
-        download_url = f"https://gitlab.gnome.org/GNOME/{project_name}/-/archive/{tag['name']}/{project_name}-{tag['name']}.tar.gz"
-        print(f"Tag: {tag['name']}")
-        print(f"Download URL: {download_url}\n")
-
-def compare_versions(version1, version2):
-    """
-    Compares two version strings and returns True if version1 is older than version2.
-    """
-    # Normalize version strings by replacing underscores with dots
-    version1 = version1.replace('_', '.')
-    version2 = version2.replace('_', '.')
-
-    # Split version strings into lists of integers
-    version1_parts = [int(part) for part in version1.split('.')]
-    version2_parts = [int(part) for part in version2.split('.')]
-
-    # Pad the shorter version with zeros to make both lists the same length
-    length = max(len(version1_parts), len(version2_parts))
-    version1_parts.extend([0] * (length - len(version1_parts)))
-    version2_parts.extend([0] * (length - len(version2_parts)))
-
-    # Compare part by part
-    for v1, v2 in zip(version1_parts, version2_parts):
-        if v1 < v2:
-            return True  # version1 is older
-        elif v1 > v2:
-            return False  # version2 is older
-
-    return False  # versions are equal
-
-def find_newer_version(version, tags):
-    """
-    Finds the newest version from the tag list that is newer than the given version.
-    """
-    newer_version = None
-    for tag in tags:
-        if compare_versions(version, tag['name']):
-            if newer_version is None or compare_versions(newer_version, tag['name']):
-                newer_version = tag['name']
-    return newer_version
 
 def update_version_file(project_name, new_version):
     """
@@ -152,51 +150,52 @@ def update_version_file(project_name, new_version):
     except Exception as e:
         print(f"An error occurred while updating the version file: {e}")
 
-# Example: Input URL from command line argument
-if len(sys.argv) < 2:
-    print("Usage: python t.py <GitLab repository URL>")
-    sys.exit(1)
+def process_version_files(version_dir):
+    """
+    Cycles through all the version files in the specified directory and ensures they are updated.
+    """
+    # Iterate through all files in the version directory
+    for file in os.listdir(version_dir):
+        file_path = os.path.join(version_dir, file)
+        if os.path.isfile(file_path):
+            # Read current version from the version file
+            with open(file_path, 'r') as f:
+                current_version = f.read().strip()
 
-repo_url = sys.argv[1]
+            # Get the project name from the file (assumed to be the project name in GitLab)
+            project_name = file.strip()  # Assuming the file name corresponds to the project name
 
-# Optional: Add your personal access token if the repository is private
-access_token = None  # Replace with your token if needed
+            print_debug(f"Processing {project_name} with current version {current_version}")
 
-# Extract the project name from the repository URL
-project_name = repo_url.split("/")[-1]  # Assuming project name is the last part of the URL
+            # Fetch tags from GitLab for this project
+            project_url = f"https://gitlab.gnome.org/GNOME/{project_name}"
+            tags = get_tags_from_gitlab(project_url)
 
-# Fetch tags from GitLab
-tags = fetch_tags(repo_url, access_token)
+            if tags:
+                # Find the newest version
+                newer_version = find_newer_version(current_version, tags)
 
-if tags:  # If tags were fetched successfully
-    # Get the version from the version/$projectname file
-    project_version = get_version_from_file(project_name)
-
-    if project_version:
-        # Check if the project version matches any of the tags
-        matching_tag = None
-        for tag in tags:
-            if tag['name'] == project_version:
-                matching_tag = tag['name']
-                break
-
-        if matching_tag:
-            print(f"Version {project_version} matches a tag! Downloading the file...")
-            download_file(matching_tag, project_name)
-        else:
-            # Look for a newer version
-            newer_version = find_newer_version(project_version, tags)
-            if newer_version:
-                print(f"Found a newer version: {newer_version}. Downloading the file...")
-                download_file(newer_version, project_name)
-                update_version_file(project_name, newer_version)  # Update the version file with the new version
+                # If a newer version is found, update the version file
+                if newer_version != current_version:
+                    print(f"Updating {file} from {current_version} to {newer_version}")
+                    with open(file_path, 'w') as f:
+                        f.write(newer_version)
             else:
-                print(f"Version {project_version} does not match any tag. Here are the available tags:")
-                print_tags_and_download_url(tags, project_name)
-    else:
-        # No version information found, print the tag list
-        print(f"Version information not found for project {project_name}. Here are the available tags:")
-        print_tags_and_download_url(tags, project_name)
-else:
-    print("No tags fetched. Please check if the repository URL is correct or if there is an authentication issue.")
+                print(f"Failed to fetch tags for {project_name}")
 
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python gnome-gitlab2.py <version_directory>")
+        sys.exit(1)
+
+    version_dir = sys.argv[1]
+
+    if not os.path.isdir(version_dir):
+        print(f"Error: {version_dir} is not a valid directory.")
+        sys.exit(1)
+
+    print(f"Processing versions in {version_dir}...")
+    process_version_files(version_dir)
+
+if __name__ == "__main__":
+    main()
