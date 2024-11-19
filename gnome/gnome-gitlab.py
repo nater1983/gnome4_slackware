@@ -13,7 +13,14 @@ def fetch_tags(repo_url, access_token=None):
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
         
-        base_api_url = "https://gitlab.gnome.org/api/v4"
+      # Check if it's under 'GNOME' or 'World' namespace
+        if "GNOME" in repo_url:
+            base_api_url = "https://gitlab.gnome.org/api/v4"
+        elif "World" in repo_url:
+            base_api_url = "https://gitlab.gnome.org/api/v4"
+        else:
+            raise ValueError("Unsupported GitLab namespace. Only GNOME and World are supported.")
+            
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
         
         if not project_path:
