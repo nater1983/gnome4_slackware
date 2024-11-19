@@ -13,7 +13,8 @@ def print_debug(message):
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository without cloning it and filters out tags older than 9 months.
+    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
+    but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
     """
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
@@ -43,14 +44,26 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
             # Get the date 9 months ago with timezone awareness (UTC in this case)
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
+            three_years_ago = datetime.now(pytz.utc) - timedelta(days=3*365)
 
-            # Filter tags by date, excluding tags older than 9 months
-            tags = [
+            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
+            recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
             ]
 
-            return tags
+            # If no tags are within the last 9 months, consider those from the last 3 years
+            if not recent_tags:
+                recent_tags = [
+                    tag for tag in tags
+                    if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
+                ]
+                if recent_tags:
+                    print_debug(f"No recent tags found. Using the latest tag from the last 3 years.")
+                else:
+                    print_debug(f"No valid tags found within the last 3 years.")
+            
+            return recent_tags
         else:
             print(f"Failed to fetch tags: {response.status_code}")
             return []
