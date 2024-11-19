@@ -42,7 +42,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             tags = response.json()
 
             # Get the date one year ago with timezone awareness (UTC in this case)
-            one_year_ago = datetime.now(pytz.utc) - timedelta(days=365)
+            one_year_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
 
             # Filter tags by date, excluding tags older than one year
             tags = [
