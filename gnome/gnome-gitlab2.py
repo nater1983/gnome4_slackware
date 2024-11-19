@@ -11,11 +11,12 @@ def print_debug(message):
     """Helper function to print debug messages."""
     print(f"[DEBUG] {message}")
 
-def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
+def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
     """
     Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
     Prints the download URLs for the tags found.
+    Optionally, only shows the tag matching the current version.
     """
     try:
         repo_url = repo_url.strip()
@@ -57,10 +58,21 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
 
-            for tag in recent_tags:
-                tag_name = tag['name']
-                download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
-                print(f"Tag: {tag_name}, Download URL: {download_url}")
+            if current_version:
+                # Only print the tag that matches the current version
+                for tag in recent_tags:
+                    tag_name = tag['name']
+                    if tag_name == current_version:
+                        download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                        print(f"Tag: {tag_name}, Download URL: {download_url}")
+                        return [tag]
+
+            else:
+                # If no current version is provided, print all recent tags
+                for tag in recent_tags:
+                    tag_name = tag['name']
+                    download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                    print(f"Tag: {tag_name}, Download URL: {download_url}")
 
             return recent_tags
 
