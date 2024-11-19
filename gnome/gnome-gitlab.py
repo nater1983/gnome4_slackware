@@ -76,64 +76,61 @@ def get_tags_from_gitlab(repo_url, access_token=None):
     except ValueError as ve:
         print(f"ValueError: {ve}")
         return []
+        
 def parse_version(version_str):
     """
     Parses a version string into a list of integers, handling missing components
-    and stripping a leading 'v' if present. Assigns lower precedence to pre-release versions like alpha, beta, and rc.
-    Handles suffixes like 'dev' appropriately.
+    and assigning a lower precedence to pre-release versions like alpha, beta, rc.
     """
     # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
     version_str = version_str.lstrip('v')
     
+    # Handle special suffixes
+    suffix_map = {
+        'alpha': 0,
+        'beta': 1,
+        'rc': 2,
+        'dev': -1,  # Lower precedence than alpha, beta, and rc
+    }
+    
     parts = version_str.replace('_', '.').split('.')
     
-    # Handle pre-release tags like alpha, beta, rc
-    if 'alpha' in parts:
-        parts[parts.index('alpha')] = '0'  # alpha < beta < rc < stable
-    elif 'beta' in parts:
-        parts[parts.index('beta')] = '1'
-    elif 'rc' in parts:
-        parts[parts.index('rc')] = '2'
+    # Convert suffixes to numeric values for comparison
+    for idx, part in enumerate(parts):
+        if part in suffix_map:
+            parts[idx] = str(suffix_map[part])
     
-    # Replace non-numeric parts like 'dev' or 'snapshot' with '0' for comparison
-    parts = [part if part.isdigit() else '0' for part in parts]
+    # Replace non-numeric parts with '0' for comparison
+    parts = [int(part) if part.isdigit() else 0 for part in parts]
     
-    # Convert parts to integers, adding trailing zeros to make it 3 components
-    return [int(part) if part.isdigit() else 0 for part in parts] + [0] * (3 - len(parts))  # Ensure three components
-    
+    # Ensure three components
+    return parts + [0] * (3 - len(parts))
+
 def find_newer_version(current_version, tags):
     """
     Finds the newest version from the tag list compared to the current version.
     """
     current_major, current_minor, current_patch = parse_version(current_version)
 
-    version_dict = {}
-    for tag in tags:
-        try:
-            tag_major, tag_minor, tag_patch = parse_version(tag['name'])
-            if tag_major not in version_dict:
-                version_dict[tag_major] = []
-            version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
-        except ValueError:
-            continue
+    def tag_precedence(tag):
+        """
+        Assign precedence value to tags for proper comparison.
+        """
+        tag_major, tag_minor, tag_patch = parse_version(tag['name'])
+        return (tag_major, tag_minor, tag_patch, -tag.get('type', 3))
 
-    # Check if version_dict is empty
-    if not version_dict:
-        print("No valid tags found.")
-        return current_version  # Return the current version if no valid tags are found
-
-    max_major = max(version_dict.keys())
-    if max_major > current_major:
-        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
-    else:
-        latest_version = current_version
-        for tag_minor, tag_patch, tag_name in version_dict[current_major]:
-            if (tag_minor > current_minor or
-                (tag_minor == current_minor and tag_patch > current_patch)):
-                if not latest_version or tag_name > latest_version:
-                    latest_version = tag_name
-
-    return latest_version
+    # Sort tags by major, minor, patch, and type (type indicates rc, beta, etc.)
+    sorted_tags = sorted(tags, key=tag_precedence, reverse=True)
+    
+    for tag in sorted_tags:
+        tag_major, tag_minor, tag_patch = parse_version(tag['name'])
+        
+        if (tag_major > current_major or
+            (tag_major == current_major and tag_minor > current_minor) or
+            (tag_major == current_major and tag_minor == current_minor and tag_patch > current_patch)):
+            return tag['name']
+    
+    return current_version
 
 def get_version_from_file(project_name):
     """
@@ -167,36 +164,28 @@ def update_version_file(project_name, new_version):
 
 def process_version_files(version_dir):
     """
-    Cycles through all the version files in the specified directory and ensures they are updated.
+    Processes the version files, updating them with the latest GitLab tags.
     """
-    # Iterate through all files in the version directory
-    for file in os.listdir(version_dir):
-        file_path = os.path.join(version_dir, file)
-        if os.path.isfile(file_path):
-            # Read current version from the version file
-            with open(file_path, 'r') as f:
-                current_version = f.read().strip()
+    try:
+        for project_name in os.listdir(version_dir):
+            project_version = get_version_from_file(project_name)
+            if not project_version:
+                print(f"Skipping {project_name} due to missing version.")
+                continue
 
-            # Get the project name from the file (assumed to be the project name in GitLab)
-            project_name = file.strip()  # Assuming the file name corresponds to the project name
-
-            print_debug(f"Processing {project_name} with current version {current_version}")
-
-            # Fetch tags from GitLab for this project
-            project_url = f"https://gitlab.gnome.org/GNOME/{project_name}"
-            tags = get_tags_from_gitlab(project_url)
-
+            tags = get_tags_from_gitlab(f"https://gitlab.gnome.org/{project_name}")
             if tags:
-                # Find the newest version
-                newer_version = find_newer_version(current_version, tags)
-
-                # If a newer version is found, update the version file
-                if newer_version != current_version:
-                    print(f"Updating {file} from {current_version} to {newer_version}")
-                    with open(file_path, 'w') as f:
-                        f.write(newer_version)
+                newer_version = find_newer_version(project_version, tags)
+                if newer_version != project_version:
+                    print(f"Updating version for {project_name}: {project_version} -> {newer_version}")
+                    update_version_file(project_name, newer_version)
+                else:
+                    print(f"Version for {project_name} is already up-to-date.")
             else:
-                print(f"Failed to fetch tags for {project_name}")
+                print(f"No tags found for {project_name}.")
+
+    except Exception as e:
+        print(f"Error processing version files: {e}")
 
 def main():
     if len(sys.argv) != 2:
