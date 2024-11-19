@@ -44,7 +44,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
             # Get the date 9 months ago with timezone awareness (UTC in this case)
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
-            three_years_ago = datetime.now(pytz.utc) - timedelta(days=3*365)
+            three_years_ago = datetime.now(pytz.utc) - timedelta(days=4*365)
 
             # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
             recent_tags = [
