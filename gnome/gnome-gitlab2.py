@@ -118,34 +118,41 @@ def find_newer_version(current_version, tags):
                     latest_version = tag_name
     return latest_version
 
-def process_version_files(version_dir, groups):
+def process_version_files(version_dir):
     """
-    Processes version files and checks for updates in all specified groups.
+    Cycles through all the version files in the specified directory and ensures they are updated.
     """
+    groups = ["GNOME", "WORLD"]
+    
     for file in os.listdir(version_dir):
         file_path = os.path.join(version_dir, file)
         if os.path.isfile(file_path):
+            # Read current version from the version file
             with open(file_path, 'r') as f:
                 current_version = f.read().strip()
 
-            project_name = file.strip()
+            # Get the project name from the file (assumed to be the project name)
+            project_name = file.strip()  # Assuming the file name corresponds to the project name
+
             print_debug(f"Processing {project_name} with current version {current_version}")
 
-            tags = []
+            # Try both groups
             for group in groups:
                 project_url = f"https://gitlab.gnome.org/{group}/{project_name}"
-                print_debug(f"Trying {project_url}")
-                group_tags = get_tags_from_gitlab(project_url)
-                tags.extend(group_tags)
+                tags = get_tags_from_gitlab(project_url, suppress_404=(group != "GNOME"))
+                
+                if tags:
+                    # Find the newest version
+                    newer_version = find_newer_version(current_version, tags)
 
-            if tags:
-                newer_version = find_newer_version(current_version, tags)
-                if newer_version != current_version:
-                    print(f"Updating {file} from {current_version} to {newer_version}")
-                    with open(file_path, 'w') as f:
-                        f.write(newer_version)
+                    # If a newer version is found, update the version file
+                    if newer_version != current_version:
+                        print(f"Updating {file} from {current_version} to {newer_version}")
+                        with open(file_path, 'w') as f:
+                            f.write(newer_version)
+                    break  # Exit the loop once a valid group is found
             else:
-                print(f"No valid tags found for {project_name} in any group.")
+                print(f"No valid tags found for {project_name}")
 
 def main():
     if len(sys.argv) < 3:
