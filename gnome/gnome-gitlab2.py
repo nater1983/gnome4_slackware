@@ -1,18 +1,16 @@
 import os
 import sys
-import urllib.parse
 import requests
+import urllib.parse
 
-# Mapping of project names to their correct GitLab repository names
+# Mapping of project names for repositories that use a different name on GitLab
 PROJECT_NAME_MAP = {
-    "rest": "librest",  # Example: "rest" maps to "librest"
-    # Add other mappings here if needed
+    'rest': 'librest',
+    # Add any other mappings here
 }
 
 def print_debug(message):
-    """
-    Helper function to print debug messages.
-    """
+    """Print debug messages."""
     print(f"[DEBUG] {message}")
 
 def get_tags_from_gitlab(repo_url, access_token=None):
@@ -30,13 +28,16 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
         # Check if the project name has a mapping in the dictionary
         if project_path in PROJECT_NAME_MAP:
-            project_path = PROJECT_NAME_MAP[encoded_path]
+            project_path = PROJECT_NAME_MAP[project_path]
 
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
 
         encoded_path = urllib.parse.quote(project_path, safe="")
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
+
+        # Debug: print the final URL to verify it's correct
+        print_debug(f"Fetching tags from: {tags_url}")
 
         headers = {}
         if access_token:
@@ -50,6 +51,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             return response.json()  # Returns a list of tag info
         else:
             print(f"Failed to fetch tags: {response.status_code}")
+            print(f"Error details: {response.text}")
             return []
 
     except requests.exceptions.RequestException as e:
@@ -61,74 +63,52 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
 def parse_version(version_str):
     """
-    Parses a version string into a list of integers, handling missing components.
+    Parses a version string into a list of integers, filling missing parts with zeros.
     """
     parts = version_str.replace('_', '.').split('.')
     return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
 
 def find_newer_version(current_version, tags):
     """
-    Finds the newest version from the tag list compared to the current version.
+    Finds the newer version from the list of tags, considering both major version changes
+    and updates within the current major version.
     """
+    # Parse the current version
     current_major, current_minor, current_patch = parse_version(current_version)
 
     version_dict = {}
     for tag in tags:
-        try:
-            tag_major, tag_minor, tag_patch = parse_version(tag['name'])
-            if tag_major not in version_dict:
-                version_dict[tag_major] = []
-            version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
-        except ValueError:
-            continue
+        tag_major, tag_minor, tag_patch = parse_version(tag['name'])
+        if tag_major not in version_dict:
+            version_dict[tag_major] = []
+        version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
 
-    # Check if version_dict is empty
-    if not version_dict:
-        print("No valid tags found.")
-        return current_version  # Return the current version if no valid tags are found
+    # Debug: print the version dictionary for inspection
+    print_debug(f"Version dictionary: {version_dict}")
 
-    max_major = max(version_dict.keys())
+    # Find the latest major version
+    max_major = max(version_dict.keys()) if version_dict else 0
     if max_major > current_major:
-        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
+        # New major version found, find the latest version within this major version
+        latest_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
     else:
-        latest_version = current_version
+        # Within the same major version, find the latest version
+        latest_version = None
         for tag_minor, tag_patch, tag_name in version_dict[current_major]:
             if (tag_minor > current_minor or
                 (tag_minor == current_minor and tag_patch > current_patch)):
-                if not latest_version or tag_name > latest_version:
+                if not latest_version or compare_versions(latest_version, tag_name):
                     latest_version = tag_name
 
     return latest_version
 
-def get_version_from_file(project_name):
+def compare_versions(version1, version2):
     """
-    Retrieves the version from the version file for the project.
+    Compares two version strings and returns True if version1 is newer than version2.
     """
-    version_file_path = f"version/{project_name}"
-
-    if os.path.exists(version_file_path):
-        try:
-            with open(version_file_path, "r") as file:
-                version = file.read().strip()
-                return version
-        except Exception as e:
-            print(f"An error occurred while reading version file: {e}")
-            return None
-    else:
-        print(f"Version file for {project_name} not found.")
-        return None
-
-def update_version_file(project_name, new_version):
-    """
-    Updates the version file for the project with the new version.
-    """
-    version_file_path = f"version/{project_name}"
-    try:
-        with open(version_file_path, "w") as file:
-            file.write(new_version)
-        print(f"Updated version file: {version_file_path} to version {new_version}")
-    except Exception as e:
-        print(f"An error occurred while updating the version file: {e}")
+    v1_parts = parse_version(version1)
+    v2_parts = parse_version(version2)
+    return v1_parts > v2_parts
 
 def process_version_files(version_dir):
     """
@@ -165,7 +145,7 @@ def process_version_files(version_dir):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python t.py <version_directory>")
+        print("Usage: python gnome-gitlab2.py <version_directory>")
         sys.exit(1)
 
     version_dir = sys.argv[1]
