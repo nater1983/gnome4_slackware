@@ -2,6 +2,7 @@ import os
 import sys
 import urllib.parse
 import requests
+from datetime import datetime, timedelta
 
 def print_debug(message):
     """
@@ -11,7 +12,7 @@ def print_debug(message):
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository without cloning it.
+    Fetches all tags from a GitLab repository without cloning it and filters out tags older than a year.
     """
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
@@ -37,7 +38,18 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
         # Check if the request was successful
         if response.status_code == 200:
-            return response.json()  # Returns a list of tag info
+            tags = response.json()
+
+            # Get the date one year ago
+            one_year_ago = datetime.now() - timedelta(days=365)
+
+            # Filter tags by date, excluding tags older than one year
+            tags = [
+                tag for tag in tags
+                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ") > one_year_ago
+            ]
+
+            return tags
         else:
             print(f"Failed to fetch tags: {response.status_code}")
             return []
