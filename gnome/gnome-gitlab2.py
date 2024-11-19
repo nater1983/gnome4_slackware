@@ -30,7 +30,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
         # Check if the project name has a mapping in the dictionary
         if project_path in PROJECT_NAME_MAP:
-            project_path = PROJECT_NAME_MAP[project_path]
+            project_path = PROJECT_NAME_MAP[encoded_path]
 
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
