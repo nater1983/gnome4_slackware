@@ -173,7 +173,7 @@ def process_version_files(version_dir):
                 print(f"Skipping {project_name} due to missing version.")
                 continue
 
-            tags = get_tags_from_gitlab(f"https://gitlab.gnome.org/{project_name}")
+            tags = get_tags_from_gitlab(f"https://gitlab.gnome.org/GNOME/{project_name}")
             if tags:
                 newer_version = find_newer_version(project_version, tags)
                 if newer_version != project_version:
