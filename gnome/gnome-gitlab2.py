@@ -13,7 +13,7 @@ def print_debug(message):
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
+    Fetches all tags from a GitLab repository, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
     """
     try:
@@ -22,14 +22,14 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
-      # Check if it's under 'GNOME' or 'World' namespace
+        # Check if it's under 'GNOME' or 'World' namespace
         if "GNOME" in repo_url:
             base_api_url = "https://gitlab.gnome.org/api/v4"
         elif "World" in repo_url:
             base_api_url = "https://gitlab.gnome.org/api/v4"
         else:
             raise ValueError("Unsupported GitLab namespace. Only GNOME and World are supported.")
-        
+
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
 
         if not project_path:
@@ -66,11 +66,14 @@ def get_tags_from_gitlab(repo_url, access_token=None):
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
                 if recent_tags:
-                    print_debug(f"No recent tags found. Using the latest tag from the last 3 years.")
+                    print_debug(f"No recent tags found. Using the latest tag from the last 4 years.")
                 else:
                     print_debug(f"No valid tags found within the last 4 years.")
             
             return recent_tags
+        elif response.status_code == 404:
+            print(f"Repository not found (404): {repo_url}")
+            return []
         else:
             print(f"Failed to fetch tags: {response.status_code}")
             return []
