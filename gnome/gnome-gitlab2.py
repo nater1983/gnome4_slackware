@@ -11,7 +11,7 @@ def print_debug(message):
     """Helper function to print debug messages."""
     print(f"[DEBUG] {message}")
 
-def get_tags_from_gitlab(repo_url, access_token=None):
+def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
     """
     Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
@@ -40,6 +40,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
         # Check if the request was successful
         if response.status_code == 200:
+            print_debug(f"Successfully fetched tags from {repo_url}")
             tags = response.json()
 
             # Get the date 9 months ago with timezone awareness (UTC in this case)
@@ -66,7 +67,8 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             return recent_tags
 
         elif response.status_code == 404:
-            print_debug(f"Repository not found: {repo_url}. Skipping.")
+            if not suppress_404:
+                print_debug(f"Repository not found: {repo_url}. Skipping.")
             return []
 
         else:
