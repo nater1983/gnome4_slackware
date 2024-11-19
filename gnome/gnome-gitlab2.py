@@ -26,6 +26,7 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, suppres
         list: A list of recent tags (up to 3 years old if no tags within the last 9 months).
     """
     try:
+        # Clean up and validate the URL
         repo_url = repo_url.strip()
 
         if not repo_url.startswith("https://gitlab.gnome.org/"):
