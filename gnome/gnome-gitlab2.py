@@ -46,7 +46,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             # Filter tags by date, excluding tags older than one year
             tags = [
                 tag for tag in tags
-                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ") > one_year_ago
+                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > one_year_ago
             ]
 
             return tags
