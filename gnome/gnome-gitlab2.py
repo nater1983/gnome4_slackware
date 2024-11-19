@@ -115,12 +115,22 @@ def process_version_files(version_dir):
                     print(f"Updating {file} from {current_version} to {newer_version}")
                     with open(file_path, 'w') as f:
                         f.write(newer_version)
-
-                # Print the download URL for the project
-                print(f"Download URL for {project_name}: {download_url}")
             else:
                 print(f"Failed to fetch tags for {project_name}")
 
-# Example Usage
-version_directory = "/path/to/your/version/files"
-process_version_files(version_directory)
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python gnome-gitlab2.py <version_directory>")
+        sys.exit(1)
+
+    version_dir = sys.argv[1]
+
+    if not os.path.isdir(version_dir):
+        print(f"Error: {version_dir} is not a valid directory.")
+        sys.exit(1)
+
+    print(f"Processing versions in {version_dir}...")
+    process_version_files(version_dir)
+
+if __name__ == "__main__":
+    main()
