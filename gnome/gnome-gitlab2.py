@@ -3,6 +3,12 @@ import sys
 import urllib.parse
 import requests
 
+# Mapping of project names to their correct GitLab repository names
+PROJECT_NAME_MAP = {
+    "rest": "librest",  # Example: "rest" maps to "librest"
+    # Add other mappings here if needed
+}
+
 def print_debug(message):
     """
     Helper function to print debug messages.
@@ -21,6 +27,10 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
         base_api_url = "https://gitlab.gnome.org/api/v4"
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
+
+        # Check if the project name has a mapping in the dictionary
+        if project_path in PROJECT_NAME_MAP:
+            project_path = PROJECT_NAME_MAP[project_path]
 
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
