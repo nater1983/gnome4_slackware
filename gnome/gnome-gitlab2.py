@@ -19,25 +19,30 @@ def get_tags_from_gitlab(repo_url, access_token=None):
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
 
+        # Ensure the URL is valid
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
-        # Check if it's under 'GNOME' or 'World' namespace
+        # Check if the repository is in the 'GNOME' or 'World' namespace
         if "GNOME" in repo_url:
-            base_api_url = "https://gitlab.gnome.org/api/v4"
+            namespace = "GNOME"
         elif "World" in repo_url:
-            base_api_url = "https://gitlab.gnome.org/api/v4"
+            namespace = "World"
         else:
             raise ValueError("Unsupported GitLab namespace. Only GNOME and World are supported.")
 
-        project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
-
+        # Extract the project path from the URL
+        project_path = repo_url.replace(f"https://gitlab.gnome.org/{namespace}/", "").rstrip(".git")
+        
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
 
+        # Encode the project path for the API URL
         encoded_path = urllib.parse.quote(project_path, safe="")
+        base_api_url = "https://gitlab.gnome.org/api/v4"
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
 
+        # Prepare the request headers with access token if provided
         headers = {}
         if access_token:
             headers["Private-Token"] = access_token
@@ -53,7 +58,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
             three_years_ago = datetime.now(pytz.utc) - timedelta(days=4*365)
 
-            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
+            # Filter tags by date, excluding tags older than 9 months
             recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
