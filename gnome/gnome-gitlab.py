@@ -79,35 +79,24 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
 def parse_version(version_str):
     """
-    Parses a version string into a list of integers, handling missing components,
-    stripping a leading 'v' if present, and assigning numerical precedence to pre-release labels.
+    Parses a version string into a list of integers, handling missing components
+    and stripping a leading 'v' if present. Assigns lower precedence to pre-release versions like alpha, beta, and rc.
     """
-    # Strip the leading 'v' if present (e.g., v47.alpha -> 47.alpha)
+    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
     version_str = version_str.lstrip('v')
-
-    # Pre-release labels with numeric precedence (alpha < beta < rc < stable)
-    pre_release_map = {
-        'alpha': 0,
-        'beta': 1,
-        'rc': 2,
-    }
-
-    # Split the version into parts
-    parts = version_str.split('.')
-
-    # Convert version parts into integers, handling pre-release labels
-    parsed_parts = []
-    for part in parts:
-        if part.isdigit():  # Handle numeric components like '47', '0', '1'
-            parsed_parts.append(int(part))
-        elif part in pre_release_map:  # Handle pre-release labels
-            parsed_parts.append(pre_release_map[part])
-        else:
-            # If part is an invalid string (e.g., a string like 'unstable'), handle it
-            parsed_parts.append(0)  # Default value or raise an error if you prefer
-
-    # Ensure three components by padding with zeros if necessary
-    return parsed_parts + [0] * (3 - len(parsed_parts))  # Ensure three components
+    
+    parts = version_str.replace('_', '.').split('.')
+    
+    # If the version has 'alpha', 'beta', or 'rc', assign lower precedence to them
+    if 'alpha' in parts:
+        parts[parts.index('alpha')] = '0'  # alpha < beta < rc < stable
+    elif 'beta' in parts:
+        parts[parts.index('beta')] = '1'
+    elif 'rc' in parts:
+        parts[parts.index('rc')] = '2'
+    
+    # Convert parts to integers, adding trailing zeros to make it 3 components
+    return [int(part) if part.isdigit() else int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
 
 def find_newer_version(current_version, tags):
     """
