@@ -5,11 +5,11 @@ import requests
 
 def print_debug(message):
     """
-    Prints debug messages to the console.
+    Helper function to print debug messages.
     """
     print(f"[DEBUG] {message}")
 
-def fetch_tags(repo_url, access_token=None):
+def get_tags_from_gitlab(repo_url, access_token=None):
     """
     Fetches all tags from a GitLab repository without cloning it.
     """
@@ -32,8 +32,10 @@ def fetch_tags(repo_url, access_token=None):
         if access_token:
             headers["Private-Token"] = access_token
 
+        # Send the GET request to fetch the tags
         response = requests.get(tags_url, headers=headers)
 
+        # Check if the request was successful
         if response.status_code == 200:
             return response.json()  # Returns a list of tag info
         else:
@@ -47,15 +49,17 @@ def fetch_tags(repo_url, access_token=None):
         print(f"ValueError: {ve}")
         return []
 
+def parse_version(version_str):
+    """
+    Parses a version string into a list of integers, handling missing components.
+    """
+    parts = version_str.replace('_', '.').split('.')
+    return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
 
 def find_newer_version(current_version, tags):
     """
     Finds the newest version from the tag list compared to the current version.
     """
-    def parse_version(version_str):
-        parts = version_str.replace('_', '.').split('.')
-        return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
-
     current_major, current_minor, current_patch = parse_version(current_version)
 
     version_dict = {}
@@ -67,6 +71,11 @@ def find_newer_version(current_version, tags):
             version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
         except ValueError:
             continue
+
+    # Check if version_dict is empty
+    if not version_dict:
+        print("No valid tags found.")
+        return current_version  # Return the current version if no valid tags are found
 
     max_major = max(version_dict.keys())
     if max_major > current_major:
@@ -81,33 +90,68 @@ def find_newer_version(current_version, tags):
 
     return latest_version
 
+def get_version_from_file(project_name):
+    """
+    Retrieves the version from the version file for the project.
+    """
+    version_file_path = f"version/{project_name}"
+
+    if os.path.exists(version_file_path):
+        try:
+            with open(version_file_path, "r") as file:
+                version = file.read().strip()
+                return version
+        except Exception as e:
+            print(f"An error occurred while reading version file: {e}")
+            return None
+    else:
+        print(f"Version file for {project_name} not found.")
+        return None
+
+def update_version_file(project_name, new_version):
+    """
+    Updates the version file for the project with the new version.
+    """
+    version_file_path = f"version/{project_name}"
+    try:
+        with open(version_file_path, "w") as file:
+            file.write(new_version)
+        print(f"Updated version file: {version_file_path} to version {new_version}")
+    except Exception as e:
+        print(f"An error occurred while updating the version file: {e}")
 
 def process_version_files(version_dir):
     """
     Cycles through all the version files in the specified directory and ensures they are updated.
     """
+    # Iterate through all files in the version directory
     for file in os.listdir(version_dir):
         file_path = os.path.join(version_dir, file)
         if os.path.isfile(file_path):
+            # Read current version from the version file
             with open(file_path, 'r') as f:
                 current_version = f.read().strip()
 
+            # Get the project name from the file (assumed to be the project name in GitLab)
             project_name = file.strip()  # Assuming the file name corresponds to the project name
 
             print_debug(f"Processing {project_name} with current version {current_version}")
 
+            # Fetch tags from GitLab for this project
             project_url = f"https://gitlab.gnome.org/GNOME/{project_name}"
-            tags = fetch_tags(project_url)
+            tags = get_tags_from_gitlab(project_url)
 
             if tags:
+                # Find the newest version
                 newer_version = find_newer_version(current_version, tags)
+
+                # If a newer version is found, update the version file
                 if newer_version != current_version:
                     print(f"Updating {file} from {current_version} to {newer_version}")
                     with open(file_path, 'w') as f:
                         f.write(newer_version)
             else:
                 print(f"Failed to fetch tags for {project_name}")
-
 
 def main():
     if len(sys.argv) != 2:
@@ -122,7 +166,6 @@ def main():
 
     print(f"Processing versions in {version_dir}...")
     process_version_files(version_dir)
-
 
 if __name__ == "__main__":
     main()
