@@ -61,7 +61,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
                 if recent_tags:
                     print_debug(f"No recent tags found. Using the latest tag from the last 3 years.")
                 else:
-                    print_debug(f"No valid tags found within the last 3 years.")
+                    print_debug(f"No valid tags found within the last 4 years.")
             
             return recent_tags
         else:
