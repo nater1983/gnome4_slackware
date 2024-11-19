@@ -8,28 +8,21 @@ from datetime import datetime, timedelta
 import pytz  # Required for timezone handling
 
 def print_debug(message):
-    """
-    Helper function to print debug messages.
-    """
+    """Helper function to print debug messages."""
     print(f"[DEBUG] {message}")
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
-    but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
+    Fetches tags from a GitLab repository, filtering by date.
     """
     try:
-        repo_url = repo_url.strip()  # Remove any leading/trailing spaces
+        repo_url = repo_url.strip()
 
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
         base_api_url = "https://gitlab.gnome.org/api/v4"
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
-
-        if not project_path:
-            raise ValueError("Invalid GitLab repository URL provided.")
-
         encoded_path = urllib.parse.quote(project_path, safe="")
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
 
@@ -37,34 +30,25 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         if access_token:
             headers["Private-Token"] = access_token
 
-        # Send the GET request to fetch the tags
         response = requests.get(tags_url, headers=headers)
-
-        # Check if the request was successful
         if response.status_code == 200:
             tags = response.json()
-
-            # Get the date 9 months ago with timezone awareness (UTC in this case)
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
             three_years_ago = datetime.now(pytz.utc) - timedelta(days=4*365)
 
-            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
             recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
             ]
-
-            # If no tags are within the last 9 months, consider those from the last 3 years
             if not recent_tags:
                 recent_tags = [
                     tag for tag in tags
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
                 if recent_tags:
-                    print_debug(f"No recent tags found. Using the latest tag from the last 4 years.")
+                    print_debug("No recent tags found. Using older tags from the last 4 years.")
                 else:
-                    print_debug(f"No valid tags found within the last 4 years.")
-            
+                    print_debug("No valid tags found within the last 4 years.")
             return recent_tags
         else:
             print(f"Failed to fetch tags: {response.status_code}")
@@ -78,23 +62,16 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         return []
 
 def parse_version(version_str):
-    """
-    Parses a version string into a list of integers, handling missing components
-    and stripping a leading 'v' if present.
-    """
-    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
+    """Parses a version string into a list of integers."""
     version_str = version_str.lstrip('v')
-    
     parts = version_str.replace('_', '.').split('.')
-    return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
+    return [int(part) for part in parts] + [0] * (3 - len(parts))
 
 def find_newer_version(current_version, tags):
-    """
-    Finds the newest version from the tag list compared to the current version.
-    """
+    """Finds the newest version from the tag list compared to the current version."""
     current_major, current_minor, current_patch = parse_version(current_version)
-
     version_dict = {}
+
     for tag in tags:
         try:
             tag_major, tag_minor, tag_patch = parse_version(tag['name'])
@@ -104,10 +81,9 @@ def find_newer_version(current_version, tags):
         except ValueError:
             continue
 
-    # Check if version_dict is empty
     if not version_dict:
         print("No valid tags found.")
-        return current_version  # Return the current version if no valid tags are found
+        return current_version
 
     max_major = max(version_dict.keys())
     if max_major > current_major:
@@ -119,85 +95,51 @@ def find_newer_version(current_version, tags):
                 (tag_minor == current_minor and tag_patch > current_patch)):
                 if not latest_version or tag_name > latest_version:
                     latest_version = tag_name
-
     return latest_version
 
-def get_version_from_file(project_name):
+def process_version_files(version_dir, groups):
     """
-    Retrieves the version from the version file for the project.
+    Processes version files and checks for updates in all specified groups.
     """
-    version_file_path = f"version/{project_name}"
-
-    if os.path.exists(version_file_path):
-        try:
-            with open(version_file_path, "r") as file:
-                version = file.read().strip()
-                return version
-        except Exception as e:
-            print(f"An error occurred while reading version file: {e}")
-            return None
-    else:
-        print(f"Version file for {project_name} not found.")
-        return None
-
-def update_version_file(project_name, new_version):
-    """
-    Updates the version file for the project with the new version.
-    """
-    version_file_path = f"version/{project_name}"
-    try:
-        with open(version_file_path, "w") as file:
-            file.write(new_version)
-        print(f"Updated version file: {version_file_path} to version {new_version}")
-    except Exception as e:
-        print(f"An error occurred while updating the version file: {e}")
-
-def process_version_files(version_dir):
-    """
-    Cycles through all the version files in the specified directory and ensures they are updated.
-    """
-    # Iterate through all files in the version directory
     for file in os.listdir(version_dir):
         file_path = os.path.join(version_dir, file)
         if os.path.isfile(file_path):
-            # Read current version from the version file
             with open(file_path, 'r') as f:
                 current_version = f.read().strip()
 
-            # Get the project name from the file (assumed to be the project name in GitLab)
-            project_name = file.strip()  # Assuming the file name corresponds to the project name
-
+            project_name = file.strip()
             print_debug(f"Processing {project_name} with current version {current_version}")
 
-            # Fetch tags from GitLab for this project
-            project_url = f"https://gitlab.gnome.org/WORLD/{project_name}"
-            tags = get_tags_from_gitlab(project_url)
+            tags = []
+            for group in groups:
+                project_url = f"https://gitlab.gnome.org/{group}/{project_name}"
+                print_debug(f"Trying {project_url}")
+                group_tags = get_tags_from_gitlab(project_url)
+                tags.extend(group_tags)
 
             if tags:
-                # Find the newest version
                 newer_version = find_newer_version(current_version, tags)
-
-                # If a newer version is found, update the version file
                 if newer_version != current_version:
                     print(f"Updating {file} from {current_version} to {newer_version}")
                     with open(file_path, 'w') as f:
                         f.write(newer_version)
             else:
-                print(f"Failed to fetch tags for {project_name}")
+                print(f"No valid tags found for {project_name} in any group.")
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python gnome-gitlab2.py <version_directory>")
+    if len(sys.argv) < 3:
+        print("Usage: python script.py <version_directory> <group1> [<group2> ...]")
         sys.exit(1)
 
     version_dir = sys.argv[1]
+    groups = sys.argv[2:]
 
     if not os.path.isdir(version_dir):
         print(f"Error: {version_dir} is not a valid directory.")
         sys.exit(1)
 
-    print(f"Processing versions in {version_dir}...")
-    process_version_files(version_dir)
+    print(f"Processing versions in {version_dir} for groups: {', '.join(groups)}...")
+    process_version_files(version_dir, groups)
 
 if __name__ == "__main__":
     main()
