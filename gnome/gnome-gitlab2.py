@@ -15,15 +15,17 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
     """
     Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
+    Prints the download URLs for the tags found.
     """
     try:
-        repo_url = repo_url.strip()  # Remove any leading/trailing spaces
+        repo_url = repo_url.strip()
 
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
         base_api_url = "https://gitlab.gnome.org/api/v4"
         project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
+        repository_name = project_path.split("/")[-1]
 
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
@@ -35,34 +37,30 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
         if access_token:
             headers["Private-Token"] = access_token
 
-        # Send the GET request to fetch the tags
         response = requests.get(tags_url, headers=headers)
 
-        # Check if the request was successful
         if response.status_code == 200:
             print_debug(f"Successfully fetched tags from {repo_url}")
             tags = response.json()
 
-            # Get the date 9 months ago with timezone awareness (UTC in this case)
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9 * 30)
             three_years_ago = datetime.now(pytz.utc) - timedelta(days=4 * 365)
 
-            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
             recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
             ]
 
-            # If no tags are within the last 9 months, consider those from the last 3 years
             if not recent_tags:
                 recent_tags = [
                     tag for tag in tags
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
-                if recent_tags:
-                    print_debug(f"No recent tags found. Using the latest tag from the last 4 years.")
-                else:
-                    print_debug(f"No valid tags found within the last 4 years.")
+
+            for tag in recent_tags:
+                tag_name = tag['name']
+                download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                print(f"Tag: {tag_name}, Download URL: {download_url}")
 
             return recent_tags
 
