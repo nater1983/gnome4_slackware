@@ -79,14 +79,35 @@ def get_tags_from_gitlab(repo_url, access_token=None):
 
 def parse_version(version_str):
     """
-    Parses a version string into a list of integers, handling missing components
-    and stripping a leading 'v' if present.
+    Parses a version string into a list of integers, handling missing components,
+    stripping a leading 'v' if present, and assigning numerical precedence to pre-release labels.
     """
-    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
+    # Strip the leading 'v' if present (e.g., v47.alpha -> 47.alpha)
     version_str = version_str.lstrip('v')
-    
-    parts = version_str.replace('_', '.').split('.')
-    return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
+
+    # Pre-release labels with numeric precedence (alpha < beta < rc < stable)
+    pre_release_map = {
+        'alpha': 0,
+        'beta': 1,
+        'rc': 2,
+    }
+
+    # Split the version into parts
+    parts = version_str.split('.')
+
+    # Convert version parts into integers, handling pre-release labels
+    parsed_parts = []
+    for part in parts:
+        if part.isdigit():  # Handle numeric components like '47', '0', '1'
+            parsed_parts.append(int(part))
+        elif part in pre_release_map:  # Handle pre-release labels
+            parsed_parts.append(pre_release_map[part])
+        else:
+            # If part is an invalid string (e.g., a string like 'unstable'), handle it
+            parsed_parts.append(0)  # Default value or raise an error if you prefer
+
+    # Ensure three components by padding with zeros if necessary
+    return parsed_parts + [0] * (3 - len(parsed_parts))  # Ensure three components
 
 def find_newer_version(current_version, tags):
     """
