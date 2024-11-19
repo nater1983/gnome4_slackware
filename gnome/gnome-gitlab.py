@@ -76,18 +76,18 @@ def get_tags_from_gitlab(repo_url, access_token=None):
     except ValueError as ve:
         print(f"ValueError: {ve}")
         return []
-
 def parse_version(version_str):
     """
     Parses a version string into a list of integers, handling missing components
     and stripping a leading 'v' if present. Assigns lower precedence to pre-release versions like alpha, beta, and rc.
+    Handles suffixes like 'dev' appropriately.
     """
     # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
     version_str = version_str.lstrip('v')
     
     parts = version_str.replace('_', '.').split('.')
     
-    # If the version has 'alpha', 'beta', or 'rc', assign lower precedence to them
+    # Handle pre-release tags like alpha, beta, rc
     if 'alpha' in parts:
         parts[parts.index('alpha')] = '0'  # alpha < beta < rc < stable
     elif 'beta' in parts:
@@ -95,9 +95,12 @@ def parse_version(version_str):
     elif 'rc' in parts:
         parts[parts.index('rc')] = '2'
     
+    # Replace non-numeric parts like 'dev' or 'snapshot' with '0' for comparison
+    parts = [part if part.isdigit() else '0' for part in parts]
+    
     # Convert parts to integers, adding trailing zeros to make it 3 components
-    return [int(part) if part.isdigit() else int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
-
+    return [int(part) if part.isdigit() else 0 for part in parts] + [0] * (3 - len(parts))  # Ensure three components
+    
 def find_newer_version(current_version, tags):
     """
     Finds the newest version from the tag list compared to the current version.
