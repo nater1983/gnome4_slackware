@@ -1,48 +1,35 @@
 import os
-import sys
-import urllib.parse
 import requests
+import urllib.parse
 from datetime import datetime, timedelta
-import pytz  # Required for timezone handling
+import pytz
 
+# Debug function to print additional details
 def print_debug(message):
-    """
-    Helper function to print debug messages.
-    """
     print(f"[DEBUG] {message}")
 
 def get_tags_from_gitlab(repo_url, access_token=None):
     """
-    Fetches all tags from a GitLab repository, filtering out tags older than 9 months,
+    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
+    Also returns the download URL for the repository.
     """
     try:
         repo_url = repo_url.strip()  # Remove any leading/trailing spaces
 
-        # Ensure the URL is valid
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
-        # Check if the repository is in the 'GNOME' or 'World' namespace
-        if "GNOME" in repo_url:
-            namespace = "GNOME"
-        elif "World" in repo_url:
-            namespace = "World"
-        else:
-            raise ValueError("Unsupported GitLab namespace. Only GNOME and World are supported.")
+        base_api_url = "https://gitlab.gnome.org/api/v4"
+        project_path = repo_url.replace("https://gitlab.gnome.org/", "").rstrip(".git")
 
-        # Extract the project path from the URL
-        project_path = repo_url.replace(f"https://gitlab.gnome.org/{namespace}/", "").rstrip(".git")
-        
         if not project_path:
             raise ValueError("Invalid GitLab repository URL provided.")
 
-        # Encode the project path for the API URL
         encoded_path = urllib.parse.quote(project_path, safe="")
-        base_api_url = "https://gitlab.gnome.org/api/v4"
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
+        download_url = f"{base_api_url}/projects/{encoded_path}/repository/archive.tar.gz"
 
-        # Prepare the request headers with access token if provided
         headers = {}
         if access_token:
             headers["Private-Token"] = access_token
@@ -58,7 +45,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9*30)
             three_years_ago = datetime.now(pytz.utc) - timedelta(days=4*365)
 
-            # Filter tags by date, excluding tags older than 9 months
+            # Filter tags by date, excluding tags older than 9 months, but consider up to 3 years ago as valid
             recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
@@ -75,95 +62,28 @@ def get_tags_from_gitlab(repo_url, access_token=None):
                 else:
                     print_debug(f"No valid tags found within the last 4 years.")
             
-            return recent_tags
-        elif response.status_code == 404:
-            print(f"Repository not found (404): {repo_url}")
-            return []
+            return recent_tags, download_url
         else:
             print(f"Failed to fetch tags: {response.status_code}")
-            return []
+            return [], None
 
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while fetching tags: {e}")
-        return []
+        return [], None
     except ValueError as ve:
         print(f"ValueError: {ve}")
-        return []
-
-def parse_version(version_str):
-    """
-    Parses a version string into a list of integers, handling missing components
-    and stripping a leading 'v' if present.
-    """
-    # Strip the leading 'v' if present (e.g., v3.4.9 -> 3.4.9)
-    version_str = version_str.lstrip('v')
-    
-    parts = version_str.replace('_', '.').split('.')
-    return [int(part) for part in parts] + [0] * (3 - len(parts))  # Ensure three components
+        return [], None
 
 def find_newer_version(current_version, tags):
     """
-    Finds the newest version from the tag list compared to the current version.
+    Compares the current version with the list of tags and returns the latest tag (version).
     """
-    current_major, current_minor, current_patch = parse_version(current_version)
-
-    version_dict = {}
+    latest_version = current_version
     for tag in tags:
-        try:
-            tag_major, tag_minor, tag_patch = parse_version(tag['name'])
-            if tag_major not in version_dict:
-                version_dict[tag_major] = []
-            version_dict[tag_major].append((tag_minor, tag_patch, tag['name']))
-        except ValueError:
-            continue
-
-    # Check if version_dict is empty
-    if not version_dict:
-        print("No valid tags found.")
-        return current_version  # Return the current version if no valid tags are found
-
-    max_major = max(version_dict.keys())
-    if max_major > current_major:
-        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
-    else:
-        latest_version = current_version
-        for tag_minor, tag_patch, tag_name in version_dict[current_major]:
-            if (tag_minor > current_minor or
-                (tag_minor == current_minor and tag_patch > current_patch)):
-                if not latest_version or tag_name > latest_version:
-                    latest_version = tag_name
-
+        tag_version = tag['name']
+        if tag_version > latest_version:
+            latest_version = tag_version
     return latest_version
-
-def get_version_from_file(project_name):
-    """
-    Retrieves the version from the version file for the project.
-    """
-    version_file_path = f"version/{project_name}"
-
-    if os.path.exists(version_file_path):
-        try:
-            with open(version_file_path, "r") as file:
-                version = file.read().strip()
-                return version
-        except Exception as e:
-            print(f"An error occurred while reading version file: {e}")
-            return None
-    else:
-        print(f"Version file for {project_name} not found.")
-        return None
-
-def update_version_file(project_name, new_version):
-    """
-    Updates the version file for the project with the new version.
-    """
-    version_file_path = f"version/{project_name}"
-    try:
-        with open(version_file_path, "w") as file:
-            file.write(new_version)
-        print(f"Updated version file: {version_file_path} to version {new_version}")
-    except Exception as e:
-        print(f"An error occurred while updating the version file: {e}")
 
 def process_version_files(version_dir):
     """
@@ -182,9 +102,9 @@ def process_version_files(version_dir):
 
             print_debug(f"Processing {project_name} with current version {current_version}")
 
-            # Fetch tags from GitLab for this project
+            # Fetch tags and download URL from GitLab for this project
             project_url = f"https://gitlab.gnome.org/GNOME/{project_name}"
-            tags = get_tags_from_gitlab(project_url)
+            tags, download_url = get_tags_from_gitlab(project_url)
 
             if tags:
                 # Find the newest version
@@ -195,22 +115,12 @@ def process_version_files(version_dir):
                     print(f"Updating {file} from {current_version} to {newer_version}")
                     with open(file_path, 'w') as f:
                         f.write(newer_version)
+
+                # Print the download URL for the project
+                print(f"Download URL for {project_name}: {download_url}")
             else:
                 print(f"Failed to fetch tags for {project_name}")
 
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python gnome-gitlab2.py <version_directory>")
-        sys.exit(1)
-
-    version_dir = sys.argv[1]
-
-    if not os.path.isdir(version_dir):
-        print(f"Error: {version_dir} is not a valid directory.")
-        sys.exit(1)
-
-    print(f"Processing versions in {version_dir}...")
-    process_version_files(version_dir)
-
-if __name__ == "__main__":
-    main()
+# Example Usage
+version_directory = "/path/to/your/version/files"
+process_version_files(version_directory)
