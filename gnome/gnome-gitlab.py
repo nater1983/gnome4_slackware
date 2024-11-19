@@ -59,7 +59,7 @@ def get_tags_from_gitlab(repo_url, access_token=None):
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
                 if recent_tags:
-                    print_debug(f"No recent tags found. Using the latest tag from the last 3 years.")
+                    print_debug(f"No recent tags found. Using the latest tag from the last 4 years.")
                 else:
                     print_debug(f"No valid tags found within the last 4 years.")
             
