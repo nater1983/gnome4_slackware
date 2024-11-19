@@ -11,22 +11,13 @@ def print_debug(message):
     """Helper function to print debug messages."""
     print(f"[DEBUG] {message}")
 
-def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, suppress_output=True):
+def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True):
     """
     Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
     but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
-
-    Args:
-        repo_url (str): The GitLab repository URL.
-        access_token (str, optional): GitLab access token for private repositories.
-        suppress_404 (bool, optional): Whether to suppress messages for 404 errors. Defaults to True.
-        suppress_output (bool, optional): Whether to suppress tag and download URL output. Defaults to True.
-
-    Returns:
-        list: A list of recent tags (up to 3 years old if no tags within the last 9 months).
+    Prints the download URLs for the tags found.
     """
     try:
-        # Clean up and validate the URL
         repo_url = repo_url.strip()
 
         if not repo_url.startswith("https://gitlab.gnome.org/"):
@@ -52,11 +43,9 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, suppres
             print_debug(f"Successfully fetched tags from {repo_url}")
             tags = response.json()
 
-            # Calculate date ranges
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9 * 30)
             three_years_ago = datetime.now(pytz.utc) - timedelta(days=4 * 365)
 
-            # Filter tags by creation date
             recent_tags = [
                 tag for tag in tags
                 if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
@@ -68,12 +57,10 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, suppres
                     if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
                 ]
 
-            # Optionally print tags and their download URLs
-            if not suppress_output:
-                for tag in recent_tags:
-                    tag_name = tag['name']
-                    download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
-                    print(f"Tag: {tag_name}, Download URL: {download_url}")
+            for tag in recent_tags:
+                tag_name = tag['name']
+                download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                print(f"Tag: {tag_name}, Download URL: {download_url}")
 
             return recent_tags
 
