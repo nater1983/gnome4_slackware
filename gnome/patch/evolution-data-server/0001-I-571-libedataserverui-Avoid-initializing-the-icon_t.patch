@@ -1,0 +1,40 @@
+From fab47760d3aa2b5d4f7aa878e0405e4327a5c188 Mon Sep 17 00:00:00 2001
+From: Jordan Petridis <jpetridis@gnome.org>
+Date: Mon, 11 Nov 2024 17:26:11 +0000
+Subject: [PATCH] I#571 - libedataserverui: Avoid initializing the icon_theme
+ when building introspection data
+
+When we are trying to generate the gobject-introspection data,
+_libedataserverui_init_icon_theme will try to create a display without
+gtk having been initialized before hand.
+
+Add a gtk_init_check and assume that we will only run into this when
+building and not at runtime.
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/issues/571
+---
+ src/libedataserverui/libedataserverui-private.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/libedataserverui/libedataserverui-private.c b/src/libedataserverui/libedataserverui-private.c
+index c612f33a0..d7c007713 100644
+--- a/src/libedataserverui/libedataserverui-private.c
++++ b/src/libedataserverui/libedataserverui-private.c
+@@ -61,6 +61,14 @@ _libedataserverui_init_icon_theme (void)
+ 	static gboolean icons_added = FALSE;
+ 
+ 	#if GTK_CHECK_VERSION(4, 0, 0)
++	/* We can't call gdk_display_manager_get if gtk is
++	 * not initialized. This can happen when we are building
++	 * gobject-introspection data or documentation */
++	if (!gtk_is_initialized ()) {
++		e_source_registry_debug_print ("%s: GTK is not initialized, skipping\n", G_STRFUNC);
++		return;
++	}
++
+ 	if (!icons_added) {
+ 		GdkDisplayManager *manager;
+ 
+-- 
+2.47.0
+
