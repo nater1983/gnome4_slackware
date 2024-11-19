@@ -118,7 +118,7 @@ def find_newer_version(current_version, tags):
 
 def process_version_files(version_dir, groups):
     """
-    Processes version files and checks for updates in all specified groups.
+    Processes version files and prints the download URL for the version in each file.
     """
     for file in os.listdir(version_dir):
         file_path = os.path.join(version_dir, file)
@@ -129,21 +129,12 @@ def process_version_files(version_dir, groups):
             project_name = file.strip()
             print_debug(f"Processing {project_name} with current version {current_version}")
 
-            tags = []
+            # Construct the download URL for the current version
             for group in groups:
                 project_url = f"https://gitlab.gnome.org/{group}/{project_name}"
-                print_debug(f"Trying {project_url}")
-                group_tags = get_tags_from_gitlab(project_url)
-                tags.extend(group_tags)
-
-            if tags:
-                newer_version = find_newer_version(current_version, tags)
-                if newer_version != current_version:
-                    print(f"Updating {file} from {current_version} to {newer_version}")
-                    with open(file_path, 'w') as f:
-                        f.write(newer_version)
-            else:
-                print(f"No valid tags found for {project_name} in any group.")
+                download_url = f"{project_url}/-/archive/{current_version}/{project_name}-{current_version}.tar.gz"
+                print(f"Download URL for {project_name}: {download_url}")
+                break  # We only need one group, so break after constructing the URL
 
 def main():
     if len(sys.argv) < 3:
