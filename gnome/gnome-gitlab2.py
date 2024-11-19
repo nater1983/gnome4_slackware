@@ -3,6 +3,7 @@ import sys
 import urllib.parse
 import requests
 from datetime import datetime, timedelta
+import pytz  # Required for timezone handling
 
 def print_debug(message):
     """
@@ -40,8 +41,8 @@ def get_tags_from_gitlab(repo_url, access_token=None):
         if response.status_code == 200:
             tags = response.json()
 
-            # Get the date one year ago
-            one_year_ago = datetime.now() - timedelta(days=365)
+            # Get the date one year ago with timezone awareness (UTC in this case)
+            one_year_ago = datetime.now(pytz.utc) - timedelta(days=365)
 
             # Filter tags by date, excluding tags older than one year
             tags = [
@@ -167,7 +168,7 @@ def process_version_files(version_dir):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python t.py <version_directory>")
+        print("Usage: python gnome-gitlab2.py <version_directory>")
         sys.exit(1)
 
     version_dir = sys.argv[1]
