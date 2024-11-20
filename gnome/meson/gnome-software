@@ -8,6 +8,7 @@ cd build
     -Dtests=false \
     -Dfwupd=false \
     -Dgudev=true \
+    -Dexternal_appstream=true \
     -Dmalcontent=true \
     -Dpackagekit=false \
     -Dgtk_doc=false \
