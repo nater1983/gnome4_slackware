@@ -14,5 +14,4 @@ cd build
     -Dgtk_doc=false \
     -Dsoup2=false \
     -Dwebapps=true \
-    -Dexternal_appstream=false \
     -Dprofile=slackware64-current
