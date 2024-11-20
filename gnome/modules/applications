@@ -2,7 +2,6 @@ file-roller
 libdex 
 libpanel
 sysprof
-abseil-cpp
 protobuf-c
 libshumate
 gnome-maps
@@ -30,7 +29,6 @@ grilo
 grilo-plugins
 gnome-music
 tpm2-tss
-nv-codec-headers
 libfdk-aac
 gnome-remote-desktop
 gnome-text-editor
