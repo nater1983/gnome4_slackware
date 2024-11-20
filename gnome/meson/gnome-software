@@ -1,0 +1,18 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dtests=false \
+    -Dfwupd=false \
+    -Dgudev=true \
+    -Dexternal_appstream=true \
+    -Dmalcontent=true \
+    -Dpackagekit=false \
+    -Dgtk_doc=false \
+    -Dsoup2=false \
+    -Dwebapps=true \
+    -Dexternal_appstream=false \
+    -Dprofile=slackware64-current
