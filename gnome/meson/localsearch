@@ -1,0 +1,11 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dman=true \
+    -Dminer_rss=false \
+    -Dlandlock=disabled \
+    -Dsystemd_user_services=false 
