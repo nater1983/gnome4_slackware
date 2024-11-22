@@ -1,5 +1,5 @@
 libportal
-tracker
+tinysparql
 exempi
 libgxps
 libiptcdata
@@ -7,7 +7,7 @@ osinfo-db-tools
 osinfo-db
 libosinfo
 totem-pl-parser
-tracker-miners
+localsearch
 libcloudproviders
 nautilus
 gnome-backgrounds
