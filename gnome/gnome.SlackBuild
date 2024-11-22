@@ -23,7 +23,7 @@
 # Gnome.SlackBuild Script
 
 # Set up general build options
-CLEANUP=${CLEANUP:-"no"}       # Clean up after build
+CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
 UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
