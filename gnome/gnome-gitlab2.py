@@ -6,6 +6,7 @@ import urllib.parse
 import requests
 from datetime import datetime, timedelta
 import pytz  # Required for timezone handling
+import re    # For regex to handle complex tag formats
 
 def print_debug(message):
     """Helper function to print debug messages."""
@@ -45,7 +46,7 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
             tags = response.json()
 
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9 * 30)
-            three_years_ago = datetime.now(pytz.utc) - timedelta(days=4 * 365)
+            three_years_ago = datetime.now(pytz.utc) - timedelta(days=3 * 365)
 
             recent_tags = [
                 tag for tag in tags
@@ -93,10 +94,17 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
         return []
 
 def parse_version(version_str):
-    """Parses a version string into a list of integers."""
-    version_str = version_str.lstrip('v')
-    parts = version_str.replace('_', '.').split('.')
-    return [int(part) for part in parts] + [0] * (3 - len(parts))
+    """Parses a version string and extracts version numbers."""
+    # Remove common prefixes and extract version numbers using regex
+    version_match = re.search(r'(\d+)[._](\d+)(?:[._](\d+))?', version_str)
+    if version_match:
+        # Extract major, minor, and optional patch
+        major = int(version_match.group(1))
+        minor = int(version_match.group(2))
+        patch = int(version_match.group(3)) if version_match.group(3) else 0
+        return [major, minor, patch]
+    else:
+        raise ValueError(f"Invalid version format: {version_str}")
 
 def find_newer_version(current_version, tags):
     """Finds the newest version from the tag list compared to the current version."""
