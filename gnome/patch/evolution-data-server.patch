@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/evolution-data-server/0001-I-571-libedataserverui-Avoid-initializing-the-icon_t.patch
