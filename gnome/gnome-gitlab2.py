@@ -2,15 +2,36 @@
 
 import os
 import sys
+import re
 import urllib.parse
 import requests
 from datetime import datetime, timedelta
 import pytz  # Required for timezone handling
-import re    # For regex to handle complex tag formats
+
 
 def print_debug(message):
     """Helper function to print debug messages."""
     print(f"[DEBUG] {message}")
+
+
+def parse_version(version_str):
+    """Parses a version string and extracts version numbers."""
+    version_match = re.search(r'(\d+)[._](\d+)(?:[._](\d+))?', version_str)
+    if version_match:
+        major = int(version_match.group(1))
+        minor = int(version_match.group(2))
+        patch = int(version_match.group(3)) if version_match.group(3) else 0
+        return major, minor, patch
+    else:
+        raise ValueError(f"Invalid version format: {version_str}")
+
+
+def format_version(major, minor, patch=0):
+    """Formats version components into a string."""
+    if patch > 0:
+        return f"{major}.{minor}.{patch}"
+    return f"{major}.{minor}"
+
 
 def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
     """
@@ -60,7 +81,6 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
                 ]
 
             if current_version:
-                # Only print the tag that matches the current version
                 for tag in recent_tags:
                     tag_name = tag['name']
                     if tag_name == current_version:
@@ -69,7 +89,6 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
                         return [tag]
 
             else:
-                # If no current version is provided, print all recent tags
                 for tag in recent_tags:
                     tag_name = tag['name']
                     download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
@@ -93,18 +112,6 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
         print(f"ValueError: {ve}")
         return []
 
-def parse_version(version_str):
-    """Parses a version string and extracts version numbers."""
-    # Remove common prefixes and extract version numbers using regex
-    version_match = re.search(r'(\d+)[._](\d+)(?:[._](\d+))?', version_str)
-    if version_match:
-        # Extract major, minor, and optional patch
-        major = int(version_match.group(1))
-        minor = int(version_match.group(2))
-        patch = int(version_match.group(3)) if version_match.group(3) else 0
-        return [major, minor, patch]
-    else:
-        raise ValueError(f"Invalid version format: {version_str}")
 
 def find_newer_version(current_version, tags):
     """Finds the newest version from the tag list compared to the current version."""
@@ -126,15 +133,18 @@ def find_newer_version(current_version, tags):
 
     max_major = max(version_dict.keys())
     if max_major > current_major:
-        return max(version_dict[max_major], key=lambda x: (x[0], x[1]))[2]
+        new_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))
+        return format_version(max_major, new_version[0], new_version[1])
     else:
         latest_version = current_version
         for tag_minor, tag_patch, tag_name in version_dict[current_major]:
             if (tag_minor > current_minor or
                 (tag_minor == current_minor and tag_patch > current_patch)):
-                if not latest_version or tag_name > latest_version:
-                    latest_version = tag_name
+                formatted_version = format_version(current_major, tag_minor, tag_patch)
+                if not latest_version or formatted_version > latest_version:
+                    latest_version = formatted_version
     return latest_version
+
 
 def process_version_files(version_dir, groups):
     """
@@ -159,11 +169,12 @@ def process_version_files(version_dir, groups):
             if tags:
                 newer_version = find_newer_version(current_version, tags)
                 if newer_version != current_version:
-                    print(f"Updating {file} from {current_version} to {newer_version}")
+                    print(f"Updating {project_name} from {current_version} to {newer_version}")
                     with open(file_path, 'w') as f:
                         f.write(newer_version)
             else:
                 print(f"No valid tags found for {project_name} in any group.")
+
 
 def main():
     if len(sys.argv) < 3:
@@ -179,6 +190,7 @@ def main():
 
     print(f"Processing versions in {version_dir} for groups: {', '.join(groups)}...")
     process_version_files(version_dir, groups)
+
 
 if __name__ == "__main__":
     main()
