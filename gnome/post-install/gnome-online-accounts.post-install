@@ -1,2 +1,2 @@
-mv $PKG/usr/doc/gnome-online-accounts/Goa-1.0 $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
-rm -fr $PKG/usr/doc/gnome-online-accounts/
+mv $PKG/usr/share/doc/gnome-online-accounts/Goa-1.0 $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+rm -fr $PKG/usr/share/doc/gnome-online-accounts/
