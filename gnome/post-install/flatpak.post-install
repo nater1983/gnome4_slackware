@@ -10,4 +10,4 @@ install -vDm 0755 $CWD/post-install/flatpak/flathub -t $PKG/usr/bin/
 install -vDm 0644 $CWD/post-install/flatpak/flathub.png -t $PKG/usr/share/icons/hicolor/128x128/apps/
 
 # Add the README,gz file
-zcat $CWD//post-install/flatpak/README.gz >  $PKG/usr/doc/$PRGNAM-$VERSION/README
+zcat $CWD//post-install/flatpak/README.gz >  $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/README
