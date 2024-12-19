@@ -1,0 +1,9 @@
+python-toml
+python2-setuptools-scm
+functools-lru-cache
+python3-webencodings
+python2-soupsieve
+python3-soupsieve
+html5lib
+python2-BeautifulSoup4
+BeautifulSoup4

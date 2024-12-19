@@ -1,0 +1,28 @@
+A) In this folder are core slackaware packages AND their deps. 
+All SlackBuilds must following 3 rulles:
+
+1) PKGTYPE=${PKGTYPE:-txz}
+2) TMP=${TMP:-./}
+3) OUTPUT="$CWD"
+This way we dont build anymore in /tmp also package.txz output stored at the same folder and not in /tmp. 
+Everything are in one place.   
+
+B) When a package is not needed any more because stock version is ok for Gnome buildings,
+we DONT remove it its place to removed folder.Simple cd to its /order and remove .sh extensions from files build order.
+EXAMPLE: Assume gtk4 stock is in the correct version for Gnome needs. 
+mv  /BLACKLIST46/order/01-build_gtk4.sh /BLACKLIST46/order/01-build_gtk4
+
+Thas all, gtk4 will never be builder again as long as 01-build_gtk4 file not having .sh exetnsion.
+**********************************************************************************************************
+****************************************GFSBUILDS TEMPLATE************************************************
+**********************************************************************************************************
+*#!/bin/bash                                                                                             *
+*# (PP=package-name is the only value that need change for every package.)                               *
+*PP=gtk4  <----------we only edit this                                                                   *
+*                                                                                                        *
+*# DO NOT edit from here untill the end, everything must be the same for every package we are building.  *
+*echo "$PP"                                                                                              *
+*cd ../"$PP"  || exit 1                                                                                  *
+*bash "$PP".SlackBuild                                                                                   *
+*upgradepkg --install-new --reinstall "$PP"-*.txz                                                        *
+**********************************************************************************************************

@@ -1,0 +1,1037 @@
+From f375bfab8b5e30d85501f1dd51228cd18b136697 Mon Sep 17 00:00:00 2001
+From: Neal Gompa <neal@gompa.dev>
+Date: Mon, 25 Sep 2023 14:11:10 -0400
+Subject: [PATCH] Introduce libportal-qt6
+
+Introduce a new libportal-qt6 library with Qt6-specific parent
+window exports. It contains a blank header with a single function
+declaration (xdp_parent_new_qt), and explicitly depends on Qt6.
+
+This is based on the existing code for libportal-qt5.
+
+Related: https://github.com/flatpak/libportal/issues/12
+---
+ .github/workflows/build.yml             |   6 +-
+ .github/workflows/flatpak.yml           |  17 ++
+ README.md                               |   2 +-
+ build-aux/build.sh                      |   2 +-
+ build-aux/org.gnome.PortalTest.Qt6.json |  32 +++
+ libportal/meson.build                   |  38 +++
+ libportal/portal-qt6.cpp                | 336 ++++++++++++++++++++++++
+ libportal/portal-qt6.h                  | 118 +++++++++
+ meson.build                             |   8 +
+ meson_options.txt                       |   2 +
+ portal-test/qt6/main.cpp                |  14 +
+ portal-test/qt6/meson.build             |  23 ++
+ portal-test/qt6/portal-test-qt.cpp      |  58 ++++
+ portal-test/qt6/portal-test-qt.h        |  28 ++
+ portal-test/qt6/portal-test-qt.ui       |  37 +++
+ tests/meson.build                       |   3 +
+ tests/qt5/meson.build                   |   2 +-
+ tests/qt6/meson.build                   |  23 ++
+ tests/qt6/test.cpp                      |  87 ++++++
+ tests/qt6/test.h                        |  34 +++
+ 20 files changed, 864 insertions(+), 6 deletions(-)
+ create mode 100644 build-aux/org.gnome.PortalTest.Qt6.json
+ create mode 100644 libportal/portal-qt6.cpp
+ create mode 100644 libportal/portal-qt6.h
+ create mode 100644 portal-test/qt6/main.cpp
+ create mode 100644 portal-test/qt6/meson.build
+ create mode 100644 portal-test/qt6/portal-test-qt.cpp
+ create mode 100644 portal-test/qt6/portal-test-qt.h
+ create mode 100644 portal-test/qt6/portal-test-qt.ui
+ create mode 100644 tests/qt6/meson.build
+ create mode 100644 tests/qt6/test.cpp
+ create mode 100644 tests/qt6/test.h
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 4eec5671..045810fc 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -58,11 +58,11 @@ jobs:
+     steps:
+       - name: Install dependencies
+         run: |
+-          dnf install -y meson gcc gobject-introspection-devel gtk3-devel gtk4-devel gi-docgen vala git python3-pytest python3-dbusmock
++          dnf install -y meson gcc gobject-introspection-devel gtk3-devel gtk4-devel gi-docgen vala git python3-pytest python3-dbusmock qt5-qtbase-devel qt5-qtx11extras-devel qt6-qtbase-devel
+       - name: Check out libportal
+         uses: actions/checkout@v3
+       - name: Configure libportal
+-        run: meson setup --prefix=/usr _build -Dbackend-gtk3=enabled -Dbackend-gtk4=enabled
++        run: meson setup --prefix=/usr _build -Dbackend-gtk3=enabled -Dbackend-gtk4=enabled -Dbackend-qt5=enabled -Dbackend-qt6=enabled
+       - name: Build libportal
+         run: ninja -C_build
+       - name: Deploy Docs
+@@ -84,7 +84,7 @@ jobs:
+     steps:
+       - name: Install dependencies
+         run: |
+-          dnf install -y meson gcc gobject-introspection-devel gtk3-devel gtk4-devel qt5-qtbase-devel qt5-qtx11extras-devel git libabigail
++          dnf install -y meson gcc gobject-introspection-devel gtk3-devel gtk4-devel qt5-qtbase-devel qt5-qtx11extras-devel qt6-qtbase-devel git libabigail
+       - name: Install check-abi
+         run: |
+           curl https://gitlab.freedesktop.org/hadess/check-abi/-/raw/main/contrib/check-abi-fedora.sh | bash
+diff --git a/build-aux/build.sh b/build-aux/build.sh
+index a365e6fe..35d8adb8 100755
+--- a/build-aux/build.sh
++++ b/build-aux/build.sh
+@@ -7,7 +7,7 @@ OLD_DIR=`pwd`
+ 
+ cd "$TOP_DIR"
+ 
+-for backend in Gtk3 Gtk4 Qt5; do
++for backend in Gtk3 Gtk4 Qt5 Qt6; do
+     flatpak-builder --force-clean --ccache --repo=_build/repo --install --user "_build/app-$backend" "build-aux/org.gnome.PortalTest.${backend}.json"
+ done
+ 
+diff --git a/build-aux/org.gnome.PortalTest.Qt6.json b/build-aux/org.gnome.PortalTest.Qt6.json
+new file mode 100644
+index 00000000..928ba2af
+--- /dev/null
++++ b/build-aux/org.gnome.PortalTest.Qt6.json
+@@ -0,0 +1,32 @@
++{
++    "app-id": "org.gnome.PortalTest.Qt6",
++    "runtime": "org.kde.Platform",
++    "runtime-version": "6.5",
++    "sdk": "org.kde.Sdk",
++    "command": "portal-test-qt6",
++    "finish-args": [
++        "--socket=wayland",
++        "--socket=x11",
++        "--socket=pulseaudio"
++    ],
++    "modules": [
++        {
++            "name": "portal-test-qt6",
++            "buildsystem": "meson",
++            "builddir": true,
++            "config-opts": [
++              "-Dbackend-qt6=enabled",
++              "-Dportal-tests=true",
++              "-Dintrospection=false",
++              "-Dvapi=false",
++              "-Ddocs=false"
++            ],
++            "sources": [
++                {
++                    "type": "dir",
++                    "path": "../"
++                }
++            ]
++        }
++    ]
++}
+diff --git a/libportal/meson.build b/libportal/meson.build
+index 35cf616a..49e08571 100644
+--- a/libportal/meson.build
++++ b/libportal/meson.build
+@@ -264,6 +264,44 @@ if have_cpp and qt5_dep.found()
+   enabled_backends += ['qt5']
+ endif
+ 
++########
++# Qt 6 #
++########
++
++if meson.version().version_compare('>= 0.59.0')
++   have_cpp = add_languages('cpp', required: get_option('backend-qt6'))
++   qt6_dep = dependency('qt6', modules: ['Core', 'Gui', 'Widgets'], required: get_option('backend-qt6'))
++
++   if have_cpp and qt6_dep.found()
++     qt6_headers = ['portal-qt6.h']
++     qt6_sources = ['portal-qt6.cpp']
++
++     install_headers(qt6_headers, subdir: 'libportal-qt6')
++
++     libportal_qt6 = library('portal-qt6',
++       qt6_sources,
++       version: version,
++       include_directories: [top_inc, libportal_inc],
++       cpp_args : '-std=c++17',
++       install: true,
++       dependencies: [libportal_dep, qt6_dep],
++       gnu_symbol_visibility: 'hidden',
++     )
++
++     pkgconfig.generate(libportal_qt6,
++       description: 'Portal API wrappers (Qt 6)',
++       name: 'libportal-qt6',
++       requires: [qt6_dep, libportal],
++     )
++
++     libportal_qt6_dep = declare_dependency(
++       dependencies: [libportal_dep, qt6_dep],
++       link_with: libportal_qt6,
++     )
++     enabled_backends += ['qt6']
++   endif
++endif
++
+ if meson.version().version_compare('>= 0.54.0')
+   summary({'enabled backends': enabled_backends}, section: 'Backends', list_sep: ',')
+ endif
+diff --git a/libportal/portal-qt6.cpp b/libportal/portal-qt6.cpp
+new file mode 100644
+index 00000000..396e7ef2
+--- /dev/null
++++ b/libportal/portal-qt6.cpp
+@@ -0,0 +1,336 @@
++/*
++ * Copyright (C) 2021, Georges Basile Stavracas Neto
++                 2020-2022, Jan Grulich
++                 2023, Neal Gompa
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation, version 3.0 of the
++ * License.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * SPDX-License-Identifier: LGPL-3.0-only
++ */
++
++#include "config.h"
++#include "portal-qt6.h"
++
++#include "parent-private.h"
++
++#include <QBuffer>
++#include <QGuiApplication>
++
++static gboolean
++_xdp_parent_export_qt (XdpParent *parent,
++                       XdpParentExported callback,
++                       gpointer data)
++{
++  if (QGuiApplication::platformName() == QLatin1String("xcb"))
++    {
++      QWindow *w = (QWindow *) parent->data;
++      if (w) {
++        guint32 xid = (guint32) w->winId ();
++        g_autofree char *handle = g_strdup_printf ("x11:%x", xid);
++        callback (parent, handle, data);
++        return TRUE;
++      }
++    }
++  else
++    {
++      /* TODO: QtWayland doesn't support xdg-foreign protocol yet
++       * Upstream bugs: https://bugreports.qt.io/browse/QTBUG-73801
++       *                https://bugreports.qt.io/browse/QTBUG-76983
++       */
++      g_warning ("QtWayland doesn't support xdg-foreign protocol yet");
++      g_autofree char *handle = g_strdup ("");
++      callback (parent, handle, data);
++      return TRUE;
++    }
++
++  g_warning ("Couldn't export handle, unsupported windowing system");
++  return FALSE;
++}
++
++static inline void _xdp_parent_unexport_qt (XdpParent *parent)
++{
++}
++
++XdpParent *
++xdp_parent_new_qt (QWindow *window)
++{
++  XdpParent *parent = g_new0 (XdpParent, 1);
++  parent->parent_export = _xdp_parent_export_qt;
++  parent->parent_unexport = _xdp_parent_unexport_qt;
++  parent->data = (gpointer) window;
++  return parent;
++}
++
++namespace XdpQt {
++
++class LibPortalQt6 {
++public:
++    LibPortalQt6() : m_xdpPortal(xdp_portal_new()) { }
++    ~LibPortalQt6() { if (m_xdpPortal) { g_object_unref(m_xdpPortal); } }
++    XdpPortal *portalObject() const { return m_xdpPortal; }
++private:
++    XdpPortal *m_xdpPortal = nullptr;
++};
++
++Q_GLOBAL_STATIC(LibPortalQt6, globalLibPortalQt6)
++
++XdpPortal*
++globalPortalObject()
++{
++    return globalLibPortalQt6->portalObject();
++}
++
++GetUserInformationResult
++getUserInformationResultFromGVariant(GVariant *variant)
++{
++    GetUserInformationResult result;
++
++    g_autofree gchar *id = nullptr;
++    g_autofree gchar *name = nullptr;
++    g_autofree gchar *image = nullptr;
++
++    if (variant) {
++        if (g_variant_lookup(variant, "id", "s", &id)) {
++            result.id = id;
++        }
++
++        if (g_variant_lookup(variant, "name", "s", &name)) {
++            result.name = name;
++        }
++
++        if (g_variant_lookup(variant, "image", "s", &image)) {
++            result.image = image;
++        }
++    }
++
++    return result;
++}
++
++GVariant *
++filechooserFilterToGVariant(const FileChooserFilter &filter)
++{
++    GVariantBuilder builder;
++
++    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(us)"));
++
++    for (const FileChooserFilterRule &rule : filter.rules) {
++        g_variant_builder_add(&builder, "(us)", static_cast<uint>(rule.type), rule.rule.toUtf8().constData());
++    }
++
++    return g_variant_new("(s@a(us))", filter.label.toUtf8().constData(), g_variant_builder_end(&builder));
++}
++
++GVariant *
++filechooserFiltersToGVariant(const QList<FileChooserFilter> &filters)
++{
++    GVariantBuilder builder;
++
++    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(sa(us))"));
++
++    for (const FileChooserFilter &filter : filters) {
++        g_variant_builder_add(&builder, "@(sa(us))", filechooserFilterToGVariant(filter));
++    }
++
++    return g_variant_builder_end(&builder);
++}
++
++static GVariant *
++filechooserChoiceToGVariant(const FileChooserChoice &choice)
++{
++    GVariantBuilder builder;
++
++    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(ss)"));
++
++    if (choice.options.count()) {
++        for (auto it = choice.options.constBegin(); it != choice.options.constEnd(); ++it) {
++            g_variant_builder_add(&builder, "(&s&s)", it.key().toUtf8().constData(), it.value().toUtf8().constData());
++        }
++    }
++
++    return g_variant_new("(&s&s@a(ss)&s)", choice.id.toUtf8().constData(), choice.label.toUtf8().constData(),
++                         g_variant_builder_end(&builder), choice.selected.toUtf8().constData());
++}
++
++GVariant *
++filechooserChoicesToGVariant(const QList<FileChooserChoice> &choices)
++{
++    GVariantBuilder builder;
++
++    g_variant_builder_init(&builder, G_VARIANT_TYPE("a(ssa(ss)s)"));
++
++    for (const FileChooserChoice &choice : choices) {
++        g_variant_builder_add(&builder, "@(ssa(ss)s)", filechooserChoiceToGVariant(choice));
++    }
++
++    return g_variant_builder_end(&builder);
++}
++
++
++GVariant *
++filechooserFilesToGVariant(const QStringList &files)
++{
++    GVariantBuilder builder;
++
++    g_variant_builder_init(&builder, G_VARIANT_TYPE_BYTESTRING_ARRAY);
++
++    for (const QString &file : files) {
++        g_variant_builder_add(&builder, "@ay", g_variant_new_bytestring(file.toUtf8().constData()));
++    }
++
++    return g_variant_builder_end(&builder);
++}
++
++FileChooserResult
++filechooserResultFromGVariant(GVariant *variant)
++{
++    FileChooserResult result;
++
++    g_autofree const char **uris = nullptr;
++    g_autoptr(GVariant) choices = nullptr;
++
++    if (variant) {
++        g_variant_lookup(variant, "uris", "^a&s", &uris);
++
++        choices = g_variant_lookup_value(variant, "choices", G_VARIANT_TYPE("a(ss)"));
++        if (choices) {
++            QMap<QString, QString> choicesMap;
++            for (uint i = 0; i < g_variant_n_children(choices); i++) {
++                const char *id;
++                const char *selected;
++                g_variant_get_child(choices, i, "(&s&s)", &id, &selected);
++                result.choices.insert(QString(id), QString(selected));
++            }
++            g_variant_unref (choices);
++        }
++
++        for (int i = 0; uris[i]; i++) {
++            result.uris << QString(uris[i]);
++        }
++    }
++
++    return result;
++}
++
++static GVariant*
++QVariantToGVariant(const QVariant &variant)
++{
++    switch (variant.type()) {
++    case QVariant::Bool:
++        return g_variant_new_boolean(variant.toBool());
++    case QVariant::ByteArray:
++        return g_variant_new_bytestring(variant.toByteArray().data());
++    case QVariant::Double:
++        return g_variant_new_double(variant.toFloat());
++    case QVariant::Int:
++        return g_variant_new_int32(variant.toInt());
++    case QVariant::LongLong:
++        return g_variant_new_int64(variant.toLongLong());
++    case QVariant::String:
++        return g_variant_new_string(variant.toString().toUtf8().constData());
++    case QVariant::UInt:
++        return g_variant_new_uint32(variant.toUInt());
++    case QVariant::ULongLong:
++        return g_variant_new_uint64(variant.toULongLong());
++    default:
++        return nullptr;
++    }
++}
++
++QVariant
++GVariantToQVariant(GVariant *variant)
++{
++    if (g_variant_is_of_type(variant, G_VARIANT_TYPE_BOOLEAN)) {
++        return QVariant::fromValue<bool>(g_variant_get_boolean(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_BYTESTRING)) {
++        return QVariant::fromValue<QByteArray>(g_variant_get_bytestring(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_DOUBLE)) {
++        return QVariant::fromValue<float>(g_variant_get_double(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_INT32)) {
++        return QVariant::fromValue<int>(g_variant_get_int32(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_INT64)) {
++        return QVariant::fromValue<long>(g_variant_get_int64(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_STRING)) {
++        return QVariant::fromValue<QString>(g_variant_get_string(variant, nullptr));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_UINT32)) {
++        return QVariant::fromValue<uint>(g_variant_get_uint32(variant));
++    } else if (g_variant_is_of_type(variant, G_VARIANT_TYPE_UINT64)) {
++        return QVariant::fromValue<ulong>(g_variant_get_uint64(variant));
++    }
++
++    return QVariant();
++}
++
++static GVariant *
++notificationButtonsToGVariant(const QList<NotificationButton> &buttons)
++{
++    GVariantBuilder builder;
++    g_variant_builder_init(&builder, G_VARIANT_TYPE("aa{sv}"));
++
++    for (const NotificationButton &button : buttons) {
++        GVariantBuilder buttonBuilder;
++        g_variant_builder_init(&buttonBuilder, G_VARIANT_TYPE_VARDICT);
++        g_variant_builder_add(&buttonBuilder, "{sv}", "label", g_variant_new_string(button.label.toUtf8().constData()));
++        g_variant_builder_add(&buttonBuilder, "{sv}", "action", g_variant_new_string(button.action.toUtf8().constData()));
++
++        if (!button.target.isNull()) {
++            g_variant_builder_add(&buttonBuilder, "{sv}", "target", QVariantToGVariant(button.target));
++        }
++
++        g_variant_builder_add(&builder, "@a{sv}", g_variant_builder_end(&buttonBuilder));
++    }
++
++    return g_variant_builder_end(&builder);
++}
++
++GVariant *
++notificationToGVariant(const Notification &notification) {
++    GVariantBuilder builder;
++    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
++
++    if (!notification.title.isEmpty()) {
++        g_variant_builder_add(&builder, "{sv}", "title", g_variant_new_string(notification.title.toUtf8().constData()));
++    }
++
++    if (!notification.body.isEmpty()) {
++        g_variant_builder_add(&builder, "{sv}", "body", g_variant_new_string(notification.body.toUtf8().constData()));
++    }
++
++    if (!notification.icon.isEmpty()) {
++        g_variant_builder_add(&builder, "{sv}", "icon", g_icon_serialize(g_themed_icon_new(notification.icon.toUtf8().constData())));
++    } else if (!notification.pixmap.isNull()) {
++        g_autoptr(GBytes) bytes = nullptr;
++        QByteArray array;
++        QBuffer buffer(&array);
++        buffer.open(QIODevice::WriteOnly);
++        notification.pixmap.save(&buffer, "PNG");
++        bytes = g_bytes_new(array.data(), array.size());
++        g_variant_builder_add(&builder, "{sv}", "icon", g_icon_serialize(g_bytes_icon_new(bytes)));
++    }
++
++    if (!notification.defaultAction.isEmpty()) {
++        g_variant_builder_add(&builder, "{sv}", "default-action", g_variant_new_string(notification.defaultAction.toUtf8().constData()));
++    }
++
++    if (!notification.defaultTarget.isNull()) {
++        g_variant_builder_add(&builder, "{sv}", "default-action-target", QVariantToGVariant(notification.defaultTarget));
++    }
++
++    if (!notification.buttons.isEmpty()) {
++        g_variant_builder_add(&builder, "{sv}", "buttons", notificationButtonsToGVariant(notification.buttons));
++    }
++
++    return g_variant_builder_end(&builder);
++}
++
++}
+diff --git a/libportal/portal-qt6.h b/libportal/portal-qt6.h
+new file mode 100644
+index 00000000..1658778e
+--- /dev/null
++++ b/libportal/portal-qt6.h
+@@ -0,0 +1,118 @@
++/*
++ * Copyright (C) 2020-2022, Jan Grulich
++ * Copyright (C) 2023, Neal Gompa
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation, version 3.0 of the
++ * License.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * SPDX-License-Identifier: LGPL-3.0-only
++ */
++
++#pragma once
++
++#include <libportal/portal.h>
++
++#include <QMap>
++#include <QStringList>
++#include <QSharedPointer>
++#include <QVariant>
++#include <QWindow>
++
++XDP_PUBLIC
++XdpParent *xdp_parent_new_qt (QWindow *window);
++
++namespace XdpQt {
++
++// Returns a global instance of XdpPortal object and takes care
++// of its deletion
++XDP_PUBLIC
++XdpPortal *globalPortalObject();
++
++// Account portal helpers
++struct GetUserInformationResult {
++    QString id;
++    QString name;
++    QString image;
++};
++
++XDP_PUBLIC
++GetUserInformationResult getUserInformationResultFromGVariant(GVariant *variant);
++
++// FileChooser portal helpers
++enum FileChooserFilterRuleType{
++    Pattern = 0,
++    Mimetype = 1
++};
++
++struct FileChooserFilterRule {
++    FileChooserFilterRuleType type;
++    QString rule;
++};
++
++struct FileChooserFilter {
++    QString label;
++    QList<FileChooserFilterRule> rules;
++};
++
++struct FileChooserChoice {
++    QString id;
++    QString label;
++    QMap<QString, QString> options;
++    QString selected;
++};
++
++XDP_PUBLIC
++GVariant *filechooserFilesToGVariant(const QStringList &files);
++
++XDP_PUBLIC
++GVariant *filechooserFilterToGVariant(const FileChooserFilter &filter);
++
++XDP_PUBLIC
++GVariant *filechooserFiltersToGVariant(const QList<FileChooserFilter> &filters);
++
++XDP_PUBLIC
++GVariant *filechooserChoicesToGVariant(const QList<FileChooserChoice> &choices);
++
++struct FileChooserResult {
++    QMap<QString, QString> choices;
++    QStringList uris;
++};
++
++XDP_PUBLIC
++FileChooserResult filechooserResultFromGVariant(GVariant *variant);
++
++// Notification portal helpers
++struct NotificationButton {
++    QString label;
++    QString action;
++    QVariant target;
++};
++
++struct Notification {
++    QString title;
++    QString body;
++    QString icon;
++    QPixmap pixmap;
++    QString priority;
++    QString defaultAction;
++    QVariant defaultTarget;
++    QList<NotificationButton> buttons;
++};
++
++XDP_PUBLIC
++GVariant *notificationToGVariant(const Notification &notification);
++
++XDP_PUBLIC
++QVariant GVariantToQVariant(GVariant *variant);
++
++} // namespace XdpQt
+diff --git a/meson.build b/meson.build
+index 8f3e4947..0481116f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -15,6 +15,14 @@ pkgconfig = import('pkgconfig')
+ 
+ qt5 = import('qt5')
+ 
++if get_option('backend-qt6').enabled() and meson.version().version_compare('< 0.59.0')
++  error('qt6 backend requires meson 0.59.0 or newer')
++endif
++
++if meson.version().version_compare('>= 0.59.0')
++  qt6 = import('qt6')
++endif
++
+ conf = configuration_data()
+ conf.set_quoted('G_LOG_DOMAIN', 'libportal')
+ conf.set_quoted('PACKAGE_NAME', 'libportal')
+diff --git a/meson_options.txt b/meson_options.txt
+index e03834dc..410c4ece 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -4,6 +4,8 @@ option('backend-gtk4', type: 'feature', value: 'auto',
+   description: 'Build the GTK4 portal backend')
+ option('backend-qt5', type: 'feature', value: 'auto',
+   description: 'Build the Qt5 portal backend')
++option('backend-qt6', type: 'feature', value: 'auto',
++  description: 'Build the Qt6 portal backend')
+ option('portal-tests', type: 'boolean', value: false,
+   description : 'Build portal tests of each backend')
+ option('introspection', type: 'boolean', value: true,
+diff --git a/portal-test/qt6/main.cpp b/portal-test/qt6/main.cpp
+new file mode 100644
+index 00000000..b7c1f2aa
+--- /dev/null
++++ b/portal-test/qt6/main.cpp
+@@ -0,0 +1,14 @@
++
++#include <QApplication>
++
++#include "portal-test-qt.h"
++
++int main(int argc, char *argv[])
++{
++    QApplication a(argc, argv);
++
++    PortalTestQt *portalTest = new PortalTestQt(nullptr);
++    portalTest->show();
++
++    return a.exec();
++}
+diff --git a/portal-test/qt6/meson.build b/portal-test/qt6/meson.build
+new file mode 100644
+index 00000000..5d9a2889
+--- /dev/null
++++ b/portal-test/qt6/meson.build
+@@ -0,0 +1,23 @@
++
++add_languages('cpp', required : true)
++
++src = [
++  'main.cpp',
++  'portal-test-qt.h',
++  'portal-test-qt.cpp',
++]
++
++prep = qt6.preprocess(
++  moc_headers : 'portal-test-qt.h',
++  moc_extra_arguments: ['-DMAKES_MY_MOC_HEADER_COMPILE'],
++  ui_files : 'portal-test-qt.ui',
++  dependencies: libportal_qt6_dep,
++)
++
++executable('portal-test-qt6',
++  [src, prep],
++  include_directories: [top_inc, libportal_inc],
++  dependencies: [libportal_qt6_dep],
++  cpp_args : '-std=c++17',
++  install : true,
++)
+diff --git a/portal-test/qt6/portal-test-qt.cpp b/portal-test/qt6/portal-test-qt.cpp
+new file mode 100644
+index 00000000..fa05df76
+--- /dev/null
++++ b/portal-test/qt6/portal-test-qt.cpp
+@@ -0,0 +1,58 @@
++
++#include "portal-test-qt.h"
++#include "ui_portal-test-qt.h"
++
++#include <QStringLiteral>
++
++PortalTestQt::PortalTestQt(QWidget *parent, Qt::WindowFlags f)
++    : QMainWindow(parent, f)
++    , m_mainWindow(new Ui_PortalTestQt)
++    , m_portal(xdp_portal_new())
++{
++    m_mainWindow->setupUi(this);
++
++    connect(m_mainWindow->openFileButton, &QPushButton::clicked, [=] (bool clicked) {
++        XdpParent *parent;
++        XdpOpenFileFlags flags = XDP_OPEN_FILE_FLAG_NONE;
++
++        parent = xdp_parent_new_qt(windowHandle());
++        xdp_portal_open_file (m_portal, parent, "Portal Test Qt", nullptr /*filters*/, nullptr /*current_filters*/,
++                              nullptr /*choices*/, flags, nullptr /*cancellable*/, openedFile, this);
++        xdp_parent_free (parent);
++    });
++}
++
++PortalTestQt::~PortalTestQt()
++{
++    delete m_mainWindow;
++    g_object_unref( m_portal);
++}
++
++void PortalTestQt::updateLastOpenedFile(const QString &file)
++{
++    if (!file.isEmpty()) {
++        m_mainWindow->openedFileLabel->setText(QStringLiteral("Opened file: %1").arg(file));
++    } else {
++        m_mainWindow->openedFileLabel->setText(QStringLiteral("Failed to open a file!!!"));
++    }
++}
++
++void PortalTestQt::openedFile(GObject *object, GAsyncResult *result, gpointer data)
++{
++    Q_UNUSED(data);
++    XdpPortal *portal = XDP_PORTAL (object);
++    PortalTestQt *win = static_cast<PortalTestQt*>(data);
++    g_autoptr(GError) error = nullptr;
++    g_autoptr(GVariant) ret = nullptr;
++
++    ret = xdp_portal_open_file_finish(portal, result, &error);
++
++    if (ret) {
++        const char **uris;
++        if (g_variant_lookup(ret, "uris", "^a&s", &uris)) {
++            win->updateLastOpenedFile(uris[0]);
++        }
++    } else {
++            win->updateLastOpenedFile(QString());
++    }
++}
+diff --git a/portal-test/qt6/portal-test-qt.h b/portal-test/qt6/portal-test-qt.h
+new file mode 100644
+index 00000000..b50e8ea4
+--- /dev/null
++++ b/portal-test/qt6/portal-test-qt.h
+@@ -0,0 +1,28 @@
++
++#ifndef PORTAL_TEST_QT_H
++#define PORTAL_TEST_QT_H
++
++#include <QMainWindow>
++
++#undef signals
++#include "libportal/portal-qt6.h"
++#define signals Q_SIGNALS
++
++class Ui_PortalTestQt;
++
++class PortalTestQt : public QMainWindow
++{
++    Q_OBJECT
++public:
++    PortalTestQt(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
++    ~PortalTestQt();
++
++    void updateLastOpenedFile(const QString &file);
++private:
++    static void openedFile(GObject *object, GAsyncResult *result, gpointer data);
++
++    Ui_PortalTestQt *m_mainWindow;
++    XdpPortal *m_portal;
++};
++
++#endif // PORTAL_TEST_QT_H
+diff --git a/portal-test/qt6/portal-test-qt.ui b/portal-test/qt6/portal-test-qt.ui
+new file mode 100644
+index 00000000..3b1febe8
+--- /dev/null
++++ b/portal-test/qt6/portal-test-qt.ui
+@@ -0,0 +1,37 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<ui version="4.0">
++ <class>PortalTestQt</class>
++ <widget class="QMainWindow" name="PortalTestQt">
++  <property name="geometry">
++   <rect>
++    <x>0</x>
++    <y>0</y>
++    <width>355</width>
++    <height>100</height>
++   </rect>
++  </property>
++  <property name="windowTitle">
++   <string>Portal Test Qt</string>
++  </property>
++  <widget class="QWidget" name="centralwidget">
++   <layout class="QGridLayout" name="gridLayout">
++    <item row="0" column="0">
++     <widget class="QPushButton" name="openFileButton">
++      <property name="text">
++       <string>Open File...</string>
++      </property>
++     </widget>
++    </item>
++    <item row="1" column="0">
++     <widget class="QLabel" name="openedFileLabel">
++      <property name="text">
++       <string>No file opened!!</string>
++      </property>
++     </widget>
++    </item>
++   </layout>
++  </widget>
++ </widget>
++ <resources/>
++ <connections/>
++</ui>
+diff --git a/tests/meson.build b/tests/meson.build
+index 91f71ff0..3d0e7f6a 100644
+--- a/tests/meson.build
++++ b/tests/meson.build
+@@ -1,6 +1,9 @@
+ if 'qt5' in enabled_backends
+   subdir('qt5')
+ endif
++if 'qt6' in enabled_backends
++  subdir('qt6')
++endif
+ 
+ if meson.version().version_compare('>= 0.56.0')
+   pytest = find_program('pytest-3', 'pytest', required: false)
+diff --git a/tests/qt6/meson.build b/tests/qt6/meson.build
+new file mode 100644
+index 00000000..d6f91fb3
+--- /dev/null
++++ b/tests/qt6/meson.build
+@@ -0,0 +1,23 @@
++add_languages('cpp', required : true)
++
++qt6_dep = dependency('qt6', modules: ['Core', 'Test'])
++
++src = [
++  'test.cpp',
++  'test.h',
++]
++
++prep = qt6.preprocess(
++  moc_headers : 'test.h',
++  moc_extra_arguments: ['-DMAKES_MY_MOC_HEADER_COMPILE'],
++  dependencies: qt6_dep,
++)
++
++exe = executable('qt6-test',
++  [src, prep],
++  include_directories: [top_inc, libportal_inc],
++  dependencies: [qt6_dep, libportal_qt6_dep],
++  cpp_args : '-std=c++17',
++)
++
++test('Qt 6 unit test', exe)
+diff --git a/tests/qt6/test.cpp b/tests/qt6/test.cpp
+new file mode 100644
+index 00000000..c79c1620
+--- /dev/null
++++ b/tests/qt6/test.cpp
+@@ -0,0 +1,87 @@
++/*
++ * Copyright (C) 2022, Jan Grulich
++ * Copyright (C) 2023, Neal Gompa
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation, version 3.0 of the
++ * License.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * SPDX-License-Identifier: LGPL-3.0-only
++ */
++
++#include "test.h"
++
++#undef signals
++#include "portal-qt6.h"
++#define signals Q_SIGNALS
++
++#include <QSignalSpy>
++#include <QTest>
++
++void Test::testFileChooserPortal()
++{
++    XdpQt::FileChooserFilterRule rule;
++    rule.type = XdpQt::FileChooserFilterRuleType::Mimetype;
++    rule.rule = QStringLiteral("image/jpeg");
++
++    XdpQt::FileChooserFilter filter;
++    filter.label = QStringLiteral("Images");
++    filter.rules << rule;
++
++    g_autoptr(GVariant) filterVar = XdpQt::filechooserFiltersToGVariant({filter});
++    const QString expectedFilterVarStr = QStringLiteral("[('Images', [(1, 'image/jpeg')])]");
++    const QString filterVarStr = g_variant_print(filterVar, false);
++    QCOMPARE(expectedFilterVarStr, filterVarStr);
++
++    XdpQt::FileChooserFilterRule rule2;
++    rule2.type = XdpQt::FileChooserFilterRuleType::Pattern;
++    rule2.rule = QStringLiteral("*.png");
++    filter.rules << rule2;
++
++    g_autoptr(GVariant) filterVar2 = XdpQt::filechooserFiltersToGVariant({filter});
++    const QString expectedFilterVarStr2 = "[('Images', [(1, 'image/jpeg'), (0, '*.png')])]";
++    const QString filterVarStr2 = g_variant_print(filterVar2, false);
++    QCOMPARE(expectedFilterVarStr2, filterVarStr2);
++
++    XdpQt::FileChooserChoice choice;
++    choice.id = QStringLiteral("choice-id");
++    choice.label = QStringLiteral("choice-label");
++    choice.options.insert(QStringLiteral("option1-id"), QStringLiteral("option1-value"));
++    choice.options.insert(QStringLiteral("option2-id"), QStringLiteral("option2-value"));
++    choice.selected = QStringLiteral("option1-id");
++
++    g_autoptr(GVariant) choiceVar = XdpQt::filechooserChoicesToGVariant({choice});
++    const QString expectedChoiceVarStr = "[('choice-id', 'choice-label', [('option1-id', 'option1-value'), ('option2-id', 'option2-value')], 'option1-id')]";
++    const QString choiceVarStr = g_variant_print(choiceVar, false);
++    QCOMPARE(expectedChoiceVarStr, choiceVarStr);
++}
++
++void Test::testNotificationPortal()
++{
++    XdpQt::NotificationButton button;
++    button.label = QStringLiteral("Some label");
++    button.action = QStringLiteral("Some action");
++
++    XdpQt::Notification notification;
++    notification.title = QStringLiteral("Test notification");
++    notification.body = QStringLiteral("Testing notification portal");
++    notification.icon = QStringLiteral("applications-development");
++    notification.buttons << button;
++
++    g_autoptr(GVariant) notificationVar = XdpQt::notificationToGVariant(notification);
++    const QString expectedNotificationVarStr = "{'title': <'Test notification'>, 'body': <'Testing notification portal'>, 'icon': <('themed', <['applications-development', 'applications-development-symbolic']>)>, 'buttons': <[{'label': <'Some label'>, 'action': <'Some action'>}]>}";
++    const QString notificationStr = g_variant_print(notificationVar, false);
++    QCOMPARE(expectedNotificationVarStr, notificationStr);
++}
++
++
++QTEST_MAIN(Test)
+diff --git a/tests/qt6/test.h b/tests/qt6/test.h
+new file mode 100644
+index 00000000..073c6c1b
+--- /dev/null
++++ b/tests/qt6/test.h
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (C) 2022, Jan Grulich
++ * Copyright (C) 2023, Neal Gompa
++ *
++ * This file is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU Lesser General Public License as
++ * published by the Free Software Foundation, version 3.0 of the
++ * License.
++ *
++ * This file is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ *
++ * SPDX-License-Identifier: LGPL-3.0-only
++ */
++
++#ifndef TEST_H
++#define TEST_H
++
++#include <QObject>
++
++class Test : public QObject
++{
++    Q_OBJECT
++private Q_SLOTS:
++    void testFileChooserPortal();
++    void testNotificationPortal();
++};
++
++#endif // TEST_H

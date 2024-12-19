@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ../glibmm2 || exit 1
+
+source glibmm2.SlackBuild
+upgradepkg --install-new --reinstall $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE
+
