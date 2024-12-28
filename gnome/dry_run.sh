@@ -8,6 +8,12 @@ DEBUG=false  # Set to 'false' to disable debug information
 
 # Array of project names and corresponding GitLab repository names
 declare -A repos=(
+  ["loupe"]="loupe"
+  ["gnome-tweaks"]="gnome-tweaks"
+  ["gnome-backgrounds"]="gnome-backgrounds"
+  ["nautilus"]="nautilus"
+  ["gnome-browser-connector"]="gnome-browser-connector"
+  ["xdg-desktop-portal-gnome"]="xdg-desktop-portal-gnome"
   ["gnome-menus"]="gnome-menus"
   ["gnome-autoar"]="gnome-autoar"
   ["evolution"]="evolution"
