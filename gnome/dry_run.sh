@@ -17,7 +17,6 @@ declare -A repos=(
   ["gtksourceview5"]="gtksourceview"
   ["geocode-glib2"]="geocode-glib"
   ["gnome-settings-daemon"]="gnome-settings-daemon"
-  ["colord-gtk"]="colord-gtk"
   ["libadwaita"]="libadwaita"
   ["libgweather4"]="libgweather"
   ["gnome-bluetooth"]="gnome-bluetooth"
