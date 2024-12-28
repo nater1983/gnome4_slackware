@@ -200,5 +200,4 @@ else
   echo "No developmental releases (-dev, .alpha, .beta, .rc) found."
 fi
 
-echo "Dry run complete. No files have
-
+echo "Dry run complete. No files have been modified."
