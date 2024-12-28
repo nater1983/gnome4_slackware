@@ -8,6 +8,22 @@ DEBUG=false  # Set to 'false' to disable debug information
 
 # Array of project names and corresponding GitLab repository names
 declare -A repos=(
+  ["gnome-menus"]="gnome-menus"
+  ["gnome-autoar"]="gnome-autoar"
+  ["evolution"]="evolution"
+  ["evolution-data-server"]="evolution-data-server"
+  ["libnma-gtk4"]="libnma"
+  ["gnome-online-accounts"]="gnome-online-accounts"
+  ["gtksourceview5"]="gtksourceview"
+  ["geocode-glib2"]="geocode-glib"
+  ["gnome-settings-daemon"]="gnome-settings-daemon"
+  ["colord-gtk"]="colord-gtk"
+  ["libadwaita"]="libadwaita"
+  ["libgweather4"]="libgweather"
+  ["gnome-bluetooth"]="gnome-bluetooth"
+  ["gsound"]="gsound"
+  ["geoclue2"]="geoclue"
+  ["librest"]="rest"
   ["gnome-2048"]="gnome-2048"
   ["gnome-clocks"]="gnome-clocks"
   ["libspelling"]="libspelling"
