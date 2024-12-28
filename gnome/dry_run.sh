@@ -22,7 +22,6 @@ declare -A repos=(
   ["libgweather4"]="libgweather"
   ["gnome-bluetooth"]="gnome-bluetooth"
   ["gsound"]="gsound"
-  ["geoclue2"]="geoclue"
   ["librest"]="librest"
   ["gnome-2048"]="gnome-2048"
   ["gnome-clocks"]="gnome-clocks"
