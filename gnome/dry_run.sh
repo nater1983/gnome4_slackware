@@ -4,10 +4,11 @@
 set -e
 
 # Toggle debug information
-DEBUG=false  # Set to 'false' to disable debug information
+DEBUG=false  # Set to 'true' to enable debug information
 
 # Array of project names and corresponding GitLab repository names
 declare -A repos=(
+  ["amberol"]="amberol"
   ["loupe"]="loupe"
   ["gnome-tweaks"]="gnome-tweaks"
   ["gnome-backgrounds"]="gnome-backgrounds"
@@ -47,13 +48,34 @@ declare -A repos=(
   ["mutter"]="mutter"
 )
 
-# Base GitLab URL
+# Base GitLab URL for GNOME repository
 GITLAB_BASE_URL="https://gitlab.gnome.org/GNOME"
+
+# Array to store developmental release tags and their corresponding URLs
+declare -A dev_releases=()
 
 # Function to print debug information
 debug() {
   if [[ "$DEBUG" == true ]]; then
     echo "$@"
+  fi
+}
+
+# Function to check if a tag is older than one year
+is_older_than_one_year() {
+  tag_date="$1"
+  current_date=$(date +%s)
+  tag_timestamp=$(date -d "$tag_date" +%s)
+  
+  # Calculate the difference in seconds between the current date and the tag's date
+  let diff=$current_date-$tag_timestamp
+  let diff_days=$diff/86400
+
+  # Check if the tag is older than 365 days (1 year)
+  if (( diff_days > 365 )); then
+    return 0  # Older than a year
+  else
+    return 1  # Not older than a year
   fi
 }
 
@@ -63,26 +85,96 @@ for PRGNAM in "${!repos[@]}"; do
 
   echo "Processing repository: $REPO_NAME ($PRGNAM)"
 
-  # Use GitLab API to get the latest tag
+  # Check GNOME repository for all tags
   API_URL="https://gitlab.gnome.org/api/v4/projects/GNOME%2F${REPO_NAME}/repository/tags"
-  API_RESPONSE=$(curl -s "$API_URL")
-  
-  # Print the API response for debugging (will be visible only if DEBUG=true)
-  debug "API Response for $REPO_NAME:"
-  debug "$API_RESPONSE"
-  
-  # Attempt to parse the latest tag
-  LATEST_TAG=$(echo "$API_RESPONSE" | jq -r '.[0].name' 2>/dev/null)
+  debug "Checking GNOME repository: $API_URL"
+  API_RESPONSE=$(curl -s -w "%{http_code}" -o response.json "$API_URL")
 
-  if [[ -z "$LATEST_TAG" || "$LATEST_TAG" == "null" ]]; then
-    echo "Failed to fetch the latest tag for $REPO_NAME. Skipping."
-    continue
+  # Get the HTTP status code
+  HTTP_STATUS=$(tail -n 1 <<< "$API_RESPONSE")
+
+  # Log the raw API response from GNOME
+  debug "GNOME API Response: $(cat response.json)"
+  
+  if [[ "$HTTP_STATUS" == "404" ]]; then
+    echo "GNOME API returned 404 for $REPO_NAME. Trying World repository..."
+
+    # Check World repository if GNOME returns 404
+    API_URL_WORLD="https://gitlab.gnome.org/api/v4/projects/World%2F${REPO_NAME}/repository/tags"
+    debug "Checking World repository: $API_URL_WORLD"
+    API_RESPONSE_WORLD=$(curl -s -w "%{http_code}" -o response_world.json "$API_URL_WORLD")
+
+    # Get the HTTP status code for World
+    HTTP_STATUS_WORLD=$(tail -n 1 <<< "$API_RESPONSE_WORLD")
+
+    # Log the raw API response from World
+    debug "World API Response: $(cat response_world.json)"
+
+    if [[ "$HTTP_STATUS_WORLD" == "404" ]]; then
+      echo "Error: 404 Not Found for $REPO_NAME in both GNOME and World repositories."
+      continue
+    fi
+
+    # Parse all tags from World repository
+    ALL_TAGS_WORLD=$(jq -r '.[].name' response_world.json)
+
+    # Find the latest stable tag in World (not a developmental release)
+    STABLE_TAG_WORLD=""
+    for tag in $ALL_TAGS_WORLD; do
+      if [[ ! "$tag" =~ (-dev|\.alpha|\.beta|\.rc) ]]; then
+        STABLE_TAG_WORLD="$tag"
+        break
+      fi
+    done
+
+    if [[ -n "$STABLE_TAG_WORLD" ]]; then
+      LATEST_TAG="$STABLE_TAG_WORLD"
+      TARBALL_URL="https://gitlab.gnome.org/World/$REPO_NAME/-/archive/$LATEST_TAG/$REPO_NAME-$LATEST_TAG.tar.gz"
+      echo "Found stable tag in World repository: $LATEST_TAG"
+    else
+      echo "Failed to fetch the latest stable tag for $REPO_NAME from World repository. Skipping."
+      continue
+    fi
+  else
+    # If GNOME does not return a 404, parse all tags from GNOME API response
+    ALL_TAGS=$(jq -r '.[].name' response.json)
+
+    # Find the latest stable tag in GNOME (not a developmental release)
+    STABLE_TAG=""
+    for tag in $ALL_TAGS; do
+      if [[ ! "$tag" =~ (-dev|\.alpha|\.beta|\.rc) ]]; then
+        STABLE_TAG="$tag"
+        break
+      fi
+    done
+
+    if [[ -n "$STABLE_TAG" ]]; then
+      LATEST_TAG="$STABLE_TAG"
+      TARBALL_URL="https://gitlab.gnome.org/GNOME/$REPO_NAME/-/archive/$LATEST_TAG/$REPO_NAME-$LATEST_TAG.tar.gz"
+      echo "Found stable tag in GNOME repository: $LATEST_TAG"
+    else
+      echo "No valid stable tag found in GNOME for $REPO_NAME, skipping."
+      continue
+    fi
   fi
 
-  TARBALL_URL="$GITLAB_BASE_URL/$REPO_NAME/-/archive/$LATEST_TAG/$REPO_NAME-$LATEST_TAG.tar.gz"
+  # Check for and store developmental releases with a one-year limit
+  for tag in $ALL_TAGS; do
+    if [[ "$tag" =~ (-dev|\.alpha|\.beta|\.rc) ]]; then
+      # Get the creation date of the tag (assuming we can fetch this from GitLab API)
+      TAG_DATE=$(curl -s "https://gitlab.gnome.org/api/v4/projects/GNOME%2F$REPO_NAME/repository/tags/$tag" | jq -r '.commit.created_at')
 
-  # Always print the following information (even if DEBUG=false)
-  echo "Latest tag for $REPO_NAME: $LATEST_TAG"
+      if is_older_than_one_year "$TAG_DATE"; then
+        debug echo "Skipping developmental release: $tag (older than 1 year)"
+      else
+        dev_releases["$REPO_NAME: $tag"]="https://gitlab.gnome.org/GNOME/$REPO_NAME/-/archive/$tag/$REPO_NAME-$tag.tar.gz"
+        echo "Developmental release found for $REPO_NAME: $tag"
+      fi
+    fi
+  done
+
+  # Print stable version info for this repository
+  echo "Latest stable tag for $REPO_NAME: $LATEST_TAG"
   echo "Generated tarball URL: $TARBALL_URL"
   echo "SlackBuild file location: /$PRGNAM/$PRGNAM.SlackBuild"
   echo "Would replace VERSION with: $LATEST_TAG"
@@ -98,5 +190,15 @@ for PRGNAM in "${!repos[@]}"; do
   debug "---"
 done
 
-echo "Dry run complete. No files have been modified."
+# Print all collected developmental releases at the end
+if [[ ${#dev_releases[@]} -gt 0 ]]; then
+  echo "Developmental releases (-dev, .alpha, .beta, .rc) found:"
+  for tag in "${!dev_releases[@]}"; do
+    debug echo "$tag - URL: ${dev_releases[$tag]}"
+  done
+else
+  echo "No developmental releases (-dev, .alpha, .beta, .rc) found."
+fi
+
+echo "Dry run complete. No files have
 
