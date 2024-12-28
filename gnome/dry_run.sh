@@ -79,6 +79,13 @@ is_older_than_one_year() {
   fi
 }
 
+# Temporary files in /tmp
+response_file="/tmp/response.json"
+response_world_file="/tmp/response_world.json"
+
+# Trap to ensure files are deleted on script exit
+trap 'rm -f "$response_file" "$response_world_file"' EXIT
+
 # Main loop to process all repositories
 for PRGNAM in "${!repos[@]}"; do
   REPO_NAME=${repos[$PRGNAM]}
@@ -88,13 +95,13 @@ for PRGNAM in "${!repos[@]}"; do
   # Check GNOME repository for all tags
   API_URL="https://gitlab.gnome.org/api/v4/projects/GNOME%2F${REPO_NAME}/repository/tags"
   debug "Checking GNOME repository: $API_URL"
-  API_RESPONSE=$(curl -s -w "%{http_code}" -o response.json "$API_URL")
+  API_RESPONSE=$(curl -s -w "%{http_code}" -o "$response_file" "$API_URL")
 
   # Get the HTTP status code
   HTTP_STATUS=$(tail -n 1 <<< "$API_RESPONSE")
 
   # Log the raw API response from GNOME
-  debug "GNOME API Response: $(cat response.json)"
+  debug "GNOME API Response: $(cat "$response_file")"
   
   if [[ "$HTTP_STATUS" == "404" ]]; then
     echo "GNOME API returned 404 for $REPO_NAME. Trying World repository..."
@@ -102,13 +109,13 @@ for PRGNAM in "${!repos[@]}"; do
     # Check World repository if GNOME returns 404
     API_URL_WORLD="https://gitlab.gnome.org/api/v4/projects/World%2F${REPO_NAME}/repository/tags"
     debug "Checking World repository: $API_URL_WORLD"
-    API_RESPONSE_WORLD=$(curl -s -w "%{http_code}" -o response_world.json "$API_URL_WORLD")
+    API_RESPONSE_WORLD=$(curl -s -w "%{http_code}" -o "$response_world_file" "$API_URL_WORLD")
 
     # Get the HTTP status code for World
     HTTP_STATUS_WORLD=$(tail -n 1 <<< "$API_RESPONSE_WORLD")
 
     # Log the raw API response from World
-    debug "World API Response: $(cat response_world.json)"
+    debug "World API Response: $(cat "$response_world_file")"
 
     if [[ "$HTTP_STATUS_WORLD" == "404" ]]; then
       echo "Error: 404 Not Found for $REPO_NAME in both GNOME and World repositories."
@@ -116,7 +123,7 @@ for PRGNAM in "${!repos[@]}"; do
     fi
 
     # Parse all tags from World repository
-    ALL_TAGS_WORLD=$(jq -r '.[].name' response_world.json)
+    ALL_TAGS_WORLD=$(jq -r '.[].name' "$response_world_file")
 
     # Find the latest stable tag in World (not a developmental release)
     STABLE_TAG_WORLD=""
@@ -137,7 +144,7 @@ for PRGNAM in "${!repos[@]}"; do
     fi
   else
     # If GNOME does not return a 404, parse all tags from GNOME API response
-    ALL_TAGS=$(jq -r '.[].name' response.json)
+    ALL_TAGS=$(jq -r '.[].name' "$response_file")
 
     # Find the latest stable tag in GNOME (not a developmental release)
     STABLE_TAG=""
