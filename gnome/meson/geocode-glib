@@ -10,3 +10,6 @@ cd build
     -Denable-installed-tests=false \
     -Denable-gtk-doc=false \
     -Denable-installed-tests=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
