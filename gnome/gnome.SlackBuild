@@ -338,6 +338,7 @@ build_mod_pkg() {
         . $CWD/pre-install/${PKGNAME}.pre-install
       fi
 
+      # Run meson, using custom meson script if needed:
       if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake ; then
         # Run meson, using custom meson script if needed:
         if [ -r $CWD/meson/${PKGNAME} ]; then
@@ -348,16 +349,24 @@ build_mod_pkg() {
           . $CWD/meson/meson
         fi
  
-        # Run make, using custom make script if needed:
+      # Run cmake, using custom cmake script if needed:
         if [ -r $CWD/cmake/${PKGNAME} ]; then
           . $CWD/cmake/${PKGNAME}
         elif [ -r $CWD/cmake/${gnome_module} ]; then
           . $CWD/cmake/${gnome_module}
         else
           # This is the default make && make install routine:
-          "${NINJA:=ninja}"
-          DESTDIR=$PKG $NINJA install
-          cd ..
+          . $CWD/cmake/cmake
+        fi
+
+      # Run make, using custom make script if needed:
+        if [ -r $CWD/make/${PKGNAME} ]; then
+          . $CWD/make/${PKGNAME}
+        elif [ -r $CWD/make/${gnome_module} ]; then
+          . $CWD/make/${gnome_module}
+        else
+          # This is the default make && make install routine:
+          . $CWD/make/make
         fi
       fi
 
