@@ -13,3 +13,6 @@ cd build
     -Dtools=true \
     -Dtests=false \
     -Dexamples=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
