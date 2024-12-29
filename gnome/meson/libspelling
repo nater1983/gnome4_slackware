@@ -8,3 +8,6 @@ cd build
     -Ddocs=false \
     -Denchant=enabled \
     -Dvapi=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
