@@ -339,45 +339,34 @@ build_mod_pkg() {
       fi
 
       # Run meson, using custom meson script if needed:
-      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake; then
-        # Initialize a flag to indicate whether a build system has been run
-        build_system_used=false
-
-        # Meson build system
+      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake ; then
+        # Run meson, using custom meson script if needed:
         if [ -r $CWD/meson/${PKGNAME} ]; then
           . $CWD/meson/${PKGNAME}
-          build_system_used=true
         elif [ -r $CWD/meson/${gnome_module} ]; then
           . $CWD/meson/${gnome_module}
-          build_system_used=true
-        elif [ -r $CWD/meson/meson ]; then
+        else
           . $CWD/meson/meson
-          build_system_used=true
+        fi
+ 
+      # Run cmake, using custom cmake script if needed:
+        if [ -r $CWD/cmake/${PKGNAME} ]; then
+          . $CWD/cmake/${PKGNAME}
+        elif [ -r $CWD/cmake/${gnome_module} ]; then
+          . $CWD/cmake/${gnome_module}
+        else
+          # This is the default make && make install routine:
+          . $CWD/cmake/cmake
         fi
 
-        # CMake build system
-        if [ "$build_system_used" = false ]; then
-          if [ -r $CWD/cmake/${PKGNAME} ]; then
-            . $CWD/cmake/${PKGNAME}
-            build_system_used=true
-          elif [ -r $CWD/cmake/${gnome_module} ]; then
-            . $CWD/cmake/${gnome_module}
-            build_system_used=true
-          elif [ -r $CWD/cmake/cmake ]; then
-            . $CWD/cmake/cmake
-            build_system_used=true
-          fi
-        fi
-
-        # Make build system
-        if [ "$build_system_used" = false ]; then
-          if [ -r $CWD/make/${PKGNAME} ]; then
-            . $CWD/make/${PKGNAME}
-          elif [ -r $CWD/make/${gnome_module} ]; then
-            . $CWD/make/${gnome_module}
-          else
-            . $CWD/make/make
-          fi
+      # Run make, using custom make script if needed:
+        if [ -r $CWD/make/${PKGNAME} ]; then
+          . $CWD/make/${PKGNAME}
+        elif [ -r $CWD/make/${gnome_module} ]; then
+          . $CWD/make/${gnome_module}
+        else
+          # This is the default make && make install routine:
+          . $CWD/make/make
         fi
       fi
 
