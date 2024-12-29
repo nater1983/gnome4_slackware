@@ -8,3 +8,6 @@ cd build
     -Ddefault_library=shared \
     -Dsystemd=false \
     -Delogind=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
