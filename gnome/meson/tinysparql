@@ -7,3 +7,6 @@ cd build
     $GNOME_OPT_ARGS \
     -Ddocs=false \
     -Dsystemd_user_services=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
