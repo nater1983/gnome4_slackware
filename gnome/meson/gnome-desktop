@@ -8,3 +8,6 @@ cd build
     -Dsystemd=disabled \
     -Ddesktop_docs=false \
     -Dgtk_doc=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
