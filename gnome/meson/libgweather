@@ -9,3 +9,6 @@ cd build
     -Dgtk_doc=false \
     -Dintrospection=true \
     -Dtests=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
