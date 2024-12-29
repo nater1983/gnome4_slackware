@@ -9,3 +9,6 @@ cd build
     -Ddocumentation=api \
     -Dliboeffis=auto \
     -Dtests=disabled
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
