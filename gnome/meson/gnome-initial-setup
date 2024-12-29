@@ -8,3 +8,6 @@ cd build
     -Dibus=enabled \
     -Dsystemd=false \
     -Dparental_controls=enabled
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
