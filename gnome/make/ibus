@@ -7,5 +7,5 @@ CXXFLAGS="$SLKCFLAGS" \
       --with-unicode-emoji-dir=../${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
       --with-ucd-dir=../${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
       --disable-systemd-services
-../make
-../make install DESTDIR=$PKG
+make -C ../build
+make -C ../build install DESTDIR=$PKG
