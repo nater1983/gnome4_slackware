@@ -16,3 +16,6 @@ cd build
     -Dgoogle=true \
     -Dgoogle_client_id='44438659992-7kgjeitenc16ssihbtdjbgguch7ju55s.apps.googleusercontent.com' \
     -Dfedora=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
