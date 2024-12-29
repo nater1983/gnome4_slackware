@@ -6,6 +6,7 @@ CXXFLAGS="$SLKCFLAGS" \
       --with-python=python3 \
       --with-unicode-emoji-dir=../${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
       --with-ucd-dir=../${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
-      --disable-systemd-services
+      --disable-systemd-services \
+      --enable-gtk4
 make
 make install DESTDIR=$PKG
