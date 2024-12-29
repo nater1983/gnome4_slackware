@@ -9,3 +9,6 @@ cd build
   -Dintrospection=true \
 # not sure why this is necessary
 sed -i "/^ COMMAND = \\/usr\\/bin\\/g-ir-scanner/s/-lyaml//" build.ninja
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
