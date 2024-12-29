@@ -339,36 +339,39 @@ build_mod_pkg() {
       fi
 
       # Run meson, using custom meson script if needed:
-      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake ; then
-        # Run meson, using custom meson script if needed:
+      if ! grep -wq "^${PKGNAME}$" ${CWD}/nomake; then
         if [ -r $CWD/meson/${PKGNAME} ]; then
           . $CWD/meson/${PKGNAME}
         elif [ -r $CWD/meson/${gnome_module} ]; then
           . $CWD/meson/${gnome_module}
-        else
+        elif [ -r $CWD/meson/meson ]; then
           . $CWD/meson/meson
         fi
- 
+        # Exit after meson is executed
+        exit 0
+      fi
+
       # Run cmake, using custom cmake script if needed:
-        if [ -r $CWD/cmake/${PKGNAME} ]; then
-          . $CWD/cmake/${PKGNAME}
-        elif [ -r $CWD/cmake/${gnome_module} ]; then
-          . $CWD/cmake/${gnome_module}
-        else
-          # This is the default make && make install routine:
-          . $CWD/cmake/cmake
-        fi
+      if [ -r $CWD/cmake/${PKGNAME} ]; then
+        . $CWD/cmake/${PKGNAME}
+      elif [ -r $CWD/cmake/${gnome_module} ]; then
+        . $CWD/cmake/${gnome_module}
+      elif [ -r $CWD/cmake/cmake ]; then
+        . $CWD/cmake/cmake
+      fi
+      # Exit after cmake is executed
+      exit 0
 
       # Run make, using custom make script if needed:
-        if [ -r $CWD/make/${PKGNAME} ]; then
-          . $CWD/make/${PKGNAME}
-        elif [ -r $CWD/make/${gnome_module} ]; then
-          . $CWD/make/${gnome_module}
-        else
-          # This is the default make && make install routine:
-          . $CWD/make/make
-        fi
+      if [ -r $CWD/make/${PKGNAME} ]; then
+        . $CWD/make/${PKGNAME}
+      elif [ -r $CWD/make/${gnome_module} ]; then
+        . $CWD/make/${gnome_module}
+      elif [ -r $CWD/make/make ]; then
+        . $CWD/make/make
       fi
+      # Exit after make is executed
+      exit 0
 
       # Back to source toplevel builddir, since meson may have run in a subdir:
       cd $SLACK_GNOME_BUILD_DIR/${gnome_module}/$(pkgbase $gnome_src)
