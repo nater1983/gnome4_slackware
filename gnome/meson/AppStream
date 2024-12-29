@@ -11,3 +11,6 @@ cd build
     -Dapidocs=false \
     -Dsystemd=false \
     -Dinstall-docs=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
