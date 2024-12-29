@@ -1,12 +1,11 @@
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-cd .. \
-./configure \
+../configure \
     "${GNOME_MAKE_ARGS[@]}" \
       --enable-python-library \
       --with-python=python3 \
       --with-unicode-emoji-dir=$GNOME_BUILD_DIR/${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
       --with-ucd-dir=$GNOME_BUILD_DIR/${PKGNAME}-${MODULAR_PACKAGE_VERSION} \
-      --disable-systemd-services \
-make
-make install DESTDIR=$PKG
+      --disable-systemd-services
+../make
+../make install DESTDIR=$PKG
