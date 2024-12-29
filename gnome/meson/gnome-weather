@@ -5,5 +5,8 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-   -Dprofile=default \
-   -Ddogtail=true
+    -Dprofile=default \
+    -Ddogtail=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
