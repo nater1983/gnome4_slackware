@@ -10,3 +10,6 @@ cd build
     -Dmalcontent=true \
     -Ddefault_library=shared \
     -Ddocumentation=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
