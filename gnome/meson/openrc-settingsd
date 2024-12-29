@@ -9,3 +9,6 @@ cd build
     -Dlocale-style=slackware \
     -Dtime-style=slackware \
     -Dopenrc=disabled
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
