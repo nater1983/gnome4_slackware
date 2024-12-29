@@ -9,3 +9,6 @@ cd build
     -Dminer_rss=false \
     -Dlandlock=disabled \
     -Dsystemd_user_services=false 
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
