@@ -15,3 +15,6 @@ cd build
     -Dwebapps=true \
     -Dexternal_appstream=false \
     -Dprofile=slackware64-current
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
