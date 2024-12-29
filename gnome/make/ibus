@@ -1,6 +1,7 @@
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
-../configure \
+cd .. \
+./configure \
     "${GNOME_MAKE_ARGS[@]}" \
       --enable-python-library \
       --with-python=python3 \
