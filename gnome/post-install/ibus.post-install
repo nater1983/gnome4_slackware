@@ -1,7 +1,6 @@
 mkdir -p $PKG/etc/xdg/autostart
-install -m 644 $CWD/ibus-autostart.desktop $PKG/etc/xdg/autostart/
-install -m 644 $CWD/ibus-autostart-plasma.desktop $PKG/etc/xdg/autostart/
-install -m 755 $CWD/ibus-autostart $PKG/usr/bin/
+install -m 644 $CWD/post-install/ibus/ibus-autostart.desktop $PKG/etc/xdg/autostart/
+install -m 755 $CWD/post-install/ibus/ibus-autostart $PKG/usr/bin/
 sed -i "s|LIBDIRSUFFIX|$LIBDIRSUFFIX|" $PKG/usr/bin/ibus-autostart
 
 rm -rf $PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/gi
