@@ -5,3 +5,6 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
