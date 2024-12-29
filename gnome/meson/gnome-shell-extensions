@@ -8,3 +8,6 @@ cd build
     -Dstrip=true \
     -Dextension_set=all \
     -Dclassic_mode=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
