@@ -9,3 +9,6 @@ cd build
     -Dlogind=libelogind \
     -Dgsd_plugin=true \
     -Dman=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
