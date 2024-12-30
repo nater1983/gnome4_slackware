@@ -1,0 +1,4 @@
+cp -a docs/*
+# Prevent overwrite:
+mv $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/README $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/README.too
+cp -a LICENSE* README*
