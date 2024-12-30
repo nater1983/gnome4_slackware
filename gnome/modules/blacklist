@@ -1,7 +1,6 @@
 gtk4
 glib2
 gobject_introspection
-mozjs115
 mozjs128
 gjs
 python3-smartypants
@@ -26,7 +25,7 @@ avahi
 mm-common
 pangomm2
 glibmm2
-cairomm1
+cairomm
 gtkmm4
 dconf-editor
 geoclue2
