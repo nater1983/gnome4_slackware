@@ -1,4 +1,4 @@
-cat > ../.mozconfig << EOF
+cat > $(pwd)/firefox*/.mozconfig << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
@@ -21,11 +21,11 @@ ac_add_options --enable-tests
 ac_add_options --with-intl-api
 EOF
 
-export MOZBUILD_STATE_PATH="$(pwd)/.mozbuild"
+export MOZBUILD_STATE_PATH="$(pwd)/firefox*/.mozbuild"
 export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
-../mach build
+$(pwd)/firefox*/mach $(pwd)/firefox*/build
 
-cd $(pwd)/obj
+cd $(pwd)/firefox*/obj
 make install DESTDIR=$PKG
 cd ..
