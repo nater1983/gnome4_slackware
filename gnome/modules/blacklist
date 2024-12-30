@@ -1,5 +1,5 @@
-gtk4
-glib2
+gtk
+glib
 gobject_introspection
 firefox
 gjs
