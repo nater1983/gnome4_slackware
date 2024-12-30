@@ -9,6 +9,3 @@ cd build
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
-
-python3 setup.py build
-python3 setup.py install --root=$PKG --optimize=1 --skip-build
