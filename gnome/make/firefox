@@ -1,4 +1,3 @@
-MOZOBJ="$(pwd)/obj"
 cat > ./.mozconfig << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
@@ -27,6 +26,6 @@ export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
 ./mach build
 
-cd $MOZOBJ
+cd $(pwd)/obj
 make install DESTDIR=$PKG
 cd ..
