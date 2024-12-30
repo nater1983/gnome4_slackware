@@ -11,7 +11,7 @@ python3-toml
 at_spi2_core
 gi-docgen
 cairo
-gcr4
+gcr
 librsvg
 libgusb
 pango
