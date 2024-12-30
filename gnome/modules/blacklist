@@ -4,7 +4,7 @@ gobject-introspection
 gjs
 python3-smartypants
 python3-typogrify
-libsoup3
+libsoup
 python3-toml
 at-spi2-core
 gi-docgen
