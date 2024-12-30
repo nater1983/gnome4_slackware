@@ -6,7 +6,7 @@ cat > "$FIREFOX_DIR/.mozconfig" << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
-mk_add_options MOZ_OBJDIR="\$MOZOBJ"
+mk_add_options MOZ_OBJDIR="$FIREFOX_DIR/obj"
 ac_add_options --enable-release
 ac_add_options --enable-hardening
 ac_add_options --enable-optimize
