@@ -30,7 +30,7 @@ export MOZBUILD_STATE_PATH="$FIREFOX_DIR/.mozbuild"
 export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
 # Run the build process
-"$FIREFOX_DIR/mach" "$FIREFOX_DIR/build"
+"$FIREFOX_DIR/mach" build
 
 # Move to the object directory and install
 cd "$FIREFOX_DIR/obj" || exit 1
