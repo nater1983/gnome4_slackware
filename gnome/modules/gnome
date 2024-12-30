@@ -43,6 +43,7 @@ gnome-session
 libdaemon
 openrc-settingsd
 langtable
+hatch_fancy_pypi_readme
 gdm
 gnome-menus
 gnome-shell-extensions
