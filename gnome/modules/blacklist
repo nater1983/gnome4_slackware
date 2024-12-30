@@ -19,7 +19,8 @@ colord
 gvfs
 glib-networking
 graphviz
-adwaita_icon_theme
+adwaita-icon-theme
+adwaita-icon-theme-legacy
 libdaemon
 avahi
 mm-common
