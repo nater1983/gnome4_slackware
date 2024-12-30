@@ -1,0 +1,4 @@
+# Install man pages on correct directory
+sed -i 's|share/man|man|' setup.py
+python3 setup.py build
+python3 setup.py install --root=$PKG --optimize=1 --skip-build
