@@ -28,7 +28,7 @@ glibmm2
 cairomm
 gtkmm4
 dconf-editor
-geoclue2
+geoclue
 gsettings-desktop-schemas
 ibus
 pygobject3
