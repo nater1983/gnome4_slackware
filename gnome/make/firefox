@@ -1,8 +1,18 @@
-cat > $(pwd)/firefox*/.mozconfig << EOF
+# Find the directory dynamically
+FIREFOX_DIR=$(find "$(pwd)" -maxdepth 1 -type d -name "firefox*")
+
+# Check if the directory exists
+if [ -z "$FIREFOX_DIR" ]; then
+    echo "Error: No directory matching 'firefox*' found in $(pwd)."
+    exit 1
+fi
+
+# Create the .mozconfig file
+cat > "$FIREFOX_DIR/.mozconfig" << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
-mk_add_options MOZ_OBJDIR="$MOZOBJ"
+mk_add_options MOZ_OBJDIR="\$MOZOBJ"
 ac_add_options --enable-release
 ac_add_options --enable-hardening
 ac_add_options --enable-optimize
@@ -21,11 +31,14 @@ ac_add_options --enable-tests
 ac_add_options --with-intl-api
 EOF
 
-export MOZBUILD_STATE_PATH="$(pwd)/firefox*/.mozbuild"
+# Set environment variables
+export MOZBUILD_STATE_PATH="$FIREFOX_DIR/.mozbuild"
 export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
-$(pwd)/firefox*/mach $(pwd)/firefox*/build
+# Run the build process
+"$FIREFOX_DIR/mach" "$FIREFOX_DIR/build"
 
-cd $(pwd)/firefox*/obj
-make install DESTDIR=$PKG
+# Move to the object directory and install
+cd "$FIREFOX_DIR/obj" || exit 1
+make install DESTDIR="$PKG"
 cd ..
