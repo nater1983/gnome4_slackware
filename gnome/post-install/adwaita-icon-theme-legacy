@@ -1,2 +1,0 @@
-# Remove this directory files are copied to /usr/doc/$PRGNAM-$VERSION
-rm -fr $PKG/usr/share/licenses
