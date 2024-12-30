@@ -1,0 +1,40 @@
+From 7e9058c1edda71cd9aa457717ed8fed50cd49666 Mon Sep 17 00:00:00 2001
+From: nater1983 <naterussell83@gmail.com>
+Date: Sun, 25 Feb 2024 20:42:49 +0000
+Subject: [PATCH] Add option to disable Unit Tests
+
+- /meson.build
+- /meson_options.txt
+---
+ meson.build       | 4 +++-
+ meson_options.txt | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 80fcd89..9724725 100644
+--- a/meson.build
++++ b/meson.build
+@@ -238,7 +238,9 @@ if get_option('gtk_doc')
+   subdir('doc/libaccountsservice')
+ endif
+ 
+-subdir('tests')
++if get_option('tests')
++  subdir('tests')
++endif
+ 
+ configure_file(
+   output: 'config.h',
+diff --git a/meson_options.txt b/meson_options.txt
+index 69f547e..fd47ea6 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -14,3 +14,4 @@ option('vapi', type: 'boolean', value: true, description : 'Enable Vala bindings
+ 
+ option('docbook', type: 'boolean', value: false, description: 'build documentation (requires xmlto)')
+ option('gtk_doc', type: 'boolean', value: false, description: 'use gtk-doc to build documentation')
++option('tests', type: 'boolean', value: true, description : 'Build unit tests')
+\ No newline at end of file
+-- 
+GitLab
+
