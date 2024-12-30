@@ -2,7 +2,7 @@
 FIREFOX_DIR=$(find "$(pwd)" -maxdepth 1 -type d -name "firefox*")
 
 # Create the .mozconfig file
-cat > "$FIREFOX_DIR/.mozconfig" << EOF
+cat > "$FIREFOX_DIR"/.mozconfig << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
