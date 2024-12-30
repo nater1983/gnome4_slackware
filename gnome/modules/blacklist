@@ -1,7 +1,7 @@
 gtk4
 glib2
 gobject_introspection
-mozjs128
+firefox
 gjs
 python3-smartypants
 python3-typogrify
