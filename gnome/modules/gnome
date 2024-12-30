@@ -44,6 +44,7 @@ libdaemon
 openrc-settingsd
 langtable
 hatch_fancy_pypi_readme
+attrs
 gdm
 gnome-menus
 gnome-shell-extensions
