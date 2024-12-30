@@ -4,7 +4,7 @@ sphinxcontrib-jsmath
 sphinxcontrib-htmlhelp
 sphinxcontrib-devhelp
 sphinxcontrib-applehelp
-snowballstemmer
+snowball
 pytz
 python3-babel
 imagesize
