@@ -1,4 +1,4 @@
-cat > ./.mozconfig << EOF
+cat > ../.mozconfig << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
@@ -24,7 +24,7 @@ EOF
 export MOZBUILD_STATE_PATH="$(pwd)/.mozbuild"
 export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
-./mach build
+../mach build
 
 cd $(pwd)/obj
 make install DESTDIR=$PKG
