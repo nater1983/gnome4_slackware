@@ -1,0 +1,2 @@
+python3 -m build --wheel --no-isolation
+python3 -m installer --compile-bytecode 2 --destdir=$PKG dist/*.whl
