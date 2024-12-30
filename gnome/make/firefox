@@ -1,12 +1,9 @@
-# Find the directory dynamically
-FIREFOX_DIR=$(find "$(pwd)" -maxdepth 1 -type d -name "firefox*")
-
 # Create the .mozconfig file
-cat > "$FIREFOX_DIR"/.mozconfig << EOF
+cat > ./.mozconfig << EOF
 ac_add_options --prefix=/usr
 ac_add_options --libdir=/usr/lib${LIBDIRSUFFIX}
 ac_add_options --enable-application=js
-mk_add_options MOZ_OBJDIR="$FIREFOX_DIR/obj"
+mk_add_options MOZ_OBJDIR="$(pwd)/obj"
 ac_add_options --enable-release
 ac_add_options --enable-hardening
 ac_add_options --enable-optimize
@@ -26,13 +23,13 @@ ac_add_options --with-intl-api
 EOF
 
 # Set environment variables
-export MOZBUILD_STATE_PATH="$FIREFOX_DIR/.mozbuild"
+export MOZBUILD_STATE_PATH="$(pwd)/.mozbuild"
 export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
 # Run the build process
-"$FIREFOX_DIR/mach" build
+./mach build
 
 # Move to the object directory and install
-cd "$FIREFOX_DIR/obj" || exit 1
+cd "$(pwd)/obj" || exit 1
 make install DESTDIR="$PKG"
 cd ..
