@@ -32,7 +32,6 @@ dconf-editor
 geoclue2
 gsettings-desktop-schemas
 ibus
-libportal
 pygobject3
 vte
 xdg-desktop-portal
@@ -41,3 +40,4 @@ dav1d
 libaom
 python3-lxml
 nv-codec-headers
+at-spi2-core
