@@ -44,6 +44,7 @@ gnome-shell
 gnome-session
 libdaemon
 openrc-settingsd
+langtable
 gdm
 gnome-menus
 gnome-shell-extensions
