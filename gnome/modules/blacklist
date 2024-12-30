@@ -1,6 +1,6 @@
 gtk
 glib
-gobject_introspection
+gobject-introspection
 firefox
 gjs
 python3-smartypants
