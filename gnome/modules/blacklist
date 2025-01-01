@@ -3,6 +3,7 @@ glib
 gobject-introspection
 gjs
 build
+docutils
 smartypants
 typogrify
 libsoup
