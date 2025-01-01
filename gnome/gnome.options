@@ -118,7 +118,6 @@ export GNOME_MAKE_ARGS=(
   --sysconfdir=/etc
   --localstatedir=/var
   --mandir=/usr/man
-  --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
   --disable-static
   --build=$ARCH-slackware-linux
  )
