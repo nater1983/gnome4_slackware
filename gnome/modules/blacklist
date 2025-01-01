@@ -4,6 +4,7 @@ gobject-introspection
 gjs
 build
 docutils
+hatch_vcs
 smartypants
 typogrify
 libsoup
