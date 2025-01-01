@@ -1,4 +1,4 @@
 mkdir -p $PKG/usr/doc
-mv $PKG/usr/share/doc/${DOCNAME}/ $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+mv $PKG/usr/share/doc/$PRGNAM/ $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
 rmdir $PKG/usr/share/doc
 cp -a README $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
