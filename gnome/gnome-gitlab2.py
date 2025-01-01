@@ -63,6 +63,7 @@ def find_newer_version(current_version, tags):
                 formatted_version = format_version(current_major, tag_minor, tag_patch)
                 if not latest_version or formatted_version > latest_version:
                     latest_version = formatted_version
+        print(f"Latest version for {current_version} is {latest_version}")
         return latest_version
 
 def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
