@@ -2,10 +2,11 @@ gtk
 glib
 gobject-introspection
 gjs
-python3-smartypants
-python3-typogrify
+build
+smartypants
+typogrify
 libsoup
-python3-toml
+toml
 at-spi2-core
 gi-docgen
 cairo
@@ -30,7 +31,7 @@ libgtop
 dconf-editor
 geoclue
 gsettings-desktop-schemas
-pygobject3
+pygobject
 xdg-desktop-portal
 gnome-keyring
 dav1d
