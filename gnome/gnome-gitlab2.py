@@ -73,14 +73,19 @@ def find_newer_version(current_version, tags):
 
     # For the same major version, find the latest minor/patch version
     latest_version = current_version
+    latest_major, latest_minor, latest_patch = parse_version(latest_version)  # Parse latest_version into components
+
     for tag_minor, tag_patch, tag_name in sorted(version_dict[current_major], key=lambda x: (x[0], x[1])):
         print(f"[DEBUG] Comparing {current_version} with tag {tag_name} ({tag_minor}.{tag_patch})")
 
+        # Compare the current version's components with the tag's components
         if (tag_minor > current_minor or
             (tag_minor == current_minor and tag_patch > current_patch)):
-            formatted_version = format_version(current_major, tag_minor, tag_patch)
-            if not latest_version or formatted_version > latest_version:
-                latest_version = formatted_version
+            # Update the latest version if the tag is newer
+            if (tag_minor > latest_minor or
+                (tag_minor == latest_minor and tag_patch > latest_patch)):
+                latest_version = format_version(current_major, tag_minor, tag_patch)
+                latest_major, latest_minor, latest_patch = tag_minor, tag_patch, tag_patch
                 print(f"[DEBUG] Updated latest version to {latest_version}")
 
     if latest_version == current_version:
