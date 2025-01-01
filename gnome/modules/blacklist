@@ -2,6 +2,7 @@ gtk
 glib
 gobject-introspection
 gjs
+vte
 build
 docutils
 hatch_vcs
