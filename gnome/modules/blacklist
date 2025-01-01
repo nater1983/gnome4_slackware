@@ -22,10 +22,11 @@ adwaita-icon-theme-legacy
 libdaemon
 avahi
 mm-common
-pangomm2
-glibmm2
+pangomm
+glibmm
 cairomm
-gtkmm4
+gtkmm
+libgtop
 dconf-editor
 geoclue
 gsettings-desktop-schemas
