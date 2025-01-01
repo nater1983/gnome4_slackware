@@ -1,0 +1,8 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PRGNAM-$VERSION \
+    $GRAPHVIZ_SUPPORT
+make
+make install DESTDIR=$PKG
