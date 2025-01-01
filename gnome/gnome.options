@@ -128,7 +128,6 @@ export GNOME_MAKE_ARGS=(
   --sysconfdir=/etc
   --localstatedir=/var
   --mandir=/usr/man
-  --docdir=/usr/doc/$PRGNAM-$VERSION
   "${DOC_DIRS[@]}"  # Dynamically include --docdir options
   --disable-static
   --build=$ARCH-slackware-linux
