@@ -48,3 +48,4 @@ dav1d
 libaom
 nv-codec-headers
 libdisplay-info
+appstream-glib
