@@ -1,0 +1,9 @@
+make CFLAGS="$SLKCFLAGS" DESTDIR=$PKG
+
+mkdir -p $PKG/usr/bin $PKG/usr/man/man1
+
+# manual install = less code than hacking 'make install'
+install -s -m0755 $PRGNAM $PKG/usr/bin
+install -m0755 ${PRGNAM}all.sh $PKG/usr/bin/${PRGNAM}all
+gzip -9c < $PRGNAM.1 > $PKG/usr/man/man1/$PRGNAM.1.gz
+ln -s $PRGNAM.1.gz $PKG/usr/man/man1/${PRGNAM}all.1.gz
