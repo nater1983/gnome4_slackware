@@ -349,16 +349,6 @@ build_mod_pkg() {
           . $CWD/meson/meson
         fi
  
-      # Run cmake, using custom cmake script if needed:
-        if [ -r $CWD/cmake/${PKGNAME} ]; then
-          . $CWD/cmake/${PKGNAME}
-        elif [ -r $CWD/cmake/${gnome_module} ]; then
-          . $CWD/cmake/${gnome_module}
-        else
-          # This is the default make && make install routine:
-          . $CWD/cmake/cmake
-        fi
-
       # Run make, using custom make script if needed:
         if [ -r $CWD/make/${PKGNAME} ]; then
           . $CWD/make/${PKGNAME}
