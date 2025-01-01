@@ -23,11 +23,24 @@ def format_version(major, minor, patch):
     """Formats version components into a string."""
     return f"{major}.{minor}.{patch}"
 
-def parse_version(version_str):
-    """Parses a version string into a list of integers."""
-    version_str = re.sub(r'[^0-9._]', '', version_str).lstrip('v')
-    parts = version_str.replace('_', '.').split('.')
-    return [int(part) for part in parts] + [0] * (3 - len(parts))
+def parse_version(version):
+    """Parse a version string into major, minor, and patch components."""
+    # Remove any commas or spaces and split by '.'
+    version = version.replace(',', '').strip()
+    
+    # Ensure all components have numeric values and handle leading zeros
+    components = version.split('.')
+    
+    # Fill missing components with zeros (e.g., "1.1" -> "1.1.0")
+    components = [str(int(c)) for c in components]  # Remove leading zeros by converting to int
+    
+    # Ensure at least 3 components (major, minor, patch), if not, add zeros
+    while len(components) < 3:
+        components.append('0')
+    
+    # Convert components to integers for comparison
+    major, minor, patch = map(int, components)
+    return major, minor, patch
 
 def find_newer_version(current_version, tags):
     """Finds the newest stable version from the tag list compared to the current version."""
@@ -52,19 +65,23 @@ def find_newer_version(current_version, tags):
         return current_version
 
     max_major = max(version_dict.keys())
+    
+    # If a newer major version exists, select the latest tag within it
     if max_major > current_major:
-        new_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))
+        new_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))  # (minor, patch)
         return format_version(max_major, new_version[0], new_version[1])
-    else:
-        latest_version = current_version
-        for tag_minor, tag_patch, tag_name in version_dict[current_major]:
-            if (tag_minor > current_minor or
-                (tag_minor == current_minor and tag_patch > current_patch)):
-                formatted_version = format_version(current_major, tag_minor, tag_patch)
-                if not latest_version or formatted_version > latest_version:
-                    latest_version = formatted_version
-        print(f"Latest version for {current_version} is {latest_version}")
-        return latest_version
+    
+    # For the same major version, find the latest minor/patch version
+    latest_version = current_version
+    for tag_minor, tag_patch, tag_name in sorted(version_dict[current_major], key=lambda x: (x[0], x[1])):
+        if (tag_minor > current_minor or
+            (tag_minor == current_minor and tag_patch > current_patch)):
+            formatted_version = format_version(current_major, tag_minor, tag_patch)
+            if not latest_version or formatted_version > latest_version:
+                latest_version = formatted_version
+
+    print(f"Latest version for {current_version} is {latest_version}")
+    return latest_version
 
 def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
     """
