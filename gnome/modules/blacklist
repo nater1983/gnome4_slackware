@@ -5,8 +5,15 @@ gjs
 build
 docutils
 hatch_vcs
+hatchling
+installer
+lxml
+pillow
 smartypants
+toml
 typogrify
+webencodings
+wheel
 libsoup
 toml
 at-spi2-core
