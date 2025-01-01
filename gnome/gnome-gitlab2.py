@@ -61,26 +61,33 @@ def find_newer_version(current_version, tags):
             continue
 
     if not version_dict:
-        print("No valid tags found.")
+        print(f"[DEBUG] No valid tags found for {current_version}. Returning current version.")
         return current_version
 
     max_major = max(version_dict.keys())
-    
+
     # If a newer major version exists, select the latest tag within it
     if max_major > current_major:
         new_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))  # (minor, patch)
         return format_version(max_major, new_version[0], new_version[1])
-    
+
     # For the same major version, find the latest minor/patch version
     latest_version = current_version
     for tag_minor, tag_patch, tag_name in sorted(version_dict[current_major], key=lambda x: (x[0], x[1])):
+        print(f"[DEBUG] Comparing {current_version} with tag {tag_name} ({tag_minor}.{tag_patch})")
+
         if (tag_minor > current_minor or
             (tag_minor == current_minor and tag_patch > current_patch)):
             formatted_version = format_version(current_major, tag_minor, tag_patch)
             if not latest_version or formatted_version > latest_version:
                 latest_version = formatted_version
+                print(f"[DEBUG] Updated latest version to {latest_version}")
 
-    print(f"Latest version for {current_version} is {latest_version}")
+    if latest_version == current_version:
+        print(f"[DEBUG] Latest version for {current_version} is {latest_version} (no update).")
+    else:
+        print(f"[DEBUG] Latest version for {current_version} is {latest_version}")
+
     return latest_version
 
 def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
