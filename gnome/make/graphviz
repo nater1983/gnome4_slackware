@@ -4,6 +4,7 @@ CXXFLAGS="$SLKCFLAGS" \
 LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
     --enable-python3 \
     --disable-silent-rules \
     --disable-dependency-tracking \
