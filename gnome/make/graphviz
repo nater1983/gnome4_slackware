@@ -29,5 +29,5 @@ LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
     --with-rsvg=yes \
     --with-qt=no \
     --with-x
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make
+make install DESTDIR=$PKG
