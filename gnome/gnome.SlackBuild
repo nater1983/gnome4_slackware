@@ -121,6 +121,13 @@ process_man_pages() {
 }
 
 process_info_pages() {
+  # Move usr/share/man to usr/man if it exists
+  if [ -d "usr/share/info" ]; then
+    mkdir -p usr/info
+    mv usr/share/info/* usr/info/
+    rmdir usr/share/info
+  fi
+
   # Compress info pages and remove "dir" file from the package:
   if [ -d "usr/info" ]; then
     ( cd usr/info
