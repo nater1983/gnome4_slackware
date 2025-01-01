@@ -1,0 +1,2 @@
+python3 -m flit_core.wheel
+PYTHONPATH=src python3 -m installer -d "$PKG" dist/*.whl
