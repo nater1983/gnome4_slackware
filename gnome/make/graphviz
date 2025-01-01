@@ -30,4 +30,4 @@ LDFLAGS="-L/usr/lib${LIBDIRSUFFIX}" \
     --with-qt=no \
     --with-x
 make
-make install DESTDIR=$PKG
+make install-strip DESTDIR=$PKG
