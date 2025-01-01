@@ -53,6 +53,16 @@ fi
 NUMJOBS=${NUMJOBS:-" -j $(expr $(nproc) + 1) "}
 export NUMJOBS
 
+# Check and dynamically set --docdir based on the available variables
+DOC_DIRS=()
+if [ -n "$PRGNAM" ] && [ -n "$VERSION" ]; then
+  DOC_DIRS+=(--docdir="/usr/doc/$PRGNAM-$VERSION")
+fi
+
+if [ -n "$DOCNAME" ] && [ -n "$PACKAGE_VERSION" ]; then
+  DOC_DIRS+=(--docdir="/usr/doc/${DOCNAME}-${PACKAGE_VERSION}")
+fi
+
 # Additional cmake flags that are spanned across the KDE modules
 # Do not use "final build" unless we build an actual release.
 export GNOME_OPT_ARGS=" \
@@ -119,7 +129,7 @@ export GNOME_MAKE_ARGS=(
   --localstatedir=/var
   --mandir=/usr/man
   --docdir=/usr/doc/$PRGNAM-$VERSION
-  --docdir=/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+  "${DOC_DIRS[@]}"  # Dynamically include --docdir options
   --disable-static
   --build=$ARCH-slackware-linux
  )
