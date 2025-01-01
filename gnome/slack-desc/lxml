@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+python3-lxml: python3-lxml (Python3 bindings for libxml2 and libxslt)
+python3-lxml:
+python3-lxml: lxml is a Pythonic binding for the libxml2 and libxslt libraries. It
+python3-lxml: is unique in that it combines the speed and feature completeness of
+python3-lxml: these libraries with the simplicity of a native Python API.
+python3-lxml:
+python3-lxml: Homepage: https://lxml.de/
+python3-lxml:
+python3-lxml:
+python3-lxml:
+python3-lxml:
