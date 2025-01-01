@@ -1,0 +1,4 @@
+# Add this symlink for now so that we don't break compiles:
+if [ ! -r $PKG/usr/include/librsvg-2.0/librsvg/librsvg-features.h ]; then
+  ln -sf rsvg-features.h $PKG/usr/include/librsvg-2.0/librsvg/librsvg-features.h
+fi
