@@ -32,7 +32,6 @@ adwaita-icon-theme
 adwaita-icon-theme-legacy
 libdaemon
 avahi
-mm-common
 pangomm
 glibmm
 cairomm
