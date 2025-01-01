@@ -27,7 +27,7 @@ CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
 UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
-SKIPBUILT=${SKIPBUILT:-"no"}   # Skip already built packages
+SKIPBUILT=${SKIPBUILT:-"yes"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
 
 # Function to get base name of the package (remove .tar extensions)
@@ -100,8 +100,8 @@ process_man_pages() {
   # Move usr/share/man to usr/man if it exists
   if [ -d "usr/share/man" ]; then
     mkdir -p usr/man
-    mv usr/share/man/* usr/man/
-    rmdir usr/share/man
+    cp -av usr/share/man/* usr/man/
+    rm -fr usr/share/man
   fi
 
   # Compress and symlink the man pages if needed:
