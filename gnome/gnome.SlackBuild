@@ -121,7 +121,7 @@ process_man_pages() {
 }
 
 process_info_pages() {
-  # Move usr/share/man to usr/info if it exists
+  # Move usr/share/info to usr/info if it exists
   if [ -d "usr/share/info" ]; then
     mkdir -p usr/info
     mv usr/share/info/* usr/info/
