@@ -200,7 +200,7 @@ precheck() {
       if [ "$CHECKOUT" = "yes" ] || [ "$CHECKOUT" = "YES" ]; then
         THEDATE=$(date +%Y%m%d)
         echo "Checking out ${MODLOC}:${MODBASE} at date ${THEDATE}."
-        $CWD/plasma_checkout.sh -c -d ${THEDATE} -o $CWD/src ${MODLOC}:${MODBASE}
+        $CWD/gnome_checkout.sh -c -d ${THEDATE} -o $CWD/src ${MODLOC}:${MODBASE}
         RETVAL=$?
         if [ $RETVAL -ne 0 ]; then
           echo "Error while checking out '$MODPKG' ($MODLOC/$MODBASE) !"
