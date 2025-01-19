@@ -1,3 +1,4 @@
+autoreconf -i
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
