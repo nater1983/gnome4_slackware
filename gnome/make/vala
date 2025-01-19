@@ -1,4 +1,4 @@
-autoreconf -i
+./autogen.sh
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
