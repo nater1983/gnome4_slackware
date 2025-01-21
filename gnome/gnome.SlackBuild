@@ -28,7 +28,7 @@ UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 CHECKOUT=${CHECKOUT:-"no"} # don't let the script checkout missing sources.
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
-SKIPBUILT=${SKIPBUILT:-"yes"}   # Skip already built packages
+SKIPBUILT=${SKIPBUILT:-"no"}   # Skip already built packages
 EXITFAIL=${EXITFAIL:-"yes"}     # Exit on build failure
 
 # Function to get base name of the package (remove .tar extensions)
