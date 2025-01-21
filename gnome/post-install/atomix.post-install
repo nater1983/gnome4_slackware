@@ -1,1 +1,1 @@
-install -vDm 0644 $CWD/post-install/atomix.6 -t $PKG/usr/man/man6/
+install -vDm 0644 $CWD/post-install/atomix/atomix.6 -t $PKG/usr/man/man6/
