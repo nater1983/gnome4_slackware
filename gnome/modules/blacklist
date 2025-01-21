@@ -22,6 +22,7 @@ at-spi2-core
 gi-docgen
 cairo
 gcr
+cargo-c
 librsvg
 libgusb
 pango
