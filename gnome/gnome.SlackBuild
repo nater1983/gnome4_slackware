@@ -47,7 +47,7 @@ pkgbase() {
 cd $(dirname $0) ; CWD=$(pwd)
 
 TMP=${TMP:-$CWD}
-SLACK_GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/gnome_build}
+SLACK_GNOME_BUILD_DIR=${GNOME_BUILD_DIR:-$TMP/build}
 mkdir -p "$SLACK_GNOME_BUILD_DIR"
 
 extract_archive() {
