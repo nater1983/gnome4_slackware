@@ -5,7 +5,6 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Ddefault_library=shared \
     -Dsystemd=false \
     -Delogind=true
   "${NINJA:=ninja}"
