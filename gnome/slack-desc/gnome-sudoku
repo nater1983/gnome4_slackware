@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+gnome-sudoku: gnome-sudoku (Sudoku puzzle game for GNOME)
+gnome-sudoku:
+gnome-sudoku: This is an application for playing the popular sudoku logic puzzle
+gnome-sudoku: game, in which one must fill a 9 by 9 square with the correct digits.
+gnome-sudoku: It features automatic puzzle generation, saving and restoring games,
+gnome-sudoku: annotations, trackers, and much more.
+gnome-sudoku:
+gnome-sudoku: Homepage: https://gitlab.gnome.org/GNOME/gnome-sudoku
+gnome-sudoku:
+gnome-sudoku:
+gnome-sudoku:
