@@ -20,6 +20,7 @@ python2-soupsieve
 python2-BeautifulSoup4
 python-zipp
 python3-soupsieve
+poetry_core
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
