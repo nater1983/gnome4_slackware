@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+clairvoyant: clairvoyant (Ask questions, get psychic answers)
+clairvoyant:
+clairvoyant: Does he love you? Should you have pizza for dinner? Is there such 
+clairvoyant: thing as a stupid question? Discover the answers to these questions 
+clairvoyant: and more with Clairvoyant, the magic 8-ball inspired fortune teller. 
+clairvoyant: Ask a question, then open Clairvoyant for an answer. 
+clairvoyant: Not satisfied? Ask again, then hit "Ask Again" to try again.
+clairvoyant: Do what you'd like with the answers—just don't shoot the messenger!
+clairvoyant: 
+clairvoyant: https://github.com/cassidyjames/clairvoyant
+clairvoyant:
