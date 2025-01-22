@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+chess-clock: chess-clock (Time games of over-the-board chess)
+chess-clock:
+chess-clock: Chess Clock is a simple application to provide time control for over-
+chess-clock: the-board chess games. Intended for mobile use, players select the 
+chess-clock: time control settings desired for their game, then the black player 
+chess-clock: taps their clock to start white's timer. After each player's turn, 
+chess-clock: they tap the clock to start their opponent's, until the game is 
+chess-clock: finished or one of the clocks reaches zero.
+chess-clock: 
+chess-clock: https://gitlab.gnome.org/World/chess-clock
+chess-clock:
