@@ -4,8 +4,8 @@ cd build
   CXXFLAGS="$SLKCFLAGS" \
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
-    -Duser_documentation=false \
-    $GNOME_OPT_ARGS
+    $GNOME_OPT_ARGS \
+    -Duser_documentation=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
