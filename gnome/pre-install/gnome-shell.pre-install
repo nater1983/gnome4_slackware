@@ -1,1 +1,0 @@
-install -vDm 0644 $CWD/pre-install/gnome-shell/noise-texture.png -t data/theme || exit 1
