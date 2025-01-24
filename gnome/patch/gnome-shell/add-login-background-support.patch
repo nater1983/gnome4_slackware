@@ -6,7 +6,7 @@ index ab9d1b2..d544a20 100644
                  return false;
              }
  
-+            this._lockDialogGroup.set_style('background-image: url("/home/nathan/Pictures/466799352_1197232678048833_8700850351770632908_n.jpg"); background-size: cover;');
++            this._lockDialogGroup.set_style('background-image: url("/usr/share/pixmaps/noise-texture.png"); background-size: cover;');
 +            this._dialog?.set_style('background-image: none; background-color: transparent;');
              this._dialog = new constructor(this._lockDialogGroup);
  
