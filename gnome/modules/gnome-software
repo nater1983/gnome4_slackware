@@ -4,7 +4,6 @@ libjcat
 protobuf-c
 libsmbios
 gcab
-fwupd
 xdg-desktop-portal-gtk
 libostree
 flatpak

@@ -1,0 +1,3 @@
+install -vDm 0644 $CWD/post-install/gnome-shell/noise-texture.png -t $PKG/usr/share/pixmaps/
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/gnome-shell/" > $PKG/etc/ld.so.conf.d/shell.conf
