@@ -1,0 +1,11 @@
+env NOCONFIGURE=1 ./autogen.sh
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --with-curl \
+    --with-openssl \
+    --with-dracut=yes
+make
+make install DESTDIR=$PKG

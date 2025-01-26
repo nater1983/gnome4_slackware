@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+              |-----handy-ruler------------------------------------------------------|
+gnome-mahjongg: gnome-mahjongg (Classic Eastern tile game for GNOME)
+gnome-mahjongg:
+gnome-mahjongg: This is a solitaire (one player) version of the classic Eastern tile
+gnome-mahjongg: game, Mahjongg. You start with five levels of tiles which are stacked
+gnome-mahjongg: so some are covered up by the tiles on top. The object of Mahjongg is
+gnome-mahjongg: to remove all the tiles from the game, by finding matching pairs
+gnome-mahjongg: which look alike.
+gnome-mahjongg:
+gnome-mahjongg: Homepage: https://wiki.gnome.org/Apps/Mahjongg
+gnome-mahjongg:
+gnome-mahjongg:
