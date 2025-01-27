@@ -28,6 +28,7 @@ cryptography
 curl_cffi
 python_dbusmock
 beautifulSoup4
+emoji
 python3-cssselect
 yelp-xsl
 yelp-tools
