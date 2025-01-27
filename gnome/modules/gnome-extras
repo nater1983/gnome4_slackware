@@ -26,6 +26,7 @@ cachetools
 click
 cryptography
 curl_cffi
+python_dbusmock
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
