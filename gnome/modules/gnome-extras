@@ -23,6 +23,7 @@ python-zipp
 python3-soupsieve
 poetry_core
 cachetools
+click
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
