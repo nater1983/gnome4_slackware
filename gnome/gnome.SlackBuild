@@ -90,11 +90,12 @@ strip_binaries() {
   find "$target_dir" | xargs file | grep "current ar archive" | grep ELF | cut -f 1 -d : | xargs strip -g 2> /dev/null
   
   # Strip rpaths:
-  for file in $(find "$target_dir" | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null); do
-    if [ -n "$(patchelf --print-rpath "$file" 2> /dev/null)" ]; then
-      patchelf --remove-rpath "$file"
-    fi
-  done
+  # Retain here just incase I need it later:
+  #for file in $(find "$target_dir" | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null); do
+  #  if [ -n "$(patchelf --print-rpath "$file" 2> /dev/null)" ]; then
+  #    patchelf --remove-rpath "$file"
+  #  fi
+  #done
 }
 
 process_man_pages() {
@@ -467,10 +468,10 @@ build_mod_pkg() {
             echo "Using custom package name: $PACKAGE_NAME, version: $PACKAGE_VERSION with build: $BUILD"
     
             # Use the parsed values in the makepkg command
-            /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PACKAGE_NAME}-$(echo $PACKAGE_VERSION | tr - _)-${PKGARCH}-${BUILD}.txz"
+            /sbin/makepkg --remove-tmp-rpaths -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PACKAGE_NAME}-$(echo $PACKAGE_VERSION | tr - _)-${PKGARCH}-${BUILD}.txz"
         else
         # Fallback to default makepkg process with original PKGNAME
-          /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz"
+          /sbin/makepkg --remove-tmp-rpaths -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz"
         fi
 
         # We will continue with the fresh packages installed:
