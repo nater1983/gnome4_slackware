@@ -25,6 +25,7 @@ poetry_core
 cachetools
 click
 cryptography
+curl_cffi
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
