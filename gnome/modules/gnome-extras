@@ -24,6 +24,7 @@ python3-soupsieve
 poetry_core
 cachetools
 click
+cryptography
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
