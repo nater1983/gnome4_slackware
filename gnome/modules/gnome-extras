@@ -27,7 +27,7 @@ click
 cryptography
 curl_cffi
 python_dbusmock
-BeautifulSoup4
+beautifulSoup4
 python3-cssselect
 yelp-xsl
 yelp-tools
