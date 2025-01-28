@@ -401,6 +401,7 @@ build_mod_pkg() {
               touch -r ChangeLog "$DOCSDIR/ChangeLog"
           fi
           if [ -f $CWD/slack-required/${DOCNAME} ]; then cat $CWD/slack-required/${DOCNAME} > "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"/slack-required; fi
+          if [ -f $CWD/slack-required/${PKGNAME} ]; then cat $CWD/slack-required/${DOCNAME} > "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"/slack-required; fi
       fi
 
       # Get rid of zero-length junk files:
