@@ -1,1 +1,0 @@
-cp -av $PKG/usr/doc/msgraph-1/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
