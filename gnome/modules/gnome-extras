@@ -29,6 +29,7 @@ curl_cffi
 python_dbusmock
 beautifulSoup4
 emoji
+exceptiongroup
 python3-cssselect
 yelp-xsl
 yelp-tools
