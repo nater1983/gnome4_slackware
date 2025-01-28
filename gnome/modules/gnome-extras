@@ -30,6 +30,7 @@ python_dbusmock
 beautifulSoup4
 emoji
 exceptiongroup
+flit_core
 python3-cssselect
 yelp-xsl
 yelp-tools
