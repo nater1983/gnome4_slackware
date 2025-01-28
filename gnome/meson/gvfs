@@ -6,7 +6,7 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Ddnssd=true \
-    -Dgoa=false \
+    -Dgoa=true \
     -Dgoogle=false \
     -Dlogind=true \
     -Dman=true \
