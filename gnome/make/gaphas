@@ -1,0 +1,7 @@
+# Use this setup.py shim:
+cat << EOF > setup.py
+from setuptools import setup
+setup(name="${SRCNAM}", version="${VERSION}", packages=["${SRCNAM}"], package_data={"": ["*"]})
+EOF
+
+unshare -n python3 setup.py install --root=$PKG || exit 1
