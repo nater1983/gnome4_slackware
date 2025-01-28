@@ -12,7 +12,7 @@ cd build
     -Dman=true \
     -Dnfs=false \
     -Dsystemduserunitdir=no \
-    -Donedrive=false \
+    -Donedrive=true \
     -Dtmpfilesdir=no
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
