@@ -1,0 +1,2 @@
+mv -v  $PKG/usr/doc/msgraph-1/* $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+rm -fr $PKG/usr/doc/msgraph-1/
