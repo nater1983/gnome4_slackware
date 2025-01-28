@@ -442,6 +442,7 @@ build_mod_pkg() {
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
           if [ -f $CWD/slack-required/${PKGNAME} ]; then cat $CWD/slack-required/${PKGNAME} > $PKG/install/slack-required; fi
+          if [ -f $CWD/slack-required/${DOCNAME} ]; then cat $CWD/slack-required/${DOCNAME} > $PKG/install/slack-required; fi
           if [ -f $CWD/slack-suggests/${PKGNAME} ]; then cat $CWD/slack-suggests/${PKGNAME} > $PKG/install/slack-suggests; fi
           if [ -f $CWD/slack-conflicts/${PKGNAME} ]; then cat $CWD/slack-conflicts/${PKGNAME} > $PKG/install/slack-conflicts; fi
         else
