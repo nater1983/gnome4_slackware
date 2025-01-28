@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                |-----handy-ruler------------------------------------------------------|
+python3-freetype: python3-freetype (Python binding for the freetype library)
+python3-freetype:
+python3-freetype: Freetype Python provides bindings for the FreeType library. Only the	
+python3-freetype: high-level API is bound.
+python3-freetype: 
+python3-freetype:
+python3-freetype: Homepage: https://github.com/rougier/freetype-pyv
+python3-freetype:
+python3-freetype:
+python3-freetype:
+python3-freetype:
