@@ -30,7 +30,6 @@ python_dbusmock
 beautifulSoup4
 emoji
 exceptiongroup
-flit_core
 fonttools
 freetype-py
 gaphas
