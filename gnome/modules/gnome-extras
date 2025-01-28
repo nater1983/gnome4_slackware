@@ -33,6 +33,7 @@ exceptiongroup
 flit_core
 fonttools
 freetype-py
+gaphas
 python3-cssselect
 yelp-xsl
 yelp-tools
