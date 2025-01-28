@@ -32,6 +32,7 @@ emoji
 exceptiongroup
 flit_core
 fonttools
+freetype-py
 python3-cssselect
 yelp-xsl
 yelp-tools
