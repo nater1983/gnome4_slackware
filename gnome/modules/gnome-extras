@@ -35,6 +35,7 @@ fonttools
 freetype-py
 gaphas
 pyglm
+google_api_core
 python3-cssselect
 yelp-xsl
 yelp-tools
