@@ -21,12 +21,13 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://download.gnome.org/sources/gvfs/1.55/gvfs-1.55.90.tar.xz
+wget -c https://download.gnome.org/sources/gvfs/1.57/gvfs-1.57.1.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=gvfs
-VERSION=${VERSION:-1.55.90}
+PRGNAM=gvfs-goa
+SRCNAM=gvfs
+VERSION=${VERSION:-1.57.1}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -70,9 +71,9 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
-rm -rf $PRGNAM-$VERSION
-tar xvf $CWD/$PRGNAM-$VERSION.tar.?z* || exit 1
-cd $PRGNAM-$VERSION || exit 1
+rm -rf $SRCNAM-$VERSION
+tar xvf $CWD/$SRCNAM-$VERSION.tar.?z* || exit 1
+cd $SRCNAM-$VERSION || exit 1
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -98,41 +99,33 @@ meson setup \
   --localstatedir=/var \
   --buildtype=release \
   -Ddnssd=true \
-  -Dgoa=false \
+  -Dgoa=true \
   -Dgoogle=false \
   -Dlogind=true \
   -Dman=true \
   -Dnfs=false \
   -Dsystemduserunitdir=no \
-  -Donedrive=false \
+  -Donedrive=true \
   -Dtmpfilesdir=no
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
 
-rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.la
+# Build only for GOA/Onedrive:
 
-find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
-  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null
-
-# Compress and link manpages, if any:
-if [ -d $PKG/usr/man ]; then
-  ( cd $PKG/usr/man
-    for manpagedir in $(find . -type d -name "man*") ; do
-      ( cd $manpagedir
-        for eachpage in $( find . -type l -maxdepth 1) ; do
-          ln -s $( readlink $eachpage ).gz $eachpage.gz
-          rm $eachpage
-        done
-        gzip -9 *.?
-      )
-    done
-  )
-fi
+rm -fr $PKG/usr/share/locale/
+rm -fr $PKG/usr/share/glib-2.0/schemas/
+rm -fr $PKG/usr/share/GConf/
+rm -fr $PKG/usr/man/
+rm -fr $PKG/usr/lib64/
+rm -f $PKG/usr/libexec/gvfs-{afc,gphoto2,mtp,udisks2}-volume-monitor
+rm -f $PKG/usr/libexec/gvfsd-{admin,afc,afp,afp-browse,archive,cdda,computer,dav,dnssd,ftp,fuse,gphoto2,http,localtest,metadata,mtp,network,recent,sftp,smb,smb-browse,trash,wsdd}
+rm -f $PKG/usr/libexec/gvfsd
+rm -f $PKG/usr/share/dbus-1/services/org.gtk.vfs.{AfcVolumeMonitor,Daemon,GPhoto2VolumeMonitor,MTPVolumeMonitor,Metadata,UDisks2VolumeMonitor}.service
+rm -f $PKG/usr/share/gvfs/mounts/{admin,afc,afp,afp-browse,archive,cdda,computer,dav+sd,dav,dns-sd,ftp,ftpis,ftps,gphoto2,httpd,localtest,mtp,network,recent,sftp,smb-browse,smb,trash,wsdd}.mount
+rm -f $PKG/usr/share/gvfs/mounts/a{afc,gphoto2,mtp,udisks2}.mount
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a COPYING* NEWS README* CONTRIBUTING.md \
-    $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
