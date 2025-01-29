@@ -124,7 +124,7 @@ rm -f $PKG/usr/libexec/gvfsd-{admin,afc,afp,afp-browse,archive,cdda,computer,dav
 rm -f $PKG/usr/libexec/gvfsd
 rm -f $PKG/usr/share/dbus-1/services/org.gtk.vfs.{AfcVolumeMonitor,Daemon,GPhoto2VolumeMonitor,MTPVolumeMonitor,Metadata,UDisks2VolumeMonitor}.service
 rm -f $PKG/usr/share/gvfs/mounts/{admin,afc,afp,afp-browse,archive,cdda,computer,dav+sd,dav,dns-sd,ftp,ftpis,ftps,gphoto2,http,localtest,mtp,network,recent,sftp,smb-browse,smb,trash,wsdd}.mount
-rm -f $PKG/usr/share/gvfs/mounts/a{afc,gphoto2,mtp,udisks2}.mount
+rm -f $PKG/usr/share/gvfs/remote-volume-monitors/{afc,gphoto2,mtp,udisks2}.monitor
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
