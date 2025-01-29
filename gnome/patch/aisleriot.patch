@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/pathch/aisleriot/aisleriot-3.22.19-appdata-namespace.patch
