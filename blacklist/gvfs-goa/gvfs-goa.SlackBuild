@@ -127,6 +127,7 @@ rm -f $PKG/usr/share/gvfs/mounts/{admin,afc,afp,afp-browse,archive,cdda,computer
 rm -f $PKG/usr/share/gvfs/remote-volume-monitors/{afc,gphoto2,mtp,udisks2}.monitor
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/usr/doc/$PRGNAM-$VERSION/slack-required; fi
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
