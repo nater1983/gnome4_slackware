@@ -114,7 +114,8 @@ cd ..
 # Build only for GOA/Onedrive:
 
 rm -fr $PKG/usr/share/locale/
-rm -fr $PKG/usr/share/glib-2.0/schemas/
+rm -fr $PKG/usr/share/glib-2.0/
+rm -fr $PKG/usr/share/polkit-1/
 rm -fr $PKG/usr/share/GConf/
 rm -fr $PKG/usr/man/
 rm -fr $PKG/usr/lib64/
