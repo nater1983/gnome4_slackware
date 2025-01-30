@@ -1,0 +1,2 @@
+mkdir -p $PKG/usr/share/fonts/TTF/
+cp {mono,sans}/*.ttf $PKG/usr/share/fonts/TTF/
