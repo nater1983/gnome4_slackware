@@ -25,20 +25,17 @@ def format_version(major, minor, patch):
 
 def parse_version(version):
     """Parse a version string into major, minor, and patch components."""
-    # Remove any commas or spaces and split by '.'
-    version = version.replace(',', '').strip()
+    # Remove any non-numeric prefix (e.g., 'v47.2.1' -> '47.2.1')
+    version = version.lstrip('v').replace(',', '').strip()
     
-    # Ensure all components have numeric values and handle leading zeros
-    components = version.split('.')
+    # Split by '.' and filter out any empty components
+    components = [c for c in version.split('.') if c.isdigit()]
     
-    # Fill missing components with zeros (e.g., "1.1" -> "1.1.0")
-    components = [str(int(c)) for c in components]  # Remove leading zeros by converting to int
-    
-    # Ensure at least 3 components (major, minor, patch), if not, add zeros
+    # Ensure at least 3 components (major, minor, patch)
     while len(components) < 3:
         components.append('0')
     
-    # Convert components to integers for comparison
+    # Convert components to integers
     major, minor, patch = map(int, components)
     return major, minor, patch
 
