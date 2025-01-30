@@ -1,0 +1,4 @@
+getent group rtkit >/dev/null || groupadd -r rtkit
+getent passwd rtkit >/dev/null || \
+    useradd -r -g rtkit -d /var/lib/rtkit -s /sbin/nologin \
+    -c "RealtimeKit" rtkit
