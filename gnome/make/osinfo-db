@@ -1,0 +1,1 @@
+osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/$PRGNAM-$VERSION.tar.xz
