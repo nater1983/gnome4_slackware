@@ -13,63 +13,98 @@ def print_debug(message):
     print(f"[DEBUG] {message}")
 
 def is_stable_version(version):
-    """Determines if the given version is stable."""
-    return not re.search(r'-(dev|alpha|beta|rc)', version, re.IGNORECASE)
+    """
+    Determines if the given version is stable.
+    Pre-release versions like -dev, -beta, -alpha are ignored.
+    """
+    return not re.search(r'-(dev)', version, re.IGNORECASE)
 
 def format_version(major, minor, patch):
     """Formats version components into a string."""
     return f"{major}.{minor}.{patch}"
 
 def parse_version(version):
-    """Parses a version string into major, minor, and patch components."""
-    version = version.lstrip('v').replace(',', '').strip()
-    components = [c for c in version.split('.') if c.isdigit()]
+    """Parse a version string into major, minor, and patch components."""
+    # Remove any commas or spaces and split by '.'
+    version = version.replace(',', '').strip()
     
-    if len(components) < 3:
-        components += ['0'] * (3 - len(components))  # Ensure at least 3 components
-
-    try:
-        return tuple(map(int, components[:3]))
-    except ValueError:
-        return (0, 0, 0)  # Return a safe default if parsing fails
+    # Ensure all components have numeric values and handle leading zeros
+    components = version.split('.')
+    
+    # Fill missing components with zeros (e.g., "1.1" -> "1.1.0")
+    components = [str(int(c)) for c in components]  # Remove leading zeros by converting to int
+    
+    # Ensure at least 3 components (major, minor, patch), if not, add zeros
+    while len(components) < 3:
+        components.append('0')
+    
+    # Convert components to integers for comparison
+    major, minor, patch = map(int, components)
+    return major, minor, patch
 
 def find_newer_version(current_version, tags):
-    """Finds the newest stable version from the tag list."""
-    current_version_tuple = parse_version(current_version)
+    """Finds the newest stable version from the tag list compared to the current version."""
+    current_major, current_minor, current_patch = parse_version(current_version)
     version_dict = {}
 
     for tag in tags:
-        tag_name = tag['name']
-        if not is_stable_version(tag_name):
-            continue  # Skip non-stable versions
+        try:
+            tag_name = tag['name']
+            if not is_stable_version(tag_name):
+                continue  # Skip non-stable versions
 
-        tag_version_tuple = parse_version(tag_name)
-        if tag_version_tuple[0] not in version_dict:
-            version_dict[tag_version_tuple[0]] = []
-        version_dict[tag_version_tuple[0]].append((tag_version_tuple, tag_name))
+            tag_major, tag_minor, tag_patch = parse_version(tag_name)
+            if tag_major not in version_dict:
+                version_dict[tag_major] = []
+            version_dict[tag_major].append((tag_minor, tag_patch, tag_name))
+        except ValueError:
+            continue
 
     if not version_dict:
-        print_debug(f"No valid tags found for {current_version}. Returning current version.")
+        print(f"[DEBUG] No valid tags found for {current_version}. Returning current version.")
         return current_version
 
     max_major = max(version_dict.keys())
 
-    if max_major > current_version_tuple[0]:
-        new_version = max(version_dict[max_major], key=lambda x: x[0])
-        return format_version(*new_version[0])
+    # If a newer major version exists, select the latest tag within it
+    if max_major > current_major:
+        new_version = max(version_dict[max_major], key=lambda x: (x[0], x[1]))  # (minor, patch)
+        return format_version(max_major, new_version[0], new_version[1])
 
-    latest_version = current_version_tuple
-    for version_tuple, tag_name in version_dict.get(current_version_tuple[0], []):
-        if version_tuple > latest_version:
-            latest_version = version_tuple
-            print_debug(f"Updated latest version to {format_version(*latest_version)}")
+    # For the same major version, find the latest minor/patch version
+    latest_version = current_version
+    latest_major, latest_minor, latest_patch = parse_version(latest_version)  # Parse latest_version into components
 
-    return format_version(*latest_version)
+    for tag_minor, tag_patch, tag_name in sorted(version_dict[current_major], key=lambda x: (x[0], x[1])):
+        print(f"[DEBUG] Comparing {current_version} with tag {tag_name} ({tag_minor}.{tag_patch})")
+
+        # Compare the current version's components with the tag's components
+        if (tag_minor > current_minor or
+            (tag_minor == current_minor and tag_patch > current_patch)):
+            # Update the latest version if the tag is newer
+            if (tag_minor > latest_minor or
+                (tag_minor == latest_minor and tag_patch > latest_patch)):
+                latest_version = format_version(current_major, tag_minor, tag_patch)
+                latest_major, latest_minor, latest_patch = tag_minor, tag_patch, tag_patch
+                print(f"[DEBUG] Updated latest version to {latest_version}")
+
+    if latest_version == current_version:
+        print(f"[DEBUG] Latest version for {current_version} is {latest_version} (no update).")
+    else:
+        print(f"[DEBUG] Latest version for {current_version} is {latest_version}")
+
+    return latest_version
 
 def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current_version=None):
-    """Fetches all tags from a GitLab repository, filtering out older tags."""
+    """
+    Fetches all tags from a GitLab repository without cloning it, filtering out tags older than 9 months,
+    but considering tags up to 3 years ago as valid if no tags are within the last 9 months.
+    Prints the download URLs for the tags found.
+    Optionally, only shows the tag matching the current version.
+    """
     try:
         repo_url = repo_url.strip()
+
         if not repo_url.startswith("https://gitlab.gnome.org/"):
             raise ValueError("The URL must start with https://gitlab.gnome.org/")
 
@@ -83,75 +118,94 @@ def get_tags_from_gitlab(repo_url, access_token=None, suppress_404=True, current
         encoded_path = urllib.parse.quote(project_path, safe="")
         tags_url = f"{base_api_url}/projects/{encoded_path}/repository/tags"
 
-        headers = {"Private-Token": access_token} if access_token else {}
+        headers = {}
+        if access_token:
+            headers["Private-Token"] = access_token
 
-        response = requests.get(tags_url, headers=headers, timeout=10)
+        response = requests.get(tags_url, headers=headers)
 
         if response.status_code == 200:
             print_debug(f"Successfully fetched tags from {repo_url}")
             tags = response.json()
 
             nine_months_ago = datetime.now(pytz.utc) - timedelta(days=9 * 30)
-            three_years_ago = datetime.now(pytz.utc) - timedelta(days=3 * 365)
+            three_years_ago = datetime.now(pytz.utc) - timedelta(days=4 * 365)
 
-            def filter_tags(tag):
-                try:
-                    created_at = datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z")
-                    return created_at > nine_months_ago or created_at > three_years_ago
-                except (KeyError, ValueError):
-                    return False
+            recent_tags = [
+                tag for tag in tags
+                if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > nine_months_ago
+            ]
 
-            recent_tags = [tag for tag in tags if filter_tags(tag)]
+            if not recent_tags:
+                recent_tags = [
+                    tag for tag in tags
+                    if datetime.strptime(tag['commit']['created_at'], "%Y-%m-%dT%H:%M:%S.%f%z") > three_years_ago
+                ]
 
             if current_version:
+                # Only print the tag that matches the current version
                 for tag in recent_tags:
-                    if tag['name'] == current_version:
-                        print(f"Tag: {tag['name']}, Download URL: {repo_url}/-/archive/{tag['name']}/{repository_name}-{tag['name']}.tar.gz")
+                    tag_name = tag['name']
+                    if tag_name == current_version:
+                        download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                        print(f"Tag: {tag_name}, Download URL: {download_url}")
                         return [tag]
 
-            for tag in recent_tags:
-                print(f"Tag: {tag['name']}, Download URL: {repo_url}/-/archive/{tag['name']}/{repository_name}-{tag['name']}.tar.gz")
+            else:
+                # If no current version is provided, print all recent tags
+                for tag in recent_tags:
+                    tag_name = tag['name']
+                    download_url = f"{repo_url}/-/archive/{tag_name}/{repository_name}-{tag_name}.tar.gz"
+                    print(f"Tag: {tag_name}, Download URL: {download_url}")
 
             return recent_tags
 
-        if response.status_code == 404 and not suppress_404:
-            print_debug(f"Repository not found: {repo_url}. Skipping.")
-        return []
+        elif response.status_code == 404:
+            if not suppress_404:
+                print_debug(f"Repository not found: {repo_url}. Skipping.")
+            return []
 
-    except (requests.RequestException, ValueError) as e:
-        print_debug(f"Error fetching tags from {repo_url}: {e}")
+        else:
+            print(f"Failed to fetch tags: {response.status_code}")
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while fetching tags: {e}")
+        return []
+    except ValueError as ve:
+        print(f"ValueError: {ve}")
         return []
 
 def process_version_files(version_dir, groups):
-    """Processes version files and checks for updates in all specified groups."""
+    """
+    Processes version files and checks for updates in all specified groups.
+    """
     for file in os.listdir(version_dir):
         file_path = os.path.join(version_dir, file)
-        if not os.path.isfile(file_path):
-            continue
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
+                current_version = f.read().strip()
 
-        with open(file_path, 'r') as f:
-            current_version = f.read().strip()
+            project_name = file.strip()
+            print_debug(f"Processing {project_name} with current version {current_version}")
 
-        project_name = file.strip()
-        print_debug(f"Processing {project_name} with current version {current_version}")
+            tags = []
+            for group in groups:
+                project_url = f"https://gitlab.gnome.org/{group}/{project_name}"
+                print_debug(f"Trying {project_url}")
+                group_tags = get_tags_from_gitlab(project_url)
+                tags.extend(group_tags)
 
-        tags = []
-        for group in groups:
-            project_url = f"https://gitlab.gnome.org/{group}/{project_name}"
-            print_debug(f"Trying {project_url}")
-            tags.extend(get_tags_from_gitlab(project_url))
-
-        if tags:
-            newer_version = find_newer_version(current_version, tags)
-            if newer_version != current_version:
-                print(f"Updating {file} from {current_version} to {newer_version}")
-                with open(file_path, 'w') as f:
-                    f.write(newer_version)
-        else:
-            print(f"No valid tags found for {project_name} in any group.")
+            if tags:
+                newer_version = find_newer_version(current_version, tags)
+                if newer_version != current_version:
+                    print(f"Updating {file} from {current_version} to {newer_version}")
+                    with open(file_path, 'w') as f:
+                        f.write(newer_version)
+            else:
+                print(f"No valid tags found for {project_name} in any group.")
 
 def main():
-    """Main function to handle command-line arguments and execute the update process."""
     if len(sys.argv) < 3:
         print("Usage: python script.py <version_directory> <group1> [<group2> ...]")
         sys.exit(1)
