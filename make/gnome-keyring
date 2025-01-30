@@ -1,0 +1,10 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+../configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --enable-nls \
+    --disable-debug \
+    --enable-ssh-agent \
+    --with-pam-dir=/lib${LIBDIRSUFFIX}/security
+make -C ../build
+make -C ../build install DESTDIR=$PKG

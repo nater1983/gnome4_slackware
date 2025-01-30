@@ -1,0 +1,11 @@
+gnome-online-accounts
+libgweather4
+libgdata
+webkit2gtk6.0
+libwpe
+xdg-dbus-proxy
+wpebackend-fdo
+geoclue2
+bubblewrap
+librest
+geocode-glib

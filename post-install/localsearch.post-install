@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/localsearch-3.0/" > $PKG/etc/ld.so.conf.d/localsearch.conf

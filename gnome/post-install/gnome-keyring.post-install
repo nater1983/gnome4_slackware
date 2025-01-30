@@ -1,1 +1,0 @@
-rm -f $PKG/lib${LIBDIRSUFFIX}/security/*.la

@@ -1,0 +1,6 @@
+install -vDm 0755 $CWD/post-install/openrc-settingsd/rc.openrc-settingsd.new -t $PKG/etc/rc.d/
+install -vDm 0644 $CWD/post-install/openrc-settingsd/openrc-listener.desktop -t $PKG/etc/xdg/autostart
+install -vDm 0755 $CWD/post-install/openrc-settingsd/openrc-listener -t $PKG/bin/
+install -vDm 0755 $CWD/post-install/openrc-settingsd/gnome-remote-desktop -t $PKG/etc/config
+install -vDm 0755 $CWD/post-install/openrc-settingsd/gnome-user-share-webdav -t $PKG/etc/config
+install -vDm 0755 $CWD/post-install/openrc-settingsd/rygel -t $PKG/etc/config

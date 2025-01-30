@@ -1,2 +1,0 @@
-python3 setup.py build --with-unicode-strings
-python3 setup.py install --skip-build --root=$PKG

@@ -1,0 +1,5 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+cat <<EOF > $PKG/etc/ld.so.conf.d/gedit.conf
+/usr/lib${LIBDIRSUFFIX}/gedit
+/usr/lib${LIBDIRSUFFIX}/gedit/plugins
+EOF

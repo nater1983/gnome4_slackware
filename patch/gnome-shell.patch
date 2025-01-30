@@ -1,0 +1,5 @@
+patch -Np1 -i $CWD/patch/gnome-shell/optional-portal-helper.patch
+patch -Np1 -i $CWD/patch/gnome-shell/0001-status-keyboard-Add-a-catch-around-reload-call.patch
+patch -Np1 -i $CWD/patch/gnome-shell/0002-status-keyboard-Load-keyboard-from-system-settings-i.patch
+patch -Np1 -i $CWD/patch/gnome-shell/0003-status-keyboard-Use-gnome-desktop-API-for-getting-de.patch
+patch -Np1 -i $CWD/patch/gnome-shell/add-login-background-support.patch

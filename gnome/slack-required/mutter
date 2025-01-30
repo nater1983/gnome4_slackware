@@ -1,8 +1,0 @@
-gnome-settings-daemon
-xvfb-run
-gnome-shell
-geocode-glib
-libgweather4
-gnome-desktop
-geoclue2
-libei

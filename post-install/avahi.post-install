@@ -1,0 +1,11 @@
+# 20220414 bkw: if this dir is empty, it doesn't need to be included
+# in the package.
+rmdir $PKG/run &> /dev/null || true
+
+# Install these files as .new:
+mv $PKG/etc/rc.d/rc.avahidaemon $PKG/etc/rc.d/rc.avahidaemon.new
+mv $PKG/etc/rc.d/rc.avahidnsconfd $PKG/etc/rc.d/rc.avahidnsconfd.new
+mv $PKG/etc/avahi/avahi-daemon.conf $PKG/etc/avahi/avahi-daemon.conf.new
+
+# Fix python3 shebangs:
+sed -i "s|#!python3|#!/usr/bin/python3|g" $PKG/usr/bin/avahi-{discover,bookmarks}

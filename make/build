@@ -1,0 +1,3 @@
+rm -fr build
+python3 -m flit_core.wheel
+python3 -m installer -d "$PKG" dist/*.whl

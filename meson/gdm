@@ -1,0 +1,23 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Ddbus-sys="/usr/share/dbus-1/system.d" \
+    -Ddefault-pam-config=none \
+    -Dpam-mod-dir="/lib${LIBDIRSUFFIX}/security" \
+    -Dgdm-xsession=true \
+    -Drun-dir=/run/gdm \
+    -Dlogind-provider=elogind \
+    -Dsystemd-journal=false \
+    -Dsystemdsystemunitdir=no \
+    -Dsystemduserunitdir=no \
+    -Dsysconfsubdir=/etc/gdm \
+    -Dgdm-xsession=true \
+    -Dx11-support=true \
+    -Dinitial-vt=7
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

@@ -1,0 +1,2 @@
+install -Dm 644 $CWD/post-install/gnome-control-center/slackware_logo_med.png -t $PKG/usr/share/pixmaps/
+install -Dm 644 $CWD/post-install/gnome-control-center/slackware_whitelogo_med.png -t $PKG/usr/share/pixmaps/

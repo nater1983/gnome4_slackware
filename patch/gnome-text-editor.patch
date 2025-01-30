@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gnome-text-editor/117.patch

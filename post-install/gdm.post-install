@@ -1,0 +1,12 @@
+# gdm logo
+install -vDm 0644 $CWD/post-install/gdm/slackware_whitelogo_med.png -t $PKG/usr/share/pixmaps/
+install -vDm 0644 $CWD/post-install/gdm/org.gnome.login-screen.gschema.override -t $PKG/usr/share/glib-2.0/schemas || exit 1
+
+mkdir -p $PKG/etc/pam.d
+cat $CWD/post-install/gdm/gdm-autologin.pam > $PKG/etc/pam.d/gdm-autologin
+cat $CWD/post-install/gdm/gdm-password.pam > $PKG/etc/pam.d/gdm-password
+cat $CWD/post-install/gdm/gdm-launch-environment.pam > $PKG/etc/pam.d/gdm-launch-environment
+cat $CWD/post-install/gdm/wayland-session > $PKG/etc/gdm/wayland-session
+
+# Handle /etc/gdm/custom.conf a little nicer:
+mv $PKG/etc/gdm/{custom.conf,custom.conf.new}

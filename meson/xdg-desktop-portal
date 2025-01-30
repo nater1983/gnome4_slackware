@@ -1,0 +1,15 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dlibportal=enabled \
+    -Dgeoclue=enabled \
+    -Dsystemd=disabled \
+    -Dflatpak-interfaces=disabled \
+    -Dsandboxed-image-validation=disabled
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

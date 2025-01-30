@@ -1,0 +1,2 @@
+# Preserve customizations:
+mv -i $PKG/etc/appstream.conf{,.new}

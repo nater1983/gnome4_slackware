@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/gsettings-desktop-schemas/gsettings-desktop-schemas.font.defaults.diff
+#patch -Np1 -i $CWD/patch/gsettings-desktop-schemas/gsettings-desktop-schemas-fate324570-Add-key-for-GDM-background-configuration.patch

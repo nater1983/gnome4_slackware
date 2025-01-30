@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/gnome-software/" > $PKG/etc/ld.so.conf.d/gnome-software.conf

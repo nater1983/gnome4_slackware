@@ -1,0 +1,32 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-systemdsystemunitdir=no \
+    --enable-tests \
+    --disable-static \
+    --disable-monodoc \
+    --disable-autoipd \
+    --enable-compat-libdns_sd \
+    --enable-python-dbus \
+    --enable-glib \
+    --enable-dbus \
+    --enable-python \
+    --enable-gtk \
+    --enable-gtk3 \
+    --enable-qt5 \
+    --disable-qt4 \
+    --disable-qt3 \
+    --disable-mono \
+    --enable-core-docs \
+    --with-dbus-sys=/usr/share/dbus-1/system.d \
+    --with-avahi-user=avahi \
+    --with-avahi-group=avahi \
+    --with-avahi-priv-access-group=netdev \
+    --with-distro=slackware \
+    --program-prefix= \
+    --program-suffix= \
+    --disable-libsystemd \
+    --disable-manpages
+make
+make install DESTDIR=$PKG

@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gnome-software/gnome-pwa-list.patch

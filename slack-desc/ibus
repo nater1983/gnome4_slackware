@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+ibus-gtk4: ibus-gtk4 (Intelligent Input Bus GTK Component)
+ibus-gtk4:
+ibus-gtk4: IBus is an Intelligent Input Bus. It is a new input framework for
+ibus-gtk4: Linux. It provides a full featured and user friendly input method
+ibus-gtk4: user interface.
+ibus-gtk4:
+ibus-gtk4: Homepage: https://github.com/ibus/ibus/wiki
+ibus-gtk4:
+ibus-gtk4:
+ibus-gtk4:
+ibus-gtk4:

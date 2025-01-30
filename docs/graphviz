@@ -1,0 +1,4 @@
+mkdir -p $PKG/usr/doc
+mv $PKG/usr/share/doc/$PKGNAME/ $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+rmdir $PKG/usr/share/doc
+cp -a README $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION

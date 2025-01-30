@@ -1,0 +1,9 @@
+make CFLAGS="$SLKCFLAGS" DESTDIR=$PKG
+
+mkdir -p $PKG/usr/bin $PKG/usr/man/man1
+
+# manual install = less code than hacking 'make install'
+install -s -m0755 ${PKGNAME} $PKG/usr/bin
+install -m0755 ${PKGNAME}all.sh $PKG/usr/bin/${PKGNAME}all
+install -m0644 ${PKGNAME}.1 $PKG/usr/man/man1/${PKGNAME}.1
+install -m0644 ${PKGNAME}.1 $PKG/usr/man/man1/${PKGNAME}all.1

@@ -1,0 +1,8 @@
+# Add upower policy allowing users in the 'power' group
+# to suspend/hibernate the computer:
+mkdir -p $PKG/usr/share/polkit-1/rules.d
+install -m 0644 -o root \
+  $CWD/post-install/upower/10-enable-upower-suspend.rules \
+  $PKG/usr/share/polkit-1/rules.d/10-enable-upower-suspend.rules.new
+
+mv $PKG/etc/UPower/UPower.conf $PKG/etc/UPower/UPower.conf.new

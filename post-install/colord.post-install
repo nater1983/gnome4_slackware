@@ -1,0 +1,12 @@
+# I'm not sure why bash-completion needs to be installed in order for meson to
+# install this harmless runtime file. One of those annoying things.
+mkdir -p $PKG/usr/share/bash-completion/completions
+cp -a data/colormgr $PKG/usr/share/bash-completion/completions
+chown root:root $PKG/usr/share/bash-completion/completions/colormgr
+chmod 644 $PKG/usr/share/bash-completion/completions/colormgr
+
+# Make this config file .new:
+mv $PKG/usr/share/dbus-1/system.d/org.freedesktop.ColorManager.conf $PKG/usr/share/dbus-1/system.d/org.freedesktop.ColorManager.conf.new
+
+# It almost gets this right.
+chown -R colord:colord $PKG/var/lib/colord

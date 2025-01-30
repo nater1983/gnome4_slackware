@@ -1,7 +1,0 @@
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-    "${GNOME_MAKE_ARGS[@]}" \
-    --disable-debug
-make
-make install DESTDIR=$PKG

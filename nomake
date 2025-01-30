@@ -1,0 +1,2 @@
+# List packages with an $ARCH of "nomake" (i.e. packages
+# that contain no binaries) here:

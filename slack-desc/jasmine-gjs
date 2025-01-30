@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+jasmine-gjs: jasmine-gjs (Jasmine for GJS )
+jasmine-gjs:
+jasmine-gjs: Jasmine is a BDD (behavior-driven development) framework for
+jasmine-gjs: JavaScript. This module allows you to run Jasmine specs for your GJS
+jasmine-gjs: code. The output will be displayed in your terminal.
+jasmine-gjs:
+jasmine-gjs:
+jasmine-gjs: Homepage: https://github.com/ptomato/jasmine-gjs
+jasmine-gjs:
+jasmine-gjs:
+jasmine-gjs:

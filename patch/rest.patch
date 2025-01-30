@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/rest/0001-rest_proxy_call_sync-bail-out-if-no-payload.patch
+patch -Np1 -i $CWD/patch/rest/0002-Handle-some-potential-problems-in-parsing-oauth2-acc.patch

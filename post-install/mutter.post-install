@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/mutter-15/" > $PKG/etc/ld.so.conf.d/mutter.conf

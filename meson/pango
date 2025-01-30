@@ -1,0 +1,13 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dgtk_doc=false \
+    -Dman-pages=true \
+    -Dintrospection=enabled
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

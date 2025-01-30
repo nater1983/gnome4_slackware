@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/openrc-settingsd/10.patch
+patch -Np1 -i $CWD/patch/openrc-settingsd/11.patch

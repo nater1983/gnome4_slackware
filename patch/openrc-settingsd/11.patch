@@ -1,0 +1,309 @@
+From 9093cf0e665418513d66c7587f926238766ec753 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 1 Sep 2024 22:19:23 +0000
+Subject: [PATCH 1/5] Implement Slackware specific information for rc.ntpd
+
+---
+ src/timedated.c | 72 ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 45 insertions(+), 27 deletions(-)
+
+diff --git a/src/timedated.c b/src/timedated.c
+index 257e5a0..e96e961 100644
+--- a/src/timedated.c
++++ b/src/timedated.c
+@@ -186,26 +186,6 @@ set_timezone (const gchar *identifier,
+     return TRUE;
+ }
+ 
+-#if TIME_STYLE_SLACKWARE
+-// Function to check if the NTP service is running
+-bool ntp_is_running() {
+-    FILE* fp = popen("pgrep ntpd", "r"); // Check if the ntpd process is running
+-    if (fp == NULL) {
+-        perror("popen");
+-        return false; // Assume NTP is not running if an error occurs
+-    }
+-
+-    char buf[128];
+-    if (fgets(buf, sizeof(buf), fp) != NULL) {
+-        pclose(fp);
+-        return true; // NTP process found, so it is running
+-    }
+-
+-    pclose(fp);
+-    return false; // NTP process not found, so it is not running
+-}
+-#endif
+-
+ /* Return the ntp rc service we will use; return value should NOT be freed */
+ static const gchar *
+ ntp_service ()
+@@ -233,14 +213,23 @@ ntp_service ()
+ 
+     return service;
+ #elif TIME_STYLE_SLACKWARE
+-    // Check if NTP service is already running
+-    // Add your logic here to check if the NTP program is running
+-    if (ntp_is_running()) {
+-        return "ntpd"; // Assuming "ntp" is the default service name when NTP is running
+-    }
+-    return NULL;
++    const char *rc_ntpd = "/etc/rc.d/rc.ntpd";
++    struct stat st;
++    
++    if (stat(rc_ntpd, &st) == 0) {
++        if ((st.st_mode & S_IFMT) == S_IFREG) {
++            if ((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0755) {
++                g_debug("Starting ntpd: rc.ntpd has appropriate permissions (0755).");
++                return "ntpd";
++            }
++            else if ((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0644) {
++                g_debug("Unable to start ntpd: rc.ntpd has insufficient permissions (0644).");
++                return NULL;
++            }
++        }
++     }
+ #else
+-    return NULL;
++     return NULL;
+ #endif
+ }
+ 
+@@ -260,6 +249,9 @@ service_started (const gchar *service,
+ 
+     state = rc_service_state (service);
+     return state == RC_SERVICE_STARTED || state == RC_SERVICE_STARTING || state == RC_SERVICE_INACTIVE;
++#elif TIME_STYLE_SLACKWARE
++    int ret = system("/etc/rc.d/rc.ntpd status");
++    return (ret == 0);
+ #else
+     return FALSE;
+ #endif
+@@ -313,6 +305,18 @@ service_disable (const gchar *service,
+     if (service_script != NULL)
+         free (service_script);
+     return ret;
++#elif TIME_STYLE_SLACKWARE
++    int stop_ret = system("/etc/rc.d/rc.ntpd stop");
++    if (stop_ret != 0) {
++        g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to stop NTP service with /etc/rc.d/rc.ntpd.");
++        return FALSE;
++    } else {
++        use_ntp = FALSE;
++        if (timedate1 != NULL) {
++            openrc_settingsd_timedated_timedate1_set_ntp(timedate1, use_ntp);
++        }
++        return TRUE;
++    }
+ #else
+     return FALSE;
+ #endif
+@@ -366,6 +370,20 @@ service_enable (const gchar *service,
+     if (service_script != NULL)
+         free (service_script);
+     return ret;
++#elif TIME_STYLE_SLACKWARE
++    int ret = system("/etc/rc.d/rc.ntpd start");
++    if (ret == 0) {
++        use_ntp = TRUE;
++    } else {
++        g_set_error(error, G_IO_ERROR, G_IO_ERROR_FAILED, "Failed to start NTP service with /etc/rc.d/rc.ntpd.");
++        return FALSE;
++    }
++
++    if (timedate1 != NULL) {
++        openrc_settingsd_timedated_timedate1_set_ntp(timedate1, use_ntp);
++    }
++
++    return TRUE;
+ #else
+     return FALSE;
+ #endif
+-- 
+GitLab
+
+
+From 992cf26c15dedd56af104b9ed5932d622d4ae096 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Wed, 25 Sep 2024 22:53:35 +0000
+Subject: [PATCH 2/5] Fixed the whitespace change as it was unintentional.
+
+---
+ src/timedated.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/timedated.c b/src/timedated.c
+index e96e961..c46c47e 100644
+--- a/src/timedated.c
++++ b/src/timedated.c
+@@ -229,7 +229,7 @@ ntp_service ()
+         }
+      }
+ #else
+-     return NULL;
++    return NULL;
+ #endif
+ }
+ 
+-- 
+GitLab
+
+
+From d8d9deaaca0c4bff28d7d1b56742523cf843b74a Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 13 Oct 2024 01:23:45 +0000
+Subject: [PATCH 3/5] Update timedated.c
+
+---
+ src/timedated.c | 57 ++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 15 deletions(-)
+
+diff --git a/src/timedated.c b/src/timedated.c
+index c46c47e..a784ed3 100644
+--- a/src/timedated.c
++++ b/src/timedated.c
+@@ -36,6 +36,10 @@
+ #include <rc.h>
+ #endif
+ 
++#if TIME_STYLE_SLACKWARE
++#include <sys/stat.h>
++#endif
++
+ #include "copypaste/hwclock.h"
+ #include "timedated.h"
+ #include "timedate1-generated.h"
+@@ -214,20 +218,21 @@ ntp_service ()
+     return service;
+ #elif TIME_STYLE_SLACKWARE
+     const char *rc_ntpd = "/etc/rc.d/rc.ntpd";
+-    struct stat st;
+-    
+-    if (stat(rc_ntpd, &st) == 0) {
+-        if ((st.st_mode & S_IFMT) == S_IFREG) {
+-            if ((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0755) {
+-                g_debug("Starting ntpd: rc.ntpd has appropriate permissions (0755).");
+-                return "ntpd";
+-            }
+-            else if ((st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0644) {
+-                g_debug("Unable to start ntpd: rc.ntpd has insufficient permissions (0644).");
+-                return NULL;
+-            }
++    const char *ntpd_conf = "/etc/ntp.conf"; // Assuming this is the path for NTP configuration
++    struct stat st_ntpd, st_ntpd_conf;
++
++    if (stat(rc_ntpd, &st_ntpd) == 0 && (st_ntpd.st_mode & S_IFMT) == S_IFREG &&
++        stat(ntpd_conf, &st_ntpd_conf) == 0 && (st_ntpd_conf.st_mode & S_IFMT) == S_IFREG) {
++        
++        if ((st_ntpd.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0755) {
++            g_debug("Starting ntpd: rc.ntpd has appropriate permissions (0755).");
++            return "ntpd";
+         }
+-     }
++        else if ((st_ntpd.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0644) {
++            g_debug("Unable to start ntpd: rc.ntpd has insufficient permissions (0644).");
++            return NULL;
++        }
++    }
+ #else
+     return NULL;
+ #endif
+@@ -250,8 +255,30 @@ service_started (const gchar *service,
+     state = rc_service_state (service);
+     return state == RC_SERVICE_STARTED || state == RC_SERVICE_STARTING || state == RC_SERVICE_INACTIVE;
+ #elif TIME_STYLE_SLACKWARE
+-    int ret = system("/etc/rc.d/rc.ntpd status");
+-    return (ret == 0);
++    const char *rc_ntpd = "/etc/rc.d/rc.ntpd";
++    struct stat st;
++
++    // Check the file status
++    if (stat(rc_ntpd, &st) == 0) {
++        // Check if it's a regular file and permissions are 755
++        if ((st.st_mode & S_IFMT) == S_IFREG &&
++            (st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO)) == 0755) {
++            // Check the NTP daemon status
++            int ret = system("/etc/rc.d/rc.ntpd status");
++            if (ret == 0) {
++                return TRUE; // NTP daemon is running
++            } else {
++                // Attempt to start the NTP daemon if not running
++                gchar *cmd = g_strconcat("/etc/rc.d/rc.ntpd start", NULL);
++                ret = system(cmd);
++                g_free(cmd);
++                return (ret == 0); // Return TRUE if start command succeeds
++            }
++        } else {
++            g_debug("Unable to start ntpd: rc.ntpd has insufficient permissions (not 755).");
++            return FALSE; // Permissions are not appropriate
++        }
++    }
+ #else
+     return FALSE;
+ #endif
+-- 
+GitLab
+
+
+From 327bed3877b66fd61d310e9db2f0b8afe37ee351 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 13 Oct 2024 01:54:05 +0000
+Subject: [PATCH 4/5] Fix warning: control reaches end of non-void function's
+
+---
+ src/timedated.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/timedated.c b/src/timedated.c
+index a784ed3..553dac4 100644
+--- a/src/timedated.c
++++ b/src/timedated.c
+@@ -233,6 +233,8 @@ ntp_service ()
+             return NULL;
+         }
+     }
++    g_debug("Unable to start ntpd: rc.ntpd not found or invalid permissions.");
++    return NULL;
+ #else
+     return NULL;
+ #endif
+@@ -276,9 +278,9 @@ service_started (const gchar *service,
+             }
+         } else {
+             g_debug("Unable to start ntpd: rc.ntpd has insufficient permissions (not 755).");
+-            return FALSE; // Permissions are not appropriate
+         }
+     }
++    return FALSE;
+ #else
+     return FALSE;
+ #endif
+-- 
+GitLab
+
+
+From cbfc7b5d50a95e764283bcabc6bb810e1ebbfc69 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 13 Oct 2024 02:51:33 +0000
+Subject: [PATCH 5/5] Update gwarning to Unable to start ntpd: rc.ntpd is not a
+ regular file or does not exist.
+
+---
+ src/timedated.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/timedated.c b/src/timedated.c
+index 553dac4..1b0a675 100644
+--- a/src/timedated.c
++++ b/src/timedated.c
+@@ -233,7 +233,7 @@ ntp_service ()
+             return NULL;
+         }
+     }
+-    g_debug("Unable to start ntpd: rc.ntpd not found or invalid permissions.");
++g_warning("Unable to start ntpd: rc.ntpd is not a regular file or does not exist.");
+     return NULL;
+ #else
+     return NULL;
+-- 
+GitLab

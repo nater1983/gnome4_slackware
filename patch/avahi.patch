@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/avahi/fixup_avahi-dnsconfd.action.patch
