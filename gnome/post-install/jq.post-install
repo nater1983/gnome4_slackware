@@ -1,1 +1,1 @@
-rm -fr $PKG/usr/doc/jq
+rm -fr $PKG/usr/share/doc/jq
