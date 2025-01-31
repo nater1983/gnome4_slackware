@@ -23,17 +23,15 @@ diff --git a/meson.build b/meson.build
 index cb3cf1b19..a6f4463ac 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -59,9 +59,18 @@ libcall_ui_dep = dependency('call-ui',
+@@ -59,9 +59,16 @@ libcall_ui_dep = dependency('call-ui',
    default_options: ['tests=false', 'examples=false', 'gtk_doc=false'],
  )
  
 +use_systemd = get_option('logind_provider') == 'systemd'
 +if use_systemd
 +  libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
-+  session_bin_deps += libsystemd_dep
 +elif get_option('logind_provider') == 'elogind'
 +  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
-+  session_bin_deps += libelogind_dep
 +endif
 +
  systemd_user_unit_dir = get_option('systemd_user_unit_dir')
