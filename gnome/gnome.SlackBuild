@@ -24,7 +24,7 @@
 
 # Set up general build options
 CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
-UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
+UPGRADE=${UPGRADE:-"yes"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 CHECKOUT=${CHECKOUT:-"no"} # don't let the script checkout missing sources.
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
