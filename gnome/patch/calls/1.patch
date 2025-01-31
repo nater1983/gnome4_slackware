@@ -14,8 +14,8 @@ index cb3cf1b19..ec10e9ba2 100644
 -    systemd_user_unit_dir = prefix / libdir / 'systemd/user'
 -  endif
 +  systemd_dep = dependency('systemd', version: '>= 242', required: true)
-+  systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir',
-+                                                 pkgconfig_define: ['prefix', session_prefix])
++  systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemd_user_unit_dir',
++                                                 pkgconfig_define: [prefix / libdir / 'systemd/user'])
  endif
  
  config_data = configuration_data()
