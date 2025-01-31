@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/sofia-sip/46b02f0655af0a9594e805f09a8ee99278f84777.diff
