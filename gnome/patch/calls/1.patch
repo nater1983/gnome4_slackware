@@ -13,7 +13,7 @@ index cb3cf1b19..ec10e9ba2 100644
 -  else
 -    systemd_user_unit_dir = prefix / libdir / 'systemd/user'
 -  endif
-+  systemd_dep = dependency('systemd', version: '>= 242', required: false)
++  systemd_dep = dependency('systemd', version: '>= 242', required: true)
 +  systemd_userunitdir = systemd_dep.get_variable('systemd_user_unit_dir')
  endif
  
