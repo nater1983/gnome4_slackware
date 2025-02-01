@@ -405,8 +405,13 @@ build_mod_pkg() {
       fi
 
       # Get rid of zero-length junk files:
-      find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
-      rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
+      if [ -r $CWD/makepkg/${DOCNAME} ]; then
+        find $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION} -type f -size 0 -exec rm --verbose "{}" \+
+        rmdir --verbose $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION} 2> /dev/null
+      else
+        find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
+        rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
+      fi
 
       # And get rid of any .la files
       rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
