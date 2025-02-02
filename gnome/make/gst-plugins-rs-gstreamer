@@ -1,0 +1,1 @@
+cargo cinstall -p gst-plugin-gtk4 --all-features --prefix=/usr --destdir=$PKG
