@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                        |-----handy-ruler------------------------------------------------------|
+gst-plugins-rs-gstreamer: gst-plugins-rs-gstreamer (GStreamer plugins written in Rust)
+gst-plugins-rs-gstreamer:
+gst-plugins-rs-gstreamer: GStreamer is a streaming media framework based on graphs of filters
+gst-plugins-rs-gstreamer: that operate on media data. Applications using this library can do
+gst-plugins-rs-gstreamer: anything media-related, from real-time sound processing to playing
+gst-plugins-rs-gstreamer: videos. Its plug-in-based architecture means that new data types or
+gst-plugins-rs-gstreamer: processing capabilities can be added simply by installing new
+gst-plugins-rs-gstreamer: plug-ins.
+gst-plugins-rs-gstreamer: (This package provides various plugins written in Rust.)
+gst-plugins-rs-gstreamer:
+gst-plugins-rs-gstreamer: Homepage: https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs
