@@ -50,3 +50,4 @@ libaom
 nv-codec-headers
 libdisplay-info
 appstream-glib
+flit_core

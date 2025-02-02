@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# SlackBuild script for python3-langtable
-#
-# Copyright 2023 Nathaniel Russell <naterussell83@gmail.com>
+# Copyright 2009-2012  Robby Workman, Northport, Alabama, USA
+# Copyright 2017, 2018  Patrick J. Volkerding, Sebeka, MN, USA
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -11,7 +10,7 @@
 # 1. Redistributions of this script must retain the above copyright
 #    notice, this list of conditions and the following disclaimer.
 #
-#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
 #  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 #  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
 #  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -22,15 +21,15 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://github.com/mike-fabian/langtable/releases/download/0.0.68/langtable-0.0.68.tar.gz
+wget -c https://download.gnome.org/sources/gvfs/1.57/gvfs-1.57.1.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
-PRGNAM=python3-langtable
-SRCNAM=langtable
-VERSION=${VERSION:-0.0.68}
+PRGNAM=gvfs-goa
+SRCNAM=gvfs
+VERSION=${VERSION:-1.57.1}
+TAG=_gfs
 BUILD=${BUILD:-1}
-TAG=${TAG:-_gfs}
 PKGTYPE=${PKGTYPE:-txz}
 
 if [ -z "$ARCH" ]; then
@@ -73,8 +72,8 @@ rm -rf $PKG
 mkdir -p $TMP $PKG
 cd $TMP
 rm -rf $SRCNAM-$VERSION
-tar xvf $CWD/$SRCNAM-$VERSION.tar.?z*
-cd $SRCNAM-$VERSION
+tar xvf $CWD/$SRCNAM-$VERSION.tar.?z* || exit 1
+cd $SRCNAM-$VERSION || exit 1
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -82,15 +81,61 @@ find -L . \
  \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
   -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
-python3 setup.py install --root=$PKG
+# Configure, build, and install:
+export CFLAGS="$SLKCFLAGS"
+export CXXFLAGS="$SLKCFLAGS"
+mkdir meson-build
+cd meson-build
+meson setup \
+  --prefix=/usr \
+  --libdir=lib${LIBDIRSUFFIX} \
+  --libexecdir=/usr/libexec \
+  --bindir=/usr/bin \
+  --sbindir=/usr/sbin \
+  --includedir=/usr/include \
+  --datadir=/usr/share \
+  --mandir=/usr/man \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --buildtype=release \
+  -Ddnssd=true \
+  -Dgoa=true \
+  -Dgoogle=false \
+  -Dlogind=true \
+  -Dman=true \
+  -Dnfs=false \
+  -Dsystemduserunitdir=no \
+  -Donedrive=true \
+  -Dtmpfilesdir=no
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
+
+# Build only for GOA/Onedrive:
+
+rm -fr $PKG/usr/share/locale/
+rm -fr $PKG/usr/share/glib-2.0/
+rm -fr $PKG/usr/share/polkit-1/
+rm -fr $PKG/usr/share/GConf/
+rm -fr $PKG/usr/man/
+rm -fr $PKG/usr/lib64/
+rm -f $PKG/usr/libexec/gvfs-{afc,gphoto2,mtp,udisks2}-volume-monitor
+rm -f $PKG/usr/libexec/gvfsd-{admin,afc,afp,afp-browse,archive,cdda,computer,dav,dnssd,ftp,fuse,gphoto2,http,localtest,metadata,mtp,network,recent,sftp,smb,smb-browse,trash,wsdd}
+rm -f $PKG/usr/libexec/gvfsd
+rm -f $PKG/usr/share/dbus-1/services/org.gtk.vfs.{AfcVolumeMonitor,Daemon,GPhoto2VolumeMonitor,MTPVolumeMonitor,Metadata,UDisks2VolumeMonitor}.service
+rm -f $PKG/usr/share/gvfs/mounts/{admin,afc,afp,afp-browse,archive,cdda,computer,dav+sd,dav,dns-sd,ftp,ftpis,ftps,gphoto2,http,localtest,mtp,network,recent,sftp,smb-browse,smb,trash,wsdd}.mount
+rm -f $PKG/usr/share/gvfs/remote-volume-monitors/{afc,gphoto2,mtp,udisks2}.monitor
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a  README COPYING ChangeLog \
-    $PKG/usr/doc/$PRGNAM-$VERSION
+if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/usr/doc/$PRGNAM-$VERSION/slack-required; fi
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
+if [ -f $CWD/slack-suggests ]; then cat $CWD/slack-suggests > $PKG/install/slack-suggests; fi
+if [ -f $CWD/slack-conflicts ]; then cat $CWD/slack-conflicts > $PKG/install/slack-conflicts; fi
 
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE

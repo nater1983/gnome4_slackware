@@ -1,0 +1,1 @@
+rm -r "$PKG"/usr/lib${LIBDIRSUFFIX}/python*/site-packages/${SRCNAM}/tests/

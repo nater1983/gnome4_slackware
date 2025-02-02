@@ -42,6 +42,9 @@ gupnp
 gupnp-av
 gupnp-dlna
 gst-editing-services
+gst-plugins-bad
+gst-rtsp-server
+gstreamer-vaapi
 rygel
 totem
 orca
@@ -55,3 +58,7 @@ libgedit-gfls
 libgedit-tepl
 gedit
 meld
+ghex
+gst-plugins-rs
+showtime
+

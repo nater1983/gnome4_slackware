@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/jq/run_tests_in_C_locale.patch

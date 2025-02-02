@@ -1,0 +1,4 @@
+mkdir -p $PKG/usr/doc
+mv $PKG/usr/share/doc/msgraph-1/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+rm -fr $PKG/usr/share/doc
+cp -a COPYING NEWS README.md $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION

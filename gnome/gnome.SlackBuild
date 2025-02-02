@@ -24,7 +24,7 @@
 
 # Set up general build options
 CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
-UPGRADE=${UPGRADE:-"no"}       # Upgrade package after successful build
+UPGRADE=${UPGRADE:-"yes"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 CHECKOUT=${CHECKOUT:-"no"} # don't let the script checkout missing sources.
 GRACETME=${GRACETME:-"10"}      # Grace time before build starts
@@ -90,11 +90,12 @@ strip_binaries() {
   find "$target_dir" | xargs file | grep "current ar archive" | grep ELF | cut -f 1 -d : | xargs strip -g 2> /dev/null
   
   # Strip rpaths:
-  for file in $(find "$target_dir" | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null); do
-    if [ -n "$(patchelf --print-rpath "$file" 2> /dev/null)" ]; then
-      patchelf --remove-rpath "$file"
-    fi
-  done
+  # Retain here just incase I need it later:
+  #for file in $(find "$target_dir" | xargs file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : 2> /dev/null); do
+  #  if [ -n "$(patchelf --print-rpath "$file" 2> /dev/null)" ]; then
+  #    patchelf --remove-rpath "$file"
+  #  fi
+  #done
 }
 
 process_man_pages() {
@@ -390,7 +391,7 @@ build_mod_pkg() {
       else
           cp -a \
             AUTHORS* CONTRIBUTING* COPYING* HACKING* \
-            INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* \
+            INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* CHANGES* \
             "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
 
           # If there's a ChangeLog, include it with a limit of the most recent 1000 lines
@@ -400,11 +401,17 @@ build_mod_pkg() {
               touch -r ChangeLog "$DOCSDIR/ChangeLog"
           fi
           if [ -f $CWD/slack-required/${DOCNAME} ]; then cat $CWD/slack-required/${DOCNAME} > "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"/slack-required; fi
+          if [ -f $CWD/slack-required/${PKGNAME} ]; then cat $CWD/slack-required/${DOCNAME} > "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"/slack-required; fi
       fi
 
       # Get rid of zero-length junk files:
-      find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
-      rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
+      if [ -r $CWD/makepkg/${DOCNAME} ]; then
+        find $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION} -type f -size 0 -exec rm --verbose "{}" \+
+        rmdir --verbose $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION} 2> /dev/null
+      else
+        find $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION -type f -size 0 -exec rm --verbose "{}" \+
+        rmdir --verbose $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION 2> /dev/null
+      fi
 
       # And get rid of any .la files
       rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
@@ -440,6 +447,7 @@ build_mod_pkg() {
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
           if [ -f $CWD/slack-required/${PKGNAME} ]; then cat $CWD/slack-required/${PKGNAME} > $PKG/install/slack-required; fi
+          if [ -f $CWD/slack-required/${DOCNAME} ]; then cat $CWD/slack-required/${DOCNAME} > $PKG/install/slack-required; fi
           if [ -f $CWD/slack-suggests/${PKGNAME} ]; then cat $CWD/slack-suggests/${PKGNAME} > $PKG/install/slack-suggests; fi
           if [ -f $CWD/slack-conflicts/${PKGNAME} ]; then cat $CWD/slack-conflicts/${PKGNAME} > $PKG/install/slack-conflicts; fi
         else
@@ -467,20 +475,30 @@ build_mod_pkg() {
             echo "Using custom package name: $PACKAGE_NAME, version: $PACKAGE_VERSION with build: $BUILD"
     
             # Use the parsed values in the makepkg command
-            /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PACKAGE_NAME}-$(echo $PACKAGE_VERSION | tr - _)-${PKGARCH}-${BUILD}.txz"
+            /sbin/makepkg --remove-tmp-rpaths -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PACKAGE_NAME}-$(echo $PACKAGE_VERSION | tr - _)-${PKGARCH}-${BUILD}.txz"
         else
         # Fallback to default makepkg process with original PKGNAME
-          /sbin/makepkg -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz"
+          /sbin/makepkg --remove-tmp-rpaths -l y -c n "${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-$(echo $MODULAR_PACKAGE_VERSION | tr - _)-${PKGARCH}-${MODBUILD}${TAG}.txz"
         fi
 
         # We will continue with the fresh packages installed:
-        if [ "$UPGRADE" = "yes" -o "$UPGRADE" = "YES" ]; then
-          upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
-          # Keep MIME database current:
-          /usr/bin/update-mime-database /usr/share/mime 1>/dev/null 2>/dev/null &
+        if [ "$UPGRADE" = "yes" ] || [ "$UPGRADE" = "YES" ]; then
+            if [ -r "$CWD/makepkg/${PKGNAME}" ]; then
+                . "$CWD/makepkg/${PKGNAME}"
+                upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PRGNAM:-$PACKAGE_NAME}-${PKGVERSION:-$PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
+                # Keep MIME database current:
+                /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>&1 &
+            else
+                upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
+                # Keep MIME database current:
+                /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>&1 &
+            fi
+        else
+            upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
+                # Keep MIME database current:
+                /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>&1 &
         fi
       fi
-
     done
   )
 }

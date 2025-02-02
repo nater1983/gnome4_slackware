@@ -1,0 +1,1 @@
+osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/src/$PKGNAME-$MODULAR_PACKAGE_VERSION.tar.xz

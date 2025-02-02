@@ -1,0 +1,6 @@
+wget -c -P "$CWD/post-install/osinfo-db" https://harrier.slackbuilds.org/misc/osinfo-db-slackware-20220214.tar.xz
+osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/post-install/osinfo-db/osinfo-db-slackware-20220214.tar.xz
+sleep 5
+rm -fr $CWD/post-install/osinfo-db/osinfo-db-slackware-20220214.tar.xz
+cp -a $PKG/usr/share/osinfo/{LICENSE,VERSION} $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+rm -f $PKG/usr/share/osinfo/{LICENSE,VERSION}

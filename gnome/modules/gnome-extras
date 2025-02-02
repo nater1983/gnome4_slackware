@@ -7,6 +7,7 @@ osinfo-db-tools
 osinfo-db
 libosinfo
 totem-pl-parser
+totem
 localsearch
 libcloudproviders
 nautilus
@@ -21,6 +22,20 @@ python2-BeautifulSoup4
 python-zipp
 python3-soupsieve
 poetry_core
+cachetools
+click
+cryptography
+curl_cffi
+python_dbusmock
+beautifulSoup4
+emoji
+exceptiongroup
+fonttools
+freetype-py
+gaphas
+pyglm
+google_api_core
+google_api_python_client
 BeautifulSoup4
 python3-cssselect
 yelp-xsl
@@ -29,6 +44,7 @@ yelp
 glycin
 loupe
 gnome-terminal
+Catch2
 gnome-system-monitor
 gnome-weather
 gnome-clocks
@@ -39,3 +55,4 @@ gnome-calendar
 gnome-calculator
 ptyxis
 jasmine-gjs
+shotwell

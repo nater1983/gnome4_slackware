@@ -1,0 +1,34 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Denable-bookmarks=yes \
+    -Denable-chromaprint=yes \
+    -Denable-dleyna=yes \
+    -Ddleyna-service-name=yes \
+    -Denable-dmap=yes \
+    -Denable-filesystem=yes \
+    -Denable-flickr=yes \
+    -Denable-freebox=yes \
+    -Denable-gravatar=yes \
+    -Denable-local-metadata=yes \
+    -Denable-lua-factory=yes \
+    -Denable-magnatune=yes \
+    -Denable-metadata-store=yes \
+    -Denable-opensubtitles=no \
+    -Denable-optical-media=yes \
+    -Denable-podcasts=yes \
+    -Denable-raitv=yes \
+    -Denable-shoutcast=yes \
+    -Denable-thetvdb=yes \
+    -Denable-tmdb=yes \
+    -Denable-tracker=no \
+    -Denable-tracker3=yes \
+    -Denable-youtube=no \
+    -Dhelp=yes
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

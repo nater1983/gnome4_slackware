@@ -1,0 +1,8 @@
+mv -v  $PKG/usr/share/man $PKG/usr
+rm -rvf $PKG/usr/share
+
+cd Doc
+make singlehtml
+make man
+mv -v Doc/build/man/fonttools.1  $PKG/usr/man/man1/
+cd ..
