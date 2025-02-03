@@ -9,3 +9,5 @@ libgit2-glib
 sysprof
 libportal
 libpanel
+flatpak
+libostree
