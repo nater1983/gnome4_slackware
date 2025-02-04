@@ -1,2 +1,2 @@
-patch -Np1 -i $CWD/patch/xdg-desktop-portal-gnome/0001-externalwindow-Call-gtk_init-before-opening-a-displa.patch
+#patch -Np1 -i $CWD/patch/xdg-desktop-portal-gnome/0001-externalwindow-Call-gtk_init-before-opening-a-displa.patch
 patch -Np1 -i $CWD/patch/xdg-desktop-portal-gnome/204.patch
