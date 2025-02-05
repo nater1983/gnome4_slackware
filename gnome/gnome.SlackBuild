@@ -561,7 +561,6 @@ GNOMEMODS=" \
   gnome \
   gnome-extras \
   applications \
-  gnome-extra:gnome-calculator \
   "
 
 # Allow for specification of individual packages to be built:
