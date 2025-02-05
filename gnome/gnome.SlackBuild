@@ -556,7 +556,7 @@ GNOMEVARS=/usr/lib${LIBDIRSUFFIX}/gnome ; export GNOMEVARS
 # Build/install libgtk before compiling gnome-terminal.
 # Build/install gnome-shell before compiling gnome-settings-daemon.
 GNOMEMODS=" \
-  gnome:libgnome \
+  blacklist \
   gnome-shell \
   gnome:gnome-terminal \
   gnome-settings-daemon \
