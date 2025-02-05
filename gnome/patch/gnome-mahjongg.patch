@@ -1,2 +1,0 @@
-#patch -R -Np1 -i $CWD/patch/gnome-mahjongg/f0febae40522f4a485f215a1eab4221533cc256d.patch
-patch -Np1 -i $CWD/patch/gnome-mahjongg/e3bb220cdff066a9354c96b7db5e4849091ad6c8.patch
