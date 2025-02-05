@@ -1,5 +1,0 @@
-mkdir -p $PKG/usr/doc
-mv $PKG/usr/doc/libfwupd/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
-mv $PKG/usr/doc/libfwupdplugin/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
-rmdir $PKG/usr/doc
-
