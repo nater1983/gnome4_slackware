@@ -17,6 +17,7 @@ cd build
     -Dhsi=enabled \
     -Dlvfs=true \
     -Dman=true \
+    -Dbluez=enabled \
     -Dpassim=disabled \
     -Defi_binary=false \
     -Dplugin_tpm=enabled \
