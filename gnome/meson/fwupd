@@ -18,7 +18,7 @@ cd build
     -Dlvfs=true \
     -Dman=true \
     -Dpassim=disabled \
-    -Defi_binary=true \
+    -Defi_binary=false \
     -Dplugin_amdgpu=enabled \
     -Dplugin_redfish=disabled \
     -Dplugin_flashrom=disabled \
