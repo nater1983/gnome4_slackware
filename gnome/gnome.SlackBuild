@@ -558,12 +558,10 @@ GNOMEVARS=/usr/lib${LIBDIRSUFFIX}/gnome ; export GNOMEVARS
 GNOMEMODS=" \
   blacklist \
   gnome-shell \
-  gnome:gnome-terminal \
-  gnome-settings-daemon \
-  gnome-extra:gtk3,gnome-icon-theme \
-  gnome-extra:gnome-software,gnome-control-center \
-  gnome-extra:gnome-calculator \
   gnome \
+  gnome-extra \
+  applications \
+  gnome-extra:gnome-calculator \
   "
 
 # Allow for specification of individual packages to be built:
