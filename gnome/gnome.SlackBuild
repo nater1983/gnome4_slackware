@@ -559,7 +559,7 @@ GNOMEMODS=" \
   blacklist \
   gnome-shell \
   gnome \
-  gnome-extra \
+  gnome-extras \
   applications \
   gnome-extra:gnome-calculator \
   "
