@@ -10,7 +10,6 @@ cd build
     -Dcogl_tests=false \
     -Dclutter_tests=false \
     -Dtests=disabled \
-    -Dsystemd=false \
     -Dx11=true \
     -Dinstalled_tests=false
   "${NINJA:=ninja}"
