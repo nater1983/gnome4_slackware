@@ -1,0 +1,5 @@
+rm -fr subprojects/gtk-frdp
+
+  # Add categories to desktop file first before building.
+  sed -i 's/Categories=GTK;/Categories=GNOME;GTK;Utility;RemoteAccess;Network;/' \
+    data/org.gnome.Connections.desktop.in
