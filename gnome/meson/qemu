@@ -1,6 +1,5 @@
 export TARGETS=${TARGETS:-all}
 export VNC_ENABLE=${VNC_ENABLE:-yes}
-export AUDIODRIVERS=${AUDIODRIVERS:-pa,alsa,oss,sdl}
 export SLIRP=${SLIRP:-=yes}
 
 # Needed to build man pages if built after plain "su"
@@ -22,33 +21,34 @@ fi
 
 # To omit VNC capability, use VNC_ENABLE=no
 if [ "$VNC_ENABLE" = "yes" ]; then
-  with_vnc="--enable-vnc --enable-vnc-sasl --enable-vnc-jpeg"
+  with_vnc="enabled --vnc_sasl=enabled --vnc_jpeg=enabled"
 else
-  with_vnc="--disable-vnc"
+  with_vnc="disabled"
 fi
 
 # To disable user mode networking use SLIRP=no
 if [ "$SLIRP" = "no" ]; then
-  with_slirp="--disable-slirp"
+  with_slirp="disabled
  else
-  with_slirp="--enable-slirp"
+  with_slirp="enabled"
 fi
 
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-    "${GNOME_MAKE_ARGS[@]}" \
-    --enable-gtk \
-    --enable-system \
-    --enable-kvm \
-    --disable-debug-info \
-    --enable-virtfs \
-    --enable-sdl \
-    --enable-nettle \
-    --${uring}able-linux-io-uring \
-    --audio-drv-list=${AUDIODRIVERS} \
-    $with_slirp \
-    $with_vnc \
-    $targets
-make
-make install DESTDIR=$PKG
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dslirp=${with_slirp} \
+    -Dvnc=${with_vnc} \
+    -Dgtk=enabled \
+    -Dkvm=enabled \
+    -Dlinux_io_uring=${uring}able \
+    -Dvirtfs=enabled \
+    -Dsdl=enabled \
+    -Dnettle=enabled \
+    -Daudio_drv_list=alsa,oss,pa,pipewire,sdl \
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
