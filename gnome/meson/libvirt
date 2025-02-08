@@ -1,0 +1,29 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dqemu_group=$VIRTGROUP \
+    -Dqemu_user=$VIRTUSER \
+    $bash_completion \
+    -Daudit=${audit}abled \
+    -Dlibiscsi=${libiscsi}abled \
+    -Dopenwsman=enabled \
+    -Dapparmor=disabled \
+    -Dselinux=disabled \
+    -Dwireshark_dissector=disabled \
+    -Ddriver_bhyve=disabled \
+    -Ddriver_hyperv=enabled \
+    -Ddriver_libxl=disabled \
+    -Ddriver_vz=disabled \
+    -Dsecdriver_apparmor=disabled \
+    -Dsecdriver_selinux=disabled \
+    -Dstorage_vstorage=disabled \
+    -Ddtrace=disabled \
+    -Dstrip=true \
+    -Dinit_script=none
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
