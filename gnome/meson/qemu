@@ -30,7 +30,7 @@ if [ "$SLIRP" = "no" ]; then
   with_slirp="enabled"
 fi
 
-./configure 2>/dev/null
+./configure >/dev/null 2>&1
 
 cd build
   CFLAGS="$SLKCFLAGS" \
