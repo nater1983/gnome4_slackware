@@ -18,7 +18,7 @@ fi
 
 # To omit VNC capability, use VNC_ENABLE=no
 if [ "$VNC_ENABLE" = "yes" ]; then
-  with_vnc="enabled --vnc_sasl=enabled --vnc_jpeg=enabled"
+  with_vnc="enabled --Dvnc_sasl=enabled --Dvnc_jpeg=enabled"
 else
   with_vnc="disabled"
 fi
