@@ -8,9 +8,6 @@ export PATH=$PATH:/usr/share/texmf/bin
 # Autodetect liburing support
 uring="dis" ; if pkg-config --exists liburing ; then uring="en" ; fi
 
-# Remove double CFLAGS
-sed -i "s|^\ \ CFLAGS=\"-O2\ |  CFLAGS=\"|" configure
-
 # Enable only x86* and arm emulation for qemu: if you want to build
 # all the targets available use TARGETS=all
 if [ "$TARGETS" = "all" ]; then
@@ -48,7 +45,7 @@ cd build
     -Dvirtfs=enabled \
     -Dsdl=enabled \
     -Dnettle=enabled \
-    -Daudio_drv_list=alsa,oss,pa,pipewire,sdl \
+    -Daudio_drv_list=alsa,oss,pa,pipewire,sdl
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
