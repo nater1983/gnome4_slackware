@@ -31,6 +31,9 @@ if [ "$SLIRP" = "no" ]; then
 fi
 
 mkdir build
+cat << EOF > build/config-host.mak
+"==="
+EOF
 cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
