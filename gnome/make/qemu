@@ -1,0 +1,55 @@
+export TARGETS=${TARGETS:-all}
+export VNC_ENABLE=${VNC_ENABLE:-yes}
+export AUDIODRIVERS=${AUDIODRIVERS:-pa,alsa,oss,sdl}
+export SLIRP=${SLIRP:-=yes}
+
+# Needed to build man pages if built after plain "su"
+export PATH=$PATH:/usr/share/texmf/bin
+
+# Autodetect liburing support
+uring="dis" ; if pkg-config --exists liburing ; then uring="en" ; fi
+
+# Remove double CFLAGS
+sed -i "s|^\ \ CFLAGS=\"-O2\ |  CFLAGS=\"|" configure
+
+# Enable only x86* and arm emulation for qemu: if you want to build
+# all the targets available use TARGETS=all
+if [ "$TARGETS" = "all" ]; then
+  targets=""
+else
+  targets="--target-list=$TARGETS"
+fi
+
+# To omit VNC capability, use VNC_ENABLE=no
+if [ "$VNC_ENABLE" = "yes" ]; then
+  with_vnc="--enable-vnc --enable-vnc-sasl --enable-vnc-jpeg"
+else
+  with_vnc="--disable-vnc"
+fi
+
+# To disable user mode networking use SLIRP=no
+if [ "$SLIRP" = "no" ]; then
+  with_slirp="--disable-slirp"
+ else
+  with_slirp="--enable-slirp"
+fi
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --enable-gtk \
+  --enable-system \
+  --enable-kvm \
+  --disable-debug-info \
+  --enable-virtfs \
+  --enable-sdl \
+  --enable-nettle \
+  --${uring}able-linux-io-uring \
+  --audio-drv-list=${AUDIODRIVERS} \
+  $with_slirp \
+  $with_vnc \
+  $targets
+make
+make install DESTDIR=$PKG
