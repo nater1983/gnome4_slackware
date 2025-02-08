@@ -41,7 +41,7 @@ cd build
     -Dvnc=${with_vnc} \
     -Dgtk=enabled \
     -Dkvm=enabled \
-    -Dlinux_io_uring=${uring}able \
+    -Dlinux_io_uring=${uring}abled \
     -Dvirtfs=enabled \
     -Dsdl=enabled \
     -Dnettle=enabled \
