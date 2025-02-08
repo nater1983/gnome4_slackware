@@ -1,4 +1,3 @@
-export TARGETS=${TARGETS:-all}
 export VNC_ENABLE=${VNC_ENABLE:-yes}
 export SLIRP=${SLIRP:-=yes}
 
@@ -7,14 +6,6 @@ export PATH=$PATH:/usr/share/texmf/bin
 
 # Autodetect liburing support
 uring="dis" ; if pkg-config --exists liburing ; then uring="en" ; fi
-
-# Enable only x86* and arm emulation for qemu: if you want to build
-# all the targets available use TARGETS=all
-if [ "$TARGETS" = "all" ]; then
-  targets=""
-else
-  targets="--target-list=$TARGETS"
-fi
 
 # To omit VNC capability, use VNC_ENABLE=no
 if [ "$VNC_ENABLE" = "yes" ]; then
@@ -31,7 +22,6 @@ if [ "$SLIRP" = "no" ]; then
 fi
 
 ./configure >/dev/null 2>&1
-
 cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -45,6 +35,7 @@ cd build
     -Dlinux_io_uring=${uring}abled \
     -Dvirtfs=enabled \
     -Dsdl=enabled \
+    -Dmalloc=jemalloc \
     -Dnettle=enabled \
     -Daudio_drv_list=alsa,oss,pa,pipewire,sdl
   "${NINJA:=ninja}"
