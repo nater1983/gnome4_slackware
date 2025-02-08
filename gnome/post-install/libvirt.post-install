@@ -8,7 +8,7 @@ rm -fr $PKG/usr/share/augeas
 rm -fR $PKG/var/run
 
 # add an rc.libvirt to start/stop/restart the daemon
-install -D -m 0755 $CWD/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
+install -D -m 0755 $CWD/post-install/libvirt/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
 
 # we use $VIRTGROUP as our virtualization group, fix auth permissions, and
 # consider the fact that by default we got no certs
