@@ -1,5 +1,5 @@
-VIRTUSER=${VIRTUSER:-root}
-VIRTGROUP=${VIRTGROUP:-users}
+export VIRTUSER=${VIRTUSER:-root}
+export VIRTGROUP=${VIRTGROUP:-users}
 
 # Some optional dependencies checks
 audit="dis" ; if pkg-config --exists audit ; then audit="en" ; fi
