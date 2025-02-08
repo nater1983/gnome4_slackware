@@ -1,5 +1,5 @@
-VIRTUSER=${VIRTUSER:-root}
-VIRTGROUP=${VIRTGROUP:-users}
+export VIRTUSER=${VIRTUSER:-root}
+export VIRTGROUP=${VIRTGROUP:-users}
 
 mkdir build
 cd build
