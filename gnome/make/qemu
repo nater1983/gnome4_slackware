@@ -33,5 +33,5 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-vnc-sasl \
   --enable-vnc-jpeg \
   --target-list=all
-make
+make V=1
 make install DESTDIR=$PKG
