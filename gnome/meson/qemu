@@ -28,6 +28,7 @@ cd build
   meson setup --reconfigure ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+    -Ddocdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
     -Dslirp=${with_slirp} \
     -Dvnc=${with_vnc} \
     -Dgtk=enabled \
