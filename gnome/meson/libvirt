@@ -1,3 +1,6 @@
+VIRTUSER=${VIRTUSER:-root}
+VIRTGROUP=${VIRTGROUP:-users}
+
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
