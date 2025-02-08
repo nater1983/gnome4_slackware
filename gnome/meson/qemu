@@ -25,7 +25,7 @@ fi
 
 # To disable user mode networking use SLIRP=no
 if [ "$SLIRP" = "no" ]; then
-  with_slirp="disabled
+  with_slirp="disabled"
  else
   with_slirp="enabled"
 fi
