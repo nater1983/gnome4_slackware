@@ -1,0 +1,53 @@
+export TARGETS=${TARGETS:-all}
+export VNC_ENABLE=${VNC_ENABLE:-yes}
+export SLIRP=${SLIRP:-=yes}
+
+# Needed to build man pages if built after plain "su"
+export PATH=$PATH:/usr/share/texmf/bin
+
+# Autodetect liburing support
+uring="dis" ; if pkg-config --exists liburing ; then uring="en" ; fi
+
+# Enable only x86* and arm emulation for qemu: if you want to build
+# all the targets available use TARGETS=all
+if [ "$TARGETS" = "all" ]; then
+  targets=""
+else
+  targets="--target-list=$TARGETS"
+fi
+
+# To omit VNC capability, use VNC_ENABLE=no
+if [ "$VNC_ENABLE" = "yes" ]; then
+  with_vnc="enabled -Dvnc_sasl=enabled -Dvnc_jpeg=enabled"
+else
+  with_vnc="disabled"
+fi
+
+# To disable user mode networking use SLIRP=no
+if [ "$SLIRP" = "no" ]; then
+  with_slirp="disabled"
+ else
+  with_slirp="enabled"
+fi
+
+./configure 2>/dev/null
+
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup --reconfigure ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dslirp=${with_slirp} \
+    -Dvnc=${with_vnc} \
+    -Dgtk=enabled \
+    -Dkvm=enabled \
+    -Dlinux_io_uring=${uring}abled \
+    -Dvirtfs=enabled \
+    -Dsdl=enabled \
+    -Dnettle=enabled \
+    -Daudio_drv_list=alsa,oss,pa,pipewire,sdl
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
+
