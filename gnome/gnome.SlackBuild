@@ -557,7 +557,7 @@ GNOMEVARS=/usr/lib${LIBDIRSUFFIX}/gnome ; export GNOMEVARS
 # Build/install gnome-shell before compiling gnome-settings-daemon.
 GNOMEMODS=" \
   blacklist \
-  gnome-shell \
+  gnome:gnome-shell \
   gnome \
   gnome-extras \
   applications \
