@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
          |-----handy-ruler------------------------------------------------------|
-rhythmbox: rhythmbox (music library management application)
+rhythmbox: rhythmbox (Music Management Application)
 rhythmbox:
-rhythmbox: Rhythmbox is an integrated music management application, originally
-rhythmbox: inspired by Apple's iTunes.
+rhythmbox: Rhythmbox is an integrated music management application based on the
+rhythmbox: powerful GStreamer media framework. It has a number of features,
+rhythmbox: including an easy to use music browser, searching and sorting,
+rhythmbox: comprehensive audio format support through GStreamer, Internet Radio
+rhythmbox: support, playlists and more.
+rhythmbox: Rhythmbox is extensible through a plugin system.
 rhythmbox:
-rhythmbox: It is designed to work witha the GNOME desktop and based on the
-rhythmbox: powerful GStreamer media framework.
-rhythmbox:
-rhythmbox: Homepage: http://projects.gnome.org/rhythmbox/
-rhythmbox:
+rhythmbox: Homepage: https://gitlab.gnome.org/GNOME/rhythmbox
 rhythmbox:
