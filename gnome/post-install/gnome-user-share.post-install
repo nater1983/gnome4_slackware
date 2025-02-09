@@ -1,0 +1,2 @@
+install -vDm644 $PKG/usr/lib/systemd/user/gnome-user-share-webdav.service "$PKG/usr/share/dbus-1/services/org.gnome.user-share.webdav.service"
+rm -fr $PKG/usr/lib
