@@ -1,3 +1,4 @@
+libgnome-games-support
 gnome-chess
 atomix
 gnome-mahjongg
@@ -5,3 +6,5 @@ clairvoyant
 chess-clock
 gnome-sudoku
 aisleriot
+gnome-taquin
+tali
