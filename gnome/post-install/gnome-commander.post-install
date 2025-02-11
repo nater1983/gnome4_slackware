@@ -1,0 +1,1 @@
+install -vDm 0644 $CWD/post-install/gnome-commander/gnome-commander.1 -t $PKG/usr/man/man1
