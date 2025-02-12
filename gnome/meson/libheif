@@ -1,9 +1,11 @@
+mkdir cmake-build
+cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DWITH_LIBDE265_PLUGIN:BOOL=ON \
     -DWITH_RAV1E=ON \
     -DWITH_SvtEnc=ON \
     -DWITH_DAV1D=ON \
-    -DWITH_DAV1D_PLUGIN=ON ..
-make -C ../cmake-build
-make -C ../cmake-build install DESTDIR=$PKG
+    -DWITH_DAV1D_PLUGIN=ON
+make
+make install DESTDIR=$PKG
