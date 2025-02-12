@@ -21,8 +21,12 @@ graphviz
 highway
 libjxl
 libyuv
+x265
+rav1e
+libde265
 SVT-AV1
 libavif
+libheif
 unifdef
 gtksourceview
 rest
