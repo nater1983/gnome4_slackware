@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/libheif/a911b26a902c5f89fee2dc20ac4dfaafcb8144ec.patch
