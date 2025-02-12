@@ -4,6 +4,6 @@
     -DWITH_RAV1E=ON \
     -DWITH_SvtEnc=ON \
     -DWITH_DAV1D=ON \
-    -DWITH_DAV1D_PLUGIN=ON
+    -DWITH_DAV1D_PLUGIN=ON ..
 make -C ../build
 make -C ../build install DESTDIR=$PKG
