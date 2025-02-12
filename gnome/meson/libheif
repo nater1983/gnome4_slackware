@@ -1,5 +1,3 @@
-mkdir cmake-build
-cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DWITH_LIBDE265_PLUGIN:BOOL=ON \
@@ -7,6 +5,5 @@ cd cmake-build
     -DWITH_SvtEnc=ON \
     -DWITH_DAV1D=ON \
     -DWITH_DAV1D_PLUGIN=ON
-      "${NINJA:=ninja}"
-      DESTDIR=$PKG $NINJA install
-    cd ..
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
