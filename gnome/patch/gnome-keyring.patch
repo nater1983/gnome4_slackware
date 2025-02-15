@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/gnome-keyring/001-pam-manpage.patch
+patch -Np1 -i $CWD/patch/gnome-keyring/pam-libdir.patch
