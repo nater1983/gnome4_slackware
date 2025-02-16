@@ -1,3 +1,0 @@
-make clean
-make CFLAGS="$SLKCFLAGS -w -Wl,--allow-multiple-definition" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
-make install PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} DESTDIR=$PKG
