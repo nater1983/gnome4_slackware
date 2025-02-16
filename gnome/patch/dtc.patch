@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/dtc/d1e2384185c5eeb8e238f7a8174ff43ea0da5d92.patch
+patch -Np1 -i $CWD/patch/dtc/fix-python-destdir-usage.diff
