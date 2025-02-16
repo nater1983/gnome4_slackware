@@ -1,4 +1,0 @@
-wget -c -P "$CWD/post-install/dtc" https://github.com/devicetree-org/pylibfdt/archive/v1.7.1/pylibfdt-1.7.1.tar.gz
-tar xvf $CWD/post-install/dtc/pylibfdt-1.7.1.tar.gz ; cd pylibfdt-1.7.1
-sed -i "s/\(\['setuptools_scm'\)/\1, 'swig'/" "setup.py"
-python3 setup.py install --root=$PKG
