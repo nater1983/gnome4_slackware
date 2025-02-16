@@ -21,7 +21,6 @@ cd cmake-build
     -DWITH_SERVER=ON \
     -DWITH_CAIRO=ON \
     -DBUILD_TESTING=OFF \
-    -DWITH_CLIENT_SDL3=ON \
     -DWITH_PKCS11=OFF
 make 
-make install DESTDIR=$PKG
+make install/strip DESTDIR=$PKG
