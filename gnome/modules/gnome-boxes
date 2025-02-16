@@ -11,7 +11,7 @@ spice-protocol
 spice
 usbredir
 spice-gtk
-device-tree-compiler
+dtc
 libnfs
 snappy
 vde2
