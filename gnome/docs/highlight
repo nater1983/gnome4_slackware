@@ -1,3 +1,0 @@
-mkdir -p $PKG/usr/doc
-mv $PKG/usr/share/doc/${DOCNAME}/ $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
-rmdir $PKG/usr/share/doc
