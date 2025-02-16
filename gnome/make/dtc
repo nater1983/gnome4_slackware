@@ -1,3 +1,3 @@
 make clean
-make CFLAGS="$SLKCFLAGS -w -Wl,--allow-multiple-definition" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
+make NO_PYTHON=1 CFLAGS="$SLKCFLAGS -w -Wl,--allow-multiple-definition" PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX}
 make install PREFIX=/usr LIBDIR=/usr/lib${LIBDIRSUFFIX} DESTDIR=$PKG
