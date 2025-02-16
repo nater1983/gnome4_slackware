@@ -23,7 +23,7 @@
 # Gnome.SlackBuild Script
 
 # Set up general build options
-CLEANUP=${CLEANUP:-"no"}       # Clean up after build
+CLEANUP=${CLEANUP:-"yes"}       # Clean up after build
 UPGRADE=${UPGRADE:-"yes"}       # Upgrade package after successful build
 PRECHECK=${PRECHECK:-"no"}      # Perform a pre-check of sources
 CHECKOUT=${CHECKOUT:-"no"} # don't let the script checkout missing sources.
@@ -151,7 +151,7 @@ no_usr_share_doc() {
 no_usr_doc_prgnam() {
   # If there are docs, move them:
   if [ -d "usr/doc/${DOCNAME}" ]; then
-    mv usr/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+    mv usr/doc/${DOCNAME}/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     rmdir usr/doc/${DOCNAME}
   fi
 }
