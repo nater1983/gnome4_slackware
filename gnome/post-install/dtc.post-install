@@ -1,0 +1,4 @@
+wget -c -P "$CWD/post-install/dtc" https://github.com/devicetree-org/pylibfdt/archive/v1.7.2/pylibfdt-1.7.2.tar.gz
+tar xvf $CWD/post-install/dtc/pylibfdt-1.7.2.tar.gz ; cd pylibfdt
+python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
