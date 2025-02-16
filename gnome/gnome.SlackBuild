@@ -143,8 +143,16 @@ no_usr_share_doc() {
   # If there are docs, move them:
   if [ -d "usr/share/doc" ]; then
     mkdir -p usr/doc
-    mv usr/share/doc/* usr/doc
+    mv usr/share/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     rmdir usr/share/doc
+  fi
+}
+
+no_usr_doc_prgnam() {
+  # If there are docs, move them:
+  if [ -d "usr/doc/${DOCNAME" ]; then
+    mv usr/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+    rmdir usr/doc/${DOCNAME
   fi
 }
 
@@ -442,7 +450,8 @@ build_mod_pkg() {
         cd $PKG
         process_man_pages
         process_info_pages
-        no_usr_share_doc          
+        no_usr_share_doc
+        no_usr_doc_prgnam
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
