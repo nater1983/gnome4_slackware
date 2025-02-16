@@ -151,7 +151,7 @@ no_usr_share_doc() {
 no_usr_doc_prgnam() {
   # If there are docs, move them:
   if [ -d "usr/doc/${DOCNAME}" ]; then
-    mv usr/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+    mv usr/doc/${DOCNAME}/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     rmdir usr/doc/${DOCNAME}
   fi
 }
