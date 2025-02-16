@@ -1,3 +1,5 @@
+mkdir cmake-build
+cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DRDTK_FORCE_STATIC_BUILD=ON \
@@ -20,5 +22,5 @@
     -DWITH_CAIRO=ON \
     -DBUILD_TESTING=OFF \
     -DWITH_PKCS11=OFF
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make 
+make install DESTDIR=$PKG
