@@ -32,6 +32,7 @@ grilo-plugins
 gnome-music
 tpm2-tss
 libfdk-aac
+freerdp
 gnome-remote-desktop
 gnome-text-editor
 gnome-tour
