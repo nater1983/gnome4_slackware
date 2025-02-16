@@ -101,9 +101,17 @@ strip_binaries() {
 process_man_pages() {
   # Move usr/share/man to usr/man if it exists
   if [ -d "usr/share/man" ]; then
-    mkdir -p usr/man
-    cp -av usr/share/man/* usr/man/
-    rm -fr usr/share/man
+      mkdir -p usr/man
+      cp -av usr/share/man/* usr/man/
+      rm -fr usr/share/man  
+  
+      # Find .gz files and check if an uncompressed version exists
+      find usr/man -type f -name "*.gz" | while read -r gzfile; do
+          uncompressed="${gzfile%.gz}"
+          if [ -f "$uncompressed" ]; then
+              rm -v "$gzfile"  # Remove the .gz file only if an uncompressed version exists
+          fi
+      done
   fi
 
   # Compress and symlink the man pages if needed:
