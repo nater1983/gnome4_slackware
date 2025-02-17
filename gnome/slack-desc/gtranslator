@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+gtranslator: gtranslator (GNOME translation making program)
+gtranslator:
+gtranslator: gtranslator is a quite comfortable gettext po/po.gz/(g)mo files
+gtranslator: editor for the GNOME 3.x platform with many features. It's evolving 
+gtranslator: quite fast and many useful functions are already implemented; 
+gtranslator: gtranslator aims to be a very complete editing environment for 
+gtranslator: translation issues within the GNU gettext/GNOME desktop world.
+gtranslator:
+gtranslator: Gtranslator (-the GNOME translation making program-)
+gtranslator: https://wiki.gnome.org/Apps/Gtranslator 
+gtranslator:
