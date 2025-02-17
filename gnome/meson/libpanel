@@ -5,6 +5,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+    -Ddocs=false \
     -Dintrospection=enabled \
     -Dvapi=true 
   "${NINJA:=ninja}"
