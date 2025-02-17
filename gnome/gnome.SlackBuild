@@ -147,11 +147,20 @@ process_info_pages() {
   fi
 }
 
+#no_usr_share_doc() {
+#  # If there are docs, move them:
+#  if [ -d "usr/share/doc" ]; then
+#    mkdir -p usr/doc
+#    mv usr/share/doc/* usr/doc
+#    rmdir usr/share/doc
+#  fi
+#}
+
 no_usr_share_doc() {
   # If there are docs, move them:
   if [ -d "usr/share/doc" ]; then
-    mkdir -p usr/doc
-    mv usr/share/doc/* usr/doc
+    mkdir -p usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+    mv usr/share/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     rmdir usr/share/doc
   fi
 }
