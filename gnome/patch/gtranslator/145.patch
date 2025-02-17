@@ -1,0 +1,27 @@
+From ff573604c460f96f605dbbf8617e2aac3d63df4d Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 22 Mar 2024 04:14:22 +0000
+Subject: [PATCH] Add spellcheck
+
+In this patch the library is a hard dependency.
+
+Fix https://gitlab.gnome.org/GNOME/gtranslator/-/issues/180
+
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index 25da8b6b..85b740a3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -127,6 +127,7 @@ gtr_deps = [
+   dependency('libxml-2.0', version: '>= 2.4.12'),
+   dependency('libsoup-3.0'),
+   dependency('json-glib-1.0', version: '>= 1.2.0'),
++  dependency('libspelling-1'),
+   cc.find_library('gettextpo'),
+ ]
+ 
+-- 
+GitLab
