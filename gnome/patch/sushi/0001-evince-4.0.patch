@@ -13,3 +13,17 @@ index 5b181a5..e56e9c0 100644
  freetype_dep = dependency('freetype2')
  gdk_pixbuf_dep = dependency('gdk-pixbuf-2.0', version: '>=2.23.0')
  gio_unix_dep = dependency('gio-unix-2.0', version: '>=2.29.14')
+
+diff --git a/src/libsushi/sushi-utils.c b/src/libsushi/sushi-utils.c
+index b98084a..74ef7de 100644
+--- a/src/libsushi/sushi-utils.c
++++ b/src/libsushi/sushi-utils.c
+@@ -84,7 +84,7 @@ sushi_query_supported_document_types (void)
+   GList *infos, *l;
+   gchar **retval = NULL;
+   GPtrArray *array;
+-  EvTypeInfo *info;
++  EvBackendInfo *info;
+   gint idx;
+ 
+   infos = ev_backends_manager_get_all_types_info ();
