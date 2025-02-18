@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/sushi/0001-evince-4.0.patch
