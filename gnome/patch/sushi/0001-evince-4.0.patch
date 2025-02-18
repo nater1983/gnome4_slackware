@@ -23,7 +23,7 @@ index b98084a..74ef7de 100644
    gchar **retval = NULL;
    GPtrArray *array;
 -  EvTypeInfo *info;
-+  EvBackendInfo *info;
++  EvBackendPage *info;
    gint idx;
  
    infos = ev_backends_manager_get_all_types_info ();
