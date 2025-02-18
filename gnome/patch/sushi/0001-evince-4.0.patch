@@ -15,15 +15,37 @@ index 5b181a5..e56e9c0 100644
  gio_unix_dep = dependency('gio-unix-2.0', version: '>=2.29.14')
 
 diff --git a/src/libsushi/sushi-utils.c b/src/libsushi/sushi-utils.c
-index b98084a..74ef7de 100644
+index 77fb64e..528fe5d 100644
 --- a/src/libsushi/sushi-utils.c
 +++ b/src/libsushi/sushi-utils.c
-@@ -84,7 +84,7 @@ sushi_query_supported_document_types (void)
+@@ -84,10 +84,10 @@ sushi_query_supported_document_types (void)
    GList *infos, *l;
    gchar **retval = NULL;
    GPtrArray *array;
 -  EvTypeInfo *info;
-+  EvBackendPage *info;
++  EvBackendInfo *info;
    gint idx;
  
-   infos = ev_backends_manager_get_all_types_info ();
+-  infos = ev_backends_manager_get_all_types_info ();
++  infos = _ev_backend_info_load_from_dir (EV_BACKENDS_DIR);
+ 
+   if (infos == NULL)
+     return NULL;
+@@ -95,7 +95,7 @@ sushi_query_supported_document_types (void)
+   array = g_ptr_array_new ();
+ 
+   for (l = infos; l != NULL; l = l->next) {
+-    info = l->data;
++    info = (EvBackendInfo *)l->data;
+ 
+     for (idx = 0; info->mime_types[idx] != NULL; idx++)
+       g_ptr_array_add (array, g_strdup (info->mime_types[idx]));
+@@ -104,6 +104,8 @@ sushi_query_supported_document_types (void)
+   g_ptr_array_add (array, NULL);
+   retval = (gchar **) g_ptr_array_free (array, FALSE);
+ 
++  g_list_free_full (infos, (GDestroyNotify) _ev_backend_info_unref);
++
+   return retval;
+ }
+ 
