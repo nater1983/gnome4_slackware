@@ -6,7 +6,9 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Dgtk-doc=false \
-    -Dnmea-source=true
+    -Dnmea-source=true \
+    -Ddefault-wifi-url="https://api.beacondb.net/v1/geolocate" \
+    -Ddefault-wifi-submit-url="https://api.beacondb.net/v2/geosubmit"
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
