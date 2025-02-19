@@ -1,0 +1,3093 @@
+From 7b8aa789c0a3a4b422e02a5f92b7c9d47a2e75fe Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jonas=20Dre=C3=9Fler?= <verdre@v0yd.nl>
+Date: Sat, 19 Oct 2024 17:36:11 +0200
+Subject: [PATCH] data: geoclue.conf.in: Mention the geolocation service
+ defined at build-time
+
+The geolocation service to use can also be defined at build time using the
+'default-wifi-url' meson option. This service will be used when no url=
+parameter is set in the config file, make that a bit more obvious by
+mentioning it explicitly in the documentation.
+---
+ data/geoclue.conf.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/data/geoclue.conf.in b/data/geoclue.conf.in
+index 0eb59cd..124334c 100644
+--- a/data/geoclue.conf.in
++++ b/data/geoclue.conf.in
+@@ -50,6 +50,7 @@ enable=@default_wifi_enable@
+ # URL to a WiFi geolocation service compatible with the Ichnaea API
+ # (https://ichnaea.readthedocs.io/en/latest/api/geolocate.html).
+ # An API key can be set by using the 'key' URL parameter.
++# If unset, defaults to a location service defined at build-time.
+ #url=https://example.com/v1/geolocate?key=YOUR_KEY
+ 
+ # To use the Google geolocation service, uncomment this URL
+-- 
+2.48.1
+
+
+From 3422928dd1d11bfaee59cffc267286e5b4d550bd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jonas=20Dre=C3=9Fler?= <verdre@v0yd.nl>
+Date: Sat, 19 Oct 2024 17:40:40 +0200
+Subject: [PATCH] data: geoclue.conf.in: Add URL and API key for the Positon
+ location service
+
+Allow users and distributions to opt into using the Positon
+(https://positon.xyz) geolocation service for wifi and cell tower locations.
+
+The API key that's used here was assigned to geoclue by Positon, and may be
+used by non-commercial re-distributors of geoclue as well.
+
+See also https://gitlab.freedesktop.org/geoclue/geoclue/-/issues/200
+---
+ data/geoclue.conf.in | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/data/geoclue.conf.in b/data/geoclue.conf.in
+index 124334c..7298353 100644
+--- a/data/geoclue.conf.in
++++ b/data/geoclue.conf.in
+@@ -53,6 +53,27 @@ enable=@default_wifi_enable@
+ # If unset, defaults to a location service defined at build-time.
+ #url=https://example.com/v1/geolocate?key=YOUR_KEY
+ 
++# To use the Positon geolocation service, uncomment this URL.
++#
++# NOTE: Distributors of geoclue may only uncomment this URL if the
++#       service is used in a non-commercial manner, to quote Positon:
++#
++#         We generally consider a service or software commercial, when it is only
++#         intended to be available (beyond free trials or other restrictions) via
++#         a one-time payment, subscription, account registration or similar.
++#         Funding the development through donations or optional support contracts
++#         does not make the software itself commercial.
++#
++#         Fedora Linux, CentOS Stream, Rocky Linux or AlmaLinux all would not be
++#         considered commercial by us, neither would e.g. Debian, Ubuntu or
++#         elementary OS. However, RedHat Enterprise Linux and various SUSE Linux
++#         Enterprise versions would be considered commercial.
++#
++#       For more information, contact Positon or consult their website:
++#       https://positon.xyz/docs/
++#
++#url=https://api.positon.xyz/v1/geolocate?key=56aba903-ae67-4f26-919b-15288b44bda9
++
+ # To use the Google geolocation service, uncomment this URL
+ # while changing YOUR_KEY to your Google API key.
+ #
+-- 
+2.48.1
+
+
+From 7500e385a1a0f0f9985f74870f8504bd9ac77ea1 Mon Sep 17 00:00:00 2001
+From: Chris Talbot <chris@talbothome.com>
+Date: Sun, 1 Dec 2024 21:33:38 -0700
+Subject: [PATCH] Mozilla: Include SSID for geolocate and submission requests
+
+---
+ src/gclue-mozilla.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/gclue-mozilla.c b/src/gclue-mozilla.c
+index 9e8feb1..abb2280 100644
+--- a/src/gclue-mozilla.c
++++ b/src/gclue-mozilla.c
+@@ -257,6 +257,7 @@ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+                 for (iter = bss_list; iter != NULL; iter = iter->next) {
+                         WPABSS *bss = WPA_BSS (iter->data);
+                         char mac[BSSID_STR_LEN + 1] = { 0 };
++                        char ssid[MAX_SSID_LEN + 1] = { 0 };
+                         gint16 strength_dbm;
+                         guint age_ms;
+ 
+@@ -269,6 +270,10 @@ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+                         get_bssid_from_bss (bss, mac);
+                         json_builder_add_string_value (builder, mac);
+ 
++                        json_builder_set_member_name (builder, "ssid");
++                        get_ssid_from_bss (bss, ssid);
++                        json_builder_add_string_value (builder, ssid);
++
+                         json_builder_set_member_name (builder, "signalStrength");
+                         strength_dbm = wpa_bss_get_signal (bss);
+                         json_builder_add_int_value (builder, strength_dbm);
+@@ -486,6 +491,7 @@ gclue_mozilla_create_submit_query (GClueMozilla  *mozilla,
+                 for (iter = bss_list; iter != NULL; iter = iter->next) {
+                         WPABSS *bss = WPA_BSS (iter->data);
+                         char mac[BSSID_STR_LEN + 1] = { 0 };
++                        char ssid[MAX_SSID_LEN + 1] = { 0 };
+                         gint16 strength_dbm;
+                         guint16 frequency;
+                         guint age_ms;
+@@ -499,6 +505,10 @@ gclue_mozilla_create_submit_query (GClueMozilla  *mozilla,
+                         get_bssid_from_bss (bss, mac);
+                         json_builder_add_string_value (builder, mac);
+ 
++                        json_builder_set_member_name (builder, "ssid");
++                        get_ssid_from_bss (bss, ssid);
++                        json_builder_add_string_value (builder, ssid);
++
+                         json_builder_set_member_name (builder, "signalStrength");
+                         strength_dbm = wpa_bss_get_signal (bss);
+                         json_builder_add_int_value (builder, strength_dbm);
+-- 
+2.48.1
+
+
+From 87efd9a932cf9b723d6fc84f7b61ebb4cc09d635 Mon Sep 17 00:00:00 2001
+From: Chris Talbot <chris@talbothome.com>
+Date: Sun, 1 Dec 2024 21:34:44 -0700
+Subject: [PATCH] Mozilla: replace rather than append User-Agent
+
+It won't actually attach if you don't do this
+---
+ src/gclue-mozilla.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gclue-mozilla.c b/src/gclue-mozilla.c
+index abb2280..2b3467d 100644
+--- a/src/gclue-mozilla.c
++++ b/src/gclue-mozilla.c
+@@ -301,7 +301,7 @@ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+         uri = gclue_mozilla_get_locate_url (mozilla);
+         ret = soup_message_new ("POST", uri);
+         request_headers = soup_message_get_request_headers (ret);
+-        soup_message_headers_append (request_headers, "User-Agent", USER_AGENT);
++        soup_message_headers_replace (request_headers, "User-Agent", USER_AGENT);
+         body = g_bytes_new_take (data, data_len);
+         soup_message_set_request_body_from_bytes (ret, "application/json", body);
+         g_debug ("Sending following request to '%s':\n%s", uri, data);
+@@ -566,7 +566,7 @@ gclue_mozilla_create_submit_query (GClueMozilla  *mozilla,
+ 
+         ret = soup_message_new ("POST", url);
+         request_headers = soup_message_get_request_headers (ret);
+-        soup_message_headers_append (request_headers, "User-Agent", USER_AGENT);
++        soup_message_headers_replace (request_headers, "User-Agent", USER_AGENT);
+         if (nick != NULL && nick[0] != '\0')
+                 soup_message_headers_append (request_headers,
+                                              "X-Nickname",
+-- 
+2.48.1
+
+
+From 72b1c3794e86ef97ba398a64446a0d84ae1ef2ad Mon Sep 17 00:00:00 2001
+From: sarayourfriend <git@sarayourfriend.pictures>
+Date: Wed, 4 Dec 2024 13:56:41 +1100
+Subject: [PATCH] lib: simple: forward xdp location start errors
+
+Instead of squashing the error as a generic gio failed,
+forward the xdp error itself, so that the callsite can
+determine the cause of the failure.
+
+Signed-off-by: Sara Marcondes <git@sarayourfriend.pictures>
+---
+ libgeoclue/gclue-simple.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/libgeoclue/gclue-simple.c b/libgeoclue/gclue-simple.c
+index 4c2f299..7a96baf 100644
+--- a/libgeoclue/gclue-simple.c
++++ b/libgeoclue/gclue-simple.c
+@@ -551,10 +551,7 @@ on_portal_started_finish (GObject      *source_object,
+         g_autoptr (GError) error = NULL;
+ 
+         if (!xdp_location_call_start_finish (priv->portal, NULL, res, &error)) {
+-                if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
+-                        g_task_return_error (task, g_steal_pointer (&error));
+-                else
+-                        g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_FAILED, "Start failed");
++                g_task_return_error (task, g_steal_pointer (&error));
+         } else {
+                 async_init_return_error_when_cancelled (task);
+         }
+-- 
+2.48.1
+
+
+From 596231b53dc71f91355b093946fdd8c98af48f4e Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 19 Nov 2024 14:15:59 +0200
+Subject: [PATCH] location: Ignore NMEA coordinates without degree digits
+
+The coordinates for latitude and longitude in NMEA sentences are given
+as strings in the format `ddmm.mm` where ds are the digits for degrees
+and mm.mm is the float value for minutes. Degree values for latitudes
+are between 1 to 2 digits (0 to 90) and between 1 to 3 digits (0 to 180)
+for longitudes. Implementations seem to mostly output degrees
+zero-padded with 2 digits for latitude and 3 digits with longitude.
+
+We now reject coordinate strings without at least one character for
+degree, so that e.g. "012.3456" is allowed, but "12.3456" is not.
+
+Previously, coordinate strings without digit values were parsed, leading
+to erroneous output.
+
+Thanks to Benoit Maurin for reporting this.
+---
+ src/gclue-location.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/gclue-location.c b/src/gclue-location.c
+index da2a10a..83f51bd 100644
+--- a/src/gclue-location.c
++++ b/src/gclue-location.c
+@@ -449,6 +449,8 @@ parse_coordinate_string (const char *coordinate,
+         if (dot_str == NULL)
+                 return INVALID_COORDINATE;
+         dot_offset = dot_str - coordinate;
++        if (dot_offset < 3)
++                return INVALID_COORDINATE;
+ 
+         degrees_str = g_strndup (coordinate, dot_offset - 2);
+         degrees = g_ascii_strtod (degrees_str, NULL);
+-- 
+2.48.1
+
+
+From 3baf0c7442adfcd195bcd1f08b8d8ae8f8a79894 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 19 Nov 2024 17:30:07 +0200
+Subject: [PATCH] location: Stricter NMEA coordinate string parsing
+
+Add check for NULL coordinate and direction strings, remove duplicate
+check for empty direction string.
+
+Check coordinate string for chars which are not a digit or '.' and
+reject such strings.
+
+Check that the full minutes part of the string is consumed by
+g_ascii_strtod(), reject the string if not. The degrees part is covered
+by other checks on the coordinate string.
+---
+ src/gclue-location.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/src/gclue-location.c b/src/gclue-location.c
+index 83f51bd..eb6d66f 100644
+--- a/src/gclue-location.c
++++ b/src/gclue-location.c
+@@ -428,12 +428,11 @@ parse_coordinate_string (const char *coordinate,
+ {
+         gdouble minutes, degrees, out;
+         g_autofree gchar *degrees_str = NULL;
+-        gchar *dot_str;
++        const char *c, *dot_str, *coordinate_end;
++        char *conversion_end;
+         gint dot_offset;
+ 
+-        if (coordinate[0] == '\0' ||
+-            direction[0] == '\0' ||
+-            direction[0] == '\0')
++        if (!coordinate || !direction || coordinate[0] == '\0' || direction[0] == '\0')
+                 return INVALID_COORDINATE;
+ 
+         if (direction[0] != 'N' &&
+@@ -445,17 +444,29 @@ parse_coordinate_string (const char *coordinate,
+                 return INVALID_COORDINATE;
+         }
+ 
++        for (c = coordinate; *c != '\0'; c++) {
++                if (!(g_ascii_isdigit (*c) || *c == '.')) {
++                        g_warning ("Invalid coordinate string '%s'", coordinate);
++                        return INVALID_COORDINATE;
++                }
++        }
++        coordinate_end = c;
++
+         dot_str = g_strstr_len (coordinate, 6, ".");
+-        if (dot_str == NULL)
+-                return INVALID_COORDINATE;
+         dot_offset = dot_str - coordinate;
+-        if (dot_offset < 3)
++        if (!dot_str || dot_offset < 3) {
++                g_warning ("Invalid coordinate string '%s'", coordinate);
+                 return INVALID_COORDINATE;
++        }
+ 
+         degrees_str = g_strndup (coordinate, dot_offset - 2);
+         degrees = g_ascii_strtod (degrees_str, NULL);
+ 
+-        minutes = g_ascii_strtod (dot_str - 2, NULL);
++        minutes = g_ascii_strtod (dot_str - 2, &conversion_end);
++        if (conversion_end != coordinate_end) {
++                g_warning ("Invalid coordinate string '%s'", coordinate);
++                return INVALID_COORDINATE;
++        }
+ 
+         /* Include the minutes as part of the degrees */
+         out = degrees + (minutes / 60.0);
+-- 
+2.48.1
+
+
+From 52d383c8634c6601c811fbd3b8ac75d48c0b4765 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 8 Dec 2024 19:50:09 +0200
+Subject: [PATCH] location: Check parsed NMEA coordinates for correct range
+
+---
+ src/gclue-location.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/src/gclue-location.c b/src/gclue-location.c
+index eb6d66f..b4747ad 100644
+--- a/src/gclue-location.c
++++ b/src/gclue-location.c
+@@ -477,6 +477,17 @@ parse_coordinate_string (const char *coordinate,
+         return out;
+ }
+ 
++static gboolean
++coordinates_ok (double latitude,
++                double longitude)
++{
++        if (latitude > 90.0 || latitude < -90 ||
++            longitude > 180.0 || longitude < -180.0)
++                return FALSE;
++        else
++                return TRUE;
++}
++
+ static gdouble
+ parse_altitude_string (const char *altitude,
+                        const char *unit)
+@@ -631,8 +642,9 @@ gclue_location_create_from_gga (const char *gga)
+         timestamp = parse_nmea_timestamp (parts[1]);
+         latitude = parse_coordinate_string (parts[2], parts[3]);
+         longitude = parse_coordinate_string (parts[4], parts[5]);
+-        if (latitude == INVALID_COORDINATE || longitude == INVALID_COORDINATE) {
+-                g_warning ("Invalid coordinate on NMEA GGA sentence.");
++        if (!coordinates_ok (latitude, longitude)) {
++                g_warning ("Invalid coordinates (%f, %f) on NMEA GGA sentence.",
++                           latitude, longitude);
+                 return NULL;
+         }
+ 
+@@ -677,9 +689,9 @@ gclue_location_create_from_rmc (const char     *rmc,
+         guint64 timestamp = parse_nmea_timestamp (parts[1]);
+         gdouble lat = parse_coordinate_string (parts[3], parts[4]);
+         gdouble lon = parse_coordinate_string (parts[5], parts[6]);
+-
+-        if (lat == INVALID_COORDINATE || lon == INVALID_COORDINATE) {
+-                g_warning ("Invalid coordinate on NMEA RMC sentence.");
++        if (!coordinates_ok (lat, lon)) {
++                g_warning ("Invalid coordinates (%f, %f) on NMEA RMC sentence.",
++                           lat, lon);
+                 return NULL;
+         }
+ 
+-- 
+2.48.1
+
+
+From 32101976945e51536aff3b6945c12ec4d15dd203 Mon Sep 17 00:00:00 2001
+From: Chris Talbot <chris@talbothome.com>
+Date: Thu, 5 Dec 2024 06:58:48 -0700
+Subject: [PATCH] Web-Source: Set User-Agent on Soup Session Construction
+
+Also add OS Info to user-agent
+---
+ src/gclue-mozilla.c    |  6 ------
+ src/gclue-web-source.c | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/src/gclue-mozilla.c b/src/gclue-mozilla.c
+index 2b3467d..5680e45 100644
+--- a/src/gclue-mozilla.c
++++ b/src/gclue-mozilla.c
+@@ -174,8 +174,6 @@ towertec_to_radiotype (GClueTowerTec tec,
+         return TRUE;
+ }
+ 
+-#define USER_AGENT (PACKAGE_NAME "/" PACKAGE_VERSION)
+-
+ SoupMessage *
+ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+                             gboolean skip_tower,
+@@ -185,7 +183,6 @@ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+ {
+         gboolean has_tower = FALSE, has_bss = FALSE;
+         SoupMessage *ret = NULL;
+-        SoupMessageHeaders *request_headers;
+         JsonBuilder *builder;
+         g_autoptr(GList) bss_list = NULL;
+         JsonGenerator *generator;
+@@ -300,8 +297,6 @@ gclue_mozilla_create_query (GClueMozilla  *mozilla,
+ 
+         uri = gclue_mozilla_get_locate_url (mozilla);
+         ret = soup_message_new ("POST", uri);
+-        request_headers = soup_message_get_request_headers (ret);
+-        soup_message_headers_replace (request_headers, "User-Agent", USER_AGENT);
+         body = g_bytes_new_take (data, data_len);
+         soup_message_set_request_body_from_bytes (ret, "application/json", body);
+         g_debug ("Sending following request to '%s':\n%s", uri, data);
+@@ -566,7 +561,6 @@ gclue_mozilla_create_submit_query (GClueMozilla  *mozilla,
+ 
+         ret = soup_message_new ("POST", url);
+         request_headers = soup_message_get_request_headers (ret);
+-        soup_message_headers_replace (request_headers, "User-Agent", USER_AGENT);
+         if (nick != NULL && nick[0] != '\0')
+                 soup_message_headers_append (request_headers,
+                                              "X-Nickname",
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 92d94b8..56d511b 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -28,6 +28,7 @@
+ #include "gclue-error.h"
+ #include "gclue-location.h"
+ #include "gclue-mozilla.h"
++#include "config.h"
+ 
+ /**
+  * SECTION:gclue-web-source
+@@ -402,16 +403,45 @@ gclue_web_source_finalize (GObject *gsource)
+         G_OBJECT_CLASS (gclue_web_source_parent_class)->finalize (gsource);
+ }
+ 
++static char *
++get_os_info (void)
++{
++        g_autofree char *pretty_name = NULL;
++        g_autofree char *os_name = g_get_os_info (G_OS_INFO_KEY_NAME);
++        g_autofree char *os_version = g_get_os_info (G_OS_INFO_KEY_VERSION);
++
++        if (os_name && os_version)
++                return g_strdup_printf ("%s; %s", os_name, os_version);
++
++        pretty_name = g_get_os_info (G_OS_INFO_KEY_PRETTY_NAME);
++        if (pretty_name)
++                return g_steal_pointer (&pretty_name);
++
++        /* Translators: Not marked as translatable as debug output should stay English */
++        return g_strdup ("Unknown");
++}
++
++#define USER_AGENT (PACKAGE_NAME "/" PACKAGE_VERSION)
++
++static char *
++get_user_agent (void)
++{
++        g_autofree char *os_info = get_os_info ();
++        return g_strdup_printf ("%s (%s)", USER_AGENT, os_info);
++}
++
+ static void
+ gclue_web_source_constructed (GObject *object)
+ {
+         GNetworkMonitor *monitor;
+         GClueWebSourcePrivate *priv = GCLUE_WEB_SOURCE (object)->priv;
++        g_autofree char *user_agent = get_user_agent ();
+ 
+         G_OBJECT_CLASS (gclue_web_source_parent_class)->constructed (object);
+ 
+         priv->soup_session = soup_session_new ();
+         soup_session_set_proxy_resolver (priv->soup_session, NULL);
++        soup_session_set_user_agent (priv->soup_session, user_agent);
+ 
+         monitor = g_network_monitor_get_default ();
+         priv->network_changed_id =
+-- 
+2.48.1
+
+
+From 1db3827daab03ea5ab95500d1db9733b6fc2240b Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 27 Aug 2024 12:07:40 +0300
+Subject: [PATCH] Return a correct enum from LocationSource stop method
+ implementations
+
+---
+ src/gclue-3g.c          | 3 ++-
+ src/gclue-cdma.c        | 3 ++-
+ src/gclue-locator.c     | 4 +++-
+ src/gclue-modem-gps.c   | 3 ++-
+ src/gclue-nmea-source.c | 3 ++-
+ src/gclue-wifi.c        | 3 ++-
+ 6 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/src/gclue-3g.c b/src/gclue-3g.c
+index 225b706..90cd5e5 100644
+--- a/src/gclue-3g.c
++++ b/src/gclue-3g.c
+@@ -409,7 +409,8 @@ gclue_3g_stop (GClueLocationSource *source)
+         g_autoptr(GError) error = NULL;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_3g_parent_class);
+         base_result = base_class->stop (source);
+diff --git a/src/gclue-cdma.c b/src/gclue-cdma.c
+index 75bd5a0..4c992e5 100644
+--- a/src/gclue-cdma.c
++++ b/src/gclue-cdma.c
+@@ -246,7 +246,8 @@ gclue_cdma_stop (GClueLocationSource *source)
+         g_autoptr(GError) error = NULL;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_cdma_parent_class);
+         base_result = base_class->stop (source);
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index d6ed560..083ebe6 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -569,7 +569,9 @@ gclue_locator_stop (GClueLocationSource *source)
+         GList *node;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_LOCATOR (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_LOCATOR (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
++
+         locator = GCLUE_LOCATOR (source);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_locator_parent_class);
+diff --git a/src/gclue-modem-gps.c b/src/gclue-modem-gps.c
+index 5b348d2..a187aab 100644
+--- a/src/gclue-modem-gps.c
++++ b/src/gclue-modem-gps.c
+@@ -265,7 +265,8 @@ gclue_modem_gps_stop (GClueLocationSource *source)
+         g_autoptr(GError) error = NULL;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_modem_gps_parent_class);
+         base_result = base_class->stop (source);
+diff --git a/src/gclue-nmea-source.c b/src/gclue-nmea-source.c
+index 13ada66..e17d65a 100644
+--- a/src/gclue-nmea-source.c
++++ b/src/gclue-nmea-source.c
+@@ -1109,7 +1109,8 @@ gclue_nmea_source_stop (GClueLocationSource *source)
+         GClueLocationSourceClass *base_class;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_NMEA_SOURCE (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_NMEA_SOURCE (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_nmea_source_parent_class);
+         base_result = base_class->stop (source);
+diff --git a/src/gclue-wifi.c b/src/gclue-wifi.c
+index cd20b0d..0649ef0 100644
+--- a/src/gclue-wifi.c
++++ b/src/gclue-wifi.c
+@@ -846,7 +846,8 @@ gclue_wifi_stop (GClueLocationSource *source)
+         GClueLocationSourceClass *base_class;
+         GClueLocationSourceStopResult base_result;
+ 
+-        g_return_val_if_fail (GCLUE_IS_WIFI (source), FALSE);
++        g_return_val_if_fail (GCLUE_IS_WIFI (source),
++                              GCLUE_LOCATION_SOURCE_STOP_RESULT_FAILED);
+ 
+         base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_wifi_parent_class);
+         base_result = base_class->stop (source);
+-- 
+2.48.1
+
+
+From 420a5b06cb57c147949b906f78171b708ab6269a Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 27 Aug 2024 10:41:53 +0300
+Subject: [PATCH] where-am-i: Output accuracy without unnecessary decimals
+
+---
+ demo/where-am-i.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/demo/where-am-i.c b/demo/where-am-i.c
+index 8324058..bff89f0 100644
+--- a/demo/where-am-i.c
++++ b/demo/where-am-i.c
+@@ -88,7 +88,7 @@ print_location (GClueSimple *simple)
+ 
+         location = gclue_simple_get_location (simple);
+         g_print ("\nNew location:\n");
+-        g_print ("Latitude:    %f°\nLongitude:   %f°\nAccuracy:    %f meters\n",
++        g_print ("Latitude:    %f°\nLongitude:   %f°\nAccuracy:    %.0f meters\n",
+                  gclue_location_get_latitude (location),
+                  gclue_location_get_longitude (location),
+                  gclue_location_get_accuracy (location));
+-- 
+2.48.1
+
+
+From 253983f1061ad647605a273bce1acea94bc63aa6 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 16:04:05 +0300
+Subject: [PATCH] meson: Fix typos in meson_options.txt
+
+---
+ meson_options.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/meson_options.txt b/meson_options.txt
+index 4d55a63..a7f34b7 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -12,13 +12,13 @@ option('gtk-doc',
+        description: 'Whether to generate the API reference for Geocode-GLib')
+ option('3g-source',
+        type: 'boolean', value: true,
+-       description: 'Enable 3G source (requires ModemManager')
++       description: 'Enable 3G source (requires ModemManager)')
+ option('cdma-source',
+        type: 'boolean', value: true,
+-       description: 'Enable CDMA source (requires ModemManager')
++       description: 'Enable CDMA source (requires ModemManager)')
+ option('modem-gps-source',
+        type: 'boolean', value: true,
+-       description: 'Enable modem GPS source (requires ModemManager')
++       description: 'Enable modem GPS source (requires ModemManager)')
+ option('nmea-source',
+        type: 'boolean', value: true,
+        description: 'Enable network NMEA source (requires Avahi libraries)')
+-- 
+2.48.1
+
+
+From d148ff47bb3fd86df34e8d4ea9595c6c919cb213 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 15:49:50 +0300
+Subject: [PATCH] meson, locator: Add 'wifi-source' compilation option
+
+Allows disabling the WiFi source during compilation.
+---
+ meson.build         | 13 ++++++++-----
+ meson_options.txt   |  3 +++
+ src/gclue-locator.c |  9 +++++++--
+ 3 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index c561572..4cef412 100644
+--- a/meson.build
++++ b/meson.build
+@@ -32,6 +32,7 @@ conf.set_quoted('LOCALEDIR', localedir)
+ conf.set_quoted('SYSCONFDIR', sysconfdir)
+ conf.set_quoted('DEFAULT_WIFI_URL', get_option('default-wifi-url'))
+ conf.set_quoted('DEFAULT_WIFI_SUBMIT_URL', get_option('default-wifi-submit-url'))
++conf.set10('GCLUE_USE_WIFI_SOURCE', get_option('wifi-source'))
+ conf.set10('GCLUE_USE_3G_SOURCE', get_option('3g-source'))
+ conf.set10('GCLUE_USE_CDMA_SOURCE', get_option('cdma-source'))
+ conf.set10('GCLUE_USE_MODEM_GPS_SOURCE', get_option('modem-gps-source'))
+@@ -90,11 +91,12 @@ summary = '''
+         Backend:                  @4@
+         Convenience library:      @5@
+         Introspection:            @6@
+-        3G source:                @7@
+-        CDMA source:              @8@
+-        Modem GPS source:         @9@
+-        Network NMEA source:      @10@
+-        Compass:                  @11@
++        WiFi source:              @7@
++        3G source:                @8@
++        CDMA source:              @9@
++        Modem GPS source:         @10@
++        Network NMEA source:      @11@
++        Compass:                  @12@
+ '''.format(gclue_version,
+            get_option('prefix'),
+            cc.get_id(),
+@@ -102,6 +104,7 @@ summary = '''
+            get_option('enable-backend'),
+            get_option('libgeoclue'),
+            get_option('introspection'),
++           get_option('wifi-source'),
+            get_option('3g-source'),
+            get_option('cdma-source'),
+            get_option('modem-gps-source'),
+diff --git a/meson_options.txt b/meson_options.txt
+index a7f34b7..708d32a 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -10,6 +10,9 @@ option('vapi',
+ option('gtk-doc',
+        type: 'boolean', value: true,
+        description: 'Whether to generate the API reference for Geocode-GLib')
++option('wifi-source',
++       type: 'boolean', value: true,
++       description: 'Enable WiFi source')
+ option('3g-source',
+        type: 'boolean', value: true,
+        description: 'Enable 3G source (requires ModemManager)')
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index 083ebe6..4e5c1b9 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -29,9 +29,12 @@
+ #include "gclue-locator.h"
+ 
+ #include "gclue-static-source.h"
+-#include "gclue-wifi.h"
+ #include "gclue-config.h"
+ 
++#if GCLUE_USE_WIFI_SOURCE
++#include "gclue-wifi.h"
++#endif
++
+ #if GCLUE_USE_3G_SOURCE
+ #include "gclue-3g.h"
+ #endif
+@@ -400,7 +403,6 @@ gclue_locator_constructed (GObject *object)
+         GClueLocator *locator = GCLUE_LOCATOR (object);
+         GClueLocationSource *submit_source = NULL;
+         GClueConfig *gconfig = gclue_config_get_singleton ();
+-        GClueWifi *wifi = NULL;
+         GList *node;
+         GClueMinUINT *threshold;
+ 
+@@ -420,6 +422,8 @@ gclue_locator_constructed (GObject *object)
+                                                         cdma);
+         }
+ #endif
++#if GCLUE_USE_WIFI_SOURCE
++        GClueWifi *wifi = NULL;
+         if (gclue_config_get_enable_wifi_source (gconfig)) {
+                 wifi = gclue_wifi_get_singleton (locator->priv->accuracy_level);
+         } else {
+@@ -434,6 +438,7 @@ gclue_locator_constructed (GObject *object)
+                 locator->priv->sources = g_list_append (locator->priv->sources,
+                                                         wifi);
+         }
++#endif
+ #if GCLUE_USE_MODEM_GPS_SOURCE
+         if (gclue_config_get_enable_modem_gps_source (gconfig)) {
+                 GClueModemGPS *gps = gclue_modem_gps_get_singleton ();
+-- 
+2.48.1
+
+
+From 1b2ca74cf3200d24787c29508d5c69e4ac0b899a Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sat, 31 Aug 2024 21:26:25 +0300
+Subject: [PATCH] meson, locator: Add 'static-source' compilation option
+
+---
+ meson.build         | 5 ++++-
+ meson_options.txt   | 3 +++
+ src/gclue-locator.c | 8 ++++++--
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 4cef412..74f7578 100644
+--- a/meson.build
++++ b/meson.build
+@@ -37,6 +37,7 @@ conf.set10('GCLUE_USE_3G_SOURCE', get_option('3g-source'))
+ conf.set10('GCLUE_USE_CDMA_SOURCE', get_option('cdma-source'))
+ conf.set10('GCLUE_USE_MODEM_GPS_SOURCE', get_option('modem-gps-source'))
+ conf.set10('GCLUE_USE_NMEA_SOURCE', get_option('nmea-source'))
++conf.set10('GCLUE_USE_STATIC_SOURCE', get_option('static-source'))
+ conf.set10('GCLUE_USE_COMPASS', get_option('compass'))
+ 
+ configure_file(output: 'config.h', configuration : conf)
+@@ -96,7 +97,8 @@ summary = '''
+         CDMA source:              @9@
+         Modem GPS source:         @10@
+         Network NMEA source:      @11@
+-        Compass:                  @12@
++        Static source:            @12@
++        Compass:                  @13@
+ '''.format(gclue_version,
+            get_option('prefix'),
+            cc.get_id(),
+@@ -109,5 +111,6 @@ summary = '''
+            get_option('cdma-source'),
+            get_option('modem-gps-source'),
+            get_option('nmea-source'),
++           get_option('static-source'),
+            get_option('compass'))
+ message(summary)
+diff --git a/meson_options.txt b/meson_options.txt
+index 708d32a..76825d0 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -25,6 +25,9 @@ option('modem-gps-source',
+ option('nmea-source',
+        type: 'boolean', value: true,
+        description: 'Enable network NMEA source (requires Avahi libraries)')
++option('static-source',
++       type: 'boolean', value: true,
++       description: 'Enable static source (geolocation file)')
+ option('compass',
+        type: 'boolean', value: true,
+        description: 'Enable setting heading from net.hadess.SensorProxy compass')
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index 4e5c1b9..7b0aefa 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -28,7 +28,6 @@
+ 
+ #include "gclue-locator.h"
+ 
+-#include "gclue-static-source.h"
+ #include "gclue-config.h"
+ 
+ #if GCLUE_USE_WIFI_SOURCE
+@@ -51,6 +50,10 @@
+ #include "gclue-nmea-source.h"
+ #endif
+ 
++#if GCLUE_USE_STATIC_SOURCE
++#include "gclue-static-source.h"
++#endif
++
+ /* This class is like a master location source that hides all individual
+  * location sources from rest of the code
+  */
+@@ -460,7 +463,7 @@ gclue_locator_constructed (GObject *object)
+ 
+         }
+ #endif
+-
++#if GCLUE_USE_STATIC_SOURCE
+         if (gclue_config_get_enable_static_source (gconfig)) {
+                 GClueStaticSource *static_source;
+ 
+@@ -469,6 +472,7 @@ gclue_locator_constructed (GObject *object)
+                 locator->priv->sources = g_list_append (locator->priv->sources,
+                                                         static_source);
+         }
++#endif
+ 
+         for (node = locator->priv->sources; node != NULL; node = node->next) {
+                 g_signal_connect (G_OBJECT (node->data),
+-- 
+2.48.1
+
+
+From 2cd5108cfdad9a2227777cbd87ade2e0ede90f97 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 3 Sep 2024 12:28:10 +0300
+Subject: [PATCH] config: Warn when enabling a compile-time disabled source
+
+---
+ src/gclue-config.c | 42 ++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 34 insertions(+), 8 deletions(-)
+
+diff --git a/src/gclue-config.c b/src/gclue-config.c
+index acd6009..0691f47 100644
+--- a/src/gclue-config.c
++++ b/src/gclue-config.c
+@@ -20,8 +20,9 @@
+  * Authors: Zeeshan Ali (Khattak) <zeeshanak@gnome.org>
+  */
+ 
++#include "config.h"
++
+ #include <glib/gi18n.h>
+-#include <config.h>
+ #include <string.h>
+ 
+ #include "gclue-config.h"
+@@ -303,6 +304,31 @@ error_out:
+         }
+ }
+ 
++static gboolean
++load_enable_source (GClueConfig *config,
++                    const gchar *group_name,
++                    gboolean     compiled,
++                    gboolean    *value_storage)
++{
++        gboolean enabled;
++
++        g_return_val_if_fail (value_storage != NULL, FALSE);
++
++        if (!load_boolean_value (config, group_name, "enable", &enabled))
++                return FALSE;
++
++        if (enabled && !compiled) {
++                g_warning ("Source '%s' is enabled in configuration, "
++                           "but Geoclue is compiled without it",
++                           group_name);
++                *value_storage = FALSE;
++        } else {
++                *value_storage = enabled;
++        }
++
++        return TRUE;
++}
++
+ #define DEFAULT_WIFI_SUBMIT_NICK "geoclue"
+ 
+ static void
+@@ -311,7 +337,7 @@ load_wifi_config (GClueConfig *config)
+         GClueConfigPrivate *priv = config->priv;
+         g_autofree gchar *wifi_submit_nick = NULL;
+ 
+-        load_boolean_value (config, "wifi", "enable",
++        load_enable_source (config, "wifi", GCLUE_USE_WIFI_SOURCE,
+                             &priv->enable_wifi_source);
+ 
+         load_string_value (config, "wifi", "url", &priv->wifi_url);
+@@ -338,28 +364,28 @@ load_wifi_config (GClueConfig *config)
+ static void
+ load_3g_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "3g", "enable",
++        load_enable_source (config, "3g", GCLUE_USE_3G_SOURCE,
+                             &config->priv->enable_3g_source);
+ }
+ 
+ static void
+ load_cdma_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "cdma", "enable",
++        load_enable_source (config, "cdma", GCLUE_USE_CDMA_SOURCE,
+                             &config->priv->enable_cdma_source);
+ }
+ 
+ static void
+ load_modem_gps_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "modem-gps", "enable",
++        load_enable_source (config, "modem-gps", GCLUE_USE_MODEM_GPS_SOURCE,
+                             &config->priv->enable_modem_gps_source);
+ }
+ 
+ static void
+ load_network_nmea_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "network-nmea", "enable",
++        load_enable_source (config, "network-nmea", GCLUE_USE_NMEA_SOURCE,
+                             &config->priv->enable_nmea_source);
+         load_string_value (config, "network-nmea", "nmea-socket",
+                            &config->priv->nmea_socket);
+@@ -368,14 +394,14 @@ load_network_nmea_config (GClueConfig *config)
+ static void
+ load_compass_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "compass", "enable",
++        load_enable_source (config, "compass", GCLUE_USE_COMPASS,
+                             &config->priv->enable_compass);
+ }
+ 
+ static void
+ load_static_source_config (GClueConfig *config)
+ {
+-        load_boolean_value (config, "static-source", "enable",
++        load_enable_source (config, "static-source", GCLUE_USE_STATIC_SOURCE,
+                             &config->priv->enable_static_source);
+ }
+ 
+-- 
+2.48.1
+
+
+From b598f3725a2622bb6f1accf37a99894539df9880 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 5 Jan 2025 16:11:10 +0200
+Subject: [PATCH] locator: Prevent segfault on
+ refresh_available_accuracy_level()
+
+If the location source list of the locator is empty, do not try access
+the first element, but use GCLUE_ACCURACY_LEVEL_NONE as the best
+accuracy.
+---
+ src/gclue-locator.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index 7b0aefa..74089b3 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -213,8 +213,10 @@ refresh_available_accuracy_level (GClueLocator *locator)
+                         (locator->priv->sources,
+                          (GCompareFunc) compare_accuracy_level);
+ 
+-        new = gclue_location_source_get_available_accuracy_level
+-                        (GCLUE_LOCATION_SOURCE (locator->priv->sources->data));
++        new = locator->priv->sources ?
++                gclue_location_source_get_available_accuracy_level
++                                (GCLUE_LOCATION_SOURCE (locator->priv->sources->data)) :
++                GCLUE_ACCURACY_LEVEL_NONE;
+ 
+         existing = gclue_location_source_get_available_accuracy_level
+                         (GCLUE_LOCATION_SOURCE (locator));
+-- 
+2.48.1
+
+
+From 6eebfc8347919193f324f42c44a48cc7fd89585d Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 5 Jan 2025 16:41:06 +0200
+Subject: [PATCH] locator: Warn when no location sources are available
+
+---
+ src/gclue-locator.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index 74089b3..d6aa347 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -476,6 +476,11 @@ gclue_locator_constructed (GObject *object)
+         }
+ #endif
+ 
++        if (locator->priv->sources == NULL) {
++                g_warning ("No sources enabled in configuration, "
++                           "location not available");
++        }
++
+         for (node = locator->priv->sources; node != NULL; node = node->next) {
+                 g_signal_connect (G_OBJECT (node->data),
+                                   "notify::available-accuracy-level",
+-- 
+2.48.1
+
+
+From 1ca16fe0bbea345babb9713451ab330c31e959ed Mon Sep 17 00:00:00 2001
+From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+Date: Mon, 6 Jan 2025 15:02:18 +0100
+Subject: [PATCH] modem-manager: Fix crash on removing a modem without location
+ capabilities
+
+on_mm_object_removed () should obviously act on the modem object that this
+notification pertains to, not the currently in-use modem.
+
+If there was only a modem without location capabilities present then
+priv->mm_object was NULL so the code would crash on a NULL pointer
+dereference.
+---
+ src/gclue-modem-manager.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gclue-modem-manager.c b/src/gclue-modem-manager.c
+index e6ee823..27ea191 100644
+--- a/src/gclue-modem-manager.c
++++ b/src/gclue-modem-manager.c
+@@ -944,7 +944,7 @@ on_mm_object_removed (GDBusObjectManager *object_manager,
+         MMObject *mm_object = MM_OBJECT (object);
+         GClueModemManager *manager = GCLUE_MODEM_MANAGER (user_data);
+         GClueModemManagerPrivate *priv = manager->priv;
+-        const char *path = mm_object_get_path (priv->mm_object);
++        const char *path = mm_object_get_path (mm_object);
+ 
+         g_hash_table_remove (manager->priv->modems_not_enabled, path);
+ 
+-- 
+2.48.1
+
+
+From ca898d54a63aa6216ebdec4472a6bbb71b8bde5b Mon Sep 17 00:00:00 2001
+From: Chris Talbot <chris@talbothome.com>
+Date: Sun, 22 Dec 2024 09:34:29 -0700
+Subject: [PATCH] conf.in: Define wifi URLs in conf if in options
+
+---
+ data/geoclue.conf.in | 5 ++++-
+ data/meson.build     | 8 ++++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/data/geoclue.conf.in b/data/geoclue.conf.in
+index 7298353..8225ceb 100644
+--- a/data/geoclue.conf.in
++++ b/data/geoclue.conf.in
+@@ -50,7 +50,8 @@ enable=@default_wifi_enable@
+ # URL to a WiFi geolocation service compatible with the Ichnaea API
+ # (https://ichnaea.readthedocs.io/en/latest/api/geolocate.html).
+ # An API key can be set by using the 'key' URL parameter.
+-# If unset, defaults to a location service defined at build-time.
++# If unset, defaults to an URL defined at build-time,
++# this URL is '@default_wifi_url@''
+ #url=https://example.com/v1/geolocate?key=YOUR_KEY
+ 
+ # To use the Positon geolocation service, uncomment this URL.
+@@ -98,6 +99,8 @@ submit-data=false
+ 
+ # URL to submit data to a WiFi geolocation service with an Ichnaea compatible API
+ # (https://ichnaea.readthedocs.io/en/latest/api/geosubmit2.html).
++# If unset, defaults to an URL defined at build-time,
++# this URL is '@default_wifi_submit_url@'.
+ #submission-url=https://example.com/v2/geosubmit?key=YOUR_KEY
+ 
+ # A nickname to submit network data with. If empty, omitted from the submission.
+diff --git a/data/meson.build b/data/meson.build
+index b22ff55..abbdeb5 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -8,10 +8,18 @@ if get_option('enable-backend')
+         conf.set('demo_agent', '')
+     endif
+ 
++    if get_option('default-wifi-submit-url') != ''
++        conf.set('default_wifi_submit_url', get_option('default-wifi-submit-url'))
++    else
++        conf.set('default_wifi_submit_url', '<UNSET>')
++    endif
++
+     if get_option('default-wifi-url') != ''
+         conf.set('default_wifi_enable', 'true')
++        conf.set('default_wifi_url', get_option('default-wifi-url'))
+     else
+         conf.set('default_wifi_enable', 'false')
++        conf.set('default_wifi_url', '<UNSET>')
+     endif
+ 
+     conf_dir = join_paths(sysconfdir, 'geoclue')
+-- 
+2.48.1
+
+
+From 6b439905fc85b0bd0bcfe2f00afed834b552322d Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 13 Jan 2025 21:25:51 +0200
+Subject: [PATCH] conf.in: Add BeaconDB example URL to wifi section
+
+---
+ data/geoclue.conf.in | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/data/geoclue.conf.in b/data/geoclue.conf.in
+index 8225ceb..c0e876e 100644
+--- a/data/geoclue.conf.in
++++ b/data/geoclue.conf.in
+@@ -54,6 +54,9 @@ enable=@default_wifi_enable@
+ # this URL is '@default_wifi_url@''
+ #url=https://example.com/v1/geolocate?key=YOUR_KEY
+ 
++# To use the BeaconDB geolocation service, uncomment this URL.
++#url=https://api.beacondb.net/v1/geolocate
++
+ # To use the Positon geolocation service, uncomment this URL.
+ #
+ # NOTE: Distributors of geoclue may only uncomment this URL if the
+-- 
+2.48.1
+
+
+From 9b83129401ad65c053e626ee75423a3666751299 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 22 Aug 2024 16:30:17 +0300
+Subject: [PATCH] web,mozilla: Add gclue_mozilla_parse_submit_response to parse
+ Ichnaea submit response
+
+---
+ src/gclue-mozilla.c    | 8 ++++++++
+ src/gclue-mozilla.h    | 4 ++++
+ src/gclue-web-source.c | 5 ++++-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/src/gclue-mozilla.c b/src/gclue-mozilla.c
+index 5680e45..ae35399 100644
+--- a/src/gclue-mozilla.c
++++ b/src/gclue-mozilla.c
+@@ -383,6 +383,14 @@ gclue_mozilla_parse_response (const char *json,
+         return location;
+ }
+ 
++gboolean
++gclue_mozilla_parse_submit_response (const char *response_contents,
++                                     gboolean status_code,
++                                     GError    **error)
++{
++        return status_code != SOUP_STATUS_OK && status_code != SOUP_STATUS_NO_CONTENT;
++}
++
+ const char *
+ gclue_mozilla_get_submit_url (GClueMozilla *mozilla)
+ {
+diff --git a/src/gclue-mozilla.h b/src/gclue-mozilla.h
+index a8010b0..845c73f 100644
+--- a/src/gclue-mozilla.h
++++ b/src/gclue-mozilla.h
+@@ -91,6 +91,10 @@ gclue_mozilla_create_submit_query (GClueMozilla  *mozilla,
+                                    GClueLocation   *location,
+                                    GError         **error);
+ gboolean
++gclue_mozilla_parse_submit_response (const char *response_contents,
++                                     gboolean status_code,
++                                     GError         **error);
++gboolean
+ gclue_mozilla_should_ignore_bss (WPABSS *bss);
+ 
+ const char *gclue_mozilla_get_locate_url (GClueMozilla *mozilla);
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 56d511b..0739690 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -550,6 +550,7 @@ submit_query_callback (SoupSession  *session,
+ {
+         g_autoptr(GBytes) body = NULL;
+         g_autoptr(GError) local_error = NULL;
++        g_autofree char *contents = NULL;
+         SoupMessage *query;
+         g_autofree char *uri_str = NULL;
+         gint status_code;
+@@ -563,9 +564,11 @@ submit_query_callback (SoupSession  *session,
+                            uri_str, local_error->message);
+                 return;
+         }
++        contents = g_strndup (g_bytes_get_data (body, NULL), g_bytes_get_size (body));
+ 
+         status_code = soup_message_get_status (query);
+-        if (status_code != SOUP_STATUS_OK && status_code != SOUP_STATUS_NO_CONTENT) {
++
++        if (!gclue_mozilla_parse_submit_response (contents, status_code, NULL)) {
+                 g_warning ("Failed to submit location data to '%s': %s",
+                            uri_str, soup_message_get_reason_phrase (query));
+                 return;
+-- 
+2.48.1
+
+
+From 8205af59444892ff983edff7b24b31913c67f74a Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 23:27:09 +0300
+Subject: [PATCH] web: Add gclue_web_source_get_query_data_description() method
+
+---
+ src/gclue-web-source.c | 6 ++++++
+ src/gclue-web-source.h | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 0739690..fb4008a 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -666,3 +666,9 @@ gclue_web_source_set_submit_url (GClueWebSource *source,
+ {
+         source->priv->submit_url = url;
+ }
++
++const char *gclue_web_source_get_query_data_description
++                                        (GClueWebSource      *source)
++{
++        return source->priv->query_data_description;
++}
+diff --git a/src/gclue-web-source.h b/src/gclue-web-source.h
+index 05068c6..9cc5d31 100644
+--- a/src/gclue-web-source.h
++++ b/src/gclue-web-source.h
+@@ -88,6 +88,8 @@ void gclue_web_source_set_locate_url    (GClueWebSource      *source,
+                                          const char          *url);
+ void gclue_web_source_set_submit_url    (GClueWebSource      *source,
+                                          const char          *url);
++const char *gclue_web_source_get_query_data_description
++                                        (GClueWebSource      *source);
+ 
+ G_END_DECLS
+ 
+-- 
+2.48.1
+
+
+From 0ff18d0a7c6c962d05bb7f5e1cf2b54c49c5b7c9 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 22 Aug 2024 22:51:21 +0300
+Subject: [PATCH] web, 3g, wifi: Add parse_response() and
+ parse_submit_response() vfuncs
+
+Add these methods to 3g and wifi classes, they are shim functions to
+gclue_mozilla_parse_response and gclue_mozilla_parse_submit_response.
+---
+ src/gclue-3g.c         | 22 ++++++++++++++++++++++
+ src/gclue-web-source.c | 10 ++++++----
+ src/gclue-web-source.h |  8 ++++++++
+ src/gclue-wifi.c       | 24 +++++++++++++++++++++++-
+ 4 files changed, 59 insertions(+), 5 deletions(-)
+
+diff --git a/src/gclue-3g.c b/src/gclue-3g.c
+index 90cd5e5..01f9ae2 100644
+--- a/src/gclue-3g.c
++++ b/src/gclue-3g.c
+@@ -128,6 +128,26 @@ static void cancel_location_3gpp_timeout (GClue3G *g3g)
+         priv->location_3gpp_timeout_id = 0;
+ }
+ 
++static GClueLocation *
++gclue_3g_parse_response (GClueWebSource *source,
++                         const char     *content,
++                         GError        **error)
++{
++        const char *location_description =
++                gclue_web_source_get_query_data_description (source);
++
++        return gclue_mozilla_parse_response (content, location_description, error);
++}
++
++static gboolean
++gclue_3g_parse_submit_response (GClueWebSource *source,
++                                const char     *content,
++                                gboolean        status_code,
++                                GError        **error)
++{
++        return gclue_mozilla_parse_submit_response (content, status_code, error);
++}
++
+ static void
+ gclue_3g_finalize (GObject *g3g)
+ {
+@@ -161,7 +181,9 @@ gclue_3g_class_init (GClue3GClass *klass)
+         source_class->start = gclue_3g_start;
+         source_class->stop = gclue_3g_stop;
+         web_class->create_query = gclue_3g_create_query;
++        web_class->parse_response = gclue_3g_parse_response;
+         web_class->create_submit_query = gclue_3g_create_submit_query;
++        web_class->parse_submit_response = gclue_3g_parse_submit_response;
+         web_class->get_available_accuracy_level =
+                 gclue_3g_get_available_accuracy_level;
+ }
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index fb4008a..8cd650f 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -161,9 +161,9 @@ refresh_callback (SoupSession  *session,
+         uri = soup_message_get_uri (query);
+         str = g_uri_to_string (uri);
+         g_debug ("Got following response from '%s':\n%s", str, contents);
+-        location = gclue_mozilla_parse_response (contents,
+-                                                 web->priv->query_data_description,
+-                                                 &local_error);
++        location = GCLUE_WEB_SOURCE_GET_CLASS (web)->parse_response (web,
++                                                                     contents,
++                                                                     &local_error);
+         if (local_error != NULL) {
+                 g_task_return_error (task, g_steal_pointer (&local_error));
+                 return;
+@@ -548,6 +548,7 @@ submit_query_callback (SoupSession  *session,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+ {
++        GClueWebSource *web = GCLUE_WEB_SOURCE (user_data);
+         g_autoptr(GBytes) body = NULL;
+         g_autoptr(GError) local_error = NULL;
+         g_autofree char *contents = NULL;
+@@ -568,7 +569,8 @@ submit_query_callback (SoupSession  *session,
+ 
+         status_code = soup_message_get_status (query);
+ 
+-        if (!gclue_mozilla_parse_submit_response (contents, status_code, NULL)) {
++        if (!GCLUE_WEB_SOURCE_GET_CLASS (web)->parse_submit_response
++                        (web, contents, status_code, &local_error)) {
+                 g_warning ("Failed to submit location data to '%s': %s",
+                            uri_str, soup_message_get_reason_phrase (query));
+                 return;
+diff --git a/src/gclue-web-source.h b/src/gclue-web-source.h
+index 9cc5d31..e466beb 100644
+--- a/src/gclue-web-source.h
++++ b/src/gclue-web-source.h
+@@ -73,9 +73,17 @@ struct _GClueWebSourceClass {
+         SoupMessage *     (*create_query)        (GClueWebSource *source,
+                                                   const char **query_data_description,
+                                                   GError        **error);
++        GClueLocation *   (*parse_response)      (GClueWebSource *source,
++                                                  const char *content,
++                                                  GError    **error);
+         SoupMessage *     (*create_submit_query) (GClueWebSource  *source,
+                                                   GClueLocation   *location,
+                                                   GError         **error);
++        gboolean          (*parse_submit_response)
++                                                 (GClueWebSource *source,
++                                                  const char     *content,
++                                                  gboolean        status_code,
++                                                  GError        **error);
+         GClueAccuracyLevel (*get_available_accuracy_level)
+                                                  (GClueWebSource *source,
+                                                   gboolean        network_available);
+diff --git a/src/gclue-wifi.c b/src/gclue-wifi.c
+index 0649ef0..8efdad5 100644
+--- a/src/gclue-wifi.c
++++ b/src/gclue-wifi.c
+@@ -188,6 +188,26 @@ on_scan_done (WPAInterface *object,
+               gboolean      success,
+               gpointer      user_data);
+ 
++static GClueLocation *
++gclue_wifi_parse_response (GClueWebSource *source,
++                           const char     *content,
++                           GError        **error)
++{
++        const char *location_description =
++                gclue_web_source_get_query_data_description (source);
++
++        return gclue_mozilla_parse_response (content, location_description, error);
++}
++
++static gboolean
++gclue_wifi_parse_submit_response (GClueWebSource *source,
++                                  const char     *content,
++                                  gboolean        status_code,
++                                  GError        **error)
++{
++        return gclue_mozilla_parse_submit_response (content, status_code, error);
++}
++
+ static void
+ gclue_wifi_finalize (GObject *gwifi)
+ {
+@@ -223,8 +243,10 @@ gclue_wifi_class_init (GClueWifiClass *klass)
+         source_class->stop = gclue_wifi_stop;
+         web_class->refresh_async = gclue_wifi_refresh_async;
+         web_class->refresh_finish = gclue_wifi_refresh_finish;
+-        web_class->create_submit_query = gclue_wifi_create_submit_query;
+         web_class->create_query = gclue_wifi_create_query;
++        web_class->parse_response = gclue_wifi_parse_response;
++        web_class->create_submit_query = gclue_wifi_create_submit_query;
++        web_class->parse_submit_response = gclue_wifi_parse_submit_response;
+         web_class->get_available_accuracy_level =
+                 gclue_wifi_get_available_accuracy_level;
+         gwifi_class->finalize = gclue_wifi_finalize;
+-- 
+2.48.1
+
+
+From 416a6e4fb646d08d5cf3aad054626ac40dcb0c4a Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 14:39:46 +0300
+Subject: [PATCH] web: Only debug print the beginning of the server response
+
+The server response may be large, so print only the length of the
+response and the first 256 bytes.
+---
+ src/gclue-web-source.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 8cd650f..760ebbb 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -138,6 +138,7 @@ refresh_callback (SoupSession  *session,
+         g_autoptr(GError) local_error = NULL;
+         g_autofree char *contents = NULL;
+         g_autofree char *str = NULL;
++        g_autofree char *short_contents = NULL;
+         g_autoptr(GClueLocation) location = NULL;
+         GUri *uri;
+ 
+@@ -160,7 +161,8 @@ refresh_callback (SoupSession  *session,
+         contents = g_strndup (g_bytes_get_data (body, NULL), g_bytes_get_size (body));
+         uri = soup_message_get_uri (query);
+         str = g_uri_to_string (uri);
+-        g_debug ("Got following response from '%s':\n%s", str, contents);
++        short_contents = g_strndup (contents, 256);
++        g_debug ("Got a response of %ld bytes from '%s' starting with:\n%s", strlen(contents), str, short_contents);
+         location = GCLUE_WEB_SOURCE_GET_CLASS (web)->parse_response (web,
+                                                                      contents,
+                                                                      &local_error);
+-- 
+2.48.1
+
+
+From 907db955d0e70952228df49c57adc930141687c0 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 27 Aug 2024 19:32:31 +0300
+Subject: [PATCH] web: Ignore received location in query_callback
+
+Removes a warning about unused variable.
+---
+ src/gclue-web-source.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 760ebbb..15af118 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -195,9 +195,11 @@ query_callback (GObject      *source_object,
+ {
+         GClueWebSource *web = GCLUE_WEB_SOURCE (source_object);
+         g_autoptr(GError) local_error = NULL;
+-        g_autoptr(GClueLocation) location = NULL;
+ 
+-        location = GCLUE_WEB_SOURCE_GET_CLASS (web)->refresh_finish (web, result, &local_error);
++        /* Ignore returned location */
++        GClueLocation *location = GCLUE_WEB_SOURCE_GET_CLASS (web)->refresh_finish (web, result, &local_error);
++        if (location)
++                g_object_unref (location);
+ 
+         if (local_error != NULL &&
+             !g_error_matches (local_error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+-- 
+2.48.1
+
+
+From d251077a29b23d60c10774497ae88db3a70d25ac Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Tue, 27 Aug 2024 19:36:19 +0300
+Subject: [PATCH] web: If source is not active, postpone refresh to start
+
+Add a boolean var priv->refresh_needed which is set when the location
+URL becomes reachable while the source is not active.
+
+Add a specialized start() method which performs the refresh, if
+refresh_needed is true.
+
+This fixes a race condition during startup where locate_url_checked_cb
+(sometimes) runs before the source is marked active and the refresh
+call then errors out.
+
+Also make some style cleanups.
+---
+ src/gclue-web-source.c | 47 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 39 insertions(+), 8 deletions(-)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 15af118..8436ce5 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -60,6 +60,7 @@ struct _GClueWebSourcePrivate {
+         const char *submit_url;
+         gboolean locate_url_reachable;
+         gboolean submit_url_reachable;
++        gboolean refresh_needed;
+ };
+ 
+ enum
+@@ -272,8 +273,11 @@ locate_url_checked_cb (GObject      *source_object,
+                  reachable ? "Enabling locate URL queries" :
+                              "Disabling locate URL queries");
+         if (reachable) {
+-                GCLUE_WEB_SOURCE_GET_CLASS (web)->refresh_async
+-                        (web, NULL, query_callback, NULL);
++                refresh_accuracy_level (web);
++                if (gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (web)))
++                        gclue_web_source_refresh (web);
++                else
++                        web->priv->refresh_needed = TRUE; /* postpone to start */
+         }
+ }
+ 
+@@ -377,6 +381,30 @@ on_connectivity_changed (GObject    *gobject,
+         on_network_changed (NULL, FALSE, user_data);
+ }
+ 
++static GClueLocationSourceStartResult
++gclue_web_source_start (GClueLocationSource *source)
++{
++        GClueLocationSourceClass *base_class;
++        GClueWebSource *web;
++        GClueLocationSourceStartResult base_result;
++
++        g_return_val_if_fail (GCLUE_IS_LOCATION_SOURCE (source),
++                              GCLUE_LOCATION_SOURCE_START_RESULT_FAILED);
++        web = GCLUE_WEB_SOURCE (source);
++
++        base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_web_source_parent_class);
++        base_result = base_class->start (source);
++        if (base_result != GCLUE_LOCATION_SOURCE_START_RESULT_OK)
++                return base_result;
++
++        if (web->priv->refresh_needed) {
++                web->priv->refresh_needed = FALSE;
++                gclue_web_source_refresh (web);
++        }
++
++        return base_result;
++}
++
+ static void
+ gclue_web_source_finalize (GObject *gsource)
+ {
+@@ -502,15 +530,18 @@ gclue_web_source_set_property (GObject      *object,
+ static void
+ gclue_web_source_class_init (GClueWebSourceClass *klass)
+ {
+-        GObjectClass *gsource_class = G_OBJECT_CLASS (klass);
++        GObjectClass *object_class = G_OBJECT_CLASS (klass);
++        GClueLocationSourceClass *source_class = GCLUE_LOCATION_SOURCE_CLASS (klass);
+ 
+         klass->refresh_async = gclue_web_source_real_refresh_async;
+         klass->refresh_finish = gclue_web_source_real_refresh_finish;
+ 
+-        gsource_class->get_property = gclue_web_source_get_property;
+-        gsource_class->set_property = gclue_web_source_set_property;
+-        gsource_class->finalize = gclue_web_source_finalize;
+-        gsource_class->constructed = gclue_web_source_constructed;
++        source_class->start = gclue_web_source_start;
++
++        object_class->get_property = gclue_web_source_get_property;
++        object_class->set_property = gclue_web_source_set_property;
++        object_class->finalize = gclue_web_source_finalize;
++        object_class->constructed = gclue_web_source_constructed;
+ 
+         gParamSpecs[PROP_ACCURACY_LEVEL] = g_param_spec_enum ("accuracy-level",
+                                                               "AccuracyLevel",
+@@ -519,7 +550,7 @@ gclue_web_source_class_init (GClueWebSourceClass *klass)
+                                                               GCLUE_ACCURACY_LEVEL_CITY,
+                                                               G_PARAM_READWRITE |
+                                                               G_PARAM_CONSTRUCT_ONLY);
+-        g_object_class_install_property (gsource_class,
++        g_object_class_install_property (object_class,
+                                          PROP_ACCURACY_LEVEL,
+                                          gParamSpecs[PROP_ACCURACY_LEVEL]);
+ }
+-- 
+2.48.1
+
+
+From 0e5dcfa053c2bf7063820eb43619df21be926645 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 21:30:06 +0300
+Subject: [PATCH] Add GClueIp class implementing an ip (AKA GeoIP) source
+
+This class can contain several method (backend) implementations, only
+one of which can be enabled at a time in the configuration.
+
+New methods only need to implement two functions, one to create a
+SoupMessage query and another to parse the response.
+
+Currently implemented methods are ichnaea, which uses the same API and
+URL as the wifi source, and gmaps, which uses the initial location
+estimate of Google Maps.
+---
+ meson.build         |   5 +-
+ meson_options.txt   |   3 +
+ src/gclue-config.c  |  42 ++++++-
+ src/gclue-config.h  |   2 +
+ src/gclue-ip.c      | 270 ++++++++++++++++++++++++++++++++++++++++++++
+ src/gclue-ip.h      |  69 +++++++++++
+ src/gclue-locator.c |  11 ++
+ src/meson.build     |   1 +
+ 8 files changed, 401 insertions(+), 2 deletions(-)
+ create mode 100644 src/gclue-ip.c
+ create mode 100644 src/gclue-ip.h
+
+diff --git a/meson.build b/meson.build
+index 74f7578..bd0003a 100644
+--- a/meson.build
++++ b/meson.build
+@@ -38,6 +38,7 @@ conf.set10('GCLUE_USE_CDMA_SOURCE', get_option('cdma-source'))
+ conf.set10('GCLUE_USE_MODEM_GPS_SOURCE', get_option('modem-gps-source'))
+ conf.set10('GCLUE_USE_NMEA_SOURCE', get_option('nmea-source'))
+ conf.set10('GCLUE_USE_STATIC_SOURCE', get_option('static-source'))
++conf.set10('GCLUE_USE_IP_SOURCE', get_option('ip-source'))
+ conf.set10('GCLUE_USE_COMPASS', get_option('compass'))
+ 
+ configure_file(output: 'config.h', configuration : conf)
+@@ -98,7 +99,8 @@ summary = '''
+         Modem GPS source:         @10@
+         Network NMEA source:      @11@
+         Static source:            @12@
+-        Compass:                  @13@
++        IP source:                @13@
++        Compass:                  @14@
+ '''.format(gclue_version,
+            get_option('prefix'),
+            cc.get_id(),
+@@ -112,5 +114,6 @@ summary = '''
+            get_option('modem-gps-source'),
+            get_option('nmea-source'),
+            get_option('static-source'),
++           get_option('ip-source'),
+            get_option('compass'))
+ message(summary)
+diff --git a/meson_options.txt b/meson_options.txt
+index 76825d0..228d5a8 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -28,6 +28,9 @@ option('nmea-source',
+ option('static-source',
+        type: 'boolean', value: true,
+        description: 'Enable static source (geolocation file)')
++option('ip-source',
++       type: 'boolean', value: true,
++       description: 'Enable ip source (GeoIP)')
+ option('compass',
+        type: 'boolean', value: true,
+        description: 'Enable setting heading from net.hadess.SensorProxy compass')
+diff --git a/src/gclue-config.c b/src/gclue-config.c
+index 0691f47..71de78b 100644
+--- a/src/gclue-config.c
++++ b/src/gclue-config.c
+@@ -48,9 +48,11 @@ struct _GClueConfigPrivate
+         gboolean enable_wifi_source;
+         gboolean enable_compass;
+         gboolean enable_static_source;
++        gboolean enable_ip_source;
+         char *wifi_submit_url;
+         char *wifi_submit_nick;
+         char *nmea_socket;
++        char *ip_method;
+ 
+         GList *app_configs;
+ };
+@@ -90,6 +92,7 @@ gclue_config_finalize (GObject *object)
+         g_clear_pointer (&priv->wifi_submit_url, g_free);
+         g_clear_pointer (&priv->wifi_submit_nick, g_free);
+         g_clear_pointer (&priv->nmea_socket, g_free);
++        g_clear_pointer (&priv->ip_method, g_free);
+ 
+         g_list_foreach (priv->app_configs, (GFunc) app_config_free, NULL);
+ 
+@@ -205,7 +208,7 @@ load_app_configs (GClueConfig *config)
+ {
+         const char *known_groups[] = { "agent", "wifi", "3g", "cdma",
+                                        "modem-gps", "network-nmea", "compass",
+-                                       "static-source", NULL };
++                                       "static-source", "ip", NULL };
+         GClueConfigPrivate *priv = config->priv;
+         gsize num_groups = 0, i;
+         g_auto(GStrv) groups = NULL;
+@@ -405,6 +408,18 @@ load_static_source_config (GClueConfig *config)
+                             &config->priv->enable_static_source);
+ }
+ 
++static void
++load_ip_source_config (GClueConfig *config)
++{
++        GClueConfigPrivate *priv = config->priv;
++
++        load_enable_source (config, "ip", GCLUE_USE_IP_SOURCE,
++                            &priv->enable_ip_source);
++
++        load_string_value (config, "ip", "method", &priv->ip_method);
++
++}
++
+ static void
+ load_config_file (GClueConfig *config, const char *path) {
+         g_autoptr(GError) error = NULL;
+@@ -429,6 +444,7 @@ load_config_file (GClueConfig *config, const char *path) {
+         load_network_nmea_config (config);
+         load_compass_config (config);
+         load_static_source_config (config);
++        load_ip_source_config (config);
+ }
+ 
+ static void
+@@ -529,6 +545,10 @@ gclue_config_print (GClueConfig *config)
+                  string_or_none (priv->wifi_submit_nick));
+         g_debug ("Static source: %s",
+                  enabled_disabled (priv->enable_static_source));
++        g_debug ("IP source: %s",
++                 enabled_disabled (priv->enable_ip_source));
++        g_debug ("\tIP method: %s",
++                 string_or_none (priv->ip_method));
+         g_debug ("Compass: %s",
+                  enabled_disabled (priv->enable_compass));
+         g_debug ("Application configs:");
+@@ -566,6 +586,7 @@ gclue_config_init (GClueConfig *config)
+         priv->enable_wifi_source = TRUE;
+         priv->enable_compass = TRUE;
+         priv->enable_static_source = TRUE;
++        priv->enable_ip_source = TRUE;
+ 
+         /* Default strings */
+         priv->wifi_url = g_strdup (DEFAULT_WIFI_URL);
+@@ -622,6 +643,13 @@ out:
+                            "disabling WiFi/3G submissions");
+                 priv->wifi_submit = FALSE;
+         }
++        if (priv->enable_ip_source && (!string_present (priv->ip_method) ||
++            (g_strcmp0 (priv->ip_method, "ichnaea") != 0 &&
++             g_strcmp0 (priv->ip_method, "gmaps") != 0))) {
++                g_warning ("Unknown IP source method '%s', disabling source", priv->ip_method);
++                priv->enable_ip_source = FALSE;
++                g_clear_pointer (&priv->ip_method, g_free);
++        }
+         gclue_config_print (config);
+ }
+ 
+@@ -818,3 +846,15 @@ gclue_config_get_enable_static_source (GClueConfig *config)
+ {
+         return config->priv->enable_static_source;
+ }
++
++gboolean
++gclue_config_get_enable_ip_source (GClueConfig *config)
++{
++        return config->priv->enable_ip_source;
++}
++
++const char *
++gclue_config_get_ip_method (GClueConfig *config)
++{
++        return config->priv->ip_method;
++}
+diff --git a/src/gclue-config.h b/src/gclue-config.h
+index db66f86..78e05e4 100644
+--- a/src/gclue-config.h
++++ b/src/gclue-config.h
+@@ -85,6 +85,7 @@ void                gclue_config_set_wifi_submit_nick   (GClueConfig     *config
+ gboolean            gclue_config_get_wifi_submit_data   (GClueConfig     *config);
+ void                gclue_config_set_wifi_submit_data   (GClueConfig     *config,
+                                                          gboolean         submit);
++const char *        gclue_config_get_ip_method          (GClueConfig *config);
+ gboolean            gclue_config_get_enable_wifi_source (GClueConfig     *config);
+ gboolean            gclue_config_get_enable_3g_source   (GClueConfig     *config);
+ gboolean            gclue_config_get_enable_cdma_source (GClueConfig     *config);
+@@ -94,6 +95,7 @@ gboolean            gclue_config_get_enable_nmea_source (GClueConfig     *config
+ gboolean            gclue_config_get_enable_compass     (GClueConfig     *config);
+ gboolean            gclue_config_get_enable_static_source
+                                                         (GClueConfig *config);
++gboolean            gclue_config_get_enable_ip_source   (GClueConfig     *config);
+ 
+ G_END_DECLS
+ 
+diff --git a/src/gclue-ip.c b/src/gclue-ip.c
+new file mode 100644
+index 0000000..4d018c4
+--- /dev/null
++++ b/src/gclue-ip.c
+@@ -0,0 +1,270 @@
++/* vim: set et ts=8 sw=8: */
++/*
++ * Copyright 2024 Teemu Ikonen
++ *
++ * Geoclue is free software; you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License as published by the Free
++ * Software Foundation; either version 2 of the License, or (at your option)
++ * any later version.
++ *
++ * Geoclue is distributed in the hope that it will be useful, but WITHOUT ANY
++ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with Geoclue; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ * Authors: Teemu Ikonen <tpikonen@mailbox.org>
++ */
++
++#include <stdlib.h>
++#include <math.h>
++#include <glib.h>
++#include <string.h>
++#include "config.h"
++#include "gclue-ip.h"
++#include "gclue-config.h"
++#include "gclue-error.h"
++#include "gclue-mozilla.h"
++
++/**
++ * SECTION:gclue-ip
++ * @short_description: IP address based geolocation
++ * @include: gclue-glib/gclue-ip.h
++ *
++ * Contains functions to determine the geolocation based on the IP address.
++ **/
++
++struct _GClueIpPrivate {
++        GCancellable *cancellable;
++
++        /* Ichnaea */
++        GClueMozilla *mozilla;
++        /* GMaps */
++        GRegex *gregex;
++};
++
++G_DEFINE_TYPE_WITH_CODE (GClueIp,
++                         gclue_ip,
++                         GCLUE_TYPE_WEB_SOURCE,
++                         G_ADD_PRIVATE (GClueIp))
++
++/* Ichnaea method */
++
++static SoupMessage *
++ichnaea_create_query (GClueWebSource *source,
++                      const char    **query_data_description,
++                      GError        **error)
++{
++        GClueIp *ip = GCLUE_IP (source);
++
++        return gclue_mozilla_create_query (ip->priv->mozilla, TRUE, TRUE,
++                                           query_data_description, error);
++}
++
++static GClueLocation *
++ichnaea_parse_response (GClueWebSource *source,
++                        const char     *content,
++                        GError        **error)
++{
++        const char *description = gclue_web_source_get_query_data_description (source);
++
++        return gclue_mozilla_parse_response (content, description, error);
++}
++
++/* GMaps method */
++
++#define GMAPS_URL "https://www.google.com/maps"
++#define GMAPS_SCALE 1e7  /* meters */
++
++static SoupMessage *
++gmaps_create_query (GClueWebSource *source,
++                    const char    **query_data_description,
++                    GError        **error)
++{
++        g_autoptr(SoupMessage) query = NULL;
++
++        query = soup_message_new ("GET", GMAPS_URL);
++        if (query_data_description) {
++                *query_data_description = "GMaps IP";
++        }
++
++        return g_steal_pointer (&query);
++}
++
++static double
++round_to_1fig (double x)
++{
++        int zeros, base;
++
++        zeros = (int) floor (log10 (x));
++        base = pow (10, zeros);
++        return round (x / base) * base;
++}
++
++static GClueLocation *
++gmaps_parse_response (GClueWebSource *source,
++                      const char *response,
++                      GError    **error)
++{
++        GClueIp *ip = GCLUE_IP (source);
++        g_autoptr(GMatchInfo) match_info = NULL;
++        g_autofree char *locstring = NULL;
++        double latitude, longitude, accuracy;
++        guint64 zoom;
++        char *lat_end, *lon_end, *zoom_end;
++        GClueLocation *location;
++
++        g_regex_match (ip->priv->gregex, response, 0, &match_info);
++        if (!g_match_info_matches (match_info)) {
++                g_warning ("No location found from GMaps response");
++                return NULL;
++        }
++        locstring = g_match_info_fetch (match_info, 0);
++        g_debug ("GMaps location string: %s", locstring);
++        latitude = g_ascii_strtod (locstring + 7, &lat_end);
++        longitude = g_ascii_strtod (lat_end + 3, &lon_end);
++        zoom = g_ascii_strtoull (lon_end + 10, &zoom_end, 10);
++        accuracy = round_to_1fig (zoom >= 1 ? GMAPS_SCALE / (1 << (zoom - 1)) :
++                                              GMAPS_SCALE);
++        g_debug ("Parsed GMaps values lat=%.8f, lon=%.8f, zoom=%lu",
++                 latitude, longitude, zoom);
++        if (latitude <= -180.0 || latitude > 180.0 ||
++            longitude > 90.0 || longitude < -90.0 ||
++            accuracy > GMAPS_SCALE || accuracy < 1.0) {
++                g_warning ("GMaps coordinates are invalid: lat=%.8f, lon=%.8f, acc=%f",
++                           latitude, longitude, accuracy);
++                return NULL;
++        }
++        location = gclue_location_new (latitude, longitude, accuracy,
++                                       gclue_web_source_get_query_data_description(source));
++
++        return location;
++}
++
++/* GClueIp common */
++
++static void
++gclue_ip_finalize (GObject *gip)
++{
++        GClueIp *ip = (GClueIp *) gip;
++
++        G_OBJECT_CLASS (gclue_ip_parent_class)->finalize (gip);
++
++        g_cancellable_cancel (ip->priv->cancellable);
++
++        g_clear_object (&ip->priv->cancellable);
++        g_clear_object (&ip->priv->mozilla);
++        g_clear_pointer (&ip->priv->gregex, g_regex_unref);
++}
++
++static GClueLocationSourceStartResult
++gclue_ip_start (GClueLocationSource *source)
++{
++        GClueLocationSourceClass *base_class;
++        GClueLocationSourceStartResult base_result;
++
++        g_return_val_if_fail (GCLUE_IS_IP (source),
++                              GCLUE_LOCATION_SOURCE_START_RESULT_FAILED);
++
++        base_class = GCLUE_LOCATION_SOURCE_CLASS (gclue_ip_parent_class);
++        base_result = base_class->start (source);
++        if (base_result == GCLUE_LOCATION_SOURCE_START_RESULT_OK
++            && gclue_location_source_get_location (source) != NULL) {
++                g_debug ("Notifying old IP location");
++                g_object_notify (G_OBJECT (source), "location");
++        }
++
++        return base_result;
++}
++
++static GClueAccuracyLevel
++gclue_ip_get_available_accuracy_level (GClueWebSource *source,
++                                       gboolean        net_available)
++{
++        if (!net_available)
++                return GCLUE_ACCURACY_LEVEL_NONE;
++        else
++                return GCLUE_ACCURACY_LEVEL_CITY;
++}
++
++static void
++gclue_ip_class_init (GClueIpClass *klass)
++{
++        GClueWebSourceClass *web_class = GCLUE_WEB_SOURCE_CLASS (klass);
++        GClueLocationSourceClass *source_class = GCLUE_LOCATION_SOURCE_CLASS (klass);
++        GObjectClass *ip_class = G_OBJECT_CLASS (klass);
++        GClueConfig *config = gclue_config_get_singleton ();
++        const char *method;
++
++        source_class->start = gclue_ip_start;
++
++        web_class->get_available_accuracy_level = gclue_ip_get_available_accuracy_level;
++        method = gclue_config_get_ip_method (config);
++        if (g_strcmp0 (method, "ichnaea") == 0) {
++                web_class->create_query = ichnaea_create_query;
++                web_class->parse_response = ichnaea_parse_response;
++        } else if (g_strcmp0 (method, "gmaps") == 0) {
++                web_class->create_query = gmaps_create_query;
++                web_class->parse_response = gmaps_parse_response;
++        } else {
++                g_error ("Unknown IP method '%s'", method);
++        }
++
++        ip_class->finalize = gclue_ip_finalize;
++}
++
++static void
++gclue_ip_init (GClueIp *ip)
++{
++        GClueWebSource *web_source = GCLUE_WEB_SOURCE (ip);
++        GClueConfig *config = gclue_config_get_singleton ();
++        const char *method;
++
++        ip->priv = gclue_ip_get_instance_private (ip);
++
++        ip->priv->cancellable = g_cancellable_new ();
++
++        method = gclue_config_get_ip_method (config);
++        if (g_strcmp0 (method, "ichnaea") == 0) {
++                ip->priv->mozilla = gclue_mozilla_get_singleton ();
++                gclue_web_source_set_locate_url
++                        (web_source, gclue_mozilla_get_locate_url (ip->priv->mozilla));
++        } else if (g_strcmp0 (method, "gmaps") == 0) {
++                ip->priv->gregex = g_regex_new
++                        ("center=[0-9\\.]*%2C[0-9\\.]*&amp;zoom=[0-9]*&amp;",
++                         G_REGEX_DEFAULT, G_REGEX_MATCH_DEFAULT, NULL);
++                gclue_web_source_set_locate_url (web_source, GMAPS_URL);
++        } else {
++                g_error ("Unknown IP method '%s'", method);
++        }
++}
++
++/**
++ * gclue_ip_get_singleton:
++ *
++ * Get the #GClueIp singleton.
++ *
++ * Returns: (transfer full): a new ref to #GClueIp. Use g_object_unref()
++ * when done.
++ **/
++GClueIp *
++gclue_ip_get_singleton (void)
++{
++        static GClueIp *ip = NULL;
++
++        if (ip == NULL) {
++                ip = g_object_new (GCLUE_TYPE_IP,
++                                   "accuracy-level", GCLUE_ACCURACY_LEVEL_CITY,
++                                   "compute-movement", FALSE,
++                                   NULL);
++                g_object_add_weak_pointer (G_OBJECT (ip),
++                                           (gpointer) &ip);
++        } else {
++                g_object_ref (ip);
++        }
++
++        return ip;
++}
+diff --git a/src/gclue-ip.h b/src/gclue-ip.h
+new file mode 100644
+index 0000000..04fa2fb
+--- /dev/null
++++ b/src/gclue-ip.h
+@@ -0,0 +1,69 @@
++/* vim: set et ts=8 sw=8: */
++/*
++ * Copyright 2024 Teemu Ikonen
++ *
++ * Geoclue is free software; you can redistribute it and/or modify it under
++ * the terms of the GNU General Public License as published by the Free
++ * Software Foundation; either version 2 of the License, or (at your option)
++ * any later version.
++ *
++ * Geoclue is distributed in the hope that it will be useful, but WITHOUT ANY
++ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License along
++ * with Geoclue; if not, write to the Free Software Foundation, Inc.,
++ * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++ *
++ * Authors: Teemu Ikonen <tpikonen@mailbox.org>
++ */
++
++#ifndef GCLUE_IP_H
++#define GCLUE_IP_H
++
++#include <glib.h>
++#include <gio/gio.h>
++#include "gclue-web-source.h"
++
++G_BEGIN_DECLS
++
++GType gclue_ip_get_type (void) G_GNUC_CONST;
++
++#define GCLUE_TYPE_IP                   (gclue_ip_get_type ())
++#define GCLUE_IP(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), GCLUE_TYPE_IP, GClueIp))
++#define GCLUE_IS_IP(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GCLUE_TYPE_IP))
++#define GCLUE_IP_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), GCLUE_TYPE_IP, GClueIpClass))
++#define GCLUE_IS_IP_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), GCLUE_TYPE_IP))
++#define GCLUE_IP_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), GCLUE_TYPE_IP, GClueIpClass))
++
++/**
++ * GClueIp:
++ *
++ * All the fields in the #GClueIp structure are private and should never be accessed directly.
++**/
++typedef struct _GClueIp        GClueIp;
++typedef struct _GClueIpClass   GClueIpClass;
++typedef struct _GClueIpPrivate GClueIpPrivate;
++
++struct _GClueIp {
++        /* <private> */
++        GClueWebSource parent_instance;
++        GClueIpPrivate *priv;
++};
++
++/**
++ * GClueIpClass:
++ *
++ * All the fields in the #GClueIpClass structure are private and should never be accessed directly.
++**/
++struct _GClueIpClass {
++        /* <private> */
++        GClueWebSourceClass parent_class;
++};
++
++GClueIp *        gclue_ip_get_singleton      (void);
++
++G_END_DECLS
++
++#endif /* GCLUE_IP_H */
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index d6aa347..c8a9dda 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -54,6 +54,10 @@
+ #include "gclue-static-source.h"
+ #endif
+ 
++#if GCLUE_USE_IP_SOURCE
++#include "gclue-ip.h"
++#endif
++
+ /* This class is like a master location source that hides all individual
+  * location sources from rest of the code
+  */
+@@ -475,6 +479,13 @@ gclue_locator_constructed (GObject *object)
+                                                         static_source);
+         }
+ #endif
++#if GCLUE_USE_IP_SOURCE
++        if (gclue_config_get_enable_ip_source (gconfig)) {
++                GClueIp *source = gclue_ip_get_singleton ();
++                locator->priv->sources = g_list_append (locator->priv->sources,
++                                                        source);
++        }
++#endif
+ 
+         if (locator->priv->sources == NULL) {
+                 g_warning ("No sources enabled in configuration, "
+diff --git a/src/meson.build b/src/meson.build
+index b5175f8..451edd6 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -26,6 +26,7 @@ sources += [ 'gclue-main.c',
+              'gclue-service-location.h', 'gclue-service-location.c',
+              'gclue-static-source.c', 'gclue-static-source.h',
+              'gclue-web-source.c', 'gclue-web-source.h',
++             'gclue-ip.h', 'gclue-ip.c',
+              'gclue-wifi.h', 'gclue-wifi.c',
+              'gclue-mozilla.h', 'gclue-mozilla.c',
+              'gclue-min-uint.h', 'gclue-min-uint.c',
+-- 
+2.48.1
+
+
+From 749fb6b846ebd65245a78e831e8bccc2e30c13e7 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 29 Aug 2024 13:53:57 +0300
+Subject: [PATCH] data: geoclue.conf.in: Add configuration for the ip source
+
+---
+ data/geoclue.conf.in | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/data/geoclue.conf.in b/data/geoclue.conf.in
+index c0e876e..c8bc311 100644
+--- a/data/geoclue.conf.in
++++ b/data/geoclue.conf.in
+@@ -12,6 +12,17 @@
+ # separated by a ';'.
+ whitelist=@demo_agent@gnome-shell;io.elementary.desktop.agent-geoclue2;sm.puri.Phosh;lipstick
+ 
++# IP source configuration options
++[ip]
++
++# Enable the GeoIP source
++enable=true
++
++# Method (backend) to use for IP location. Currently implemented are:
++# 'ichnaea': Use the Ichnaea (MLS) API with the URL from the wifi source.
++# 'gmaps': Use the location determined by Google Maps.
++method=ichnaea
++
+ # Network NMEA source configuration options
+ [network-nmea]
+ 
+-- 
+2.48.1
+
+
+From a82a906abcf909b5b80f5012b82ad9ec685c5ef4 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 12:42:05 +0200
+Subject: [PATCH] .editorconfig: Add man page to 'max_line_length = 80' section
+
+---
+ .editorconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.editorconfig b/.editorconfig
+index 56ff6a0..d203c8b 100644
+--- a/.editorconfig
++++ b/.editorconfig
+@@ -20,5 +20,5 @@ indent_style = space
+ indent_size = 4
+ indent_style = space
+ 
+-[*.md]
++[*.{md,5.in}]
+ max_line_length = 80
+-- 
+2.48.1
+
+
+From 442973f15762e64ddf43b9737b44d9be4b0ee2da Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 12:43:42 +0200
+Subject: [PATCH] data: Make man page lines (mostly) under 80 chars
+
+---
+ data/geoclue.5.in | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index 1f21995..cca68a5 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -17,10 +17,9 @@ order. Thus, a configuration file '90-config.conf' will overwrite parameters
+ specified in another configuration file '50-config.conf' in the conf.d
+ directory.
+ .PP
+-All configurations settings below are mandatory and the defaults are
+-what you see before you edit them in geoclue.conf. If you want to keep the default
+-values around, copy and comment out the appropriate line(s) before
+-changing them.
++All configurations settings below are mandatory and the defaults are what you
++see before you edit them in geoclue.conf. If you want to keep the default values
++around, copy and comment out the appropriate line(s) before changing them.
+ .PP
+ Missing 'enable' key for a particular source in the main configuration file
+ causes that source to be enabled by default. Adding 'enable' key setting
+@@ -99,7 +98,8 @@ URL to submission API of Mozilla Location Service
+ .IP
+ .B submission-nick=geoclue
+ .br
+-A nickname to submit network data with. If empty, omitted from the submission. Otherwise, must be 2 to 32 characters long. Defaults to "geoclue".
++A nickname to submit network data with. If empty, omitted from the submission.
++Otherwise, must be 2 to 32 characters long. Defaults to "geoclue".
+ .br
+ .IP \fB[compass]
+ .br
+@@ -113,7 +113,11 @@ Enable Compass
+ .br
+ Static source configuration options.
+ .br
+-This source reads location from "geolocation" file in @sysconfdir@. While this file is constantly monitored for changes during geoclue operation, and the reported static location is updated accordingly, this source isn't meant for inputting a dynamically changing location to geoclue (please use the Network NMEA source for that).
++This source reads location from "geolocation" file in @sysconfdir@. While this
++file is constantly monitored for changes during geoclue operation, and the
++reported static location is updated accordingly, this source isn't meant for
++inputting a dynamically changing location to geoclue (please use the Network
++NMEA source for that).
+ .IP
+ .B \fBenable=true
+ .br
+@@ -205,7 +209,8 @@ users=
+ .br
+ .SH STATIC LOCATION FILE
+ .SS Basic format:
+-The static location file in @sysconfdir@ (used by the static source) is a text file consisting of the following:
++The static location file in @sysconfdir@ (used by the static source) is a text
++file consisting of the following:
+ .nr step 1 1
+ .IP \n[step]
+ Latitude (floating point number; positive values mean north, negative south)
+@@ -220,7 +225,8 @@ Accuracy radius (floating point number; in meters)
+ These values need to be separated by newline characters.
+ .SS Additional format information:
+ .IP \[bu]
+-The '\[sh]' character starts a comment, which continues until the end of the current line.
++The '\[sh]' character starts a comment, which continues until the end of the
++current line.
+ .IP \[bu]
+ Leading and trailing white-space on each line is ignored.
+ .IP \[bu]
+@@ -235,14 +241,16 @@ Empty lines (or containing just white-space or a comment) are ignored.
+ 1.83         # accuracy radius (the diameter of the torch is 12 feet)
+ .EE
+ .SS Notes:
+-For extra security, the static location file can be made readable just by the geoclue user:
++For extra security, the static location file can be made readable just by the
++geoclue user:
+ .EX
+ # chown @dbus_srv_user@ @sysconfdir@/geolocation
+ # chmod 600 @sysconfdir@/geolocation
+ .EE
+ .br
+ .SH CLIENT LIST
+-Sending SIGUSR1 to a running geoclue process prints the current list of clients to the log.
++Sending SIGUSR1 to a running geoclue process prints the current list of clients
++to the log.
+ .br
+ .SH AUTHOR
+ .na
+-- 
+2.48.1
+
+
+From 0cf7050dac529c0a4327d4f8b87b4e3dc38cd528 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 12:34:37 +0200
+Subject: [PATCH] data: Add a source configuration section to the man page
+
+---
+ data/geoclue.5.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index cca68a5..81d8efb 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -34,6 +34,7 @@ separated by a ';'.
+ .IP
+ .B whitelist=geoclue-demo-agent;gnome-shell;io.elementary.desktop.agent-geoclue2
+ .br
++.SH LOCATION SOURCE CONFIGURATION OPTIONS
+ .IP \fB[network-nmea]
+ .br
+ Network NMEA source configuration options
+-- 
+2.48.1
+
+
+From 68d041871ffb9af458cf0dd223e5484f648bbae4 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 14:41:04 +0200
+Subject: [PATCH] data: Improve the man page for 3g, wifi and static sources
+
+Remove references to Mozilla Location Service.
+---
+ data/geoclue.5.in | 42 ++++++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index 81d8efb..8c21728 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -55,7 +55,8 @@ If not set, unix socket will not be used.
+ .IP
+ .B \fBenable=true
+ .br
+-Enable 3G source
++Enable 3G source. The 3G source uses the wireless geolocation service URL
++defined in the "wifi" section.
+ .br
+ .IP \fB[cdma]
+ .br
+@@ -81,25 +82,34 @@ WiFi source configuration options
+ .br
+ Enable WiFi source
+ .IP
+-.B url=\fIhttps://location.services.mozilla.com/v1/geolocate?key=YOUR_KEY
++.B url=\fIhttps://example.com/v1/geolocate?key=YOUR_KEY
+ .br
+-URL to the WiFi geolocation service. If not set, defaults to Mozilla's
+-Location Service with a hardcoded key. To use a custom key, uncomment this URL
+-while changing YOUR_KEY to your MLS API key.
++URL to wireless geolocation service compatible with the Ichnaea API
++(https://ichnaea.readthedocs.io/en/latest/api/geolocate.html). If not set,
++defaults to an URL set in the build configuration. If an URL is not set here or
++in the build configuration, the wifi and 3g sources will be disabled. An API key
++can be set with the "key" URL parameter.
+ .IP
+ .B submit-data=false
+-Submit data to Mozilla Location Service
+ .br
+-If set to true, geoclue will automatically submit network data to Mozilla
+-each time it gets a GPS lock.
++Submit data to a wireless geolocation service.
++.br
++If set to true, geoclue will automatically submit network data to a wireless
++geolocation service each time it gets a GPS lock. Currently, only Modem-GPS or
++Network NMEA sources are supported as providers of a location to submit (one at
++a time). If Modem-GPS source is enabled above it will be the exclusive provider
++(regardless whether the system is actually equipped with such modem), otherwise
++Network NMEA source will be considered.
+ .IP
+-.B submission-url=\fIhttps://location.services.mozilla.com/v2/geosubmit?key=YOUR_KEY
++.B submission-url=\fIhttps://example.com/v2/geosubmit?key=YOUR_KEY
+ .br
+-URL to submission API of Mozilla Location Service
++URL to submit data to a wireless geolocation service with an Ichnaea compatible
++API (https://ichnaea.readthedocs.io/en/latest/api/geosubmit2.html).
+ .IP
+ .B submission-nick=geoclue
+ .br
+-A nickname to submit network data with. If empty, omitted from the submission.
++A nickname to submit network data with. Sets an "X-Nickname" HTTP header to the
++submit request. If set to an empty string, omitted from the submission.
+ Otherwise, must be 2 to 32 characters long. Defaults to "geoclue".
+ .br
+ .IP \fB[compass]
+@@ -114,11 +124,11 @@ Enable Compass
+ .br
+ Static source configuration options.
+ .br
+-This source reads location from "geolocation" file in @sysconfdir@. While this
+-file is constantly monitored for changes during geoclue operation, and the
+-reported static location is updated accordingly, this source isn't meant for
+-inputting a dynamically changing location to geoclue (please use the Network
+-NMEA source for that).
++This source reads location from "geolocation" file in @sysconfdir@. See "STATIC
++LOCATION FILE" below for the format of this file. While this file is constantly
++monitored for changes during geoclue operation, and the reported static location
++is updated accordingly, this source isn't meant for inputting a dynamically
++changing location to geoclue (please use the Network NMEA source for that).
+ .IP
+ .B \fBenable=true
+ .br
+-- 
+2.48.1
+
+
+From bfda8ddd333c9288c5418a659578497054488fd0 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 14:53:33 +0200
+Subject: [PATCH] data: Document IP source configuration in the man page
+
+---
+ data/geoclue.5.in | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index 8c21728..ca58f0d 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -35,6 +35,23 @@ separated by a ';'.
+ .B whitelist=geoclue-demo-agent;gnome-shell;io.elementary.desktop.agent-geoclue2
+ .br
+ .SH LOCATION SOURCE CONFIGURATION OPTIONS
++.IP \fB[ip]
++.br
++IP source configuration options
++.IP
++.B \fBenable=true
++.br
++Enable the GeoIP source
++.br
++.IP
++.B \fBmethod=gmaps
++.br
++Method (backend) to use for IP location. Currently implemented are:
++.br
++"ichnaea": Use the Ichnaea API with the URL from the wifi source.
++.br
++"gmaps": Use the location determined by Google Maps.
++.br
+ .IP \fB[network-nmea]
+ .br
+ Network NMEA source configuration options
+-- 
+2.48.1
+
+
+From 46c2873212e01a3ce18ef9d01eab9097eb7cebc6 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Mon, 26 Aug 2024 15:35:08 +0300
+Subject: [PATCH] locator: Add wifi to sources only if it is enabled
+
+That is, do not use the wifi source for GeoIP location.
+---
+ src/gclue-locator.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/src/gclue-locator.c b/src/gclue-locator.c
+index c8a9dda..f7a470a 100644
+--- a/src/gclue-locator.c
++++ b/src/gclue-locator.c
+@@ -432,18 +432,8 @@ gclue_locator_constructed (GObject *object)
+         }
+ #endif
+ #if GCLUE_USE_WIFI_SOURCE
+-        GClueWifi *wifi = NULL;
+         if (gclue_config_get_enable_wifi_source (gconfig)) {
+-                wifi = gclue_wifi_get_singleton (locator->priv->accuracy_level);
+-        } else {
+-                if (gclue_config_get_enable_static_source (gconfig)) {
+-                        g_debug ("Disabling GeoIP-only source since static source is enabled");
+-                } else {
+-                        /* City-level accuracy will give us GeoIP-only source */
+-                        wifi = gclue_wifi_get_singleton (GCLUE_ACCURACY_LEVEL_CITY);
+-                }
+-        }
+-        if (wifi) {
++                GClueWifi *wifi = gclue_wifi_get_singleton (locator->priv->accuracy_level);
+                 locator->priv->sources = g_list_append (locator->priv->sources,
+                                                         wifi);
+         }
+-- 
+2.48.1
+
+
+From ed19098754f72164df460a5c216c81c1e5e2546e Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 5 Jan 2025 20:50:20 +0200
+Subject: [PATCH] wifi: Remove the IP-only wifi source
+
+Leave the scrambled wifi source for below street-level accuracy and
+the non-scrambled source for higher accuracy levels.
+
+The wifi source is now always enabled in config when it's created, so
+remove the config checks.
+---
+ src/gclue-wifi.c | 27 ++++-----------------------
+ 1 file changed, 4 insertions(+), 23 deletions(-)
+
+diff --git a/src/gclue-wifi.c b/src/gclue-wifi.c
+index 8efdad5..62ae1b1 100644
+--- a/src/gclue-wifi.c
++++ b/src/gclue-wifi.c
+@@ -22,7 +22,6 @@
+ #include <stdlib.h>
+ #include <glib.h>
+ #include <string.h>
+-#include <config.h>
+ #include "gclue-wifi.h"
+ #include "gclue-3g.h"
+ #include "gclue-config.h"
+@@ -1028,13 +1027,6 @@ gclue_wifi_constructed (GObject *object)
+ 
+         G_OBJECT_CLASS (gclue_wifi_parent_class)->constructed (object);
+ 
+-        if (get_accuracy_level (wifi) == GCLUE_ACCURACY_LEVEL_CITY) {
+-                GClueConfig *config = gclue_config_get_singleton ();
+-
+-                if (!gclue_config_get_enable_wifi_source (config))
+-                        goto refresh_n_exit;
+-        }
+-
+         /* FIXME: We should be using async variant */
+         priv->supplicant = wpa_supplicant_proxy_new_for_bus_sync
+                         (G_BUS_TYPE_SYSTEM,
+@@ -1080,7 +1072,7 @@ on_wifi_destroyed (gpointer data,
+ }
+ 
+ /**
+- * gclue_wifi_new:
++ * gclue_wifi_get_singleton:
+  *
+  * Get the #GClueWifi singleton, for the specified max accuracy level @level.
+  *
+@@ -1090,29 +1082,18 @@ on_wifi_destroyed (gpointer data,
+ GClueWifi *
+ gclue_wifi_get_singleton (GClueAccuracyLevel level)
+ {
+-        static GClueWifi *wifi[] = { NULL, NULL, NULL };
++        static GClueWifi *wifi[] = { NULL, NULL };
+         guint i;
+-        GClueConfig *config = gclue_config_get_singleton ();
+-        gboolean wifi_enabled;
+         gboolean scramble_location = FALSE;
+         gboolean compute_movement = FALSE;
+ 
+         g_return_val_if_fail (level >= GCLUE_ACCURACY_LEVEL_CITY, NULL);
+ 
+-        wifi_enabled = gclue_config_get_enable_wifi_source (config);
+-        if (level == GCLUE_ACCURACY_LEVEL_CITY) {
++        if (level <= GCLUE_ACCURACY_LEVEL_NEIGHBORHOOD) {
+                 i = 0;
+-                if (wifi_enabled)
+-                        scramble_location = TRUE;
+-        } else if (level == GCLUE_ACCURACY_LEVEL_NEIGHBORHOOD) {
+-                g_return_val_if_fail (wifi_enabled, NULL);
+-
+-                i = 1;
+                 scramble_location = TRUE;
+         } else {
+-                g_return_val_if_fail (wifi_enabled, NULL);
+-
+-                i = 2;
++                i = 1;
+                 compute_movement = TRUE;
+         }
+ 
+-- 
+2.48.1
+
+
+From 95e89d0cade9954f40f0527ac03a7dc3217cb1db Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Fri, 17 Jan 2025 20:06:31 +0200
+Subject: [PATCH] web-source: Refresh location on network change
+
+Use a small timeout value to ensure consecutive network changes do not
+trigger more than one refresh.
+---
+ src/gclue-web-source.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 8436ce5..7219269 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -242,6 +242,9 @@ get_internet_available (void)
+                 G_NETWORK_CONNECTIVITY_FULL;
+ }
+ 
++/* This should be equal to WIFI_SCAN_TIMEOUT_HIGH_ACCURACY in gclue-wifi.c */
++#define WEB_LOCATION_TIMEOUT 10
++
+ static void
+ locate_url_checked_cb (GObject      *source_object,
+                        GAsyncResult *result,
+@@ -249,6 +252,7 @@ locate_url_checked_cb (GObject      *source_object,
+ {
+         GNetworkMonitor *mon = G_NETWORK_MONITOR (source_object);
+         GClueWebSource *web;
++        GClueLocation *current_location;
+         gboolean reachable, last_reachable;
+         g_autoptr(GError) error = NULL;
+ 
+@@ -266,13 +270,18 @@ locate_url_checked_cb (GObject      *source_object,
+         web = GCLUE_WEB_SOURCE (user_data);
+         last_reachable = web->priv->locate_url_reachable;
+         web->priv->locate_url_reachable = reachable;
+-        if (last_reachable == reachable)
+-                return; /* We already reacted to network change */
++        if (last_reachable != reachable) {
++                g_debug ("Network changed: %s",
++                         reachable ? "Enabling locate URL queries" :
++                                     "Disabling locate URL queries");
++        }
++        if (!reachable)
++                return;
+ 
+-        g_debug ("Network changed: %s",
+-                 reachable ? "Enabling locate URL queries" :
+-                             "Disabling locate URL queries");
+-        if (reachable) {
++        current_location = gclue_location_source_get_location (GCLUE_LOCATION_SOURCE (web));
++        if (!current_location || (g_get_real_time () / G_USEC_PER_SEC)
++            > (gclue_location_get_timestamp (current_location) + WEB_LOCATION_TIMEOUT)) {
++                g_debug ("Network changed: Refreshing");
+                 refresh_accuracy_level (web);
+                 if (gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (web)))
+                         gclue_web_source_refresh (web);
+-- 
+2.48.1
+
+
+From 9d4d99b4d7de499e5ec7e47bdc1ec0399ed942ad Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 19 Jan 2025 21:22:41 +0200
+Subject: [PATCH] web-source: Promote refresh_accuracy_level() to a method
+
+Rename refresh_accuracy_level() to
+gclue_web_source_refresh_available_accuracy_level() and add it to the
+header file as a web-source method.
+---
+ src/gclue-web-source.c | 11 ++++-------
+ src/gclue-web-source.h |  1 +
+ 2 files changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/src/gclue-web-source.c b/src/gclue-web-source.c
+index 7219269..d7e4866 100644
+--- a/src/gclue-web-source.c
++++ b/src/gclue-web-source.c
+@@ -38,9 +38,6 @@
+  * Baseclass for all sources that solely use a web resource for geolocation.
+  **/
+ 
+-static void
+-refresh_accuracy_level (GClueWebSource *web);
+-
+ struct _GClueWebSourcePrivate {
+         GCancellable *cancellable;
+ 
+@@ -92,7 +89,7 @@ gclue_web_source_real_refresh_async (GClueWebSource      *source,
+         task = g_task_new (source, cancellable, callback, user_data);
+         g_task_set_source_tag (task, gclue_web_source_real_refresh_async);
+ 
+-        refresh_accuracy_level (source);
++        gclue_web_source_refresh_available_accuracy_level (source);
+ 
+         if (!gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (source))) {
+                 g_task_return_new_error (task, G_IO_ERROR, G_IO_ERROR_NOT_INITIALIZED,
+@@ -215,8 +212,8 @@ query_callback (GObject      *source_object,
+         }
+ }
+ 
+-static void
+-refresh_accuracy_level (GClueWebSource *web)
++void
++gclue_web_source_refresh_available_accuracy_level (GClueWebSource *web)
+ {
+         GClueAccuracyLevel new, existing;
+ 
+@@ -282,7 +279,7 @@ locate_url_checked_cb (GObject      *source_object,
+         if (!current_location || (g_get_real_time () / G_USEC_PER_SEC)
+             > (gclue_location_get_timestamp (current_location) + WEB_LOCATION_TIMEOUT)) {
+                 g_debug ("Network changed: Refreshing");
+-                refresh_accuracy_level (web);
++                gclue_web_source_refresh_available_accuracy_level (web);
+                 if (gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (web)))
+                         gclue_web_source_refresh (web);
+                 else
+diff --git a/src/gclue-web-source.h b/src/gclue-web-source.h
+index e466beb..7603bfa 100644
+--- a/src/gclue-web-source.h
++++ b/src/gclue-web-source.h
+@@ -90,6 +90,7 @@ struct _GClueWebSourceClass {
+ };
+ 
+ void gclue_web_source_refresh           (GClueWebSource      *source);
++void gclue_web_source_refresh_available_accuracy_level (GClueWebSource *source);
+ void gclue_web_source_set_submit_source (GClueWebSource      *source,
+                                          GClueLocationSource *submit_source);
+ void gclue_web_source_set_locate_url    (GClueWebSource      *source,
+-- 
+2.48.1
+
+
+From a7286f6759770f1c50aa97a6d503a094a7895bc5 Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sun, 19 Jan 2025 20:33:39 +0200
+Subject: [PATCH] wifi: Accuracy level is now NONE when there is no interface
+
+IP-only queries are handled by the IP source.
+---
+ src/gclue-wifi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/gclue-wifi.c b/src/gclue-wifi.c
+index 62ae1b1..728c438 100644
+--- a/src/gclue-wifi.c
++++ b/src/gclue-wifi.c
+@@ -892,10 +892,8 @@ gclue_wifi_get_available_accuracy_level (GClueWebSource *source,
+         GClueWifi *wifi = GCLUE_WIFI (source);
+         GClueWifiPrivate *priv = wifi->priv;
+ 
+-        if (!net_available)
++        if (!net_available || !priv->interface)
+                 return GCLUE_ACCURACY_LEVEL_NONE;
+-        else if (!priv->interface)
+-                return GCLUE_ACCURACY_LEVEL_CITY;
+         else
+                 return MIN (get_accuracy_level (wifi), GCLUE_ACCURACY_LEVEL_STREET);
+ }
+-- 
+2.48.1
+
+
+From ba374e669610fae1f89ccfc99b52c52e1d3fa5ab Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Sat, 18 Jan 2025 19:32:37 +0200
+Subject: [PATCH] wifi: Do not create a location without a BSS list
+
+Create a new location only when a scan has finished and it contains a
+non-empty set of BSS's:
+
+Replace full source refresh with available accuracy level refresh when
+there is no wifi interface on initialization, when the wifi source is
+not set to active, and on wifi interface removal.
+
+Don't refresh the source or available accuracy level on construction,
+when there is no configured interface yet.
+
+Return G_IO_ERROR_NOT_INITIALIZED on refresh_async() if the BSS list
+from a scan is empty.
+---
+ src/gclue-wifi.c | 37 +++++++++++++++++++++++--------------
+ 1 file changed, 23 insertions(+), 14 deletions(-)
+
+diff --git a/src/gclue-wifi.c b/src/gclue-wifi.c
+index 728c438..24bba53 100644
+--- a/src/gclue-wifi.c
++++ b/src/gclue-wifi.c
+@@ -647,8 +647,7 @@ connect_bss_signals (GClueWifi *wifi)
+         if (priv->bss_added_id != 0)
+                 return;
+         if (priv->interface == NULL) {
+-                gclue_web_source_refresh (GCLUE_WEB_SOURCE (wifi));
+-
++                gclue_web_source_refresh_available_accuracy_level (GCLUE_WEB_SOURCE (wifi));
+                 return;
+         }
+ 
+@@ -934,7 +933,8 @@ on_interface_proxy_ready (GObject      *source_object,
+         if (gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (wifi)))
+                 connect_bss_signals (wifi);
+         else
+-                gclue_web_source_refresh (GCLUE_WEB_SOURCE (wifi));
++                gclue_web_source_refresh_available_accuracy_level (GCLUE_WEB_SOURCE (wifi));
++
+ }
+ 
+ static void
+@@ -984,7 +984,7 @@ on_interface_removed (WPASupplicant *supplicant,
+                 g_debug ("Removed interface was the WiFi source");
+         }
+ 
+-        gclue_web_source_refresh (GCLUE_WEB_SOURCE (wifi));
++        gclue_web_source_refresh_available_accuracy_level (GCLUE_WEB_SOURCE (wifi));
+ }
+ 
+ static void
+@@ -1037,7 +1037,7 @@ gclue_wifi_constructed (GObject *object)
+                 if (error)
+                         g_warning ("Failed to connect to wpa_supplicant service: %s",
+                                    error->message);
+-                goto refresh_n_exit;
++                return;
+         }
+ 
+         g_signal_connect_object (priv->supplicant,
+@@ -1055,9 +1055,6 @@ gclue_wifi_constructed (GObject *object)
+                                     interfaces[0],
+                                     NULL,
+                                     wifi);
+-
+-refresh_n_exit:
+-        gclue_web_source_refresh (GCLUE_WEB_SOURCE (object));
+ }
+ 
+ static void
+@@ -1419,16 +1416,28 @@ gclue_wifi_refresh_async (GClueWebSource      *source,
+                           gpointer             user_data)
+ {
+         GClueWifi *wifi = GCLUE_WIFI (source);
+-        g_autoptr(GTask) task = g_task_new (source, cancellable, callback, user_data);
+-        g_autoptr(GPtrArray) bss_array = get_location_cache_bss_array (wifi);
+-        g_autoptr(GVariant) cache_key = get_location_cache_hashtable_key (wifi, bss_array);
+-        g_autoptr(GArray) signal_array = get_location_cache_signal_array (wifi, bss_array);
+-        GClueLocation *cached_location = find_cached_location (wifi->priv->location_cache,
+-                                                               cache_key, signal_array);
++        GClueLocation *cached_location;
+         RefreshTaskData *tdata;
++        g_autoptr(GTask) task = g_task_new (source, cancellable, callback, user_data);
++        g_autoptr(GPtrArray) bss_array = NULL;
++        g_autoptr(GVariant) cache_key = NULL;
++        g_autoptr(GArray) signal_array = NULL;
+ 
+         g_task_set_source_tag (task, gclue_wifi_refresh_async);
+ 
++        /* Don't create a location without a BSS list, we have the IP source for that */
++        if (!wifi->priv->bss_proxies || g_hash_table_size (wifi->priv->bss_proxies) < 1) {
++                GError *error = g_error_new (G_IO_ERROR, G_IO_ERROR_NOT_INITIALIZED,
++                                             "Empty BSS list");
++                g_task_return_error (task, error);
++                return;
++        }
++
++        bss_array = get_location_cache_bss_array (wifi);
++        cache_key = get_location_cache_hashtable_key (wifi, bss_array);
++        signal_array = get_location_cache_signal_array (wifi, bss_array);
++        cached_location = find_cached_location (wifi->priv->location_cache, cache_key, signal_array);
++
+         if (gclue_location_source_get_active (GCLUE_LOCATION_SOURCE (source))) {
+                 /* Try the cache. */
+                 if (cached_location != NULL) {
+-- 
+2.48.1
+
+
+From 3554287eb6c5e9d24c593060010e780d918c1fdc Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 5 Dec 2024 16:41:05 +0200
+Subject: [PATCH] ip: Add 'reallyfreegeoip' method
+
+This method uses the JSON API of reallyfreegeoip.org to determine a
+city-level location.
+---
+ data/geoclue.5.in  |  1 +
+ src/gclue-config.c |  3 ++-
+ src/gclue-ip.c     | 62 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 65 insertions(+), 1 deletion(-)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index ca58f0d..6b654fe 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -51,6 +51,7 @@ Method (backend) to use for IP location. Currently implemented are:
+ "ichnaea": Use the Ichnaea API with the URL from the wifi source.
+ .br
+ "gmaps": Use the location determined by Google Maps.
++"reallyfreegeoip": Use the location from reallyfreegeoip.org.
+ .br
+ .IP \fB[network-nmea]
+ .br
+diff --git a/src/gclue-config.c b/src/gclue-config.c
+index 71de78b..5605520 100644
+--- a/src/gclue-config.c
++++ b/src/gclue-config.c
+@@ -645,7 +645,8 @@ out:
+         }
+         if (priv->enable_ip_source && (!string_present (priv->ip_method) ||
+             (g_strcmp0 (priv->ip_method, "ichnaea") != 0 &&
+-             g_strcmp0 (priv->ip_method, "gmaps") != 0))) {
++             g_strcmp0 (priv->ip_method, "gmaps") != 0 &&
++             g_strcmp0 (priv->ip_method, "reallyfreegeoip") != 0))) {
+                 g_warning ("Unknown IP source method '%s', disabling source", priv->ip_method);
+                 priv->enable_ip_source = FALSE;
+                 g_clear_pointer (&priv->ip_method, g_free);
+diff --git a/src/gclue-ip.c b/src/gclue-ip.c
+index 4d018c4..8449f06 100644
+--- a/src/gclue-ip.c
++++ b/src/gclue-ip.c
+@@ -22,6 +22,7 @@
+ #include <stdlib.h>
+ #include <math.h>
+ #include <glib.h>
++#include <json-glib/json-glib.h>
+ #include <string.h>
+ #include "config.h"
+ #include "gclue-ip.h"
+@@ -144,6 +145,62 @@ gmaps_parse_response (GClueWebSource *source,
+         return location;
+ }
+ 
++/* reallyfreegeoip method */
++
++#define REALLYFREEGEOIP_URL "https://reallyfreegeoip.org/json/"
++#define REALLYFREEGEOIP_ACCURACY (20000.0)
++
++static SoupMessage *
++reallyfreegeoip_create_query (GClueWebSource *source,
++                              const char    **query_data_description,
++                              GError        **error)
++{
++        g_autoptr(SoupMessage) query = NULL;
++
++        query = soup_message_new ("GET", REALLYFREEGEOIP_URL);
++        if (query_data_description) {
++                *query_data_description = "reallyfreegeoip IP";
++        }
++
++        return g_steal_pointer (&query);
++}
++
++static GClueLocation *
++reallyfreegeoip_parse_response (GClueWebSource *source,
++                                const char *response,
++                                GError    **error)
++{
++        g_autoptr(JsonParser) parser = NULL;
++        JsonNode *node;
++        JsonObject *object;
++        double latitude, longitude, accuracy;
++        GClueLocation *location;
++
++        parser = json_parser_new ();
++
++        if (!json_parser_load_from_data (parser, response, -1, error))
++                return NULL;
++
++        node = json_parser_get_root (parser);
++        object = json_node_get_object (node);
++
++        latitude = json_object_get_double_member (object, "latitude");
++        longitude = json_object_get_double_member (object, "longitude");
++        accuracy = REALLYFREEGEOIP_ACCURACY;
++        g_debug ("Parsed reallyfreegeoip values lat=%.8f, lon=%.8f, default accuracy=%.0f",
++                 latitude, longitude, accuracy);
++        if (latitude <= -180.0 || latitude > 180.0 ||
++            longitude > 90.0 || longitude < -90.0) {
++                g_warning ("reallyfreegeoip coordinates are invalid: lat=%.8f, lon=%.8f",
++                           latitude, longitude);
++                return NULL;
++        }
++        location = gclue_location_new (latitude, longitude, accuracy,
++                                       gclue_web_source_get_query_data_description(source));
++
++        return location;
++}
++
+ /* GClueIp common */
+ 
+ static void
+@@ -209,6 +266,9 @@ gclue_ip_class_init (GClueIpClass *klass)
+         } else if (g_strcmp0 (method, "gmaps") == 0) {
+                 web_class->create_query = gmaps_create_query;
+                 web_class->parse_response = gmaps_parse_response;
++        } else if (g_strcmp0 (method, "reallyfreegeoip") == 0) {
++                web_class->create_query = reallyfreegeoip_create_query;
++                web_class->parse_response = reallyfreegeoip_parse_response;
+         } else {
+                 g_error ("Unknown IP method '%s'", method);
+         }
+@@ -237,6 +297,8 @@ gclue_ip_init (GClueIp *ip)
+                         ("center=[0-9\\.]*%2C[0-9\\.]*&amp;zoom=[0-9]*&amp;",
+                          G_REGEX_DEFAULT, G_REGEX_MATCH_DEFAULT, NULL);
+                 gclue_web_source_set_locate_url (web_source, GMAPS_URL);
++        } else if (g_strcmp0 (method, "reallyfreegeoip") == 0) {
++                gclue_web_source_set_locate_url (web_source, REALLYFREEGEOIP_URL);
+         } else {
+                 g_error ("Unknown IP method '%s'", method);
+         }
+-- 
+2.48.1
+
+
+From 77e62780bbce294d72e031e3c5307da9c6cdef5d Mon Sep 17 00:00:00 2001
+From: Teemu Ikonen <tpikonen@mailbox.org>
+Date: Thu, 30 Jan 2025 19:10:02 +0200
+Subject: [PATCH] data: Fix the default IP source method in man page
+
+---
+ data/geoclue.5.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/geoclue.5.in b/data/geoclue.5.in
+index 6b654fe..091e6c8 100644
+--- a/data/geoclue.5.in
++++ b/data/geoclue.5.in
+@@ -44,7 +44,7 @@ IP source configuration options
+ Enable the GeoIP source
+ .br
+ .IP
+-.B \fBmethod=gmaps
++.B \fBmethod=ichnaea
+ .br
+ Method (backend) to use for IP location. Currently implemented are:
+ .br
+-- 
+2.48.1
