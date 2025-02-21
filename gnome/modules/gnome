@@ -33,6 +33,7 @@ rest
 gnome-online-accounts
 libnma
 cups-pk-helper
+power-profiles-daemon
 gnome-color-manager
 tecla
 webp-pixbuf-loader
