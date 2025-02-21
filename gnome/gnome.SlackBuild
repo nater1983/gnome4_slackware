@@ -416,7 +416,7 @@ build_mod_pkg() {
       else
           cp -a \
             AUTHORS* CONTRIBUTING* COPYING* HACKING* \
-            INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* CHANGES* \
+            INSTALL* LICENSE* MAINTAINERS README* NEWS* TODO* CHANGES* *.rst \
             "$PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
 
           # If there's a ChangeLog, include it with a limit of the most recent 1000 lines
