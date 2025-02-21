@@ -40,6 +40,7 @@ webp-pixbuf-loader
 xdg-desktop-portal-gnome
 gnome-control-center
 libei
+argcomplete
 mutter
 evolution-data-server
 gnome-autoar
