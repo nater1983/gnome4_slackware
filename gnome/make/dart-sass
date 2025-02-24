@@ -1,2 +1,3 @@
-wget -c -P "$CWD/src" https://github.com/sass/dart-sass/releases/download/1.85.0/dart-sass-1.85.0-linux-x64.tar.gz
-mkdir -p "$CWD/build/applications/dart-sass-1.85.0"
+sed -i "s/\/src\//\/..\/lib$LIBDIRSUFFIX\/$PRGNAM\//g" sass
+install -D -t $PKG/usr/bin/ sass
+install -D -t $PKG/usr/lib$LIBDIRSUFFIX/$PRGNAM/ src/dart src/sass.snapshot
