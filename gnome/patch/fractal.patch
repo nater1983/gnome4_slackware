@@ -1,1 +1,0 @@
-patch -Np1 -R -i $CWD/patch/fractal/55724695ce76f1131a486f9f88243228e6c92da5.patch
