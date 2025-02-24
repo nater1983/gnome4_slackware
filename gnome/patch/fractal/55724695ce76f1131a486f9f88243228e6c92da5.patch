@@ -32,43 +32,6 @@ We now require a SASS compiler at build time.
  create mode 100644 data/resources/stylesheet/_session_view.scss
  create mode 100644 data/resources/stylesheet/_vendor.scss
 
-diff --git a/build-aux/org.gnome.Fractal.Devel.json b/build-aux/org.gnome.Fractal.Devel.json
-index b0daf1e1c..fedbba791 100644
---- a/build-aux/org.gnome.Fractal.Devel.json
-+++ b/build-aux/org.gnome.Fractal.Devel.json
-@@ -48,7 +48,32 @@
-     "cleanup-commands": [
-         "mkdir -p ${FLATPAK_DEST}/lib/ffmpeg"
-     ],
-+    "cleanup": [
-+        "bin/grass"
-+    ],
-     "modules": [
-+        {
-+            "name": "grass",
-+            "buildsystem": "simple",
-+            "build-options": {
-+                "env": {
-+                    "CARGO_HOME": "/run/build/grass/cargo"
-+                }
-+            },
-+            "build-commands": [
-+                "cargo build --release --locked",
-+                "mkdir -p /app/bin",
-+                "install -D ./target/release/grass /app/bin/"
-+            ],
-+            "sources": [
-+                {
-+                    "type": "git",
-+                    "url": "https://github.com/connorskees/grass",
-+                    "tag": "0.13.4",
-+                    "commit": "e0bb9e2eabfc3a58e42b03089cd7b22c68d09d0b"
-+                }
-+            ]
-+        },
-         {
-             "name": "protobuf-c",
-             "buildsystem": "autotools",
 diff --git a/data/resources/meson.build b/data/resources/meson.build
 index 67bc2519a..b80995bdc 100644
 --- a/data/resources/meson.build
