@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/pygit2/eba710e45bb40e18641c6531394bb46631e7f295.patch
