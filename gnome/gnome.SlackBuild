@@ -344,7 +344,7 @@ build_mod_pkg() {
       # If requested, skip packages that are already in the output directory:
       if [ "$SKIPBUILT" = "yes" ]; then
         # Construct the package name:
-        if [ -r $CWD/build/${PKGNAME} ]; then
+        if [ -r $CWD/makepkg/${PKGNAME} ]; then
           MODBUILD=$(cat $CWD/makepkg/${PKGNAME})
         else
           MODBUILD=$BUILD
