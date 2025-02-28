@@ -178,7 +178,8 @@ precheck() {
   RETVAL=0
 
   # Check if the source files match the module components we want to build:
-  for SRCFILE in $(find $CWD/src -name "*.tar.?z*" | grep -vE ".asc$|.sig$"); do
+  #for SRCFILE in $(find $CWD/src -name "*.tar.?z*" | grep -vE ".asc$|.sig$"); do
+   for SRCFILE in $(find "$CWD/src" -type f \( -name "*.tar.?z*" -o -name "*.deb" \) | grep -vE ".asc$|.sig$"); do
     # Check if the source tarball is mentioned in pkgsrc
     # This feature should be reserved for cases where a different package name is needed
     PKGSRC=$(echo $SRCFILE | rev | cut -f2- -d- | cut -f1,2 -d/ | rev)
