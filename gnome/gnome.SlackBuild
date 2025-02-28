@@ -289,8 +289,19 @@ build_mod_pkg() {
         PKGSRC=$PKGNAME
         PKGLOC=""
       fi
-      gnome_src=$(basename $(find $CWD/src/$PKGLOC -name "$PKGSRC-*.tar.?z*" |grep -vE ".asc$|.sig$" |grep -E "$PKGSRC-[^-]+.tar.*$|$PKGSRC-[0-9].+.tar.*$") 2>/dev/null)
-      if [ "x$gnome_src" = "x" ]; then
+      #gnome_src=$(basename $(find $CWD/src/$PKGLOC -name "$PKGSRC-*.tar.?z*" |grep -vE ".asc$|.sig$" |grep -E "$PKGSRC-[^-]+.tar.*$|$PKGSRC-[0-9].+.tar.*$") 2>/dev/null)
+      #if [ "x$gnome_src" = "x" ]; then
+      #  if [ -z "$PRINT_PACKAGE_NAME" ]; then
+      #    echo "** Did not find '$PKGSRC' in src"
+      #  fi
+      #  continue
+      #fi
+      gnome_src=$(find "$CWD/src/$PKGLOC" -type f \( -name "$PKGSRC-*.tar.?z*" -o -name "$PKGSRC-*.deb" \) \
+        | grep -vE ".asc$|.sig$" \
+        | grep -E "$PKGSRC-[^-]+.(tar.*|deb)$|$PKGSRC-[0-9].+.(tar.*|deb)$" \
+        | head -n1 | xargs -r basename)
+      
+      if [ -z "$gnome_src" ]; then
         if [ -z "$PRINT_PACKAGE_NAME" ]; then
           echo "** Did not find '$PKGSRC' in src"
         fi
