@@ -1,0 +1,10 @@
+ar x $CWD/src/xvfb_$MODULAR_PACKAGE_VERSION-*.deb
+cd $PKG
+tar xvf $TMP/$PKGNAME-$MODULAR_PACKAGE_VERSION/data.tar.xz
+
+rm -f usr/bin/Xvfb
+mv usr/share/* usr
+rmdir usr/share
+rm -f usr/doc/xvfb/changelog*
+mv usr/doc/xvfb usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+rm -f usr/man/man1/Xvfb.1.gz
