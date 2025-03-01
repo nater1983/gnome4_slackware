@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/_gnome_checkouts"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/GNOME"
+GNOMEGITURI="https://github.com/GNOME"
 
 # Default list of modules to checkout:
 DEFMODS="vala"
