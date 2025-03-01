@@ -9,7 +9,7 @@ cd build
     -Dviewer=true \
     -Dpreviewer=true \
     -Dthumbnailer=true \
-    -Dnautilus=true \
+    -Dnautilus=false \
     -Dcomics=enabled \
     -Ddjvu=enabled \
     -Dpdf=enabled \
