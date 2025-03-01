@@ -24,14 +24,14 @@ FORCE="NO"
 MYDIR="${CWD}/_gnome_checkouts"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/GNOME/"
+GNOMEGITURI="https://gitlab.gnome.org/GNOME"
 
 # Default list of modules to checkout:
-DEFMODS="gtk gnome-shell mutter gnome-control-center"
+DEFMODS="vala"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="master"
-#DEFBRANCH="main"
+#DEFBRANCH="master"
+DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
 SHRINK="YES"
