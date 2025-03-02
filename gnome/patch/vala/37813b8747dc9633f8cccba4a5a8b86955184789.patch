@@ -7,56 +7,9 @@ Subject: [PATCH] Retrieve version when in a git worktree
 - Use autoconf to make vala/valaversion.vala rather than generating that
   file by hand
 ---
- Makefile.am      |  2 +-
- configure.ac     |  9 +++++----
  vala/Makefile.am | 12 ++----------
  3 files changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/Makefile.am b/Makefile.am
-index f70234759..1bfbe80a7 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -68,7 +68,7 @@ $(top_srcdir)/.version: gen-version
- 	@true
- .PHONY: gen-version
- gen-version:
--	@V=`$(top_srcdir)/build-aux/git-version-gen $(top_srcdir)/.tarball-version` &&			\
-+	@V=`$(top_srcdir)/build-aux/git-version-gen --prefix '' $(top_srcdir)/.tarball-version` &&			\
- 	if [ -e $(top_srcdir)/.version ] && [ "x`cat $(top_srcdir)/.version`" = "x$$V" ]; then		\
- 	  true;												\
- 	else												\
-diff --git a/configure.ac b/configure.ac
-index 097a324df..b3caa0373 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -1,5 +1,5 @@
- AC_PREREQ([2.65])
--AC_INIT([vala], m4_esyscmd([build-aux/git-version-gen .tarball-version]),
-+AC_INIT([vala], m4_esyscmd([build-aux/git-version-gen --prefix '' .tarball-version]),
- 	[https://gitlab.gnome.org/GNOME/vala/issues],
- 	[vala],
- 	[https://wiki.gnome.org/Projects/Vala])
-@@ -16,9 +16,9 @@ PACKAGE_SUFFIX="-$API_VERSION"
- VALA_MAJOR_VERSION=`echo $PACKAGE_VERSION | cut -d. -f1 | sed s/[[a-zA-Z\-]].*//g`
- VALA_MINOR_VERSION=`echo $PACKAGE_VERSION | cut -d. -f2 | sed s/[[a-zA-Z\-]].*//g`
- VALA_MICRO_VERSION=`echo $PACKAGE_VERSION | cut -d. -f3 | sed s/[[a-zA-Z\-]].*//g`
--AC_SUBST(VALA_MAJOR_VERSION)
--AC_SUBST(VALA_MINOR_VERSION)
--AC_SUBST(VALA_MICRO_VERSION)
-+AC_SUBST([VALA_MAJOR_VERSION])
-+AC_SUBST([VALA_MINOR_VERSION])
-+AC_SUBST([VALA_MICRO_VERSION])
- 
- dnl http://people.gnome.org/~walters/docs/build-api.txt
- dnl We don't support separate builddir when building from git
-@@ -224,6 +224,7 @@ AC_CONFIG_FILES([Makefile
-            gee/Makefile
-            ccode/Makefile
-            vala/Makefile
-+           vala/valaversion.vala
-            codegen/Makefile
-            compiler/Makefile
-            vapi/Makefile
 diff --git a/vala/Makefile.am b/vala/Makefile.am
 index 0191fc9aa..af48bbf0c 100644
 --- a/vala/Makefile.am
