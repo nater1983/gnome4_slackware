@@ -12,7 +12,7 @@ git repositories and create versioned tarballs of them.
 CWD=$(pwd)
 
 # Cleanup (delete) the directories containing the local clones afterwards:
-CLEANUP="NO"
+CLEANUP="YES"
  
 # Checkout at a custom date instead of today:
 CUSTDATE="NO"
@@ -21,7 +21,7 @@ CUSTDATE="NO"
 FORCE="NO"
 
 # Where to write the files by default:
-MYDIR="${CWD}/_gnome_checkouts"
+MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
 GNOMEGITURI="https://github.com/GNOME/"
