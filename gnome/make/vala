@@ -3,8 +3,7 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
-    --docdir=/usr/doc/$PRGNAM-$VERSION \
-    $GRAPHVIZ_SUPPORT
+    --docdir=/usr/doc/$PRGNAM-$VERSION
 
 # Hack to build if valac isn't already installed:
 if [ ! -r /usr/bin/valac ]; then
