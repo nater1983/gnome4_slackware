@@ -100,17 +100,28 @@ if [ $? -ne 0 ]; then
 fi
 cd "${MYDIR}"
 
-# Proceed with checking out the sources.
 echo ">> Checking out the sources..."
-for LOC in $MODS ; do
+for LOC in $MODS; do
   # Clone the repository:
   echo ">>   Fetching ${LOC} from ${GNOMEGITURI}..."
-  git clone ${GNOMEGITURI}${LOC}.git ${LOC}-${THEDATE}git
+  git clone ${GNOMEGITURI}${LOC}.git ${LOC}-temp
   if [ $? -ne 0 ]; then
     echo ">>     Failed to checkout ${LOC}."
     continue
   fi
-  pushd ${LOC}-${THEDATE}git
+
+  # Get the latest commit date and hash
+  cd ${LOC}-temp || continue
+  COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
+  cd ..
+
+  # Rename the directory with commit info
+  NEW_DIR="${LOC}-${COMMIT_INFO}git"
+  mv ${LOC}-temp ${NEW_DIR}
+
+  echo ">>   Checked out ${LOC} as ${NEW_DIR}"
+done
+  pushd ${LOC}-${NEW_DIR}
     git checkout ${DEFBRANCH}
     if [ $? -ne 0 ]; then
       BRANCH="main"
@@ -125,22 +136,22 @@ for LOC in $MODS ; do
   # Remove git metadata if SHRINK is enabled:
   if [ "$SHRINK" = "YES" ]; then
     echo ">>     Removing git metadata..."
-    find ${LOC}-${THEDATE}git -name ".git*" -depth -exec rm -rf {} \;
+    find ${LOC}-${NEW_DIR} -name ".git*" -depth -exec rm -rf {} \;
   fi
 
   # Create the tarball:
   echo ">>     Creating tarball for ${LOC}..."
-  if [ "$FORCE" = "NO" -a -f ${LOC}-${THEDATE}.tar.xz ]; then
-    echo ">> Not overwriting existing file '${LOC}-${THEDATE}.tar.xz'"
+  if [ "$FORCE" = "NO" -a -f ${LOC}-${NEW_DIR}.tar.xz ]; then
+    echo ">> Not overwriting existing file '${LOC}-${NEW_DIR}.tar.xz'"
     echo ">> Use '-f' to force overwriting existing files"
   else
-    tar -Jcf ${LOC}-${THEDATE}.tar.xz ${LOC}-${THEDATE}git
+    tar -Jcf ${LOC}-${NEW_DIR}.tar.xz ${LOC}-${NEW_DIR}
   fi
 
   # Cleanup if specified:
   if [ "$CLEANUP" = "YES" ]; then
-    echo ">>     Cleaning up ${LOC}-${THEDATE}git..."
-    rm -rf ${LOC}-${THEDATE}git
+    echo ">>     Cleaning up ${LOC}-${NEW_DIR}..."
+    rm -rf ${LOC}-${NEW_DIR}
   fi
 done
 
