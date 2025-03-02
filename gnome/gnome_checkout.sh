@@ -121,7 +121,7 @@ for LOC in $MODS; do
 
   echo ">>   Checked out ${LOC} as ${NEW_DIR}"
 done
-  pushd ${LOC}-${NEW_DIR}
+  pushd ${NEW_DIR}
     git checkout ${DEFBRANCH}
     if [ $? -ne 0 ]; then
       BRANCH="main"
@@ -136,22 +136,22 @@ done
   # Remove git metadata if SHRINK is enabled:
   if [ "$SHRINK" = "YES" ]; then
     echo ">>     Removing git metadata..."
-    find ${LOC}-${NEW_DIR} -name ".git*" -depth -exec rm -rf {} \;
+    find ${NEW_DIR} -name ".git*" -depth -exec rm -rf {} \;
   fi
 
   # Create the tarball:
   echo ">>     Creating tarball for ${LOC}..."
-  if [ "$FORCE" = "NO" -a -f ${LOC}-${NEW_DIR}.tar.xz ]; then
-    echo ">> Not overwriting existing file '${LOC}-${NEW_DIR}.tar.xz'"
+  if [ "$FORCE" = "NO" -a -f ${NEW_DIR}.tar.xz ]; then
+    echo ">> Not overwriting existing file '${NEW_DIR}.tar.xz'"
     echo ">> Use '-f' to force overwriting existing files"
   else
-    tar -Jcf ${LOC}-${NEW_DIR}.tar.xz ${LOC}-${NEW_DIR}
+    tar -Jcf ${NEW_DIR}.tar.xz ${NEW_DIR}
   fi
 
   # Cleanup if specified:
   if [ "$CLEANUP" = "YES" ]; then
-    echo ">>     Cleaning up ${LOC}-${NEW_DIR}..."
-    rm -rf ${LOC}-${NEW_DIR}
+    echo ">>     Cleaning up ${NEW_DIR}..."
+    rm -rf ${NEW_DIR}
   fi
 done
 
