@@ -120,7 +120,6 @@ for LOC in $MODS; do
   mv ${LOC}-temp ${NEW_DIR}
 
   echo ">>   Checked out ${LOC} as ${NEW_DIR}"
-done
   pushd ${NEW_DIR}
     git checkout ${DEFBRANCH}
     if [ $? -ne 0 ]; then
