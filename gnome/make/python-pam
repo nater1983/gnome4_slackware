@@ -1,0 +1,8 @@
+# Use this setup.py shim:
+cat << EOF > setup.py
+import setuptools
+if __name__ == "__main__":
+    setuptools.setup()
+EOF
+
+unshare -n python3 setup.py install --root=$PKG || exit 1
