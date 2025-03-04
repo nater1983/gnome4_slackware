@@ -5,6 +5,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+    -Ddocs=false \
     -Dbackend-gtk3=enabled \
     -Dbackend-gtk4=enabled \
     -Dbackend-qt5=enabled \
