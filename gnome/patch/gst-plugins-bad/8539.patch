@@ -9,10 +9,10 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  .../gst-plugins-bad/ext/svtav1/gstsvtav1enc.c | 60 ++++++++++++++++---
  2 files changed, 53 insertions(+), 9 deletions(-)
 
-diff --git a/subprojects/gst-plugins-bad/docs/plugins/gst_plugins_cache.json b/subprojects/gst-plugins-bad/docs/plugins/gst_plugins_cache.json
+diff --git a/docs/plugins/gst_plugins_cache.json b/docs/plugins/gst_plugins_cache.json
 index d278cb54c83c..eb9faf50f013 100644
---- a/subprojects/gst-plugins-bad/docs/plugins/gst_plugins_cache.json
-+++ b/subprojects/gst-plugins-bad/docs/plugins/gst_plugins_cache.json
+--- a/docs/plugins/gst_plugins_cache.json
++++ b/docs/plugins/gst_plugins_cache.json
 @@ -246801,7 +246801,7 @@
                          "writable": true
                      },
@@ -22,10 +22,10 @@ index d278cb54c83c..eb9faf50f013 100644
                          "conditionally-available": false,
                          "construct": false,
                          "construct-only": false,
-diff --git a/subprojects/gst-plugins-bad/ext/svtav1/gstsvtav1enc.c b/subprojects/gst-plugins-bad/ext/svtav1/gstsvtav1enc.c
+diff --git a/ext/svtav1/gstsvtav1enc.c b/ext/svtav1/gstsvtav1enc.c
 index 2ea84982fad2..65e940d43d98 100644
---- a/subprojects/gst-plugins-bad/ext/svtav1/gstsvtav1enc.c
-+++ b/subprojects/gst-plugins-bad/ext/svtav1/gstsvtav1enc.c
+--- a/ext/svtav1/gstsvtav1enc.c
++++ b/ext/svtav1/gstsvtav1enc.c
 @@ -75,7 +75,11 @@ typedef struct _GstSvtAv1Enc
    guint maximum_buffer_size;
    gint intra_period_length;
