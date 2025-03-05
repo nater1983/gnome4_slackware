@@ -5,7 +5,6 @@ Subject: [PATCH] svtav1enc: update to use SVT-AV1 3.0.0 API changes
 
 Signed-off-by: Christopher Degawa <ccom@randomderp.com>
 ---
- .../docs/plugins/gst_plugins_cache.json       |  2 +-
  .../gst-plugins-bad/ext/svtav1/gstsvtav1enc.c | 60 ++++++++++++++++---
  2 files changed, 53 insertions(+), 9 deletions(-)
 
