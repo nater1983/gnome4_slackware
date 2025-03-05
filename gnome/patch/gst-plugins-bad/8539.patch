@@ -8,19 +8,6 @@ Signed-off-by: Christopher Degawa <ccom@randomderp.com>
  .../gst-plugins-bad/ext/svtav1/gstsvtav1enc.c | 60 ++++++++++++++++---
  2 files changed, 53 insertions(+), 9 deletions(-)
 
-diff --git a/docs/plugins/gst_plugins_cache.json b/docs/plugins/gst_plugins_cache.json
-index d278cb54c83c..eb9faf50f013 100644
---- a/docs/plugins/gst_plugins_cache.json
-+++ b/docs/plugins/gst_plugins_cache.json
-@@ -246801,7 +246801,7 @@
-                         "writable": true
-                     },
-                     "logical-processors": {
--                        "blurb": "Number of logical CPU cores to be used. 0: auto",
-+                        "blurb": "Number of logical CPU cores to be used. Deprecated and replaced with level-of-parallelism in SVT-AV1 3.0.0. 0: auto",
-                         "conditionally-available": false,
-                         "construct": false,
-                         "construct-only": false,
 diff --git a/ext/svtav1/gstsvtav1enc.c b/ext/svtav1/gstsvtav1enc.c
 index 2ea84982fad2..65e940d43d98 100644
 --- a/ext/svtav1/gstsvtav1enc.c
