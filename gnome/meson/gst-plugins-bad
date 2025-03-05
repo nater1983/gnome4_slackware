@@ -5,7 +5,6 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Dsvtav1=disabled \
     -Dopencv=enabled \
     -Dwayland=enabled \
     -Dx11=enabled \
