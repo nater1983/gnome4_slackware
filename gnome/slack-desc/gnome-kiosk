@@ -1,0 +1,21 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+gnome-kiosk: gnome-kiosk (mutter based compositor for kiosks)
+gnome-kiosk:
+gnome-kiosk: Kiosk provides a desktop enviroment suitable for fixed purpose, or
+gnome-kiosk: single application deployments like wall displays and point-of-sale
+gnome-kiosk: systems. It provides a very minimal wayland display server and
+gnome-kiosk: compositor and Xorg compositor and window manager. It automatically
+gnome-kiosk: starts applications fullscreen. Notably, GNOME Kiosk features no
+gnome-kiosk: panels, dashes, or docks that could distract from the application
+gnome-kiosk: using it as a platform.
+gnome-kiosk:
+gnome-kiosk: Homepage: https://gitlab.gnome.org/GNOME/gnome-kiosk
+
+
