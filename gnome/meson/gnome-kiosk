@@ -5,8 +5,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Dlogind=elogind \
-    -Dsystemdsystemunitdir=no
+    -Dlogind=elogind
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
