@@ -24,10 +24,10 @@ index e02bb88..ab613aa 100644
  install_data('gnome-session/gnome-kiosk-script.session',
          install_dir: session_dir,
 diff --git a/meson.build b/meson.build
-index c27c073..70a52f4 100644
+index c27c073..22da792 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -43,9 +43,21 @@ config_h = configure_file(
+@@ -43,9 +43,19 @@ config_h = configure_file(
          configuration: config_data
  )
  
@@ -47,7 +47,7 @@ index c27c073..70a52f4 100644
  
  dbus_proxies = []
  dbus_proxies += {
-@@ -135,7 +147,10 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
+@@ -135,7 +145,10 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
  compositor_dependencies += dependency(libmutter_cogl_name)
  compositor_dependencies += dependency(libmutter_clutter_name)
  compositor_dependencies += mutter_dependency
