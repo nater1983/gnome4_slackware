@@ -56,8 +56,9 @@ index c27c073..f77509f 100644
 +  if not logind_dep.found()
 +    error('No logind provider dependency found: tried libsystemd and libelogind')
 +  endif
++ endif
 +endif
- 
+
  dbus_proxies = []
  dbus_proxies += {
 @@ -135,7 +153,7 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
