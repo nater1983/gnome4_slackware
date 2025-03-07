@@ -24,7 +24,7 @@ index e02bb88..ab613aa 100644
  install_data('gnome-session/gnome-kiosk-script.session',
          install_dir: session_dir,
 diff --git a/meson.build b/meson.build
-index c27c073..22da792 100644
+index c27c073..21dd706 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -43,9 +43,19 @@ config_h = configure_file(
@@ -39,7 +39,7 @@ index c27c073..22da792 100644
 +  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
 +endif
 +
-+if systemd_user_unit_dir == '' and use_systemd
++if systemd_userunitdir == '' and use_systemd
  systemd_user_unit_dir = dependency('systemd').get_pkgconfig_variable('systemduserunitdir',
                                                                       define_variable: ['prefix', prefix])
  systemd_dependency = dependency('libsystemd')
@@ -58,6 +58,43 @@ index c27c073..22da792 100644
  
  compositor_headers = []
  compositor_headers += 'compositor/kiosk-app.h'
+@@ -199,15 +212,18 @@ i18n.merge_file(
+         type: 'desktop'
+ )
+ 
++if use_systemd
+ systemd_service_config_data = configuration_data()
+ systemd_service_config_data.set('bindir', bindir)
+ 
+ systemd_service_files = []
+ systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@wayland.service.in'
+-if mutter_have_x11
+-        systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@x11.service.in'
++        if mutter_have_x11
++                systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@x11.service.in'
++        endif
+ endif
+ 
++if use_systemd
+ foreach service_file : systemd_service_files
+         configure_file(
+                 input: service_file,
+@@ -216,7 +232,6 @@ foreach service_file : systemd_service_files
+                 install_dir: systemd_user_unit_dir
+         )
+ endforeach
+-
+ targetconf = configuration_data()
+ 
+ sessions_wants = ['org.gnome.Kiosk@wayland.service']
+@@ -233,6 +248,7 @@ target = configure_file(
+ 
+ systemd_service_config_data = configuration_data()
+ systemd_service_config_data.set('bindir', bindir)
++endif
+ 
+ dconf_config_data = configuration_data()
+ dconf_config_data.set('PACKAGE', meson.project_name())
 diff --git a/meson_options.txt b/meson_options.txt
 index 900652d..3eb4802 100644
 --- a/meson_options.txt
