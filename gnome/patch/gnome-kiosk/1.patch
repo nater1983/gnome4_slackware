@@ -136,3 +136,38 @@ index 4ba7c0f..dfeb6d2 100644
 -- 
 GitLab
 
+From 3ddf2ef030f2c3e07bfba9fde03a82c4927d7c97 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 7 Mar 2025 00:32:02 +0000
+Subject: [PATCH] Update file meson.build
+
+---
+ kiosk-script/meson.build | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/kiosk-script/meson.build b/kiosk-script/meson.build
+index e02bb88..7458858 100644
+--- a/kiosk-script/meson.build
++++ b/kiosk-script/meson.build
+@@ -18,18 +18,6 @@ i18n.merge_file(
+         type: 'desktop'
+ )
+ 
+-configure_file(
+-       input: 'systemd/org.gnome.Kiosk.Script.service.in',
+-       output: '@BASENAME@',
+-       configuration: systemd_service_config_data,
+-       install_dir: systemd_user_unit_dir
+-)
+-
+-kiosk_script_systemd_target_dir = join_paths(systemd_user_unit_dir, 'gnome-session@gnome-kiosk-script.target.d')
+-install_data('systemd/session.conf',
+-        install_dir: kiosk_script_systemd_target_dir
+-)
+-
+ install_data('gnome-session/gnome-kiosk-script.session',
+         install_dir: session_dir,
+ )
+-- 
+GitLab
+
