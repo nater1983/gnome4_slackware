@@ -1,16 +1,21 @@
 diff --git a/kiosk-script/meson.build b/kiosk-script/meson.build
-index e02bb88..2dbd24a 100644
+index e02bb88..ab613aa 100644
 --- a/kiosk-script/meson.build
 +++ b/kiosk-script/meson.build
-@@ -18,6 +18,7 @@ i18n.merge_file(
+@@ -18,17 +18,19 @@ i18n.merge_file(
          type: 'desktop'
  )
  
-+if systemdsystemunitdir != 'no'
++if use_systemd
  configure_file(
         input: 'systemd/org.gnome.Kiosk.Script.service.in',
         output: '@BASENAME@',
-@@ -29,6 +30,7 @@ kiosk_script_systemd_target_dir = join_paths(systemd_user_unit_dir, 'gnome-sessi
+        configuration: systemd_service_config_data,
+        install_dir: systemd_user_unit_dir
+ )
+-
++endforeach
+ kiosk_script_systemd_target_dir = join_paths(systemd_user_unit_dir, 'gnome-session@gnome-kiosk-script.target.d')
  install_data('systemd/session.conf',
          install_dir: kiosk_script_systemd_target_dir
  )
@@ -19,97 +24,44 @@ index e02bb88..2dbd24a 100644
  install_data('gnome-session/gnome-kiosk-script.session',
          install_dir: session_dir,
 diff --git a/meson.build b/meson.build
-index c27c073..05bdc63 100644
+index c27c073..70a52f4 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -36,6 +36,7 @@ config_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
- config_data.set_quoted('VERSION', meson.project_version())
- config_data.set_quoted('LOCALEDIR', localedir)
- config_data.set('HAVE_X11', mutter_have_x11)
-+config_data.set('HAVE_LOGIND', have_logind)
- 
- config_h = configure_file(
-         input: 'config.h.meson',
-@@ -43,9 +44,27 @@ config_h = configure_file(
+@@ -43,9 +43,21 @@ config_h = configure_file(
          configuration: config_data
  )
  
--systemd_user_unit_dir = dependency('systemd').get_pkgconfig_variable('systemduserunitdir',
--                                                                     define_variable: ['prefix', prefix])
--systemd_dependency = dependency('libsystemd')
-+have_logind = get_option('logind')
-+if have_logind
-+systemd_user_unit_dir = get_option('systemdsystemunitdir')
-+if systemdsystemunitdir != 'no'
-+  assert(systemd_dep.found(), 'systemd required but not found, please provide a valid systemd system unit dir or disable it')
-+  if get_option('systemdsystemunitdir') != ''
-+    systemd_user_unit_dir = get_option('systemdsystemunitdir')
-+  else
-+    systemd_user_unit_dir = systemd_dep.get_pkgconfig_variable('systemdsystemunitdir')
-+  endif                                                                     
-+  logind_dep = dependency('libsystemd', required: false)
++ # Check for systemd
++use_systemd = get_option('logind') == 'systemd'
++if use_systemd
++  libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
++  session_bin_deps += libsystemd_dep
++elif get_option('logind') == 'elogind'
++  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
++  session_bin_deps += libelogind_dep
++endif
 +
-+  if not logind_dep.found()
-+    logind_dep = dependency('libelogind', required: false)
-+  endif
-+
-+  if not logind_dep.found()
-+    error('No logind provider dependency found: tried libsystemd and libelogind')
-+  endif
-+ endif
++if systemd_userunitdir == '' and use_systemd
+ systemd_user_unit_dir = dependency('systemd').get_pkgconfig_variable('systemduserunitdir',
+                                                                      define_variable: ['prefix', prefix])
+ systemd_dependency = dependency('libsystemd')
 +endif
  
  dbus_proxies = []
  dbus_proxies += {
-@@ -135,7 +154,7 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
+@@ -135,7 +147,10 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
  compositor_dependencies += dependency(libmutter_cogl_name)
  compositor_dependencies += dependency(libmutter_clutter_name)
  compositor_dependencies += mutter_dependency
--compositor_dependencies += systemd_dependency
-+compositor_dependencies += logind_dep
++
++if use_systemd
+ compositor_dependencies += systemd_dependency
++endif
  
  compositor_headers = []
  compositor_headers += 'compositor/kiosk-app.h'
-@@ -199,15 +218,17 @@ i18n.merge_file(
-         type: 'desktop'
- )
- 
-+if systemdsystemunitdir != 'no'
- systemd_service_config_data = configuration_data()
- systemd_service_config_data.set('bindir', bindir)
--
- systemd_service_files = []
- systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@wayland.service.in'
- if mutter_have_x11
-         systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@x11.service.in'
- endif
-+endif
- 
-+if systemdsystemunitdir != 'no'
- foreach service_file : systemd_service_files
-         configure_file(
-                 input: service_file,
-@@ -216,6 +237,7 @@ foreach service_file : systemd_service_files
-                 install_dir: systemd_user_unit_dir
-         )
- endforeach
-+endif
- 
- targetconf = configuration_data()
- 
-@@ -231,8 +253,10 @@ target = configure_file(
-         install_dir: systemd_user_unit_dir
- )
- 
-+if systemdsystemunitdir != 'no'
- systemd_service_config_data = configuration_data()
- systemd_service_config_data.set('bindir', bindir)
-+endif
- 
- dconf_config_data = configuration_data()
- dconf_config_data.set('PACKAGE', meson.project_name())
 diff --git a/meson_options.txt b/meson_options.txt
-index 900652d..491a569 100644
+index 900652d..3eb4802 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -15,3 +15,14 @@ option('search-app',
@@ -117,35 +69,39 @@ index 900652d..491a569 100644
    description: 'Build kiosk search app example'
  )
 +
-+option('logind',
-+  type: 'boolean',
-+  value: true,
-+  description: 'Enable logind support'
++option('logind', 
++  type: 'combo', 
++  choices: ['systemd', 'elogind'], value: 'systemd', 
++  description: 'logind implementation'
 +)
-+option('systemdsystemunitdir', 
++
++option('systemduserunitdir', 
 +  type: 'string', 
-+  value: '', 
-+  description: 'Directory for systemd service files, or \'no\' to disable.'
++  description: 'Directory for systemd user service files'
 +)
 \ No newline at end of file
 diff --git a/search-app/meson.build b/search-app/meson.build
-index a1d683f..ed6a924 100644
+index a1d683f..963be0a 100644
 --- a/search-app/meson.build
 +++ b/search-app/meson.build
-@@ -39,6 +39,7 @@ i18n.merge_file(
+@@ -39,14 +39,16 @@ i18n.merge_file(
          type: 'desktop'
  )
  
-+if systemdsystemunitdir != 'no'
++if use_systemd
  configure_file(
         input: 'systemd/org.gnome.Kiosk.SearchApp.service.in',
         output: '@BASENAME@',
-@@ -50,3 +51,4 @@ kiosk_search_appliance_systemd_target_dir = join_paths(systemd_user_unit_dir, 'g
+        configuration: systemd_service_config_data,
+        install_dir: systemd_user_unit_dir
+ )
+-
++endforeach
+ kiosk_search_appliance_systemd_target_dir = join_paths(systemd_user_unit_dir, 'gnome-session@org.gnome.Kiosk.SearchApp.target.d')
  install_data('systemd/session.conf',
          install_dir: kiosk_search_appliance_systemd_target_dir
  )
 +endif
-\ No newline at end of file
 
 From c9eb493fe2748c9b3bd463614aa1badec19c2bc0 Mon Sep 17 00:00:00 2001
 From: Nathaniel Russell <naterussell83@gmail.com>
