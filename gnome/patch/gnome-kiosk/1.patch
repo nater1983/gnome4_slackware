@@ -96,3 +96,43 @@ index 900652d..f9f9d23 100644
 -- 
 GitLab
 
+From c97ea38e67db64c718c2815a388352276d6904e9 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 7 Mar 2025 00:30:57 +0000
+Subject: [PATCH] Update file meson.build
+
+---
+ meson.build | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 4ba7c0f..dfeb6d2 100644
+--- a/meson.build
++++ b/meson.build
+@@ -207,10 +207,6 @@ i18n.merge_file(
+         type: 'desktop'
+ )
+ 
+-if mutter_have_x11
+-        systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@x11.service.in'
+-endif
+-
+ targetconf = configuration_data()
+ 
+ sessions_wants = ['org.gnome.Kiosk@wayland.service']
+@@ -218,12 +214,6 @@ if mutter_have_x11
+         sessions_wants += ['org.gnome.Kiosk@x11.service']
+ endif
+ targetconf.set('SUPPORTED_SESSIONS', ' '.join(sessions_wants))
+-target = configure_file(
+-        input: 'compositor/data/systemd/org.gnome.Kiosk.target.in',
+-        output: 'org.gnome.Kiosk.target',
+-        configuration: targetconf,
+-        install_dir: systemd_user_unit_dir
+-)
+ 
+ dconf_config_data = configuration_data()
+ dconf_config_data.set('PACKAGE', meson.project_name())
+-- 
+GitLab
+
