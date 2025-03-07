@@ -118,8 +118,8 @@ index 900652d..491a569 100644
  )
 +
 +option('logind',
-+  type: 'boolean',
-+  value: true,
++  type: 'string',
++  value: '',
 +  description: 'Enable logind support'
 +)
 +option('systemdsystemunitdir', 
