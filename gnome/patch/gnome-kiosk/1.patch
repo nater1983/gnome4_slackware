@@ -1,0 +1,98 @@
+From 700880e83d0c263658ccc6db5ef4232f94667090 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 7 Mar 2025 00:27:38 +0000
+Subject: [PATCH] Update 2 files
+
+- /meson_options.txt
+- /meson.build
+---
+ meson.build       | 33 ++++++++++++---------------------
+ meson_options.txt |  6 ++++++
+ 2 files changed, 18 insertions(+), 21 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index c27c073..4ba7c0f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -43,9 +43,18 @@ config_h = configure_file(
+         configuration: config_data
+ )
+ 
+-systemd_user_unit_dir = dependency('systemd').get_pkgconfig_variable('systemduserunitdir',
+-                                                                     define_variable: ['prefix', prefix])
+-systemd_dependency = dependency('libsystemd')
++have_logind = get_option('logind')
++if have_logind
++  logind_dep = dependency('libsystemd', required: false)
++
++  if not logind_dep.found()
++    logind_dep = dependency('libelogind', required: false)
++  endif
++
++  if not logind_dep.found()
++    error('No logind provider dependency found: tried libsystemd and libelogind')
++  endif
++endif
+ 
+ dbus_proxies = []
+ dbus_proxies += {
+@@ -135,7 +144,6 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
+ compositor_dependencies += dependency(libmutter_cogl_name)
+ compositor_dependencies += dependency(libmutter_clutter_name)
+ compositor_dependencies += mutter_dependency
+-compositor_dependencies += systemd_dependency
+ 
+ compositor_headers = []
+ compositor_headers += 'compositor/kiosk-app.h'
+@@ -199,24 +207,10 @@ i18n.merge_file(
+         type: 'desktop'
+ )
+ 
+-systemd_service_config_data = configuration_data()
+-systemd_service_config_data.set('bindir', bindir)
+-
+-systemd_service_files = []
+-systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@wayland.service.in'
+ if mutter_have_x11
+         systemd_service_files += 'compositor/data/systemd/org.gnome.Kiosk@x11.service.in'
+ endif
+ 
+-foreach service_file : systemd_service_files
+-        configure_file(
+-                input: service_file,
+-                output: '@BASENAME@',
+-                configuration: systemd_service_config_data,
+-                install_dir: systemd_user_unit_dir
+-        )
+-endforeach
+-
+ targetconf = configuration_data()
+ 
+ sessions_wants = ['org.gnome.Kiosk@wayland.service']
+@@ -231,9 +225,6 @@ target = configure_file(
+         install_dir: systemd_user_unit_dir
+ )
+ 
+-systemd_service_config_data = configuration_data()
+-systemd_service_config_data.set('bindir', bindir)
+-
+ dconf_config_data = configuration_data()
+ dconf_config_data.set('PACKAGE', meson.project_name())
+ dconf_config_data.set('DATADIR', datadir)
+diff --git a/meson_options.txt b/meson_options.txt
+index 900652d..f9f9d23 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -15,3 +15,9 @@ option('search-app',
+   value: true,
+   description: 'Build kiosk search app example'
+ )
++
++option('logind',
++  type: 'boolean',
++  value: true,
++  description: 'Enable logind support'
++)
+-- 
+GitLab
+
