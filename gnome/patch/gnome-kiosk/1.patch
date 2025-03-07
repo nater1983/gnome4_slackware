@@ -30,7 +30,7 @@ index c27c073..f77509f 100644
  
  config_h = configure_file(
          input: 'config.h.meson',
-@@ -43,9 +44,26 @@ config_h = configure_file(
+@@ -43,9 +44,28 @@ config_h = configure_file(
          configuration: config_data
  )
  
@@ -58,7 +58,7 @@ index c27c073..f77509f 100644
 +  endif
 + endif
 +endif
-
++
  dbus_proxies = []
  dbus_proxies += {
 @@ -135,7 +153,7 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
