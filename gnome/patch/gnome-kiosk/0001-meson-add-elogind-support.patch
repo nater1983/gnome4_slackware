@@ -137,16 +137,6 @@ index a1d683f..963be0a 100644
          install_dir: kiosk_search_appliance_systemd_target_dir
  )
 +endif
-
-From c9eb493fe2748c9b3bd463614aa1badec19c2bc0 Mon Sep 17 00:00:00 2001
-From: Nathaniel Russell <naterussell83@gmail.com>
-Date: Fri, 7 Mar 2025 00:39:34 +0000
-Subject: [PATCH] Update file kiosk-compositor.c
-
----
- compositor/kiosk-compositor.c | 6 ------
- 1 file changed, 6 deletions(-)
-
 diff --git a/compositor/kiosk-compositor.c b/compositor/kiosk-compositor.c
 index f79cbc4..a9bc0de 100644
 --- a/compositor/kiosk-compositor.c
@@ -164,18 +154,6 @@ index f79cbc4..a9bc0de 100644
  static void
  register_session (KioskCompositor *self)
  {
--- 
-GitLab
-
-From d11cd10e6ea5138018f3e20418c7cf26f12ec0ef Mon Sep 17 00:00:00 2001
-From: Nathaniel Russell <naterussell83@gmail.com>
-Date: Fri, 7 Mar 2025 00:40:31 +0000
-Subject: [PATCH] Update file kiosk-compositor.c
-
----
- compositor/kiosk-compositor.c | 1 -
- 1 file changed, 1 deletion(-)
-
 diff --git a/compositor/kiosk-compositor.c b/compositor/kiosk-compositor.c
 index a9bc0de..f93f459 100644
 --- a/compositor/kiosk-compositor.c
@@ -188,6 +166,40 @@ index a9bc0de..f93f459 100644
  }
  
  static void
--- 
-GitLab
-
+diff --git a/kiosk-script/gnome-kiosk-script b/kiosk-script/gnome-kiosk-script
+index c4ab176..c2d6f58 100755
+--- a/kiosk-script/gnome-kiosk-script
++++ b/kiosk-script/gnome-kiosk-script
+@@ -1,9 +1,10 @@
+ #!/usr/bin/sh
+ 
+ EXECDIR=~/.local/bin
++CONFIG=/etc/xdg/autostart
+ 
+ if [ ! -e $EXECDIR/gnome-kiosk-script ]; then
+-    mkdir -p $EXECDIR ~/.config
++    mkdir -p $EXECDIR $CONFIG ~/.config
+     cat > $EXECDIR/gnome-kiosk-script <<- "EOF"
+ 	#!/bin/sh
+ 	# This script is located in ~/.local/bin.
+@@ -18,7 +19,20 @@ if [ ! -e $EXECDIR/gnome-kiosk-script ]; then
+ 	exec "$0" "$@"
+ EOF
+ 
++cat > $CONFIG/gnome-kiosk.desktop <<- "EOF"
++
++[Desktop Entry]
++Type=Application
++Exec=~/.local/bin/gnome-kiosk-script
++Hidden=false
++NoDisplay=false
++X-GNOME-Autostart-enabled=true
++Name=Kiosk Script
++Comment=Starts the gnome-kiosk-script on login
++EOF
++
+     chmod +x $EXECDIR/gnome-kiosk-script
++    chmod -x $CONFIG/gnome-kiosk.desktop
+     touch ~/.config/gnome-initial-setup-done
+ fi
+ 
