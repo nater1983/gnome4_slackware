@@ -35,10 +35,8 @@ index c27c073..70a52f4 100644
 +use_systemd = get_option('logind') == 'systemd'
 +if use_systemd
 +  libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
-+  session_bin_deps += libsystemd_dep
 +elif get_option('logind') == 'elogind'
 +  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
-+  session_bin_deps += libelogind_dep
 +endif
 +
 +if systemd_userunitdir == '' and use_systemd
