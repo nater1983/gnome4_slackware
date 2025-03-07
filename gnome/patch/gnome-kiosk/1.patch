@@ -14,7 +14,7 @@ index e02bb88..ab613aa 100644
         install_dir: systemd_user_unit_dir
  )
 -
-+endforeach
++
  kiosk_script_systemd_target_dir = join_paths(systemd_user_unit_dir, 'gnome-session@gnome-kiosk-script.target.d')
  install_data('systemd/session.conf',
          install_dir: kiosk_script_systemd_target_dir
