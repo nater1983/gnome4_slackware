@@ -203,3 +203,32 @@ index a1d683f..c6b91f5 100644
 -- 
 GitLab
 
+From c9eb493fe2748c9b3bd463614aa1badec19c2bc0 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 7 Mar 2025 00:39:34 +0000
+Subject: [PATCH] Update file kiosk-compositor.c
+
+---
+ compositor/kiosk-compositor.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/compositor/kiosk-compositor.c b/compositor/kiosk-compositor.c
+index f79cbc4..a9bc0de 100644
+--- a/compositor/kiosk-compositor.c
++++ b/compositor/kiosk-compositor.c
+@@ -134,12 +134,6 @@ register_with_display_manager (KioskCompositor *self)
+         }
+ }
+ 
+-static void
+-register_with_systemd (KioskCompositor *self)
+-{
+-        sd_notify (TRUE, "READY=1");
+-}
+-
+ static void
+ register_session (KioskCompositor *self)
+ {
+-- 
+GitLab
+
