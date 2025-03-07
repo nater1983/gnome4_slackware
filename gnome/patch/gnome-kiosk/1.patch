@@ -19,7 +19,7 @@ index e02bb88..2dbd24a 100644
  install_data('gnome-session/gnome-kiosk-script.session',
          install_dir: session_dir,
 diff --git a/meson.build b/meson.build
-index c27c073..f77509f 100644
+index c27c073..05bdc63 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -36,6 +36,7 @@ config_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
@@ -30,7 +30,7 @@ index c27c073..f77509f 100644
  
  config_h = configure_file(
          input: 'config.h.meson',
-@@ -43,9 +44,28 @@ config_h = configure_file(
+@@ -43,9 +44,27 @@ config_h = configure_file(
          configuration: config_data
  )
  
@@ -58,10 +58,10 @@ index c27c073..f77509f 100644
 +  endif
 + endif
 +endif
-+
+ 
  dbus_proxies = []
  dbus_proxies += {
-@@ -135,7 +153,7 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
+@@ -135,7 +154,7 @@ compositor_dependencies += dependency('gdk-pixbuf-2.0')
  compositor_dependencies += dependency(libmutter_cogl_name)
  compositor_dependencies += dependency(libmutter_clutter_name)
  compositor_dependencies += mutter_dependency
@@ -70,7 +70,7 @@ index c27c073..f77509f 100644
  
  compositor_headers = []
  compositor_headers += 'compositor/kiosk-app.h'
-@@ -199,15 +217,17 @@ i18n.merge_file(
+@@ -199,15 +218,17 @@ i18n.merge_file(
          type: 'desktop'
  )
  
@@ -89,7 +89,7 @@ index c27c073..f77509f 100644
  foreach service_file : systemd_service_files
          configure_file(
                  input: service_file,
-@@ -216,6 +236,7 @@ foreach service_file : systemd_service_files
+@@ -216,6 +237,7 @@ foreach service_file : systemd_service_files
                  install_dir: systemd_user_unit_dir
          )
  endforeach
@@ -97,7 +97,7 @@ index c27c073..f77509f 100644
  
  targetconf = configuration_data()
  
-@@ -231,8 +252,10 @@ target = configure_file(
+@@ -231,8 +253,10 @@ target = configure_file(
          install_dir: systemd_user_unit_dir
  )
  
