@@ -229,6 +229,14 @@ index f79cbc4..a9bc0de 100644
  static void
  register_session (KioskCompositor *self)
  {
+ @@ -141,7 +141,6 @@ register_session (KioskCompositor *self)
+ 
+         register_with_display_manager (self);
+ 
+-        register_with_systemd (self);
+ }
+ 
+ static void
 -- 
 GitLab
 
