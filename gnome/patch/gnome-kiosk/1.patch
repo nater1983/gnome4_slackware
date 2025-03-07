@@ -39,7 +39,7 @@ index c27c073..21dd706 100644
 +  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
 +endif
 +
-+if systemd_userunitdir == '' and use_systemd
++if systemd_user_unit_dir == '' and use_systemd
  systemd_user_unit_dir = dependency('systemd').get_pkgconfig_variable('systemduserunitdir',
                                                                       define_variable: ['prefix', prefix])
  systemd_dependency = dependency('libsystemd')
