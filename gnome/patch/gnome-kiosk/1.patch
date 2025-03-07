@@ -229,7 +229,23 @@ index f79cbc4..a9bc0de 100644
  static void
  register_session (KioskCompositor *self)
  {
- @@ -141,7 +141,6 @@ register_session (KioskCompositor *self)
+-- 
+GitLab
+
+From d11cd10e6ea5138018f3e20418c7cf26f12ec0ef Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 7 Mar 2025 00:40:31 +0000
+Subject: [PATCH] Update file kiosk-compositor.c
+
+---
+ compositor/kiosk-compositor.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/compositor/kiosk-compositor.c b/compositor/kiosk-compositor.c
+index a9bc0de..f93f459 100644
+--- a/compositor/kiosk-compositor.c
++++ b/compositor/kiosk-compositor.c
+@@ -141,7 +141,6 @@ register_session (KioskCompositor *self)
  
          register_with_display_manager (self);
  
