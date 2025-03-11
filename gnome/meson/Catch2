@@ -6,5 +6,5 @@ cd cmake-build
     -DCATCH_ENABLE_WERROR=OFF \
     -DCATCH_INSTALL_DOCS=OFF \
     -DBUILD_SHARED_LIBS=ON
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make
+make install DESTDIR=$PKG
