@@ -43,6 +43,7 @@ gssdp
 gupnp
 gupnp-av
 gupnp-dlna
+gupnp-tools
 gst-editing-services
 gst-plugins-bad
 gst-rtsp-server
