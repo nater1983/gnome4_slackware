@@ -1,1 +1,10 @@
-meson
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DCATCH_BUILD_EXTRA_TESTS=ON \
+    -DCATCH_ENABLE_WERROR=OFF \
+    -DCATCH_INSTALL_DOCS=OFF \
+    -DBUILD_SHARED_LIBS=ON
+make -C ../build
+make -C ../build install DESTDIR=$PKG
