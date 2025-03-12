@@ -1,12 +1,12 @@
 ./configure \
-    "${GNOME_MAKE_ARGS[@]}"
+    "${GNOME_MAKE_ARGS[@]}" > /dev/null 2>&1
 #Do this so that we can use automake-1.17 and newer.
-make distclean
-rm -f aclocal.m4 ltmain.sh libtool
-aclocal
-automake --add-missing
-autoconf
-libtoolize
+make distclean > /dev/null 2>&1
+rm -f aclocal.m4 ltmain.sh libtool > /dev/null 2>&1
+aclocal > /dev/null 2>&1
+automake --add-missing > /dev/null 2>&1
+autoconf > /dev/null 2>&1
+libtoolize > /dev/null 2>&1
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
