@@ -1,4 +1,5 @@
 #Do this so that we can use automake-1.17 and newer.
+make distclean
 rm -f aclocal.m4 ltmain.sh libtool
 aclocal
 automake --add-missing
