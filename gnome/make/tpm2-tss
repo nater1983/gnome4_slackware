@@ -1,0 +1,12 @@
+autoreconf
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}"
+  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --with-udevrulesdir=/lib/udev/rules.d \
+  --with-udevrulesprefix=60- \
+  --with-tmpfilesdir=/etc/tmpfiles.d \
+  --with-sysusersdir=/etc/sysusers.d \
+make
+make install DESTDIR=$PKG
