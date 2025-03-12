@@ -2,7 +2,7 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}"
-  --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
   --with-udevrulesdir=/lib/udev/rules.d \
   --with-udevrulesprefix=60- \
   --with-tmpfilesdir=/etc/tmpfiles.d \
