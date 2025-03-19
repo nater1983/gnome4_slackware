@@ -1,3 +1,4 @@
+ln -sf .cargo/config config.toml
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
