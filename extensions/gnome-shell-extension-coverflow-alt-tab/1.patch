@@ -17,5 +17,5 @@ index 80b1167..74d2aa3 100644
      "description": "Replacement of Alt-Tab, iterates through windows in a cover-flow manner.",
 -    "url": "https://github.com/dsheeler/CoverflowAltTab"
 +    "url": "https://github.com/dsheeler/CoverflowAltTab",
-+    "version": 76
++    "version": 77
  }
