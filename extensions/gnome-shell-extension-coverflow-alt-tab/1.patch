@@ -8,14 +8,12 @@ Subject: [PATCH] Update metadata.json
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/metadata.json b/metadata.json
-index 80b1167..74d2aa3 100644
+index e71f836..ded666e 100644
 --- a/metadata.json
 +++ b/metadata.json
-@@ -10,5 +10,6 @@
-     "shell-version": ["46"],
+@@ -11,4 +11,5 @@
      "uuid": "CoverflowAltTab@palatis.blogspot.com",
      "description": "Replacement of Alt-Tab, iterates through windows in a cover-flow manner.",
--    "url": "https://github.com/dsheeler/CoverflowAltTab"
-+    "url": "https://github.com/dsheeler/CoverflowAltTab",
+     "url": "https://github.com/dsheeler/CoverflowAltTab"
 +    "version": 77
  }
