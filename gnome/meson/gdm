@@ -17,6 +17,7 @@ cd build
     -Dsysconfsubdir=/etc/gdm \
     -Dgdm-xsession=true \
     -Dx11-support=true \
+    -Dwayland-support=true \
     -Dinitial-vt=7
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
