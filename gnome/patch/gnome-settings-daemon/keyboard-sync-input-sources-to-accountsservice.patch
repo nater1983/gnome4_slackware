@@ -21,7 +21,7 @@ index ee12198..799acb6 100644
  geocode_glib_dep = dependency('geocode-glib-2.0', version: '>= 3.26.3', required: false)
  if not geocode_glib_dep.found()
 diff --git a/plugins/xsettings/gsd-xsettings-manager.c b/plugins/xsettings/gsd-xsettings-manager.c
-index a357100..4963791 100644
+index fcc1d9df..0a2c58d7 100644
 --- a/plugins/xsettings/gsd-xsettings-manager.c
 +++ b/plugins/xsettings/gsd-xsettings-manager.c
 @@ -38,6 +38,8 @@
@@ -30,10 +30,10 @@ index a357100..4963791 100644
  
 +#include <act/act.h>
 +
+ #include "gio/gio.h"
  #include "gnome-settings-profile.h"
- #include "gsd-enums.h"
- #include "gsd-xsettings-manager.h"
-@@ -57,6 +59,7 @@
+ #include "gnome-settings-daemon/gsd-enums.h"
+@@ -58,6 +60,7 @@
  #define WM_SETTINGS_SCHEMA        "org.gnome.desktop.wm.preferences"
  #define A11Y_SCHEMA               "org.gnome.desktop.a11y"
  #define A11Y_INTERFACE_SCHEMA     "org.gnome.desktop.a11y.interface"
@@ -41,7 +41,7 @@ index a357100..4963791 100644
  #define CLASSIC_WM_SETTINGS_SCHEMA "org.gnome.shell.extensions.classic-overrides"
  
  #define XSETTINGS_PLUGIN_SCHEMA "org.gnome.settings-daemon.plugins.xsettings"
-@@ -75,6 +78,7 @@
+@@ -76,6 +79,7 @@
  
  #define HIGH_CONTRAST_KEY "high-contrast"
  
@@ -49,7 +49,7 @@ index a357100..4963791 100644
  #define GTK_IM_MODULE_KEY      "gtk-im-module"
  
  #define GTK_SETTINGS_DBUS_PATH "/org/gtk/Settings"
-@@ -285,6 +289,7 @@ struct _GsdXSettingsManager
+@@ -286,6 +290,7 @@ struct _GsdXSettingsManager
          gint64             fontconfig_timestamp;
  
          GSettings         *interface_settings;
@@ -57,10 +57,10 @@ index a357100..4963791 100644
          GdkSeat           *user_seat;
  
          GsdXSettingsGtk   *gtk;
-@@ -1338,12 +1338,80 @@ migrate_settings (void)
+@@ -1278,12 +1283,80 @@ migrate_settings (void)
                                      mouse_entries, G_N_ELEMENTS (mouse_entries));
  }
-
+ 
 +void act_user_set_input_sources(ActUser *user, GVariant *sources) {
 +    g_return_if_fail (ACT_IS_USER(user));
 +}
@@ -138,7 +138,7 @@ index a357100..4963791 100644
          setting = g_settings_get_string (manager->interface_settings,
                                           GTK_IM_MODULE_KEY);
          if (setting && *setting)
-@@ -1351,6 +1415,22 @@ update_gtk_im_module (GsdXSettingsManager *manager)
+@@ -1291,6 +1364,22 @@ update_gtk_im_module (GsdXSettingsManager *manager)
          else
                  module = GTK_IM_MODULE_IBUS;
  
@@ -161,7 +161,7 @@ index a357100..4963791 100644
          xsettings_manager_set_string (manager->manager, "Gtk/IMModule", module);
          g_free (setting);
  }
-@@ -1423,6 +1503,10 @@ gsd_xsettings_manager_start (GsdXSettingsManager *manager,
+@@ -1362,6 +1451,10 @@ gsd_xsettings_manager_startup (GApplication *app)
          g_signal_connect_swapped (manager->interface_settings,
                                    "changed::" GTK_IM_MODULE_KEY,
                                    G_CALLBACK (update_gtk_im_module), manager);
@@ -172,14 +172,14 @@ index a357100..4963791 100644
          update_gtk_im_module (manager);
  
          manager->monitors_changed_id =
-@@ -1629,6 +1713,7 @@ gsd_xsettings_manager_stop (GsdXSettingsManager *manager)
+@@ -1574,6 +1667,7 @@ gsd_xsettings_manager_shutdown (GApplication *app)
                  manager->user_seat = NULL;
          }
  
 +        g_clear_object (&manager->input_sources_settings);
          g_clear_object (&manager->interface_settings);
- }
  
+         g_clear_handle_id (&manager->start_idle_id, g_source_remove);
 diff --git a/plugins/xsettings/meson.build b/plugins/xsettings/meson.build
 index 9cde0a13..5202ffc3 100644
 --- a/plugins/xsettings/meson.build
