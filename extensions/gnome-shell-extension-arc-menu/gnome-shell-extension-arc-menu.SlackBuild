@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-arc-menu
 SRCNAM=ArcMenu
-VERSION=${VERSION:-63}
+VERSION=${VERSION:-65}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=5fe2722d79f869107bb032505f2f2a0e8b87b0c3
+_commit=7e7b85be1dd00ddf76883765beabeb12ec71d558
 
 ARCH=noarch
 
