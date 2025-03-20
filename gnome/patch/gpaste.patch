@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gpaste/693a0d715c409b7be7f1cd3663219c7a8b10aae4.patch
