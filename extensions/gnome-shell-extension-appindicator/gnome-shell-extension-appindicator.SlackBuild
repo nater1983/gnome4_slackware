@@ -25,7 +25,7 @@
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-appindicator
-VERSION=${VERSION:-59}
+VERSION=${VERSION:-60}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -51,6 +51,7 @@ rm -rf $PRGNAM
 git clone https://github.com/ubuntu/gnome-shell-extension-appindicator.git
 cd $PRGNAM
 git checkout $_commit
+patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
