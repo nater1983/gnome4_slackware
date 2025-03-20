@@ -26,12 +26,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-autohide-battery
 SRCNAM=autohide-battery
-VERSION=${VERSION:-53}
+VERSION=${VERSION:-55}
 TAG=_gfs
 BUILD=${BUILD:-1}
-ARCH=noarch
 PKGTYPE=${PKGTYPE:-txz}
-_commit=e7890d677dd503609455815be7ab894f9fee2576
+_commit=323f3e5c320052471c75a3f8cda05c720b3fdff6
+
+ARCH=noarch
 
 if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   echo "$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE"
@@ -51,6 +52,7 @@ rm -rf $SRCNAM
 git clone https://github.com/ai/autohide-battery.git
 cd $SRCNAM
 git checkout $_commit
+patch -Np1 -i $CWD/72.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
