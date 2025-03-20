@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-desktop-icons-ng
 SRCNAM=desktop-icons-ng
-VERSION=${VERSION:-87+0e88c36}
+VERSION=${VERSION:-94+5f759c2}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=0e88c3620b4c64dcafec40a1b192f6791d155e8d
+_commit=5f759c22e8483d827aaa3b2d28b84326be865f2f
 
 ARCH=noarch
 
