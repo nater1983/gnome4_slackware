@@ -26,12 +26,12 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-show-desktop
 SRCNAM=Show-Desktop-Button
-VERSION=${VERSION:-37}
+VERSION=${VERSION:-44}
 TAG=_gfs
 BUILD=${BUILD:-1}
 ARCH=noarch
 PKGTYPE=${PKGTYPE:-txz}
-_commit=8103cf246d5a880f696eb501afd5c3ece6c2c2fb
+_commit=212f25e2520e6be72e5bbae1bb6c1614abf843b6
 
 if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   echo "$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE"
@@ -51,6 +51,7 @@ rm -rf $SRCNAM
 git clone https://github.com/amivaleo/Show-Desktop-Button.git
 cd $SRCNAM
 git checkout $_commit
+patch -Np1 -i $CWD/53.patch
 
 mkdir -p $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo
 cp -r * $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/
