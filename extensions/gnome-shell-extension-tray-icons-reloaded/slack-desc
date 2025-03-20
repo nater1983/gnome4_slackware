@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+  					 |-----handy-ruler------------------------------------------------------|
+gnome-shell-extension-tray-icons-reloaded: gnome-shell-extensions-tray-icons-rleaded (brings back the Tray Icons)
+gnome-shell-extension-tray-icons-reloaded:
+gnome-shell-extension-tray-icons-reloaded: Tray Icons Reloaded is a GNOME Shell extension which bring back Tray 
+gnome-shell-extension-tray-icons-reloaded: Icons to top panel, with additional features. 
+gnome-shell-extension-tray-icons-reloaded: 
+gnome-shell-extension-tray-icons-reloaded: 
+gnome-shell-extension-tray-icons-reloaded: 
+gnome-shell-extension-tray-icons-reloaded: Homepage:
+gnome-shell-extension-tray-icons-reloaded: https://github.com/MartinPL/Tray-Icons-Reloaded 
+gnome-shell-extension-tray-icons-reloaded: 
+gnome-shell-extension-tray-icons-reloaded:

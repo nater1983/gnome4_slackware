@@ -1,0 +1,504 @@
+From 0b2f6d3a5d6ac00ef89fdf261a50ca5b986050eb Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Sat, 3 Feb 2024 20:19:22 +0100
+Subject: [PATCH 1/8] apply patch from @darkblaze69
+
+---
+ appIcons.js      | 18 +++++++++---------
+ panel.js         |  6 +++---
+ panelManager.js  |  8 ++++----
+ panelStyle.js    |  6 +++---
+ taskbar.js       | 12 ++++++------
+ windowPreview.js |  4 ++--
+ 6 files changed, 27 insertions(+), 27 deletions(-)
+
+diff --git a/appIcons.js b/appIcons.js
+index 00352fd3..59c9519c 100644
+--- a/appIcons.js
++++ b/appIcons.js
+@@ -146,7 +146,7 @@ export const TaskbarAppIcon = GObject.registerClass({
+         this._dotsContainer = new St.Widget({ layout_manager: new Clutter.BinLayout() });
+         this._dtpIconContainer = new St.Widget({ layout_manager: new Clutter.BinLayout(), style: getIconContainerStyle(panel.checkIfVertical()) });
+ 
+-        this.remove_actor(this._iconContainer);
++        this.remove_child(this._iconContainer);
+         
+         this._dtpIconContainer.add_child(this._iconContainer);
+ 
+@@ -407,7 +407,7 @@ export const TaskbarAppIcon = GObject.registerClass({
+             // Workaround to prevent scaled icon from being ugly when it is animated on hover.
+             // It increases the "resolution" of the icon without changing the icon size.
+             this.icon.createIcon = (iconSize) => this.app.create_icon_texture(2 * iconSize);
+-            this._iconIconBinActorAddedId = this.icon._iconBin.connect('actor-added', () => {
++            this._iconIconBinActorAddedId = this.icon._iconBin.connect('child-added', () => {
+                 let size = this.icon.iconSize * Utils.getScaleFactor()
+                 
+                 if (this.icon._iconBin.child.mapped) {
+@@ -649,7 +649,7 @@ export const TaskbarAppIcon = GObject.registerClass({
+             // We want to keep the item hovered while the menu is up
+             this._menu.blockSourceEvents = true;
+ 
+-            Main.uiGroup.add_actor(this._menu.actor);
++            Main.uiGroup.add_child(this._menu.actor);
+             this._menuManager.addMenu(this._menu);
+         }
+         this._menu.updateQuitText();
+@@ -1107,7 +1107,7 @@ export const TaskbarAppIcon = GObject.registerClass({
+         if (type == DOT_STYLE.SOLID || type == DOT_STYLE.METRO) {
+             if (type == DOT_STYLE.SOLID || n <= 1) {
+                 cr.translate(startX, startY);
+-                Clutter.cairo_set_source_color(cr, bodyColor);
++                cr.setSourceColor(bodyColor);
+                 cr.newSubPath();
+                 cr.rectangle.apply(cr, [0, 0].concat(isHorizontalDots ? [areaSize, size] : [size, areaSize]));
+                 cr.fill();
+@@ -1121,15 +1121,15 @@ export const TaskbarAppIcon = GObject.registerClass({
+ 
+                 cr.translate(startX, startY);
+ 
+-                Clutter.cairo_set_source_color(cr, bodyColor);
++                cr.setSourceColor(bodyColor);
+                 cr.newSubPath();
+                 cr.rectangle.apply(cr, [0, 0].concat(isHorizontalDots ? [solidLength, size] : [size, solidLength]));
+                 cr.fill();
+-                Clutter.cairo_set_source_color(cr, blackenedColor);
++                cr.setSourceColor(blackenedColor);
+                 cr.newSubPath();
+                 cr.rectangle.apply(cr, isHorizontalDots ? [solidLength, 0, 1, size] : [0, solidLength, size, 1]);
+                 cr.fill();
+-                Clutter.cairo_set_source_color(cr, darkenedColor);
++                cr.setSourceColor(darkenedColor);
+                 cr.newSubPath();
+                 cr.rectangle.apply(cr, isHorizontalDots ? [solidDarkLength, 0, darkenedLength, size] : [0, solidDarkLength, size, darkenedLength]);
+                 cr.fill();
+@@ -1200,7 +1200,7 @@ export const TaskbarAppIcon = GObject.registerClass({
+ 
+             translate();
+ 
+-            Clutter.cairo_set_source_color(cr, bodyColor);
++            cr.setSourceColor(bodyColor);
+             preDraw();
+             for (let i = 0; i < n; i++) {
+                 cr.newSubPath();
+@@ -1697,7 +1697,7 @@ export const ShowAppsIconWrapper = class extends EventEmitter {
+             // We want to keep the item hovered while the menu is up
+             this._menu.blockSourceEvents = true;
+ 
+-            Main.uiGroup.add_actor(this._menu.actor);
++            Main.uiGroup.add_child(this._menu.actor);
+             this._menuManager.addMenu(this._menu);
+         }
+     }
+diff --git a/panel.js b/panel.js
+index b2f74f53..a9719144 100644
+--- a/panel.js
++++ b/panel.js
+@@ -262,12 +262,12 @@ export const Panel = GObject.registerClass({
+             ],
+             [
+                 this._centerBox,
+-                'actor-added',
++                'child-added',
+                 () => this._onBoxActorAdded(this._centerBox)
+             ],
+             [
+                 this._rightBox,
+-                'actor-added',
++                'child-added',
+                 () => this._onBoxActorAdded(this._rightBox)
+             ],
+             [
+@@ -553,7 +553,7 @@ export const Panel = GObject.registerClass({
+             let parent = this.statusArea[propName].container.get_parent();
+ 
+             if (parent) {
+-                parent.remove_actor(this.statusArea[propName].container);
++                parent.remove_child(this.statusArea[propName].container);
+             }
+ 
+             //calling this.statusArea[propName].destroy(); is buggy for now, gnome-shell never
+diff --git a/panelManager.js b/panelManager.js
+index b5acf1dc..98f67a89 100755
+--- a/panelManager.js
++++ b/panelManager.js
+@@ -201,7 +201,7 @@ export const PanelManager = class {
+         Panel.panelBoxes.forEach(c => this._signalsHandler.add(
+             [
+                 Main.panel[c], 
+-                'actor-added', 
++                'child-added', 
+                 (parent, child) => 
+                     this.primaryPanel && 
+                     this._adjustPanelMenuButton(this._getPanelMenuButton(child), this.primaryPanel.monitor, this.primaryPanel.getPosition())
+@@ -246,7 +246,7 @@ export const PanelManager = class {
+             } else {
+                 p.panelBox.remove_child(p);
+                 p.remove_child(p.panel);
+-                p.panelBox.add(p.panel);
++                p.panelBox.add_child(p.panel);
+ 
+                 p.panelBox.set_position(clipContainer.x, clipContainer.y);
+ 
+@@ -363,7 +363,7 @@ export const PanelManager = class {
+                     this._scrollAdjustment,
+                     this._fitModeAdjustment,
+                     this._overviewAdjustment);
+-                Main.layoutManager.overviewGroup.add_actor(view);
++                Main.layoutManager.overviewGroup.add_child(view);
+             }
+ 
+             this._workspacesViews.push(view);
+@@ -421,7 +421,7 @@ export const PanelManager = class {
+         Main.layoutManager.trackChrome(panelBox, { trackFullscreen: true, affectsStruts: true, affectsInputRegion: true });
+         
+         panel = new Panel.Panel(this, monitor, panelBox, isStandalone);
+-        panelBox.add(panel);
++        panelBox.add_child(panel);
+         panel.enable();
+ 
+         panelBox.visible = true;
+diff --git a/panelStyle.js b/panelStyle.js
+index e4b1f8e8..353e3ef0 100644
+--- a/panelStyle.js
++++ b/panelStyle.js
+@@ -184,7 +184,7 @@ export const PanelStyle = class {
+         this._applyStylesRecursively();
+         
+         /* connect signal */
+-        this._rightBoxActorAddedID = this.panel._rightBox.connect('actor-added',
++        this._rightBoxActorAddedID = this.panel._rightBox.connect('child-added',
+             (container, actor) => {
+                 if(this._rightBoxOperations.length && !this._ignoreAddedChild)
+                     this._recursiveApply(actor, this._rightBoxOperations);
+@@ -192,7 +192,7 @@ export const PanelStyle = class {
+                 this._ignoreAddedChild = 0;
+             }
+         );
+-        this._centerBoxActorAddedID = this.panel._centerBox.connect('actor-added',
++        this._centerBoxActorAddedID = this.panel._centerBox.connect('child-added',
+             (container, actor) => {
+                 if(this._centerBoxOperations.length && !this._ignoreAddedChild)
+                     this._recursiveApply(actor, this._centerBoxOperations);
+@@ -200,7 +200,7 @@ export const PanelStyle = class {
+                 this._ignoreAddedChild = 0;
+             }
+         );
+-        this._leftBoxActorAddedID = this.panel._leftBox.connect('actor-added',
++        this._leftBoxActorAddedID = this.panel._leftBox.connect('child-added',
+             (container, actor) => {
+                 if(this._leftBoxOperations.length)
+                     this._recursiveApply(actor, this._leftBoxOperations);
+diff --git a/taskbar.js b/taskbar.js
+index 85fb56c8..8f4a9867 100644
+--- a/taskbar.js
++++ b/taskbar.js
+@@ -227,7 +227,7 @@ export const Taskbar = class extends EventEmitter {
+         this._scrollView.connect('leave-event', this._onLeaveEvent.bind(this));
+         this._scrollView.connect('motion-event', this._onMotionEvent.bind(this));
+         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
+-        this._scrollView.add_actor(this._box);
++        this._scrollView.add_child(this._box);
+ 
+         this._showAppsIconWrapper = panel.showAppsIconWrapper;
+         this._showAppsIconWrapper.connect('menu-state-changed', (showAppsIconWrapper, opened) => {
+@@ -251,7 +251,7 @@ export const Taskbar = class extends EventEmitter {
+         this._hookUpLabel(this._showAppsIcon, this._showAppsIconWrapper);
+ 
+         this._container.add_child(new St.Widget({ width: 0, reactive: false }));
+-        this._container.add_actor(this._scrollView);
++        this._container.add_child(this._scrollView);
+         
+         let orientation = panel.getOrientation();
+         let fadeStyle = 'background-gradient-direction:' + orientation;
+@@ -264,8 +264,8 @@ export const Taskbar = class extends EventEmitter {
+         fade1.set_style(fadeStyle);
+         fade2.set_style(fadeStyle);
+ 
+-        this._container.add_actor(fade1);
+-        this._container.add_actor(fade2);
++        this._container.add_child(fade1);
++        this._container.add_child(fade2);
+ 
+         this.previewMenu = new WindowPreview.PreviewMenu(panel);
+         this.previewMenu.enable();
+@@ -1442,7 +1442,7 @@ export const TaskbarItemContainer = GObject.registerClass({
+         });
+ 
+         this._raisedClone.source.opacity = 0;
+-        Main.uiGroup.add_actor(cloneContainer);
++        Main.uiGroup.add_child(cloneContainer);
+     }
+ 
+     // Animate the clone.
+@@ -1544,7 +1544,7 @@ const DragPlaceholderItem = GObject.registerClass({
+             height: iconSize
+         });
+ 
+-        this.add_actor(this._clone);
++        this.add_child(this._clone);
+     }
+ 
+     destroy() {
+diff --git a/windowPreview.js b/windowPreview.js
+index d9c1d670..3ab0730d 100644
+--- a/windowPreview.js
++++ b/windowPreview.js
+@@ -95,7 +95,7 @@ export const PreviewMenu = GObject.registerClass({
+             y_expand: !this.isVertical
+         });
+ 
+-        this._scrollView.add_actor(this._box);
++        this._scrollView.add_child(this._box);
+         this.menu.add_child(this._scrollView);
+         this.add_child(this.menu);
+     }
+@@ -712,7 +712,7 @@ export const Preview = GObject.registerClass({
+         let [previewBinWidth, previewBinHeight] = this._getBinSize();
+         let closeButton = new St.Button({ style_class: 'window-close', accessible_name: 'Close window' });
+ 
+-        closeButton.add_actor(new St.Icon({ icon_name: 'window-close-symbolic' }));
++        closeButton.add_child(new St.Icon({ icon_name: 'window-close-symbolic' }));
+ 
+         this._closeButtonBin = new St.Widget({ 
+             style_class: 'preview-close-btn-container',
+
+From 83be1a776c3346d75b59c6cfe31936581b0dafa9 Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Sat, 3 Feb 2024 20:19:58 +0100
+Subject: [PATCH 2/8] remove CloneContainerConstraint
+
+---
+ taskbar.js | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/taskbar.js b/taskbar.js
+index 8f4a9867..e1f3e0f6 100644
+--- a/taskbar.js
++++ b/taskbar.js
+@@ -1324,21 +1324,6 @@ export const Taskbar = class extends EventEmitter {
+     }
+ };
+ 
+-const CloneContainerConstraint = GObject.registerClass({
+-}, class CloneContainerConstraint extends Clutter.BindConstraint {
+-
+-    vfunc_update_allocation(actor, actorBox) {
+-        if (!this.source)
+-            return;
+-
+-        let [stageX, stageY] = this.source.get_transformed_position();
+-        let [width, height] = this.source.get_transformed_size();
+-
+-        actorBox.set_origin(stageX, stageY);
+-        actorBox.set_size(width, height);
+-    }
+-});
+-
+ export const TaskbarItemContainer = GObject.registerClass({
+ 
+ }, class TaskbarItemContainer extends Dash.DashItemContainer {
+
+From d0465685cf68294c1a3e480f65c1f88052b48fce Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Sat, 3 Feb 2024 20:29:20 +0100
+Subject: [PATCH 3/8] add 46 to supported shell-version in metadata
+
+---
+ metadata.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/metadata.json b/metadata.json
+index 65dc8e6a..f95a7855 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -3,7 +3,7 @@
+ "uuid": "dash-to-panel@jderose9.github.com",
+ "name": "Dash to Panel",
+ "description": "An icon taskbar for the Gnome Shell. This extension moves the dash into the gnome main panel so that the application launchers and system tray are combined into a single panel, similar to that found in KDE Plasma and Windows 7+. A separate dock is no longer needed for easy access to running and favorited applications.\n\nFor a more traditional experience, you may also want to use Tweak Tool to enable Windows > Titlebar Buttons > Minimize & Maximize.\n\nFor the best support, please report any issues on Github. Dash-to-panel is developed and maintained by @jderose9 and @charlesg99.",
+-"shell-version": [ "45" ],
++"shell-version": [ "45", "46" ],
+ "url": "https://github.com/home-sweet-gnome/dash-to-panel",
+ "gettext-domain": "dash-to-panel",
+ "version": 9999
+
+From 291a8f64e209fb72729c9683dfcd1d01cf99d178 Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Sat, 3 Feb 2024 20:38:25 +0100
+Subject: [PATCH 4/8] remove 45 from supported shell-version in metadata
+
+---
+ metadata.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/metadata.json b/metadata.json
+index f95a7855..53146c1e 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -3,7 +3,7 @@
+ "uuid": "dash-to-panel@jderose9.github.com",
+ "name": "Dash to Panel",
+ "description": "An icon taskbar for the Gnome Shell. This extension moves the dash into the gnome main panel so that the application launchers and system tray are combined into a single panel, similar to that found in KDE Plasma and Windows 7+. A separate dock is no longer needed for easy access to running and favorited applications.\n\nFor a more traditional experience, you may also want to use Tweak Tool to enable Windows > Titlebar Buttons > Minimize & Maximize.\n\nFor the best support, please report any issues on Github. Dash-to-panel is developed and maintained by @jderose9 and @charlesg99.",
+-"shell-version": [ "45", "46" ],
++"shell-version": [ "46" ],
+ "url": "https://github.com/home-sweet-gnome/dash-to-panel",
+ "gettext-domain": "dash-to-panel",
+ "version": 9999
+
+From 382eca0b51d03726c7a1bb8544644ee7838eda47 Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Fri, 23 Feb 2024 20:36:04 +0100
+Subject: [PATCH 5/8] replace layout display property with backend property
+ patch from @darkblaze69
+
+---
+ panelManager.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/panelManager.js b/panelManager.js
+index 98f67a89..c76a2720 100755
+--- a/panelManager.js
++++ b/panelManager.js
+@@ -737,7 +737,7 @@ function newUpdatePanelBarrier(panel) {
+ 
+     Object.keys(barriers).forEach(k => {
+         let barrierOptions = { 
+-            display: global.display,
++            backend: global.backend,
+             directions: barriers[k][2]
+         };
+         
+
+From 4c014b00b46c549a46e1e2fee9724469fa76d067 Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Mon, 26 Feb 2024 17:58:31 +0100
+Subject: [PATCH 6/8] calculate shade inline for multiple window indicators
+
+---
+ appIcons.js | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/appIcons.js b/appIcons.js
+index 59c9519c..88a4bbb6 100644
+--- a/appIcons.js
++++ b/appIcons.js
+@@ -1114,8 +1114,8 @@ export const TaskbarAppIcon = GObject.registerClass({
+             } else {
+                 let blackenedLength = (1 / 48) * areaSize; // need to scale with the SVG for the stacked highlight
+                 let darkenedLength = isFocused ? (2 / 48) * areaSize : (10 / 48) * areaSize;
+-                let blackenedColor = bodyColor.shade(.3);
+-                let darkenedColor = bodyColor.shade(.7);
++                let blackenedColor = new Clutter.Color({ red: bodyColor.red * .3, green: bodyColor.green * .3, blue: bodyColor.blue * .3, alpha: bodyColor.alpha });
++                let darkenedColor = new Clutter.Color({ red: bodyColor.red * .7, green: bodyColor.green * .7, blue: bodyColor.blue * .7, alpha: bodyColor.alpha });
+                 let solidDarkLength = areaSize - darkenedLength;
+                 let solidLength = solidDarkLength - blackenedLength;
+ 
+
+From 99812f26ea4a7ed90d5fe9a7662ec3d49de6194e Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Thu, 7 Mar 2024 23:16:27 +0100
+Subject: [PATCH 7/8] replace deprecated St.ScrollView.vscroll patch by
+ @darkblaze69
+
+---
+ taskbar.js       | 6 +++---
+ utils.js         | 4 ++--
+ windowPreview.js | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/taskbar.js b/taskbar.js
+index e1f3e0f6..8b599bdc 100644
+--- a/taskbar.js
++++ b/taskbar.js
+@@ -142,7 +142,7 @@ export const TaskbarActor = GObject.registerClass({
+ 
+         scrollview.allocate(childBox);
+ 
+-        let [value, , upper, , , pageSize] = scrollview[orientation[0] + 'scroll'].adjustment.get_values();
++        let [value, , upper, , , pageSize] = scrollview[orientation[0] + 'adjustment'].get_values();
+         upper = Math.floor(upper);
+         scrollview._dtpFadeSize = upper > pageSize ? this._delegate.iconSize : 0;
+ 
+@@ -277,7 +277,7 @@ export const Taskbar = class extends EventEmitter {
+             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START
+         });
+ 
+-        let adjustment = this._scrollView[orientation[0] + 'scroll'].adjustment;
++        const adjustment = this._scrollView[orientation[0] + 'adjustment'];
+         
+         this._workId = Main.initializeDeferredWork(this._box, this._redisplay.bind(this));
+ 
+@@ -514,7 +514,7 @@ export const Taskbar = class extends EventEmitter {
+ 
+         let adjustment, delta;
+ 
+-        adjustment = this._scrollView[orientation[0] + 'scroll'].get_adjustment();
++        adjustment = this._scrollView[orientation[0] + 'adjustment'];
+ 
+         let increment = adjustment.step_increment;
+ 
+diff --git a/utils.js b/utils.js
+index 8fa29868..828e184a 100644
+--- a/utils.js
++++ b/utils.js
+@@ -505,8 +505,8 @@ export const notify = function(text, iconName, action, isTransient) {
+  * Return the amount of shift applied
+ */
+ export const ensureActorVisibleInScrollView = function(scrollView, actor, fadeSize, onComplete) {
+-    let vadjustment = scrollView.vscroll.adjustment;
+-    let hadjustment = scrollView.hscroll.adjustment;
++    const vadjustment = scrollView.vadjustment;
++    const hadjustment = scrollView.hadjustment;
+     let [vvalue, vlower, vupper, vstepIncrement, vpageIncrement, vpageSize] = vadjustment.get_values();
+     let [hvalue, hlower, hupper, hstepIncrement, hpageIncrement, hpageSize] = hadjustment.get_values();
+ 
+diff --git a/windowPreview.js b/windowPreview.js
+index 3ab0730d..f0a2741a 100644
+--- a/windowPreview.js
++++ b/windowPreview.js
+@@ -509,7 +509,7 @@ export const PreviewMenu = GObject.registerClass({
+     }
+ 
+     _getScrollAdjustmentValues() {
+-        let [value , , upper, , , pageSize] = this._scrollView[(this.isVertical ? 'v' : 'h') + 'scroll'].adjustment.get_values();
++        let [value , , upper, , , pageSize] = this._scrollView[(this.isVertical ? 'v' : 'h') + 'adjustment'].get_values();
+ 
+         return [value, upper, pageSize];
+     }
+
+From a74d5f51a2c9b1e2d8eadcf19078512fdf7e0e55 Mon Sep 17 00:00:00 2001
+From: Philipp Unger <philipp.unger.1988@gmail.com>
+Date: Thu, 7 Mar 2024 23:21:50 +0100
+Subject: [PATCH 8/8] fix xml escapes in AdwActionRow subtitle patch from
+ @tekstryder
+
+---
+ ui/BoxIntellihideOptions.ui | 2 +-
+ ui/BoxOverlayShortcut.ui    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ui/BoxIntellihideOptions.ui b/ui/BoxIntellihideOptions.ui
+index a60dab34..0da3ec29 100644
+--- a/ui/BoxIntellihideOptions.ui
++++ b/ui/BoxIntellihideOptions.ui
+@@ -154,7 +154,7 @@
+         <child>
+           <object class="AdwActionRow">
+             <property name="title" translatable="yes">Keyboard shortcut to reveal and hold the panel</property>
+-            <property name="subtitle" translatable="yes">Syntax: &lt;Shift&gt;, &lt;Ctrl&gt;, &lt;Alt&gt;, &lt;Super&gt;</property>
++            <property name="subtitle" translatable="yes">Syntax: &amp;lt;Shift&amp;gt;, &amp;lt;Ctrl&amp;gt;, &amp;lt;Alt&amp;gt;, &amp;lt;Super&amp;gt;</property>
+             <child>
+               <object class="GtkEntry" id="intellihide_toggle_entry">
+                 <property name="valign">center</property>
+diff --git a/ui/BoxOverlayShortcut.ui b/ui/BoxOverlayShortcut.ui
+index 98fcb0a5..5f875896 100644
+--- a/ui/BoxOverlayShortcut.ui
++++ b/ui/BoxOverlayShortcut.ui
+@@ -68,7 +68,7 @@
+         <child>
+           <object class="AdwActionRow">
+             <property name="title" translatable="yes">Shortcut to show the overlay for 2 seconds</property>
+-            <property name="subtitle" translatable="yes">Syntax: &lt;Shift&gt;, &lt;Ctrl&gt;, &lt;Alt&gt;, &lt;Super&gt;</property>
++            <property name="subtitle" translatable="yes">Syntax: &amp;lt;Shift&amp;gt;, &amp;lt;Ctrl&amp;gt;, &amp;lt;Alt&amp;gt;, &amp;lt;Super&amp;gt;</property>
+             <child>
+               <object class="GtkEntry" id="shortcut_entry">
+                 <property name="valign">center</property>
