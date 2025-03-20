@@ -1,0 +1,20 @@
+From 693a0d715c409b7be7f1cd3663219c7a8b10aae4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jeremy=20B=C3=ADcha?= <jeremy.bicha@canonical.com>
+Date: Wed, 12 Feb 2025 21:28:12 -0500
+Subject: [PATCH] gnome-shell: Support 48
+
+---
+ src/gnome-shell/metadata.json.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/gnome-shell/metadata.json.in b/src/gnome-shell/metadata.json.in
+index 1aa84c32..292e6937 100644
+--- a/src/gnome-shell/metadata.json.in
++++ b/src/gnome-shell/metadata.json.in
+@@ -1,5 +1,5 @@
+ {
+-    "shell-version": [ "45", "46", "47" ],
++    "shell-version": [ "45", "46", "47", "48" ],
+     "session-modes": [ "user" ],
+     "uuid": "GPaste@gnome-shell-extensions.gnome.org",
+     "name": "GPaste",
