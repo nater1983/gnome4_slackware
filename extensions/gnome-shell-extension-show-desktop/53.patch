@@ -1,0 +1,18 @@
+diff --git a/metadata.json b/metadata.json
+index f8892df..97d961a 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -9,9 +9,10 @@
+   "shell-version": [
+     "45",
+     "46",
+-    "47"
++    "47",
++    "48"
+   ],
+   "url": "https://github.com/amivaleo/Show-Desktop-Button",
+   "uuid": "show-desktop-button@amivaleo",
+   "version": 44
+-}
+\ No newline at end of file
++}
