@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-tray-icons-reloaded
 SRCNAM=Tray-Icons-Reloaded
-VERSION=${VERSION:-31}
+VERSION=${VERSION:-32}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=af92191413237145e8e13e562d48175168b4f3df
+_commit=54438e11e066b9ef66426d00e3a0951565a5e99f
 
 ARCH=noarch
 
@@ -47,7 +47,7 @@ rm -rf $SRCNAM
 git clone https://github.com/MartinPL/Tray-Icons-Reloaded.git
 cd $SRCNAM
 git checkout $_commit
-sed -i 's/"shell-version": \["47"\]/"shell-version": ["46", "47"]/g' metadata.json
+#sed -i 's/"shell-version": \["47"\]/"shell-version": ["46", "47"]/g' metadata.json
 
 mkdir -p $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl
 cp -r * $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/
