@@ -348,5 +348,5 @@ index 1319ea1..f35487e 100644
 +  "shell-version": ["45", "46", "47", "48",]
    "url": "https://github.com/danchris/eortologio-gnome-shell-extension",
 -  "version": 8
-+  "version": 11
++  "version": 9
  }
