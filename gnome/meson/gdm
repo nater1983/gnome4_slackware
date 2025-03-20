@@ -8,7 +8,6 @@ cd build
     -Ddbus-sys="/usr/share/dbus-1/system.d" \
     -Ddefault-pam-config=none \
     -Dpam-mod-dir="/lib${LIBDIRSUFFIX}/security" \
-    -Dgdm-xsession=true \
     -Drun-dir=/run/gdm \
     -Dlogind-provider=elogind \
     -Dsystemd-journal=false \
