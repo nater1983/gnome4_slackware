@@ -2,6 +2,7 @@ CFLAGS="$SLKCFLAGS -Wl,-s" \
 CXXFLAGS="$SLKCFLAGS -Wl,-s" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
+    --enable-shared \
     --with-audio=alsa
 
 make
