@@ -13,7 +13,7 @@ strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
 # "cd -", as they don't nest.
 ( cd doc
   # build the HTML docs.
-  make $PRGNAM.html
+  make flite.html
   ( cd html
 
     # Upstream hardlinks index.html, use a symlink instead.
@@ -31,7 +31,7 @@ strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
 
 # 20181114 bkw: always build the GNU info docs.
 ( cd doc
-  makeinfo $PRGNAM.texi
+  makeinfo flite.texi
   mkdir -p $PKG/usr/info
-  gzip -9c < $PRGNAM.info > $PKG/usr/info/$PRGNAM.info.gz
+  gzip -9c < flite.info > $PKG/usr/info/flite.info.gz
 )
