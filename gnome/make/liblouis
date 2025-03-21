@@ -1,0 +1,12 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PRGNAM-$VERSION \ 
+    --enable-ucs4
+make
+make install DESTDIR=$PKG
+
+cd python
+python3 setup.py install --root=$PKG
+cd ..
