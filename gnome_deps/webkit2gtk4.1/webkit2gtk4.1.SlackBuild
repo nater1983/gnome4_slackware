@@ -22,7 +22,7 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://webkitgtk.org/releases/webkitgtk-2.46.3.tar.xz
+wget -c https://webkitgtk.org/releases/webkitgtk-2.48.0.tar.xz
 wget -c https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/webkit2gtk-4.1.vapi
 wget -c https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/webkit2gtk-web-extension-4.1.vapi
 wget -c https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/javascriptcoregtk-4.1.vapi
@@ -31,7 +31,7 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=webkit2gtk4.1
 SRCNAM=webkitgtk
-VERSION=${VERSION:-2.46.3}
+VERSION=${VERSION:-2.48.0}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
@@ -79,7 +79,6 @@ cd $TMP
 rm -rf $SRCNAM-$VERSION
 tar xvf $CWD/$SRCNAM-$VERSION.tar.?z*
 cd $SRCNAM-$VERSION
-patch -Np1 -i $CWD/icu76.patch
 patch -Np1 -i $CWD/unhide-deprecated-api.patch
 chown -R root:root .
 find -L . \
