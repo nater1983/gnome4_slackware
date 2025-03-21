@@ -1,1 +1,1 @@
-patch -Np1 -R $CWD/patch/gnome-calculator/295.patch
+patch -Np1 -R -i $CWD/patch/gnome-calculator/295.patch
