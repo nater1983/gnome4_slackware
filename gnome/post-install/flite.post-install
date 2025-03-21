@@ -1,0 +1,44 @@
+# flite.1 written by SlackBuild author. The rest are from Debian.
+mkdir -p $PKG/usr/man/man1
+for i in $CWD/post-install/flite/*.1; do
+  gzip -9c < $i > $PKG/usr/man/man1/"$( basename "$i" )".gz
+done
+
+# the Debian package includes these 2 binaries that don't get installed
+# by 'make install'. They look useful enough, so:
+install -s -m0755 bin/t2p bin/flite_time $PKG/usr/bin
+
+# include any *.flitevox files the user downloaded.
+for file in $CWD/*.flitevox; do
+  [ -e "$file" ] && \
+    mkdir -p $PKG/usr/share/$PRGNAM && \
+    cat $file > $PKG/usr/share/$PRGNAM/"$( basename "$file" )" && \
+    EXTRA=yes
+done
+
+# build the docs. NB don't replace subshells with "cd dir" and
+# "cd -", as they don't nest.
+( cd doc
+  # build the HTML docs.
+  make $PRGNAM.html
+  ( cd html
+
+    # Upstream hardlinks index.html, use a symlink instead.
+    rm -f index.html
+    ln -s ${PRGNAM}_toc.html index.html
+
+    # Also, we don't ship the PDF doc, so link to upstream's.
+    # Fix link to source package.
+    sed -i \
+      -e 's,HREF="flite.pdf",HREF="http://www.festvox.org/flite/doc/flite.pdf",' \
+      -e 's,\.tar\.gz,.tar.bz2,g' \
+      ${PRGNAM}_toc.html
+  )
+)
+
+# 20181114 bkw: always build the GNU info docs.
+( cd doc
+  makeinfo $PRGNAM.texi
+  mkdir -p $PKG/usr/info
+  gzip -9c < $PRGNAM.info > $PKG/usr/info/$PRGNAM.info.gz
+)
