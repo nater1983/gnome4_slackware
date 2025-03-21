@@ -14,7 +14,8 @@ strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
 ( cd doc
   # build the HTML docs.
   make flite.html
-  ( cd html
+)
+  ( cd doc/html
 
     # Upstream hardlinks index.html, use a symlink instead.
     rm -f index.html
@@ -27,7 +28,6 @@ strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
       -e 's,\.tar\.gz,.tar.bz2,g' \
       flite_toc.html
   )
-)
 
 # 20181114 bkw: always build the GNU info docs.
 ( cd doc
