@@ -1,0 +1,9 @@
+CFLAGS="$SLKCFLAGS -Wl,-s" \
+CXXFLAGS="$SLKCFLAGS -Wl,-s" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-audio=alsa
+
+make
+make install prefix=$PKG/usr INSTALLLIBDIR=$PKG/usr/lib${LIBDIRSUFFIX}
+strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
