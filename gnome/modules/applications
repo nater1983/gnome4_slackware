@@ -50,6 +50,7 @@ gst-rtsp-server
 gstreamer-vaapi
 rygel
 totem
+liblouis
 orca
 gtksourceview4
 evince
