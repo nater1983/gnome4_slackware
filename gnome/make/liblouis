@@ -2,7 +2,8 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
-    --docdir=/usr/doc/$PRGNAM-$VERSION
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --enable-ucs4
 make
 make install DESTDIR=$PKG
 
