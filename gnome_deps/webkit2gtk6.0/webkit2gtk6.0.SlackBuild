@@ -61,13 +61,9 @@ elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686 -g1 -fcf-protection=none"
   LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
-  OPT='-flto=thin -march=x86-64-v3'
-  LDOPT='-flto=thin -Wl,-O1,--sort-common,--icf=safe'
   SLKCFLAGS="-O2 -fPIC -march=x86-64 -mtune=generic -g1 -fcf-protection=none"
   LIBDIRSUFFIX="64"
 elif [ "$ARCH" = "aarch64" ]; then
-  OPT='-flto=thin -march=armv8-a'
-  LDOPT='-flto=thin -Wl,-O1,--sort-common,--icf=safe'
   SLKCFLAGS="-O2 -fPIC -march=armv8-a -mtune=generic -g1 -fcf-protection=none"
   LIBDIRSUFFIX="64"
 else
@@ -83,7 +79,6 @@ cd $TMP
 rm -rf $SRCNAM-$VERSION
 tar xvf $CWD/$SRCNAM-$VERSION.tar.?z*
 cd $SRCNAM-$VERSION
-patch -Np1 -i $CWD/icu76.patch
 patch -Np1 -i $CWD/unhide-deprecated-api.patch
 chown -R root:root .
 find -L . \
@@ -94,11 +89,6 @@ find -L . \
 
 mkdir -p build
 cd build
-  CC=clang \
-  CXX=clang++ \
-  CFLAGS="$OPT -fdata-sections -ffunction-sections" \
-  CXXFLAGS="$OPT -fdata-sections -ffunction-sections" \
-  LDFLAGS="$LDOPT -fuse-ld=lld -Wl,--gc-sections" \
   cmake -DPORT=GTK \
 	-DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
 	-DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
