@@ -18,14 +18,14 @@ strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
 
     # Upstream hardlinks index.html, use a symlink instead.
     rm -f index.html
-    ln -s ${PRGNAM}_toc.html index.html
+    ln -s flite_toc.html index.html
 
     # Also, we don't ship the PDF doc, so link to upstream's.
     # Fix link to source package.
     sed -i \
       -e 's,HREF="flite.pdf",HREF="http://www.festvox.org/flite/doc/flite.pdf",' \
       -e 's,\.tar\.gz,.tar.bz2,g' \
-      ${PRGNAM}_toc.html
+      flite_toc.html
   )
 )
 
