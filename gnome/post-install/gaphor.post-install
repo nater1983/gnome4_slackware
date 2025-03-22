@@ -1,0 +1,2 @@
+install -Dm644 "$CWD/post-install/gaphor/org.gaphor.Gaphor.desktop" -t $PKG/usr/share/applications
+install -Dm644 "$CWD/post-install/gaphor/org.gaphor.Gaphor.svg" -t $PKG/usr/share/icons/
