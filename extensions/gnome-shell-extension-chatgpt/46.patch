@@ -1,0 +1,26 @@
+From 7c66290fb9d9497b58e94932612f88e3a60ad3dd Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 2 Feb 2025 14:16:51 -0600
+Subject: [PATCH 2/2] Fix toggle on and off issue
+
+This fix's an issue where if you toggle off the extension and later what to return to it the extension doesn't activate even though it claims to be enabled.
+---
+ chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
+index 426b467..77b1a4e 100644
+--- a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
++++ b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
+@@ -15,11 +15,6 @@ export default class ChatGPTGnomeDesktopExtension extends Extension {
+     }
+ 
+     enable() {
+-        if (this.initialized) {
+-            log('Extension already initialized');
+-            return;
+-        }
+-        this.initialized = true;
+ 
+         log('Initializing extension');
+         this.button = new St.Bin({
