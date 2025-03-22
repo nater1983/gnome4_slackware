@@ -1,7 +1,2 @@
-# Use this setup.py shim:
-cat << EOF > setup.py
-from setuptools import setup
-setup(name="${PKGSRC}", version="${MODULAR_PACKAGE_VERSION}", packages=["${PKGSRC}"], package_data={"": ["*"]})
-EOF
-
-unshare -n python3 setup.py install --root=$PKG || exit 1
+python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
