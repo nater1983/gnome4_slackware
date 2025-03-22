@@ -46,6 +46,7 @@ gupnp-dlna
 gupnp-tools
 gst-editing-services
 gst-plugins-bad
+gst-plugins-ugly
 gst-rtsp-server
 gstreamer-vaapi
 rygel
