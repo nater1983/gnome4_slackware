@@ -7,7 +7,7 @@ python3-poetry-core
 python3-generic
 exceptiongroup
 python3-flit_scm
-python3-gaphas
+gaphas
 python3-tinycss2
 python3-webencodings
 python3-pydot
