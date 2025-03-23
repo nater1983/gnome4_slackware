@@ -1,0 +1,20 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+               |-----handy-ruler------------------------------------------------------|
+python3-dulwich: python3-dulwich (Pure-Python Git implementation )
+python3-dulwich:
+python3-dulwich: It aims to provide an interface to git repos (both local and remote)
+python3-dulwich: that doesn't call out to git directly but instead uses pure Python.
+python3-dulwich: Unlike other Python Git libraries, Dulwich is available as a
+python3-dulwich: standalone package that doesn't depend on git (like GitPython) being
+python3-dulwich: installed or any native code (like pygit2).
+python3-dulwich:
+python3-dulwich: Homepage: https://github.com/jelmer/dulwich
+python3-dulwich:
+python3-dulwich:
+
