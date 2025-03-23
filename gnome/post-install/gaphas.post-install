@@ -1,1 +1,1 @@
-install -vDm 0644 "$CWD/post-install/decorators.py" -t "$PKG/usr/lib${LIBDIRSUFFIX}/python*/site-packages/gaphas/"
+install -vDm 0644 "$CWD/post-install/gaphas/decorators.py" -t "$PKG/usr/lib${LIBDIRSUFFIX}/python*/site-packages/gaphas/"
