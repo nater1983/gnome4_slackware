@@ -8,11 +8,11 @@
         |-----handy-ruler------------------------------------------------------|
 decibels: decibels (Play audio files)
 decibels:
-decibels: Audio player for the GNOME desktop.n audio player that just plays
-decibels: audio files. It doesn't require an organized music library
-decibels: and won't overload you with tons of functionality.
-decibels: Audio Player still offers advanced features such as:
-decibels: * An elegant waveform of the track, Adjustable playback speed
+decibels: An audio player that just plays audio files. It doesn't require an
+decibels: organized music library and won't overload you with tons of
+decibels: functionality. Audio Player still offers advanced features such as:
+decibels: * Adjustable playback speed
+decibels: * An elegant waveform of the track
 decibels: * Easy seek controls, & Playing multiple files at the same time
 decibels:
 decibels: Homepage: https://gitlab.gnome.org/GNOME/decibels
