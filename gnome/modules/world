@@ -3,13 +3,12 @@ cozy
 emblem
 Image-ExifTool
 eyedropper
-python3-poetry-core
-python3-generic
+poetry_core
+generic
 exceptiongroup
 python3-flit_scm
 gaphas
-python3-tinycss2
-python3-webencodings
+tinycss2
 python3-pydot
 python3-jedi
 python3-parso
