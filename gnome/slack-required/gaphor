@@ -11,3 +11,4 @@ python3-jedi
 python3-parso
 python3-better-exceptions
 python3-defusedxml
+python3-dulwich
