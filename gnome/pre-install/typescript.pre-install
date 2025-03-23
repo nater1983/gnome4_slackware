@@ -1,1 +1,1 @@
-tar --strip-components=1 -xzf $CWD/src/typescript-5.8.2.tar.gz -C $TMP/typescript-5.8.2
+tar --strip-components=1 -xzf $CWD/src/typescript-5.8.2.tar.gz -C $TMP/build/typescript-5.8.2
