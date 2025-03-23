@@ -1,4 +1,1 @@
-wget -c -P "$CWD/src" https://github.com/microsoft/TypeScript/releases/download/v5.8.2/typescript-5.8.2.tgz
-tar --strip-components=1 -xzf $CWD/src/https://github.com/microsoft/TypeScript/releases/download/v5.8.2/typescript-5.8.2.tgz -C $TMP/typescript-5.8.2
-rm -fr $CWD/src/https://github.com/microsoft/TypeScript/releases/download/v5.8.2/typescript-5.8.2.tgz
-
+tar --strip-components=1 -xzf $CWD/src/typescript-5.8.2.tgz -C $TMP/typescript-5.8.2
