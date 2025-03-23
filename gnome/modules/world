@@ -15,6 +15,7 @@ jedi
 parso
 better_exceptions
 defusedxml
+dulwich
 gaphor
 identity
 typescript
