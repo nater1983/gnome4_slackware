@@ -1,3 +1,5 @@
+mkdir cmake-build
+cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DJPEGXL_ENABLE_JNI:BOOL='false' \
