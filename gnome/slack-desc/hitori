@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+      |-----handy-ruler------------------------------------------------------|
+hitori: hitori (logic puzzle game similar to sudoku)
+hitori:
+hitori: Hitori puzzles give you a grid filled with numbers. The goal is to
+hitori: remove numbers such that no row or column contains duplicates. This
+hitori: implementation has undo/redo support, can give hints, and generates
+hitori: puzzles up to 10x10 cells large.
+hitori:
+hitori: Homepage: https://wiki.gnome.org/Apps/Hitori
+hitori:
+hitori:
+hitori:
