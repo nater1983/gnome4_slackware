@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                |-----handy-ruler------------------------------------------------------|
+metadata-cleaner: metadata-cleaner (View and clean metadata in files)
+metadata-cleaner:
+metadata-cleaner: Metadata within a file can tell a lot about you. Cameras record data 
+metadata-cleaner: about when and where a picture was taken and which camera was used. 
+metadata-cleaner: Office applications automatically add author and company information 
+metadata-cleaner: to documents and spreadsheets. This is sensitive information and you 
+metadata-cleaner: may not want to disclose it. This tool allows you to view metadata in 
+metadata-cleaner: your files and to get rid of it, as much as possible.
+metadata-cleaner: 
+metadata-cleaner: https://gitlab.com/rmnvgr/metadata-cleaner
+metadata-cleaner:
