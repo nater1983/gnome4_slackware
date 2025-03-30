@@ -1,0 +1,2 @@
+# Preserve config file
+mv $PKG/etc/geoclue/geoclue.conf $PKG/etc/geoclue/geoclue.conf.new
