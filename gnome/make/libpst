@@ -11,7 +11,7 @@ make
 make install DESTDIR=$PKG
 
 make install-strip DESTDIR=$PKG \
-    htmldir=/usr/doc/$PKGNAME-$PKGVERSION \
-    htmldeveldir=/usr/doc/$PKGNAME-$PKGVERSION/devel
+    htmldir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    htmldeveldir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION/devel
 
 rm -f $PKG/usr/lib*/*.la $PKG/usr/lib*/python*/*/*.la
