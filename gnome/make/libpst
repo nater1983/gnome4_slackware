@@ -1,0 +1,15 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --enable-dii \
+    --enable-libpst-shared \
+    --enable-python
+make
+make install DESTDIR=$PKG
+
+make install-strip DESTDIR=$PKG \
+    htmldir=/usr/doc/$PRGNAM-$VERSION \
+    htmldeveldir=/usr/doc/$PRGNAM-$VERSION/devel
+
+rm -f $PKG/usr/lib*/*.la $PKG/usr/lib*/python*/*/*.la
