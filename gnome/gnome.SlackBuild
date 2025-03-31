@@ -173,6 +173,13 @@ no_usr_doc_prgnam() {
   fi
 }
 
+no_usr_dups() {
+  # If there are docs, move them:
+  if [ -d "usr/doc/${DOCNAME}-${PACKAGE_VERSION}/${DOCNAME}-${PACKAGE_VERSION}" ]; then
+    rm -fr usr/doc/${DOCNAME}-${PACKAGE_VERSION}/${DOCNAME}-${PACKAGE_VERSION}
+  fi
+}
+
 precheck() {
   # Initialize return value
   RETVAL=0
@@ -481,6 +488,7 @@ build_mod_pkg() {
         process_info_pages
         no_usr_share_doc
         no_usr_doc_prgnam
+        no_usr_dups
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
