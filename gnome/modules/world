@@ -33,3 +33,9 @@ news_flash_gtk
 fractal
 zbar
 Authenticator
+liboauth
+duplicity
+librsync
+fasteners
+rclone
+deja-dup
