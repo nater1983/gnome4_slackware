@@ -1,3 +1,12 @@
+rm -fr subprojects/libgd
+
+cat > subprojects/libgd.wrap << 'EOF'
+[wrap-git]
+directory=libgd
+url=https://gitlab.gnome.org/GNOME/libgd.git
+revision=head
+EOF
+
 mkdir meson-build
 cd meson-build
   CFLAGS="$SLKCFLAGS" \
