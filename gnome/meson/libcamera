@@ -5,22 +5,10 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Dudevrulesdir=/lib/udev/rules.d \
-    -Ddocs=enabled \
-    -Dgstreamer=disabled \
-    -Dgstreamer-device-provider=disabled \
-    -Droc=enabled \
-    -Dffmpeg=enabled \
-    -Dpw-cat-ffmpeg=enabled \
-    -Dvulkan=enabled \
-    -Drlimits-install=false \
-    -Dsession-managers=[] \
-    -Dbluez5-codec-lc3plus=disabled \
-    -Dvolume=enabled \
-    -Dselinux=disabled \
-    -Dsnap=disabled \
-    -Dman=enabled \
-    -Ddocs=enabled
+    -Dudev=/lib/udev/rules.d \
+    -Dv4l2=true \
+    -Dtracing=disabled \
+    -Dtest=true
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
