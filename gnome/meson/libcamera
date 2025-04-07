@@ -5,7 +5,6 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Dudev=/lib/udev/rules.d \
     -Dv4l2=true \
     -Dtracing=disabled \
     -Dtest=true
