@@ -10,6 +10,7 @@ done
 
   cmake \
     "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
     -DHIGH_BIT_DEPTH=ON \
     -DMAIN12=ON \
@@ -23,6 +24,7 @@ done
 
   cmake \
     "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
     -DHIGH_BIT_DEPTH=ON \
     -DEXPORT_C_API=OFF \
@@ -38,6 +40,7 @@ done
 
   cmake \
     "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
     -DEXTRA_LIB="x265_main10.a;x265_main12.a" \
     -DEXTRA_LINK_FLAGS="-L." \
