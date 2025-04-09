@@ -60,3 +60,4 @@ blueprint-compiler
 pytest
 GPaste
 flite
+validators
