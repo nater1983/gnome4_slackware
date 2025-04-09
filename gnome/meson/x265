@@ -16,8 +16,7 @@ done
     -DMAIN12=ON \
     -DEXPORT_C_API=OFF \
     -DENABLE_CLI=OFF \
-    -DENABLE_SHARED=OFF \
-    -DCMAKE_BUILD_TYPE=Release ../source
+    -DENABLE_SHARED=OFF ../source
   make
 
   cd ../build-10
