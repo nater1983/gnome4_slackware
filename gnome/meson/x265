@@ -1,3 +1,5 @@
+sed -r '/cmake_policy.*(0025|0054)/d' -i source/CMakeLists.txt
+
 for d in 8 $([ "$ARCH" = "x86_64" ] && echo "10 12"); do
   if [[ -d build-$d ]]; then
     rm -rf build-$d
