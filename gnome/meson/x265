@@ -19,7 +19,7 @@ done
     -DEXPORT_C_API=OFF \
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
-    -DCMAKE_BUILD_TYPE=Releas../source
+    -DCMAKE_BUILD_TYPE=Release ../source
   make
 
   cd ../build-10
@@ -32,7 +32,7 @@ done
     -DEXPORT_C_API=OFF \
     -DENABLE_CLI=OFF \
     -DENABLE_SHARED=OFF \
-    -DCMAKE_BUILD_TYPE=Releas../source
+    -DCMAKE_BUILD_TYPE=Release ../source
   make
 
   cd ../build-8
