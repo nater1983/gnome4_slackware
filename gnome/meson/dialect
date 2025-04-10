@@ -12,5 +12,10 @@ cd build
   DESTDIR=$PKG $NINJA install
 cd ..
 
-python3 -m build --wheel --no-isolation
-python3 -m installer --destdir "$PKG" dist/*.whl
+cat << EOF > setup.py
+import setuptools
+if __name__ == "__main__":
+    setuptools.setup()
+EOF
+
+python3 setup.py install --root=$PKG
