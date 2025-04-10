@@ -1,10 +1,11 @@
 rm -fr po
 cat > subprojects/po.wrap << 'EOF'
 [wrap-git]
-directory=../po
+directory=po
 url=https://github.com/dialect-app/po/
 revision=head
 EOF
+mv subprojects/po ./po
 
 mkdir build
 cd build
