@@ -5,7 +5,6 @@ directory=../po
 url=https://github.com/dialect-app/po/
 revision=head
 EOF
-ln -sf subproject/po po
 
 mkdir build
 cd build
