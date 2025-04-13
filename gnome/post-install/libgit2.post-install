@@ -1,0 +1,6 @@
+# Move cmake rules for libgit2 unless we are building on 386 pcs.
+if [ "$ARCH" = "x86_64" ]; then
+$PKG/usr/lib/cmake/libgit2/ $PKG/usr/lib${LIBDIRSUFFIX}/cmake/libgit2/
+else
+exit 1
+fi
