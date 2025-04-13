@@ -1,0 +1,3 @@
+install -vDm 0644 $CWD/post-install/libcamera/70-libcamera.rules -t $PKG/lib/udev/rules.d/
+install -vDm 0644 $CWD/post-install/libcamera/qcam.metainfo.xml -t $PKG/usr/share/metainfo/
+install -vDm 0644 $CWD/post-install/libcamera/qcam.desktop -t $PKG/usr/share/applications/

@@ -1,0 +1,21 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+libcamera: libcamera ( A creating app stores across distributions )
+libcamera:
+libcamera: libcamera is a library that deals with heavy hardware image
+libcamera: processing operations of complex camera devices that are shared
+libcamera: between the linux host all while allowing offload of certain aspects
+libcamera: to the control of complex camera hardware such as ISPs.
+libcamera: Hardware support includes USB UVC cameras, libv4l cameras as well as
+libcamera: more complex ISPs (Image Signal Processor). 
+libcamera:
+libcamera: Homepage: https://libcamera.org/
+libcamera:
+
+

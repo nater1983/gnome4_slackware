@@ -1,0 +1,56 @@
+sed -r '/cmake_policy.*(0025|0054)/d' -i source/CMakeLists.txt
+
+for d in 8 $([ "$ARCH" = "x86_64" ] && echo "10 12"); do
+  if [[ -d build-$d ]]; then
+    rm -rf build-$d
+  fi
+  mkdir build-$d
+done
+
+
+  cd build-12
+
+  cmake \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
+    -DHIGH_BIT_DEPTH=ON \
+    -DMAIN12=ON \
+    -DEXPORT_C_API=OFF \
+    -DENABLE_CLI=OFF \
+    -DENABLE_SHARED=OFF \
+    -DCMAKE_BUILD_TYPE=Release ../source
+  make
+
+  cd ../build-10
+
+  cmake \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
+    -DHIGH_BIT_DEPTH=ON \
+    -DEXPORT_C_API=OFF \
+    -DENABLE_CLI=OFF \
+    -DENABLE_SHARED=OFF \
+    -DCMAKE_BUILD_TYPE=Release ../source
+  make
+
+  cd ../build-8
+
+  ln -s ../build-10/libx265.a libx265_main10.a
+  ln -s ../build-12/libx265.a libx265_main12.a
+
+  cmake \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DLIB_INSTALL_DIR=lib${LIBDIRSUFFIX} \
+    -DEXTRA_LIB="x265_main10.a;x265_main12.a" \
+    -DEXTRA_LINK_FLAGS="-L." \
+    -DLINKED_10BIT=ON \
+    -DLINKED_12BIT=ON \
+    -DCMAKE_BUILD_TYPE=Release ../source
+  make
+
+make install DESTDIR=$PKG
+
+cd ..

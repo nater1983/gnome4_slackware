@@ -60,3 +60,8 @@ blueprint-compiler
 pytest
 GPaste
 flite
+validators
+zxcvbn
+unicodedata2
+tzlocal
+turtle

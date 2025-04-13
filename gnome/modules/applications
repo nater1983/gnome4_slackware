@@ -76,3 +76,5 @@ enter-tex
 goffice
 gnumeric
 gnome-usage
+gnome-network-displays
+typing_extensions

@@ -21,13 +21,13 @@
 #  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-wget -c https://download.gnome.org/sources/gvfs/1.57/gvfs-1.57.1.tar.xz
+wget -c https://download.gnome.org/sources/gvfs/1.57/gvfs-1.57.2.tar.xz
 
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gvfs-goa
 SRCNAM=gvfs
-VERSION=${VERSION:-1.57.1}
+VERSION=${VERSION:-1.57.2}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
