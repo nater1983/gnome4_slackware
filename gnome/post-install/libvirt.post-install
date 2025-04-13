@@ -37,3 +37,6 @@ fi
 mkdir -p $PKG/etc
 $PKG/usr/lib/sysctl.d/60-qemu-postcopy-migration.conf $PKG/etc/sysctl.d
 rm -fr $PKG/usr/lib/sysctl.d
+
+#Remove firewalld policy's since we don't install firewalld
+rm -fr $PKG/usr/lib/firewalld/
