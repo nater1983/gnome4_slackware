@@ -32,3 +32,8 @@ if [ -e $PKG/etc/libvirt/qemu.conf ]; then
   sed -i  "s|^\#seccomp_sandbox = 1|seccomp_sandbox = 0|" \
     $PKG/etc/libvirt/qemu.conf
 fi
+
+#Move sysctl file's to the correct place.
+mkdir -p $PKG/etc
+$PKG/usr/lib/sysctl.d/60-qemu-postcopy-migration.conf $PKG/etc/sysctl.d
+rm -fr $PKG/usr/lib/sysctl.d
