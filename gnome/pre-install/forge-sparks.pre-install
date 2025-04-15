@@ -1,0 +1,4 @@
+wget -c -P "$CWD/pre-install/forge-sparks" https://github.com/sonnyp/troll/archive/595965429fa9aea1dd7bc4429f7bd5337343e04e/troll-595965429fa9aea1dd7bc4429f7bd5337343e04e.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/forge-sparks/troll-595965429fa9aea1dd7bc4429f7bd5337343e04e.tar.gz -C troll
+rm -fr $CWD/pre-install/forge-sparks/troll-595965429fa9aea1dd7bc4429f7bd5337343e04e.tar.gz
+rm -fr $CWD/pre-install/forge-sparks/
