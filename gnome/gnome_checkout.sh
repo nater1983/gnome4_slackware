@@ -27,11 +27,11 @@ MYDIR="${CWD}/src"
 GNOMEGITURI="https://github.com/GNOME/"
 
 # Default list of modules to checkout:
-DEFMODS="vala"
+DEFMODS="gnome-browser-connector"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-#DEFBRANCH="master"
-DEFBRANCH="main"
+DEFBRANCH="master"
+#DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
 SHRINK="YES"
