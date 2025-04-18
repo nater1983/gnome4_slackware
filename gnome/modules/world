@@ -55,4 +55,5 @@ pykeepass
 pyotp
 validators
 zxcvbn
+zxcvbn_rs_py
 secrets
