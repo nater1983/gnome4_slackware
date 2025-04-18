@@ -112,7 +112,7 @@ for LOC in $MODS; do
 
   # Get the latest commit date and hash
   cd ${LOC}-temp || continue
-  COMMIT_INFO=$(grep -Po "version:\s*'\K[0-9]+\.[0-9]+\.[0-9]+" meson.build)
+  COMMIT_INFO=$(grep -Po "version:\s*'\K[^']+" meson.build)
   cd ..
 
   # Rename the directory with commit info
