@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://github.com/GNOME/"
+GNOMEGITURI="https://gitlab.gnome.org/Archive/"
 
 # Default list of modules to checkout:
 DEFMODS="gnome-dictionaryr"
