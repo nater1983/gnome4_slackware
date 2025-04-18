@@ -27,7 +27,7 @@ MYDIR="${CWD}/src"
 GNOMEGITURI="https://gitlab.gnome.org/Archive/"
 
 # Default list of modules to checkout:
-DEFMODS="gnome-dictionaryr"
+DEFMODS="gnome-dictionary"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
 DEFBRANCH="master"
