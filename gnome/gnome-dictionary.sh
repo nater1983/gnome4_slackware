@@ -15,7 +15,7 @@ CWD=$(pwd)
 CLEANUP="YES"
  
 # Checkout at a custom date instead of today:
-CUSTDATE="NO"
+CUSTDATE="YES"
 
 # Forced overwriting of existing tarballs:
 FORCE="NO"
