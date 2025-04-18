@@ -1,0 +1,1 @@
+cargo cinstall --all-features --prefix=/usr --destdir=$PKG
