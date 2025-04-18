@@ -56,4 +56,5 @@ pyotp
 validators
 zxcvbn
 zxcvbn_rs_py
+pykcs11
 secrets
