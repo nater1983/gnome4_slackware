@@ -15,7 +15,7 @@ CWD=$(pwd)
 CLEANUP="YES"
  
 # Checkout at a custom date instead of today:
-CUSTDATE="YES"
+CUSTDATE="NO"
 
 # Forced overwriting of existing tarballs:
 FORCE="NO"
@@ -112,7 +112,7 @@ for LOC in $MODS; do
 
   # Get the latest commit date and hash
   cd ${LOC}-temp || continue
-  COMMIT_INFO=$(grep -Po "version:\s*'\K[^']+" meson.build)
+  COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
   cd ..
 
   # Rename the directory with commit info
