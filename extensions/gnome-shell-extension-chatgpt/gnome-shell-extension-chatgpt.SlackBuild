@@ -30,7 +30,7 @@ VERSION=${VERSION:-1.2}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=4678f9c39325168ded55cc0a7a6f29ef5ba73bf9
+_commit=014a26742096f58303bc0dec50f31c82324abffa
 
 ARCH=noarch
 
@@ -52,8 +52,6 @@ rm -rf $SRCNAM
 git clone https://github.com/HorrorPills/ChatGPT-Gnome-Desktop-Extension.git
 cd $SRCNAM
 git checkout $_commit
-sed -i 's/"shell-version": \[.*\]/"shell-version": ["46","47","48"]/' chatgpt-gnome-desktop@chatgpt-gnome-desktop/metadata.json
-patch -Np1 -i $CWD/46.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
