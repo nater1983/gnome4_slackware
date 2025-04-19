@@ -87,3 +87,22 @@ index bb7a2c4bd570..a8d7d7aa2681 100644
  
    clutter_frame_set_result (frame, CLUTTER_FRAME_RESULT_PENDING_PRESENTED);
  }
+
+diff --git a/src/backends/meta-cursor-sprite-xcursor.c b/src/backends/meta-cursor-sprite-xcursor.c
+index ac34736de6..a2dad50ef4 100644
+--- a/src/backends/meta-cursor-sprite-xcursor.c
++++ b/src/backends/meta-cursor-sprite-xcursor.c
+@@ -500,12 +500,11 @@ load_cursor_from_theme (MetaCursorSprite *sprite)
+                            xcursor_images);
+     }
+ 
+-  sprite_xcursor->current_frame = 0;
+-
+   if (sprite_xcursor->xcursor_images == xcursor_images)
+     return FALSE;
+ 
+   sprite_xcursor->xcursor_images = xcursor_images;
++  sprite_xcursor->current_frame = 0;
+   load_from_current_xcursor_image (sprite_xcursor);
+   return TRUE;
+ }
