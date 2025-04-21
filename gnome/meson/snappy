@@ -4,5 +4,5 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}" \
     -DSNAPPY_BUILD_TESTS=OFF \
     -DSNAPPY_BUILD_BENCHMARKS=OFF
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
