@@ -63,6 +63,7 @@ libgedit-amtk
 libgedit-gfls
 libgedit-tepl
 gedit
+gedit-plugins
 meld
 ghex
 gst-plugins-rs
