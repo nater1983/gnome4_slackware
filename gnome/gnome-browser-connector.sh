@@ -1,7 +1,7 @@
 #!/bin/bash
 # -----------------------------------------------------------------------------
 # Purpose: A script to checkout sources for GNOME from the
-git repositories and create versioned tarballs of them.
+# git repositories and create versioned tarballs of them.
 # Author:  Adapted for GNOME
 # Date:    20240101
 # -----------------------------------------------------------------------------
