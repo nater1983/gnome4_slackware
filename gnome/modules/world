@@ -58,3 +58,5 @@ zxcvbn
 zxcvbn_rs_py
 pykcs11
 secrets
+hidapi
+boatswain
