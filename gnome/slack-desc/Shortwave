@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+Shortwave: Shortwave (Listen to internet radio)
+Shortwave:
+Shortwave: Shortwave is an internet radio player that provides access to a 
+Shortwave: station database with over 30,000 stations. Create your own library 
+Shortwave: where you can add your favorite stations. Easily search and discover 
+Shortwave: new radio stations. Automatic recognition of songs, with the 
+Shortwave: possibility to save them individually. Responsive application layout, 
+Shortwave: compatible for small and large screens
+Shortwave: 
+Shortwave: https://gitlab.gnome.org/World/Shortwave
+Shortwave: 
