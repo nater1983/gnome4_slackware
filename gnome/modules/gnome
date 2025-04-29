@@ -26,6 +26,7 @@ rav1e
 libde265
 SVT-AV1
 libavif
+pillow_heif
 libheif
 unifdef
 gtksourceview
