@@ -1,4 +1,4 @@
-sed -i '/install(CODE "execute_process(COMMAND/ s/\/${CMAKE_INSTALL_BINDIR}//g' examples/CMakeLists.txt
+sed -i '/install(CODE "execute_process(COMMAND/ s/\/${CMAKE_INSTALL_PREFIX}//g' examples/CMakeLists.txt
 
 mkdir cmake-build
 cd cmake-build
