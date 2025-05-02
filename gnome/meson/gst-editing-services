@@ -7,7 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Ddoc=disabled \
     -Dexamples=disabled \
-    -Dintrospection=enabled \
+    -Dvaapi=enabled \
     -Dtests=disabled \
     -Dtools=enabled \
     -Dbash-completion=disabled \
