@@ -22,3 +22,42 @@ index cb754134..2fddd2bb 100644
  
  # this creates the cpuid tool
  add_executable      ( cpuid ${ly_base_dir}/util/cpuid.c )
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dae6f0c3..cb754134 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -246,12 +246,13 @@ if(UNIT_TEST)
+   endif()
+ endif()
+ 
++include(GNUInstallDirs)
+ 
+ # install the conversion tool, .so, .a, and all the header files
+-install ( TARGETS yuvconvert DESTINATION bin )
+-install ( TARGETS ${ly_lib_static}						DESTINATION lib )
+-install ( TARGETS ${ly_lib_shared} LIBRARY DESTINATION lib RUNTIME DESTINATION bin ARCHIVE DESTINATION lib )
+-install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/		DESTINATION include )
++install ( PROGRAMS yuvconvert				DESTINATION ${CMAKE_INSTALL_BINDIR})
++install ( TARGETS ${ly_lib_static}			DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install ( TARGETS ${ly_lib_shared} LIBRARY		DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+ # create the .deb and .rpm packages using cpack
+ include ( CM_linux_packages.cmake )
+
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cb754134..2fddd2bb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -248,8 +248,7 @@ endif()
+ 
+ include(GNUInstallDirs)
+ 
+-# install the conversion tool, .so, .a, and all the header files
+-install ( PROGRAMS yuvconvert				DESTINATION ${CMAKE_INSTALL_BINDIR})
++# install the .so, .a, and all the header files
+ install ( TARGETS ${ly_lib_static}			DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install ( TARGETS ${ly_lib_shared} LIBRARY		DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
