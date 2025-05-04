@@ -2,7 +2,7 @@ if [ "$ARCH" = "x86_64" ]; then
     sed -i 's+DESTINATION lib+DESTINATION lib64+g' CMakeLists.txt
 fi
 
-sed -i "182aSET_TARGET_PROPERTIES( \${ly_lib_shared} PROPERTIES VERSION \"${LIBYUV_VERSION}\" SOVERSION \"${YUV_VER_MAJOR}\" )" CMakeLists.txt
+sed -i "182aSET_TARGET_PROPERTIES   ( ${ly_lib_shared} PROPERTIES VERSION "0.0.0" SOVERSION 0 ) CMakeLists.txt
 
 mkdir cmake-build
 cd cmake-build
