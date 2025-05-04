@@ -8,3 +8,6 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}"
 make -C ../cmake-build
 make -C ../cmake-build install DESTDIR=$PKG
+
+#Remove static libraries
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.a
