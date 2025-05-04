@@ -61,3 +61,17 @@ index cb754134..2fddd2bb 100644
  install ( TARGETS ${ly_lib_static}			DESTINATION ${CMAKE_INSTALL_LIBDIR})
  install ( TARGETS ${ly_lib_shared} LIBRARY		DESTINATION ${CMAKE_INSTALL_LIBDIR})
  install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2fddd2bb..fa2590ba 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -196,7 +196,7 @@ target_link_libraries	( yuvconvert ${ly_lib_shared} )
+ 
+ # this creates the yuvconstants tool
+ add_executable      ( yuvconstants ${ly_base_dir}/util/yuvconstants.c )
+-target_link_libraries  ( yuvconstants ${ly_lib_shared} )
++target_link_libraries  ( yuvconstants ${ly_lib_shared} m )
+ 
+ find_package ( JPEG )
+ if (JPEG_FOUND)
