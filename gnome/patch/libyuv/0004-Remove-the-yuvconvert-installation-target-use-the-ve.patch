@@ -27,7 +27,7 @@ index dae6f0c3..cb754134 100644
 -install ( TARGETS ${ly_lib_static}						DESTINATION lib )
 -install ( TARGETS ${ly_lib_shared} LIBRARY DESTINATION lib RUNTIME DESTINATION bin ARCHIVE DESTINATION lib )
 -install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/		DESTINATION include )
-+install ( PROGRAMS yuvconvert				DESTINATION ${CMAKE_INSTALL_BINDIR})
++install ( TARGETS yuvconvert				DESTINATION ${CMAKE_INSTALL_BINDIR})
 +install ( TARGETS ${ly_lib_static}			DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +install ( TARGETS ${ly_lib_shared} LIBRARY		DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +install ( DIRECTORY ${PROJECT_SOURCE_DIR}/include/	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
