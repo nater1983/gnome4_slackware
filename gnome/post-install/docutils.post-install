@@ -1,0 +1,5 @@
+cd $PKG/usr/bin
+  for i in *.py; do
+    ln -s "$i" "$PKG/usr/bin/$(basename $i .py)"
+  done
+cd -
