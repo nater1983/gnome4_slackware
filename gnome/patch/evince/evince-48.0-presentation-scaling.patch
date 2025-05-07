@@ -1,0 +1,34 @@
+From ee48d51075ec5c24fcaae2e49b5bdefdc2aaac3c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Nelson=20Ben=C3=ADtez=20Le=C3=B3n?= <nbenitezl@gmail.com>
+Date: Fri, 25 Apr 2025 17:37:24 +0100
+Subject: [PATCH] presentation: confine monitor fix to affected gtk versions
+
+GTK 3.24.42 (via this commit[1]) fixed the regression
+that first started in GTK 3.24.9 and for which we added a
+fix in Evince (commit b2b9012c5e), so now we confine the
+fix for the affected GTK versions so that the presentation
+view works fine again with recent GTK versions.
+
+Fixes #1600
+
+[1] https://gitlab.gnome.org/GNOME/gtk/-/commit/09373bf7ee4c6069a5825a363f11b7b0f229d04b
+---
+ libview/ev-view-presentation.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libview/ev-view-presentation.c b/libview/ev-view-presentation.c
+index 4e8b7f8f..96a79246 100644
+--- a/libview/ev-view-presentation.c
++++ b/libview/ev-view-presentation.c
+@@ -1255,7 +1255,7 @@ ev_view_presentation_update_monitor_geometry (EvViewPresentation *pview)
+ 	pview->monitor_width = geometry.width;
+ 	pview->monitor_height = geometry.height;
+ 
+-#if GTK_CHECK_VERSION(3, 24, 9) && defined (GDK_WINDOWING_WAYLAND)
++#if GTK_CHECK_VERSION(3, 24, 9) && !GTK_CHECK_VERSION(3, 24, 42) && defined (GDK_WINDOWING_WAYLAND)
+ 	if (GDK_IS_WAYLAND_DISPLAY (display)) {
+ 		/* See Evince issue #1365 and GTK regression gtk#2599 */
+ 		int scale_factor = gdk_monitor_get_scale_factor (monitor);
+-- 
+2.49.0
+
