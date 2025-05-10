@@ -8,6 +8,7 @@ CXXFLAGS="$SLKCFLAGS -Wl,-s" \
 make
 make install prefix=$PKG/usr INSTALLLIBDIR=$PKG/usr/lib${LIBDIRSUFFIX}
 strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
+rm $PKG/usr/lib$LIBDIRSUFFIX/libflite*.a
 
 # build the docs. NB don't replace subshells with "cd dir" and
 # "cd -", as they don't nest.
