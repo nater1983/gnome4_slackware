@@ -113,5 +113,5 @@ python3-soupsieve
 python3-tzlocal
 Unidecode
 #Gnome Firmware
-fwupd
+# fwupd - in gnome-software module
 gnome-firmware
