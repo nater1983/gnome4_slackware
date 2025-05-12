@@ -1,0 +1,8 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --enable-introspection=yes \
+    --enable-static=no
+make
+make install DESTDIR=$PKG
