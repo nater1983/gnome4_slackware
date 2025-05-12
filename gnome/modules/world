@@ -112,3 +112,6 @@ python3-regex
 python3-soupsieve
 python3-tzlocal
 Unidecode
+#Gnome Firmware
+fwupd
+gnome-firmware
