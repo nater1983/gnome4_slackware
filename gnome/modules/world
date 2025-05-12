@@ -99,7 +99,7 @@ python3-dateparser
 python3-dateutil
 python3-emoji
 python3-entrypoints
-python3-jaraco.functools
+jaraco_functools
 python3-keyring
 python3-magic
 python3-more-itertools
