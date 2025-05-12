@@ -1,0 +1,12 @@
+yelp-tools
+webkit2gtk4.1
+functools-lru-cache
+python3-webencodings
+python3-soupsieve
+python3-beautifulsoup4
+libwpe
+xdg-dbus-proxy
+wpebackend-fdo
+geoclue2
+bubblewrap
+yelp-xsl
