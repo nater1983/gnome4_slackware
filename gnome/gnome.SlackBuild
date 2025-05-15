@@ -540,9 +540,6 @@ build_mod_pkg() {
                 /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>&1 &
             fi
         else
-            upgradepkg --install-new --reinstall ${SLACK_GNOME_BUILD_DIR}/${gnome_module}/${PKGNAME}-${MODULAR_PACKAGE_VERSION}-${PKGARCH}-${MODBUILD}${TAG}.txz
-                # Keep MIME database current:
-                /usr/bin/update-mime-database /usr/share/mime >/dev/null 2>&1 &
         fi
       fi
     done
