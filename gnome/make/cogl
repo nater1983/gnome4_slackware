@@ -1,5 +1,5 @@
-CFLAGS="$SLKCFLAGS -fPIC -std=gnu17" \
-CXXFLAGS="$SLKCFLAGS -fPIC -std=gnu17" \
+CFLAGS="$SLKCFLAGS -std=gnu17" \
+CXXFLAGS="$SLKCFLAGS -std=gnu17" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
     --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
