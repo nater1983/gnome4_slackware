@@ -1,3 +1,6 @@
+# Remove Makfile since we only run meson build's here and not autotools.
+rm -f Makefile
+
 wget -c -P "$CWD/pre-install/Commit" https://github.com/sonnyp/troll/archive/8b0275948eedec9ed0378f9bdda1aa4aac3062ba/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz
 tar --strip-components=1 -xzf $CWD/pre-install/Commit/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz -C troll
 rm -fr $CWD/pre-install/Commit/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz
