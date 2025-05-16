@@ -10,6 +10,7 @@ seahorse
 snapshot
 zenity
 callaudiod
+umockdev
 feedbackd
 telepathy-glib
 folks
