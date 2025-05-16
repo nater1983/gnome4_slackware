@@ -1,0 +1,1 @@
+meson compile -C build --verbose src/gtex/Gtex-1.gir
