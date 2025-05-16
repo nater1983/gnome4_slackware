@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/felipeborges"
+GNOMEGITURI="https://gitlab.gnome.org/felipeborges/"
 
 # Default list of modules to checkout:
 DEFMODS="libovf-glib"
