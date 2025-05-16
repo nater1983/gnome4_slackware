@@ -21,7 +21,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories base URL:
-GNOMEGITURI="hhttps://github.com/sonnyp/"
+GNOMEGITURI="https://github.com/sonnyp/"
 
 # Default list of modules to checkout:
 DEFMODS="Commit"
