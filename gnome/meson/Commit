@@ -1,4 +1,6 @@
+# Remove Makfile since we only run meson build's here and not autotools.
 rm -f Makefile
+
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
