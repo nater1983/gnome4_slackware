@@ -1,3 +1,4 @@
+rm -f Makefile
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
