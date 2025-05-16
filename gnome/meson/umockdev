@@ -1,3 +1,5 @@
+echo -n "${MODULAR_PACKAGE_VERSION}" > .version
+
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
