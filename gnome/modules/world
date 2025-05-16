@@ -115,3 +115,6 @@ Unidecode
 #Gnome Firmware
 # fwupd - in gnome-software module
 gnome-firmware
+# Commit
+blueprint-compiler
+Commit
