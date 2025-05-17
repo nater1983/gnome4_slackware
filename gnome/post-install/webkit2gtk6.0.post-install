@@ -1,0 +1,17 @@
+mkdir -p $PKG/usr/share/gtk-doc/html/webkit2gtk-6.0
+mkdir -p $PKG/usr/share/gtk-doc/html/webkit2gtk-web-extension-6.0
+install -m 0644 ../Documentation/webkitgtk-6.0/* \
+  $PKG/usr/share/gtk-doc/html/webkit2gtk-6.0
+install -m 0644 ../Documentation/webkitgtk-web-process-extension-6.0/* \
+  $PKG/usr/share/gtk-doc/html/webkit2gtk-web-extension-6.0
+
+#add vala bindings
+mkdir -p $PKG/$VALADIR
+echo -e "gtk4\njavascriptcoregtk-6.0\nlibsoup-3.0\n">$PKG/$VALADIR/webkitgtk-6.0.deps
+chmod 644 $PKG/$VALADIR/webkitgtk-6.0.deps
+cp -a $PKG/$VALADIR/webkitgtk-6.0.deps $PKG/$VALADIR/webkitgtk-web-extension-6.0.deps
+install -m 0644 $CWD/pre-install/webkit2gtk6.0/webkitgtk-6.0.vapi $PKG/$VALADIR/webkitgtk-6.0.vapi
+install -m 0644 $CWD/pre-install/webkit2gtk6.0/webkitgtk-web-extension-6.0.vapi $PKG/$VALADIR/webkitgtk-web-extension-6.0.vapi
+install -m 0644 $CWD/pre-install/webkit2gtk6.0/javascriptcoregtk-6.0.vapi $PKG/$VALADIR/javascriptcoregtk-6.0.vapi
+chmod 644 $PKG/$VALADIR/webkitgtk-6.0.vapi $PKG/$VALADIR/webkitgtk-web-extension-6.0.vapi $PKG/$VALADIR/javascriptcoregtk-6.0.vapi
+rm -fr $CWD/pre-install/webkit2gtk6.0/
