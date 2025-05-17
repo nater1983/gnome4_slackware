@@ -31,6 +31,19 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
  # We don't want to define HAVE_ macros in public headers. Instead, we use
  # CMake's variable substitution with 0/1 variables, which will be seen by the
  # preprocessor as constants.
+@@ -395,4 +401,8 @@
+       "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
+     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+   )
++  install(
++    FILES "${PROJECT_BINARY_DIR}/snappy.pc"
++    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
++  )
+ endif(SNAPPY_INSTALL)
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
 @@ -331,19 +331,18 @@
    set(install_gmock OFF)
    set(build_gmock ON)
@@ -54,12 +67,3 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 +    set_property(TARGET GTest::gtest
          APPEND PROPERTY COMPILE_OPTIONS -Wno-implicit-int-float-conversion)
    endif(SNAPPY_HAVE_NO_IMPLICIT_INT_FLOAT_CONVERSION)
-@@ -395,4 +401,8 @@
-       "${PROJECT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
-     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-   )
-+  install(
-+    FILES "${PROJECT_BINARY_DIR}/snappy.pc"
-+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
-+  )
- endif(SNAPPY_INSTALL)
