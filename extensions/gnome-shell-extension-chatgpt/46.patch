@@ -34,10 +34,10 @@ Subject: [PATCH] Update window.js
  window.js | 29 ++++++++++++++++++++++++-----
  1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/window.js b/window.js
+diff --git a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
 index 9f254a6..67207c8 100644
---- a/window.js
-+++ b/window.js
+--- a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
++++ b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
 @@ -2,7 +2,6 @@ imports.gi.versions.Gtk = '3.0';
  imports.gi.versions.WebKit2 = '4.1';
  
