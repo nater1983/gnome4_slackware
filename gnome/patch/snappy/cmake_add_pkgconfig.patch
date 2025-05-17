@@ -6,7 +6,7 @@ index 0000000000..9e87e2c740
 @@ -0,0 +1,10 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +exec_prefix=${prefix}
-+libdir=${prefix}/lib@LIBDIRSUFFIX@
++libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
 +includedir=${prefix}/include
 +
 +Name: snappy
