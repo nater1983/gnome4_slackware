@@ -11,6 +11,9 @@ cd cmake-build
     -DUSE_SYSTEM_MALLOC=on \
     -DUSE_GTK4=ON \
     -DCMAKE_SKIP_RPATH=ON \
-    -DUSE_JPEGXL=ON
-make -C ../cmake-build
-make -C ../cmake-build install DESTDIR=$PKG
+    -DUSE_JPEGXL=ON \
+    -Wno-dev \
+    -G Ninja \
+    ..
+"${NINJA:=ninja}" -j$(expr $(nproc) / 2)
+DESTDIR=$PKG $NINJA -j1 install
