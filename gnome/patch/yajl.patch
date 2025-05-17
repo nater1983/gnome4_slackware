@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/yajl/multi_commit.patch
