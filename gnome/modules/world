@@ -119,3 +119,8 @@ gnome-firmware
 # Commit
 blueprint-compiler
 Commit
+# pure_protobuf
+python3-poetry-dynamic-versioning
+tomlkit
+python3-dunamai
+pure_protobuf
