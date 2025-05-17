@@ -4,7 +4,6 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}" \
     -DSNAPPY_BUILD_TESTS=OFF \
     -DCMAKE_CXX_STANDARD=23 \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.10 \
     -DSNAPPY_BUILD_BENCHMARKS=OFF
 make -C ../cmake-build
 make -C ../cmake-build install DESTDIR=$PKG
