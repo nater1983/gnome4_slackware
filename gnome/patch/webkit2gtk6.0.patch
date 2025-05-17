@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/webkit2gtk6.0/unhide-deprecated-api.patch
