@@ -36,6 +36,7 @@ gtksourceview
 rest
 gnome-online-accounts
 libnma-gtk4
+NetworkManager-openvpn-gtk4
 cups-pk-helper
 power-profiles-daemon
 gnome-color-manager
