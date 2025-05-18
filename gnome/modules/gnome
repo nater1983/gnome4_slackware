@@ -35,7 +35,7 @@ unifdef
 gtksourceview
 rest
 gnome-online-accounts
-libnma
+libnma-gtk4
 cups-pk-helper
 power-profiles-daemon
 gnome-color-manager
