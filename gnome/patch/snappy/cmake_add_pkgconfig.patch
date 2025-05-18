@@ -44,7 +44,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -302,7 +302,7 @@ if(SNAPPY_BUILD_TESTS OR SNAPPY_BUILD_BENCHMARKS)
+@@ -308,7 +308,7 @@ if(SNAPPY_BUILD_TESTS OR SNAPPY_BUILD_BENCHMARKS)
      set_target_properties(snappy_test_support PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
    endif(BUILD_SHARED_LIBS)
  
@@ -53,7 +53,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
  
    if(HAVE_LIBZ)
      target_link_libraries(snappy_test_support z)
-@@ -331,19 +331,18 @@
+@@ -335,19 +335,18 @@
    set(install_gmock OFF)
    set(build_gmock ON)
  
