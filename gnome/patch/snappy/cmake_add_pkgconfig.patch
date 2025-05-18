@@ -18,7 +18,7 @@ index 0000000000..9e87e2c740
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -187,6 +187,12 @@
+@@ -225,6 +225,12 @@
    "${PROJECT_BINARY_DIR}/config.h"
  )
  
