@@ -1,0 +1,18 @@
+mkdir -p build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dudevrulesdir=/lib/udev/rules.d \
+    -Dman=enabled \
+    -Dffmpeg=enabled \
+    -Dvulkan=enabled \
+    -Djack=disabled \
+    -Dpipewire-jack=disabled \
+    -Dlibcamera=enabled \
+    -Dsession-managers=[]
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
