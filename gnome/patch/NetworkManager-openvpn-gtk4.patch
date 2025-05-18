@@ -1,0 +1,3 @@
+# Run as nobody:nogroup:
+patch -Np1 -i $CWD/patch/NetworkManager-openvpn-gtk4/openvpn.nobody.nogroup.diff
+patch -Np1 -i $CWD/patch/NetworkManager-openvpn-gtk4/a790374f4c2e9e1657cbb8470357d72d4bd87916.patch
