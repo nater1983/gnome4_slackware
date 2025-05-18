@@ -35,6 +35,7 @@ unifdef
 gtksourceview
 rest
 gnome-online-accounts
+pipewire-libcamera
 libnma-gtk4
 NetworkManager-openvpn-gtk4
 cups-pk-helper
