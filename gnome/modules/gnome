@@ -57,13 +57,15 @@ openrc-settingsd
 langtable
 hatch_fancy_pypi_readme
 attrs
+libfprint
+fprintd
 gdm
 gnome-menus
 gnome-shell-extensions
 p7zip
 jq
 gnome-browser-connector
-ibus
+ibus-gtk4
 adwaita-fonts
 cantarell-fonts
 xvfb
