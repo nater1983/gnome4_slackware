@@ -7,4 +7,4 @@ install -m 0644 $CWD/pre-install/webkit2gtk4.1/webkit2gtk-4.1.vapi $PKG/$VALADIR
 install -m 0644 $CWD/pre-install/webkit2gtk4.1/webkit2gtk-web-extension-4.1.vapi $PKG/$VALADIR/webkit2gtk-web-extension-4.1.vapi
 install -m 0644 $CWD/pre-install/webkit2gtk4.1/javascriptcoregtk-4.1.vapi $PKG/$VALADIR/javascriptcoregtk-4.1.vapi
 chmod 644 $PKG/$VALADIR/webkit2gtk-4.1.vapi $PKG/$VALADIR/webkit2gtk-web-extension-4.1.vapi $PKG/$VALADIR/javascriptcoregtk-4.1.vapi
-rm -fr $CWD/pre-install/webkit2gtk6.0/
+rm -fr $CWD/pre-install/webkit2gtk4.1/
