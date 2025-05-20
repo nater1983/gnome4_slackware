@@ -90,7 +90,7 @@ python3-pyasn1-modules
 python3-pydrive2
 pyopenssl
 python3-rsa
-typing_extensions
+python3-typing_extensions
 python3-uritemplate
 # pure_protobuf
 python3-poetry-dynamic-versioning
