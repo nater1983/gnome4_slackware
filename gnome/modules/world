@@ -3,13 +3,14 @@ cozy
 emblem
 Image-ExifTool
 eyedropper
+# Gaphor
 poetry_core
 generic
 exceptiongroup
 python-webencodings
 flit_scm
 gaphas
-tinycss2
+python3-tinycss2
 pydot
 jedi
 parso
