@@ -125,3 +125,10 @@ blueprint-compiler
 Commit
 # video-trimmer
 video-trimmer
+# Plots
+python3-lark
+python3-opengl
+python3-numpy
+python3-freetype
+python3-glm
+Plots
