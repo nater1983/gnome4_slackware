@@ -1,1 +1,2 @@
-PKGVERSION="$(echo "$PKGNAME" | rev | cut -d- -f3 | rev)"
+PKGVERSION="${PKGNAME%-*}"         # Remove the last field (-1_gfs.txz)
+PKGVERSION="${PKGVERSION##*-}"          # Extract version (removes everything before last -)
