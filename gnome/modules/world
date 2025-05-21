@@ -134,3 +134,6 @@ python3-numpy
 python3-freetype
 python3-glm
 Plots
+# Collision
+crystal-lang
+Collision
