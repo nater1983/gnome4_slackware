@@ -1,0 +1,575 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 99cf9e95..789ddf99 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -30,7 +30,7 @@ ADD_DEFINITIONS(-DYAJL_BUILD)
+ # set up some paths
+ SET (libDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ SET (incDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include/yajl)
+-SET (shareDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/share/pkgconfig)
++SET (pkgconfigDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib/pkgconfig)
+ 
+ # set the output path for libraries
+ SET(LIBRARY_OUTPUT_PATH ${libDir})
+@@ -61,7 +61,7 @@ FILE(MAKE_DIRECTORY ${incDir})
+ # generate build-time source
+ SET(dollar $)
+ CONFIGURE_FILE(api/yajl_version.h.cmake ${incDir}/yajl_version.h)
+-CONFIGURE_FILE(yajl.pc.cmake ${shareDir}/yajl.pc)
++CONFIGURE_FILE(yajl.pc.cmake ${pkgconfigDir}/yajl.pc)
+ 
+ # copy public headers to output directory
+ FOREACH (header ${PUB_HDRS})
+@@ -84,4 +84,4 @@ INSTALL(TARGETS yajl
+ INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+-INSTALL(FILES ${shareDir}/yajl.pc DESTINATION share/pkgconfig)
++INSTALL(FILES ${pkgconfigDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+
+diff --git a/src/yajl.pc.cmake b/src/yajl.pc.cmake
+index 6eaca146..485ded91 100644
+--- a/src/yajl.pc.cmake
++++ b/src/yajl.pc.cmake
+@@ -1,6 +1,6 @@
+ prefix=${CMAKE_INSTALL_PREFIX}
+ libdir=${dollar}{prefix}/lib${LIB_SUFFIX}
+-includedir=${dollar}{prefix}/include/yajl
++includedir=${dollar}{prefix}/include
+ 
+ Name: Yet Another JSON Library
+ Description: A Portable JSON parsing and serialization library in ANSI C
+
+diff --git a/test/api/run_tests.sh b/test/api/run_tests.sh
+index 66551529..88e43fba 100755
+--- a/test/api/run_tests.sh
++++ b/test/api/run_tests.sh
+@@ -5,7 +5,7 @@ echo Running api tests:
+ tests=0
+ passed=0
+ 
+-for file in `ls`; do
++for file in `ls ../../build/test/api`; do
+     [ ! -x $file -o -d $file ] && continue
+     tests=`expr 1 + $tests`
+     printf " test(%s): " $file
+
+diff --git a/test/parsing/run_tests.sh b/test/parsing/run_tests.sh
+index b37e4dd5..ceb2e7a7 100755
+--- a/test/parsing/run_tests.sh
++++ b/test/parsing/run_tests.sh
+@@ -16,11 +16,11 @@ fi
+ # find test binary on both platforms.  allow the caller to force a
+ # particular test binary (useful for non-cmake build systems).
+ if [ -z "$testBin" ]; then
+-    testBin="../build/test/parsing/Release/yajl_test.exe"
++    testBin="../../build/test/parsing/Release/yajl_test.exe"
+     if [ ! -x $testBin ] ; then
+-        testBin="../build/test/parsing/Debug/yajl_test.exe"
++        testBin="../../build/test/parsing/Debug/yajl_test.exe"
+         if [ ! -x $testBin ] ; then
+-            testBin="../build/test/parsing/yajl_test"
++            testBin="../../build/test/parsing/yajl_test"
+             if [  ! -x $testBin ] ; then
+                 ${ECHO} "cannot execute test binary: '$testBin'"
+                 exit 1;
+
+diff --git a/reformatter/CMakeLists.txt b/reformatter/CMakeLists.txt
+index 52a9bee8..4b7b3fa4 100644
+--- a/reformatter/CMakeLists.txt
++++ b/reformatter/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_reformat ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_reformat yajl_s)
++TARGET_LINK_LIBRARIES(json_reformat yajl)
+ 
+ # In some environments, we must explicitly link libm (like qnx,
+ # thanks @shahbag)
+ 
+diff --git a/verify/CMakeLists.txt b/verify/CMakeLists.txt
+index 967fca16..2bceb265 100644
+--- a/verify/CMakeLists.txt
++++ b/verify/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_verify ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_verify yajl_s)
++TARGET_LINK_LIBRARIES(json_verify yajl)
+ 
+ # copy in the binary
+ GET_TARGET_PROPERTY(binPath json_verify LOCATION)
+
+diff --git a/src/yajl_tree.c b/src/yajl_tree.c
+index 3d357a32..4b3cf2b1 100644
+--- a/src/yajl_tree.c
++++ b/src/yajl_tree.c
+@@ -143,7 +143,7 @@ static yajl_val context_pop(context_t *ctx)
+     ctx->stack = stack->next;
+ 
+     v = stack->value;
+-
++    free (stack->key);
+     free (stack);
+ 
+     return (v);
+@@ -444,6 +444,10 @@ yajl_val yajl_tree_parse (const char *input,
+              snprintf(error_buffer, error_buffer_size, "%s", internal_err_str);
+              YA_FREE(&(handle->alloc), internal_err_str);
+         }
++        while(ctx.stack != NULL) {
++             yajl_val v = context_pop(&ctx);
++             yajl_tree_free(v);
++        }
+         yajl_free (handle);
+         return NULL;
+     }
+
+diff --git a/src/api/yajl_parse.h b/src/api/yajl_parse.h
+index 1c25a60d..fd5b9a06 100644
+--- a/src/api/yajl_parse.h
++++ b/src/api/yajl_parse.h
+@@ -35,7 +35,7 @@ extern "C" {
+         yajl_status_ok,
+         /** a client callback returned zero, stopping the parse */
+         yajl_status_client_canceled,
+-        /** An error occured during the parse.  Call yajl_get_error for
++        /** An error occurred during the parse.  Call yajl_get_error for
+          *  more information about the encountered error */
+         yajl_status_error
+     } yajl_status;
+@@ -192,7 +192,7 @@ extern "C" {
+      *  parse.
+      *
+      *  If verbose is non-zero, the message will include the JSON
+-     *  text where the error occured, along with an arrow pointing to
++     *  text where the error occurred, along with an arrow pointing to
+      *  the specific char.
+      *
+      *  \returns A dynamically allocated string will be returned which should
+@@ -211,7 +211,7 @@ extern "C" {
+      *
+      * In the event an error is encountered during parsing, this function
+      * affords the client a way to get the offset into the most recent
+-     * chunk where the error occured.  0 will be returned if no error
++     * chunk where the error occurred.  0 will be returned if no error
+      * was encountered.
+      */
+     YAJL_API size_t yajl_get_bytes_consumed(yajl_handle hand);
+
+diff --git a/src/yajl_parser.c b/src/yajl_parser.c
+index 1a528a64..a52f345d 100644
+--- a/src/yajl_parser.c
++++ b/src/yajl_parser.c
+@@ -343,6 +343,7 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         goto around_again;
+                     }
+                     /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 }
+                 case yajl_tok_colon:
+                 case yajl_tok_comma:
+@@ -394,6 +395,7 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         bufLen = yajl_buf_len(hand->decodeBuf);
+                     }
+                     /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 case yajl_tok_string:
+                     if (hand->callbacks && hand->callbacks->yajl_map_key) {
+                         _CC_CHK(hand->callbacks->yajl_map_key(hand->ctx, buf,
+
+diff --git a/src/headers/yajl b/src/headers/yajl
+new file mode 120000
+index 00000000..8edbb42d
+--- /dev/null
++++ b/src/headers/yajl
+@@ -0,0 +1 @@
++../api
+\ No newline at end of file
+
+diff --git a/contrib/hfuzz.sh b/contrib/hfuzz.sh
+new file mode 100755
+index 00000000..da1df980
+--- /dev/null
++++ b/contrib/hfuzz.sh
+@@ -0,0 +1,5 @@
++#!/bin/sh
++
++./configure CC=hfuzz-clang  CPPFLAGS='-D FUZZER' CFLAGS="-ggdb3"
++make
++VALIDATE_FUZZ=1 honggfuzz --linux_perf_instr --threads 4  -i ./test/parsing/cases/ -- verify/json_verify
+
+diff --git a/verify/json_verify.c b/verify/json_verify.c
+index 01849e03..353e8ce6 100644
+--- a/verify/json_verify.c
++++ b/verify/json_verify.c
+@@ -15,10 +15,43 @@
+  */
+ 
+ #include <yajl/yajl_parse.h>
++#include <yajl/yajl_tree.h>
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <inttypes.h>
++
++#ifdef FUZZER
++int
++LLVMFuzzerInitialize(int *argc, char ***argv)
++{
++  return 0;
++}
++
++int
++LLVMFuzzerTestOneInput(uint8_t *buf, size_t len)
++{
++  yajl_val tree;
++  yajl_handle hand;
++  char err[1024];
++  char *str = malloc(len+1);
++
++  memcpy(str, buf, len);
++  str[len] = '\0';
++
++  hand = yajl_alloc(NULL, NULL, NULL);
++  yajl_parse(hand, buf, len);
++  yajl_free(hand);
++
++  /* make sure it is NUL terminated.  */
++  tree = yajl_tree_parse(str, err, sizeof(err));
++  if (tree)
++    yajl_tree_free(tree);
++  free(str);
++  return 0;
++}
++#endif
+ 
+ static void
+ usage(const char * progname)
+@@ -44,6 +77,20 @@ main(int argc, char ** argv)
+     int retval = 0;
+     int a = 1;
+ 
++#ifdef FUZZER
++  if (getenv("VALIDATE_FUZZ")) {
++    extern void HF_ITER(uint8_t** buf, size_t* len);
++    for (;;) {
++      size_t len;
++      uint8_t *buf;
++
++      HF_ITER(&buf, &len);
++  
++      LLVMFuzzerTestOneInput(buf, len);
++    }
++  }
++#endif
++
+     /* allocate a parser */
+     hand = yajl_alloc(NULL, NULL, NULL);
+ 
+diff --git a/src/yajl_tree.c b/src/yajl_tree.c
+index 4b3cf2b1..d3e76512 100644
+--- a/src/yajl_tree.c
++++ b/src/yajl_tree.c
+@@ -250,10 +250,14 @@ static int context_add_value (context_t *ctx, yajl_val v)
+         else /* if (ctx->key != NULL) */
+         {
+             char * key;
++            int ret;
+ 
+             key = ctx->stack->key;
+             ctx->stack->key = NULL;
+-            return (object_add_keyval (ctx, ctx->stack->value, key, v));
++            ret = object_add_keyval (ctx, ctx->stack->value, key, v);
++            if (ret)
++                ctx->stack->key = key;
++            return ret;
+         }
+     }
+     else if (YAJL_IS_ARRAY (ctx->stack->value))
+@@ -286,7 +290,10 @@ static int handle_string (void *ctx,
+     memcpy(v->u.string, string, string_length);
+     v->u.string[string_length] = 0;
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_number (void *ctx, const char *string, size_t string_length)
+@@ -321,7 +328,10 @@ static int handle_number (void *ctx, const char *string, size_t string_length)
+     if ((errno == 0) && (endptr != NULL) && (*endptr == 0))
+         v->u.number.flags |= YAJL_NUMBER_DOUBLE_VALID;
+ 
+-    return ((context_add_value(ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_start_map (void *ctx)
+@@ -336,7 +346,11 @@ static int handle_start_map (void *ctx)
+     v->u.object.values = NULL;
+     v->u.object.len = 0;
+ 
+-    return ((context_push (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_push (ctx, v) == 0))
++        return STATUS_CONTINUE;
++
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_end_map (void *ctx)
+@@ -347,7 +361,10 @@ static int handle_end_map (void *ctx)
+     if (v == NULL)
+         return (STATUS_ABORT);
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_start_array (void *ctx)
+@@ -361,7 +378,10 @@ static int handle_start_array (void *ctx)
+     v->u.array.values = NULL;
+     v->u.array.len = 0;
+ 
+-    return ((context_push (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_push (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_end_array (void *ctx)
+@@ -372,7 +392,10 @@ static int handle_end_array (void *ctx)
+     if (v == NULL)
+         return (STATUS_ABORT);
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_boolean (void *ctx, int boolean_value)
+@@ -383,7 +406,10 @@ static int handle_boolean (void *ctx, int boolean_value)
+     if (v == NULL)
+         RETURN_ERROR ((context_t *) ctx, STATUS_ABORT, "Out of memory");
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_null (void *ctx)
+@@ -394,7 +420,10 @@ static int handle_null (void *ctx)
+     if (v == NULL)
+         RETURN_ERROR ((context_t *) ctx, STATUS_ABORT, "Out of memory");
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ /*
+@@ -448,6 +477,7 @@ yajl_val yajl_tree_parse (const char *input,
+              yajl_val v = context_pop(&ctx);
+              yajl_tree_free(v);
+         }
++        yajl_tree_free(ctx.root);
+         yajl_free (handle);
+         return NULL;
+     }
+
+diff --git a/src/yajl_parser.c b/src/yajl_parser.c
+index a52f345d..20c047d3 100644
+--- a/src/yajl_parser.c
++++ b/src/yajl_parser.c
+@@ -413,6 +413,8 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         yajl_bs_pop(hand->stateStack);
+                         goto around_again;
+                     }
++                    /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 default:
+                     yajl_bs_set(hand->stateStack, yajl_state_parse_error);
+                     hand->parseError =
+
+diff --git a/src/yajl_buf.c b/src/yajl_buf.c
+index 1aeafde0..8bd1bea7 100644
+--- a/src/yajl_buf.c
++++ b/src/yajl_buf.c
+@@ -30,7 +30,7 @@ struct yajl_buf_t {
+ };
+ 
+ static
+-void yajl_buf_ensure_available(yajl_buf buf, size_t want)
++int yajl_buf_ensure_available(yajl_buf buf, size_t want)
+ {
+     size_t need;
+     
+@@ -46,11 +46,15 @@ void yajl_buf_ensure_available(yajl_buf buf, size_t want)
+     need = buf->len;
+ 
+     while (want >= (need - buf->used)) need <<= 1;
++    if (need < buf->used) {
++         return -1;
++    }
+ 
+     if (need != buf->len) {
+         buf->data = (unsigned char *) YA_REALLOC(buf->alloc, buf->data, need);
+         buf->len = need;
+     }
++    return 0;
+ }
+ 
+ yajl_buf yajl_buf_alloc(yajl_alloc_funcs * alloc)
+@@ -70,7 +74,8 @@ void yajl_buf_free(yajl_buf buf)
+ 
+ void yajl_buf_append(yajl_buf buf, const void * data, size_t len)
+ {
+-    yajl_buf_ensure_available(buf, len);
++    if (yajl_buf_ensure_available(buf, len))
++        return;
+     if (len > 0) {
+         assert(data != NULL);
+         memcpy(buf->data + buf->used, data, len);
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 471eee13..9af25203 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,6 +16,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+ 
+ PROJECT(YetAnotherJSONParser C)
+ 
++option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
++
+ SET (YAJL_MAJOR 2)
+ SET (YAJL_MINOR 1)
+ SET (YAJL_MICRO 1)
+ 
+diff --git a/example/CMakeLists.txt b/example/CMakeLists.txt
+index 0a7f6220..62ddf14c 100644
+--- a/example/CMakeLists.txt
++++ b/example/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(parse_config ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(parse_config yajl_s)
++TARGET_LINK_LIBRARIES(parse_config yajl)
+
+diff --git a/perf/CMakeLists.txt b/perf/CMakeLists.txt
+index b438d7a1..924a2681 100644
+--- a/perf/CMakeLists.txt
++++ b/perf/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(perftest ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(perftest yajl_s)
++TARGET_LINK_LIBRARIES(perftest yajl)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 789ddf99..78875032 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -35,9 +35,7 @@ SET (pkgconfigDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib/pkgconfig
+ # set the output path for libraries
+ SET(LIBRARY_OUTPUT_PATH ${libDir})
+ 
+-ADD_LIBRARY(yajl_s STATIC ${SRCS} ${HDRS} ${PUB_HDRS})
+-
+-ADD_LIBRARY(yajl SHARED ${SRCS} ${HDRS} ${PUB_HDRS})
++ADD_LIBRARY(yajl ${SRCS} ${HDRS} ${PUB_HDRS})
+ 
+ #### setup shared library version number
+ SET_TARGET_PROPERTIES(yajl PROPERTIES
+@@ -69,7 +67,7 @@ FOREACH (header ${PUB_HDRS})
+ 
+   EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${header} ${incDir})
+ 
+-  ADD_CUSTOM_COMMAND(TARGET yajl_s POST_BUILD
++  ADD_CUSTOM_COMMAND(TARGET yajl POST_BUILD
+       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${header} ${incDir})
+ ENDFOREACH (header ${PUB_HDRS})
+ 
+@@ -81,7 +79,6 @@ INSTALL(TARGETS yajl
+         RUNTIME DESTINATION lib${LIB_SUFFIX}
+         LIBRARY DESTINATION lib${LIB_SUFFIX}
+         ARCHIVE DESTINATION lib${LIB_SUFFIX})
+-INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+ INSTALL(FILES ${pkgconfigDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+
+diff --git a/test/parsing/CMakeLists.txt b/test/parsing/CMakeLists.txt
+index c22a3887..f445920d 100644
+--- a/test/parsing/CMakeLists.txt
++++ b/test/parsing/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(yajl_test ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(yajl_test yajl_s)
++TARGET_LINK_LIBRARIES(yajl_test yajl)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 471eee13..deba3a40 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,7 +12,7 @@
+ # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
++CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0...3.10)
+ 
+ PROJECT(YetAnotherJSONParser C)
+ 
+diff --git a/reformatter/CMakeLists.txt b/reformatter/CMakeLists.txt
+index 52a9bee8..267d02e2 100644
+--- a/reformatter/CMakeLists.txt
++++ b/reformatter/CMakeLists.txt
+@@ -35,9 +35,7 @@ IF (NOT WIN32)
+ ENDIF (NOT WIN32)
+ 
+ # copy the binary into the output directory
+-GET_TARGET_PROPERTY(binPath json_reformat LOCATION)
+-
+ ADD_CUSTOM_COMMAND(TARGET json_reformat POST_BUILD
+-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
++    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:json_reformat> ${binDir})
+ 
+ INSTALL(TARGETS json_reformat RUNTIME DESTINATION bin)
+diff --git a/verify/CMakeLists.txt b/verify/CMakeLists.txt
+index 967fca16..2f390082 100644
+--- a/verify/CMakeLists.txt
++++ b/verify/CMakeLists.txt
+@@ -29,9 +29,7 @@ ADD_EXECUTABLE(json_verify ${SRCS})
+ TARGET_LINK_LIBRARIES(json_verify yajl_s)
+ 
+ # copy in the binary
+-GET_TARGET_PROPERTY(binPath json_verify LOCATION)
+-
+ ADD_CUSTOM_COMMAND(TARGET json_verify POST_BUILD
+-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${binPath} ${binDir})
++    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:json_verify> ${binDir})
+ 
+ INSTALL(TARGETS json_verify RUNTIME DESTINATION bin)

@@ -1,0 +1,1152 @@
+From 7018af850bea681a38de1bcde4b243ba037a2895 Mon Sep 17 00:00:00 2001
+From: Krzesimir Nowak <qdlacz@gmail.com>
+Date: Mon, 29 Jan 2018 22:47:19 +0100
+Subject: [PATCH 3/6] build: Add meson build system
+
+The following flags were ported to meson:
+
+--enable-bz2 is now -Dbzip2=true (auto by default)
+
+--enable-lzma is now -Dlzma=true (auto by default)
+
+--with-webkit2gtk-4-0 is now -Dwebkit2gtk-4-0=true (disabled by
+default)
+
+Some of the gtk-doc infra is in place, but not hooked to the toplevel
+meson.build file as it was also dropped from autotools.
+---
+ data/domains/gen_yelp_pot.sh      |  45 ++++++++++
+ data/domains/gen_yelp_xml.sh      |  99 +++++++++++++++++++++
+ data/domains/meson.build          |  28 ++++++
+ data/dtd/meson.build              |   5 ++
+ data/meson.build                  |  59 +++++++++++++
+ data/xslt/meson.build             |  26 ++++++
+ docs/libyelp/meson.build          |  36 ++++++++
+ libyelp/meson.build               | 103 ++++++++++++++++++++++
+ libyelp/web-extension/meson.build |  18 ++++
+ meson.build                       | 141 ++++++++++++++++++++++++++++++
+ meson_options.txt                 |  14 +++
+ po/meson.build                    |   6 ++
+ src/link-gnome-help.sh            |   8 ++
+ src/meson.build                   |  21 +++++
+ 14 files changed, 609 insertions(+)
+ create mode 100644 data/domains/gen_yelp_pot.sh
+ create mode 100644 data/domains/gen_yelp_xml.sh
+ create mode 100644 data/domains/meson.build
+ create mode 100644 data/dtd/meson.build
+ create mode 100644 data/meson.build
+ create mode 100644 data/xslt/meson.build
+ create mode 100644 docs/libyelp/meson.build
+ create mode 100644 libyelp/meson.build
+ create mode 100644 libyelp/web-extension/meson.build
+ create mode 100644 meson.build
+ create mode 100644 meson_options.txt
+ create mode 100644 po/meson.build
+ create mode 100644 src/link-gnome-help.sh
+ create mode 100644 src/meson.build
+
+diff --git a/data/domains/gen_yelp_pot.sh b/data/domains/gen_yelp_pot.sh
+new file mode 100644
+index 00000000..5654a839
+--- /dev/null
++++ b/data/domains/gen_yelp_pot.sh
+@@ -0,0 +1,45 @@
++#!/bin/sh
++
++set -e
++
++itstool=""
++
++parse_options() {
++    while [[ -n "${1}" ]]; do
++        case "${1}" in
++            --itstool)
++                itstool="${2}"
++                shift 2
++                ;;
++            --help)
++                cat <<EOF
++Usage ${0} [FLAGS]
++FLAGS:
++--itstool <PATH> - path to the itstool program
++--help - prints this message and quits
++EOF
++                ;;
++            *=*)
++                echo "--foo=bar flags are not supported, use --foo bar"
++                exit 1
++                ;;
++            *)
++                echo "unknown flag ${1}, use --help to get help" >&2
++                exit 1
++                ;;
++        esac
++    done
++
++    if [ -z "${itstool}" ]; then
++        echo "path to itstool program not specified" >&2
++        exit 1
++    fi
++}
++
++parse_options "${@}"
++
++# Note that this modifies the file in source directory, not build
++# directory, because the changes are supposed to be committed to the
++# repository.
++cd "${MESON_SOURCE_ROOT}/${MESON_SUBDIR}"
++"${itstool}" -o 'yelp.pot' 'yelp.xml.in'
+diff --git a/data/domains/gen_yelp_xml.sh b/data/domains/gen_yelp_xml.sh
+new file mode 100644
+index 00000000..29e133b5
+--- /dev/null
++++ b/data/domains/gen_yelp_xml.sh
+@@ -0,0 +1,99 @@
++#!/bin/bash
++
++set -e
++
++po_dir=''
++itstool=''
++msgfmt=''
++input=''
++output=''
++target=''
++
++parse_options() {
++    while [[ -n "${1}" ]]; do
++        case "${1}" in
++            --input)
++                input="${2}"
++                shift 2
++                ;;
++            --itstool)
++                itstool="${2}"
++                shift 2
++                ;;
++            --msgfmt)
++                msgfmt="${2}"
++                shift 2
++                ;;
++            --output)
++                output="${2}"
++                shift 2
++                ;;
++            --po-dir)
++                po_dir="${2}"
++                shift 2
++                ;;
++            --target)
++                target="${2}"
++                shift 2
++                ;;
++            --help)
++                cat <<EOF
++Usage ${0} [FLAGS]
++FLAGS:
++--input <PATH> - path to the input xml file
++--itstool <PATH> - path to the itstool program
++--msgfmt <PATH> - path to the msgfmt program
++--output <PATH> - path to the output xml file
++--po-dir <PATH> - path to "po" directory; should also contain LINGUAS file
++--target <NAME> - name of the target rule, used for deducing the temporary directory
++--help - prints this message and quits
++EOF
++                ;;
++            *=*)
++                echo "--foo=bar flags are not supported, use --foo bar"
++                exit 1
++                ;;
++            *)
++                echo "unknown flag ${1}, use --help to get help" >&2
++                exit 1
++                ;;
++        esac
++    done
++
++    if [ -z "${input}" ]; then
++        echo "path to input file not specified" >&2
++        exit 1
++    fi
++    if [ -z "${itstool}" ]; then
++        echo "path to itstool program not specified" >&2
++        exit 1
++    fi
++    if [ -z "${msgfmt}" ]; then
++        echo "path to msgfmt program not specified" >&2
++        exit 1
++    fi
++    if [ -z "${output}" ]; then
++        echo "path to output directory not specified" >&2
++        exit 1
++    fi
++    if [ -z "${po_dir}" ]; then
++        echo "path to po directory not specified" >&2
++        exit 1
++    fi
++    if [ -z "${target}" ]; then
++        echo "target name not specified" >&2
++        exit 1
++    fi
++}
++
++parse_options "${@}"
++
++dir=$(dirname "${output}")
++target_dir="${dir}/${target}.dir"
++mkdir -p "${target_dir}"
++all_linguas=$(grep -v '^#' "${po_dir}/LINGUAS" | tr '\n' ' ')
++for lang in ${all_linguas}; do
++    "${msgfmt}" -o "${target_dir}/${lang}.mo" "${po_dir}/${lang}.po"
++done
++"${itstool}" -o "${output}" -j "${input}" "${target_dir}"/*.mo
++rm -rf "${target_dir}"
+diff --git a/data/domains/meson.build b/data/domains/meson.build
+new file mode 100644
+index 00000000..beeef8a4
+--- /dev/null
++++ b/data/domains/meson.build
+@@ -0,0 +1,28 @@
++gen_yelp_pot = find_program('gen_yelp_pot.sh')
++gen_yelp_xml = find_program('gen_yelp_xml.sh')
++msgfmt = find_program('msgfmt')
++
++run_target('yelp.pot',
++           command: [
++             gen_yelp_pot,
++             '--itstool', itstool.full_path(),
++           ])
++
++custom_target('yelp-xml-domain',
++              input: 'yelp.xml.in',
++              output: 'yelp.xml',
++              command: [
++                gen_yelp_xml,
++                '--po-dir', join_paths(meson.project_source_root(), 'po'),
++                '--itstool', itstool,
++                '--msgfmt', msgfmt,
++                '--input', '@INPUT@',
++                '--output', '@OUTPUT@',
++                '--target', 'yelp-xml-domain',
++              ],
++              install: true,
++              install_dir: join_paths(datadir,
++                                      'yelp-xsl',
++                                      'xslt',
++                                      'common',
++                                      'domains'))
+diff --git a/data/dtd/meson.build b/data/dtd/meson.build
+new file mode 100644
+index 00000000..cc8472e1
+--- /dev/null
++++ b/data/dtd/meson.build
+@@ -0,0 +1,5 @@
++configure_file(input: 'catalog.in',
++               output: 'catalog',
++               configuration: yelp_xsl_conf,
++               install: true,
++               install_dir: join_paths(yelp_datadir, 'dtd'))
+diff --git a/data/meson.build b/data/meson.build
+new file mode 100644
+index 00000000..36ce0daa
+--- /dev/null
++++ b/data/meson.build
+@@ -0,0 +1,59 @@
++yelp_datadir = join_paths(datadir, 'yelp')
++
++subdir('domains')
++subdir('dtd')
++subdir('xslt')
++
++# we build it by default, but ignore the result - this is to ensure
++# that schema file is valid
++gnome.compile_schemas(build_by_default: true,
++                      depend_files: 'org.gnome.yelp.gschema.xml',
++)
++
++install_data('org.gnome.yelp.gschema.xml',
++             install_dir : join_paths(datadir, 'glib-2.0', 'schemas'))
++
++install_subdir('dtd',
++               install_dir: yelp_datadir,
++               exclude_files: [
++                 'meson.build',
++                 'catalog.in',
++               ])
++
++#install_subdir('mathjax',
++#               install_dir: yelp_datadir,
++#               exclude_files: [
++#                 'LICENSE',
++#                 'README',
++#                 'jax/element/mml/optable/Makefile.am',
++#                 'jax/input/MathML/entities/Makefile.am',
++#                 'jax/output/Makefile.am',
++#                 'jax/output/HTML-CSS/fonts/TeX/SansSerif/Bold/Makefile.am',
++#                 'jax/output/HTML-CSS/fonts/TeX/SansSerif/Italic/Makefile.am',
++#                 'jax/output/HTML-CSS/fonts/TeX/SansSerif/Regular/Makefile.am',
++#               ],
++#               exclude_directories: [
++#                 'unpacked',
++#               ])
++
++# TODO: this should be installed as icons directory
++install_subdir('yelp-icons',
++               install_dir: join_paths(yelp_datadir, 'icons'),
++               strip_directory: true,
++               exclude_files: [
++                 'yelp-watermark-blockquote.xcf',
++               ])
++
++install_subdir('icons',
++               install_dir: datadir,
++               exclude_files: [
++                 'hicolor/scalable/apps/org.gnome.Yelp.Devel.svg',
++               ])
++
++i18n.merge_file(
++                input: 'yelp.appdata.xml.in',
++                output: 'yelp.appdata.xml',
++                install: true,
++                install_dir: join_paths(datadir, 'metainfo'),
++                po_dir: join_paths(meson.project_source_root(), 'po'),
++                type: 'xml')
+diff --git a/data/xslt/meson.build b/data/xslt/meson.build
+new file mode 100644
+index 00000000..7b358be2
+--- /dev/null
++++ b/data/xslt/meson.build
+@@ -0,0 +1,26 @@
++yelp_xsltdir = join_paths(yelp_datadir, 'xslt')
++
++configure_file(input: 'db2html.xsl.in',
++               output: 'db2html.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
++configure_file(input: 'links2html.xsl.in',
++               output: 'links2html.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
++configure_file(input: 'info2html.xsl.in',
++               output: 'info2html.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
++configure_file(input: 'mal2html.xsl.in',
++               output: 'mal2html.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
++configure_file(input: 'man2html.xsl.in',
++               output: 'man2html.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
++configure_file(input: 'yelp-common.xsl.in',
++               output: 'yelp-common.xsl',
++               configuration: yelp_xsl_conf,
++               install_dir: yelp_xsltdir)
+diff --git a/docs/libyelp/meson.build b/docs/libyelp/meson.build
+new file mode 100644
+index 00000000..b82018f6
+--- /dev/null
++++ b/docs/libyelp/meson.build
+@@ -0,0 +1,36 @@
++private_headers = [
++  'yelp-debug.h',
++#  'yelp-types.h',
++  'yelp-common-types.h',
++  'yelp-bz2-decompressor.h',
++  'yelp-lzma-decompressor.h',
++  'yelp-magic-decompressor.h',
++]
++
++version_conf = configuration_data()
++version_conf.set('PACKAGE_VERSION', meson.project_version())
++
++configure_file(input: 'version.xml.in', output: 'version.xml', configuration: version_conf)
++docpath = join_paths(prefix, datadir, 'gtk-doc', 'html')
++
++gnome.gtkdoc('libyelp',
++             mode: 'none',
++             main_xml: 'libyelp-docs.xml',
++             src_dir: [
++               join_paths(meson.project_source_root(), 'libyelp'),
++             ],
++             dependencies: libyelp_dep,
++             gobject_typesfile: join_paths(meson.project_source_root(), 'docs', 'libyelp', 'libyelp.types'),
++             scan_args: [
++               #'--ignore-decorators=_GDK_EXTERN|G_GNUC_WARN_UNUSED_RESULT',
++               '--ignore-headers=' + ' '.join(private_headers),
++             ],
++             fixxref_args: [
++               '--html-dir=@0@'.format(docpath),
++             #  '--extra-dir=@0@'.format(join_paths(glib_docpath, 'glib')),
++             #  '--extra-dir=@0@'.format(join_paths(glib_docpath, 'gobject')),
++             #  '--extra-dir=@0@'.format(join_paths(glib_docpath, 'gio')),
++             #  '--extra-dir=@0@'.format(cairo_docpath),
++             ],
++             #html_assets: images,
++             install: true)
+diff --git a/libyelp/meson.build b/libyelp/meson.build
+new file mode 100644
+index 00000000..80a793fc
+--- /dev/null
++++ b/libyelp/meson.build
+@@ -0,0 +1,103 @@
++libyelp_deps = [
++  m_dep,
++  gio_dep,
++  gio_unix_dep,
++  gtk_dep,
++  libxml_dep,
++  libxslt_dep,
++  libexslt_dep,
++  sqlite_dep,
++  webkitgtk_dep,
++  yelp_xsl_dep,
++]
++
++libyelp_headers = files(
++  'yelp-bookmarks.h',
++  'yelp-docbook-document.h',
++  'yelp-document.h',
++  'yelp-help-list.h',
++  'yelp-info-document.h',
++  'yelp-mallard-document.h',
++  'yelp-man-document.h',
++  'yelp-search-entry.h',
++  'yelp-settings.h',
++  'yelp-simple-document.h',
++  'yelp-sqlite-storage.h',
++  'yelp-storage.h',
++  'yelp-transform.h',
++  'yelp-uri-builder.h',
++  'yelp-uri.h',
++  'yelp-view.h',
++)
++install_headers(libyelp_headers, subdir: 'libyelp')
++
++libyelp_sources = files(
++  'yelp-bookmarks.c',
++  'yelp-debug.c',
++  'yelp-docbook-document.c',
++  'yelp-document.c',
++  'yelp-error.c',
++  'yelp-help-list.c',
++  'yelp-info-document.c',
++  'yelp-info-parser.c',
++  'yelp-magic-decompressor.c',
++  'yelp-mallard-document.c',
++  'yelp-man-document.c',
++  'yelp-man-parser.c',
++  'yelp-search-entry.c',
++  'yelp-settings.c',
++  'yelp-simple-document.c',
++  'yelp-sqlite-storage.c',
++  'yelp-storage.c',
++  'yelp-transform.c',
++  'yelp-uri-builder.c',
++  'yelp-uri.c',
++  'yelp-view.c',
++)
++
++if lzma_dep.found()
++  libyelp_sources += files('yelp-lzma-decompressor.c')
++  libyelp_deps += lzma_dep
++endif
++
++if bzip2_dep.found()
++  libyelp_sources += files('yelp-bz2-decompressor.c')
++  libyelp_deps += bzip2_dep
++endif
++
++libyelp_marshallers = gnome.genmarshal('yelp-marshal',
++                                       sources: 'yelp-marshal.list',
++                                       prefix: 'yelp_marshal',
++                                       internal: true,
++)
++
++#libyelp_enums = gnome.mkenums('yelp-types',
++#                              c_template: 'yelp-types.c',
++#                              h_template: 'yelp-types.h',
++#                              install_header: true,
++#                              install_dir: join_paths(includedir, 'libyelp'),
++#                              sources: libyelp_headers,
++#)
++
++libyelp = library('yelp',
++                  sources: libyelp_sources + libyelp_marshallers, 
++                  install: true,
++                  soversion: '0',
++                  version: '0.0.0',
++                  dependencies: libyelp_deps,
++                  include_directories: configinc,
++                  c_args: [
++                    '-DHAVE_CONFIG_H',
++                  ],
++)
++
++libyelp_dep = declare_dependency(link_with: libyelp,
++                                 include_directories: libyelpinc,
++                                 dependencies: [
++                                   gio_dep,
++                                   gtk_dep,
++                                   webkitgtk_dep,
++                                 ],
++)
++
++subdir('web-extension')
+diff --git a/libyelp/web-extension/meson.build b/libyelp/web-extension/meson.build
+new file mode 100644
+index 00000000..96094449
+--- /dev/null
++++ b/libyelp/web-extension/meson.build
+@@ -0,0 +1,18 @@
++webextension_sources = files(
++  '../yelp-settings.c',
++  '../yelp-uri-builder.c',
++  '../yelp-uri.c',
++  'yelp-web-extension.c',
++)
++
++webextension = library('yelpwebextension',
++                             sources: webextension_sources,
++                             install: true,
++                             link_args : ['-Wl,--no-undefined'],
++                             dependencies: [webkitgtk_web_extension_dep],
++                             include_directories: [configinc, libyelpinc],
++                             c_args: ['-DHAVE_CONFIG_H'],
++                             install_dir: join_paths(libdir,
++                                                     'yelp',
++                                                     'web-extensions'),
++)
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 00000000..fe922145
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,184 @@
++project('yelp', 'c',
++        version : '42.2',
++        meson_version : '>= 0.59.0',
++        default_options : [
++          'warning_level=1',
++          'c_std=gnu89'
++        ]
++)
++
++buildtype = get_option('buildtype')
++if buildtype != 'plain'
++  gs_c_args = [
++    '-fno-omit-frame-pointer',
++    '-mno-omit-leaf-frame-pointer',
++    '-fno-strict-aliasing',
++    '-Wpointer-arith',
++    '-Wmissing-declarations',
++    '-Wimplicit-function-declaration',
++    '-Wformat=2',
++    '-Wformat-nonliteral',
++    '-Wformat-security',
++    '-Wstrict-prototypes',
++    '-Wmissing-prototypes',
++    '-Wnested-externs',
++    '-Wold-style-definition',
++    '-Wundef',
++    '-Wunused',
++    '-Wcast-align',
++    '-Wmissing-noreturn',
++    '-Wmissing-format-attribute',
++    '-Wmissing-include-dirs',
++    '-Wlogical-op',
++    '-Wignored-qualifiers',
++    '-Werror=redundant-decls',
++    '-Werror=implicit',
++    '-Werror=nonnull',
++    '-Werror=init-self',
++    '-Werror=main',
++    '-Werror=missing-braces',
++    '-Werror=sequence-point',
++    '-Werror=return-type',
++    '-Werror=trigraphs',
++    '-Werror=array-bounds',
++    '-Werror=write-strings',
++    '-Werror=address',
++    '-Werror=int-to-pointer-cast',
++    '-Werror=pointer-to-int-cast',
++    '-Werror=empty-body',
++    '-Werror=write-strings',
++  ]
++endif
++
++prefix = get_option('prefix')
++localedir = get_option('localedir')
++datadir = get_option('datadir')
++libdir = get_option('libdir')
++includedir = get_option('includedir')
++buildtype = get_option('buildtype')
++
++yelp_conf = configuration_data()
++
++if buildtype == 'debug' or buildtype == 'debugoptimized'
++  yelp_conf.set('YELP_DEBUG', true)
++endif
++yelp_conf.set_quoted('PACKAGE', 'yelp')
++yelp_conf.set_quoted('GETTEXT_PACKAGE', 'yelp')
++yelp_conf.set_quoted('VERSION', meson.project_version())
++yelp_conf.set_quoted('LOCALEDIR', join_paths(prefix, localedir))
++yelp_conf.set_quoted('DATADIR', join_paths(prefix, datadir))
++
++cc = meson.get_compiler('c')
++
++m_dep = cc.find_library('m', required : false)
++gio_dep = dependency('gio-2.0', version: '>= 2.67.4')
++gio_unix_dep = dependency('gio-unix-2.0')
++gtk_unix_print_dep = dependency('gtk+-unix-print-3.0')
++gtk_dep = dependency('gtk+-3.0', version: '>= 3.13.3')
++libhandy_dep = dependency('libhandy-1', version: '>= 1.5.0')
++libxml_dep = dependency('libxml-2.0', version: '>= 2.6.5')
++libxslt_dep = dependency('libxslt', version: '>= 1.1.4')
++libexslt_dep = dependency('libexslt', version: '>= 0.8.1')
++sqlite_dep = dependency('sqlite3')
++# Release team wants WebKitGTK 4.1 for the GNOME 41 release.
++# Shaun doesn't have a build environment with that yet.
++# Get rid of this option when that stops being true.
++#if get_option('webkit2gtk-4-0')
++#  webkitgtk_dep = dependency('webkit2gtk-4.0', version: '>= 2.19.2')
++#  webkitgtk_web_extension_dep = dependency('webkit2gtk-web-extension-4.0',
++#                                           version: '>= 2.7.2')
++#else
++  webkitgtk_dep = dependency('webkit2gtk-4.1')
++  webkitgtk_web_extension_dep = dependency('webkit2gtk-web-extension-4.1')
++#endif
++yelp_xsl_dep = dependency('yelp-xsl', version: '>= 41.0')
++
++lzma_dep = dependency('liblzma',
++                      version: '>= 4.9',
++                      required: get_option('lzma'))
++if lzma_dep.found()
++  yelp_conf.set('ENABLE_LZMA', true)
++endif
++
++if get_option('bzip2').enabled()
++  # Do not fail the configuration step even if we explicitly enabled
++  # bzip2. If there is no pkg-config file, we will check for an
++  # existence of the library and that will be a point of failure when
++  # library is really absent on the system.
++  bzip2_dep = dependency('bzip2',
++                         required: false)
++else
++  bzip2_dep = dependency('bzip2',
++                         required: get_option('bzip2'))
++endif
++if not bzip2_dep.found()
++  bzip2_dep = cc.find_library('bz2',
++                              required: get_option('bzip2'))
++endif
++if bzip2_dep.found()
++  yelp_conf.set('ENABLE_BZ2', true)
++endif
++
++itstool = find_program('itstool')
++r = run_command(itstool, '--version')
++if r.returncode() != 0
++  error('failed to run itstool --version')
++endif
++parts = r.stdout().strip().split()
++if parts.length() != 2
++  error('unexpected output from itstool --version')
++endif
++if parts[1].version_compare('<1.2.0')
++  error('itstool >= 1.2.0 is required to build the translation XML files')
++endif
++
++xsl_xsltdir = yelp_xsl_dep.get_variable(pkgconfig: 'xsltdir')
++xsl_db2xhtml = yelp_xsl_dep.get_variable(pkgconfig: 'db2xhtml')
++xsl_mal2xhtml = yelp_xsl_dep.get_variable(pkgconfig: 'mal2xhtml')
++
++xsl_color = '@0@/common/color.xsl'.format(xsl_xsltdir)
++xsl_icons = '@0@/common/icons.xsl'.format(xsl_xsltdir)
++xsl_html = '@0@/common/html.xsl'.format(xsl_xsltdir)
++xsl_tmpl = '@0@/common/tmpl.xsl'.format(xsl_xsltdir)
++
++xsl_jsdir = yelp_xsl_dep.get_variable(pkgconfig: 'jsdir')
++xsl_gettext = yelp_xsl_dep.get_variable(pkgconfig: 'gettext')
++xsl_icondir = yelp_xsl_dep.get_variable(pkgconfig: 'icondir')
++
++yelp_xsl_conf = configuration_data()
++
++yelp_xsl_conf.set('XSL_DB2XHTML', xsl_db2xhtml)
++yelp_xsl_conf.set('XSL_MAL2XHTML', xsl_mal2xhtml)
++yelp_xsl_conf.set('XSL_COLOR', xsl_color)
++yelp_xsl_conf.set('XSL_ICONS', xsl_icons)
++yelp_xsl_conf.set('XSL_HTML', xsl_html)
++yelp_xsl_conf.set('XSL_TMPL', xsl_tmpl)
++yelp_xsl_conf.set('XSL_JSDIR', xsl_jsdir)
++yelp_xsl_conf.set('XSL_GETTEXT', xsl_gettext)
++yelp_xsl_conf.set('DATADIR', join_paths(prefix, datadir))
++
++yelp_conf.set_quoted('YELP_ICON_PATH', xsl_icondir)
++yelp_conf.set_quoted('YELP_WEB_EXTENSIONS_DIR',
++                     join_paths(prefix, libdir, 'yelp', 'web-extensions'))
++
++configure_file(output: 'config.h',
++               configuration: yelp_conf)
++
++configinc = include_directories('.')
++libyelpinc = include_directories('libyelp')
++
++gnome = import('gnome')
++i18n = import('i18n')
++
++i18n.merge_file(
++                input: 'yelp.desktop.in',
++                output: 'yelp.desktop',
++                install: true,
++                install_dir: join_paths(datadir, 'applications'),
++                po_dir: join_paths(meson.project_source_root(), 'po'),
++                type: 'desktop')
++
++subdir('libyelp')
++subdir('src')
++subdir('data')
++subdir('po')
+diff --git a/meson_options.txt b/meson_options.txt
+new file mode 100644
+index 00000000..ea3c8443
+--- /dev/null
++++ b/meson_options.txt
+@@ -0,0 +1,14 @@
++option('lzma',
++       type : 'feature',
++       value : 'auto',
++       description : 'build with liblzma decoder support')
++
++option('bzip2',
++       type : 'feature',
++       value : 'auto',
++       description : 'build with bzip2 decoder support')
++
++option('webkit2gtk-4-0',
++       type : 'boolean',
++       value : false,
++       description : 'build against webkit2gtk-4.0 instead of webkit2gtk-4.1')
+diff --git a/po/meson.build b/po/meson.build
+new file mode 100644
+index 00000000..a1ef595e
+--- /dev/null
++++ b/po/meson.build
+@@ -0,0 +1,6 @@
++i18n.gettext(meson.project_name(),
++  preset : 'glib',
++  args: [
++    '--default-domain=@0@'.format(meson.project_name()),
++  ]
++)
+diff --git a/src/link-gnome-help.sh b/src/link-gnome-help.sh
+new file mode 100644
+index 00000000..dac2eeb5
+--- /dev/null
++++ b/src/link-gnome-help.sh
+@@ -0,0 +1,8 @@
++#!/bin/bash
++
++set -e
++
++gnome_help="${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/gnome-help"
++
++rm -f "${gnome_help}"
++ln -s yelp "${gnome_help}"
+diff --git a/src/meson.build b/src/meson.build
+new file mode 100644
+index 00000000..dde430bc
+--- /dev/null
++++ b/src/meson.build
+@@ -0,0 +1,21 @@
++yelp_sources = files(
++  'yelp-application.c',
++  'yelp-window.c',
++  'yelp.c',
++)
++
++yelp = executable('yelp',
++                  sources: yelp_sources,
++                  c_args: [
++                    '-DHAVE_CONFIG_H',
++                    '-DG_LOG_DOMAIN="Yelp"',
++                  ],
++                  dependencies: [
++                    libyelp_dep,
++                    libhandy_dep,
++                  ],
++                  install: true,
++                  include_directories: [configinc],
++)
++
++meson.add_install_script('link-gnome-help.sh')
+-- 
+GitLab
+
+From c611f57a159a2dba4ce1ce6c6b944bf82548663d Mon Sep 17 00:00:00 2001
+From: Shaun McCance <shaunm@gnome.org>
+Date: Tue, 17 Mar 2020 13:51:18 -0400
+Subject: [PATCH 5/6] Change yelp.xml.in build note for meson port
+
+---
+ data/domains/yelp.pot    | 4 ++--
+ data/domains/yelp.xml.in | 7 +++++--
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/data/domains/yelp.pot b/data/domains/yelp.pot
+index aaedfa56..a3b7d182 100644
+--- a/data/domains/yelp.pot
++++ b/data/domains/yelp.pot
+@@ -1,7 +1,7 @@
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: PACKAGE VERSION\n"
+-"POT-Creation-Date: 2019-01-24 21:22+0100\n"
++"POT-Creation-Date: 2020-03-17 10:50-0400\n"
+ "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+ "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+ "Language-Team: LANGUAGE <LL@li.org>\n"
+@@ -19,7 +19,7 @@ msgstr ""
+ #. 
+ #. <string/> - The package to install
+ #. 
+-#: data/domains/yelp.xml.in:36
++#: yelp.xml.in:36
+ msgid "Install <string/>"
+ msgstr ""
+ 
+diff --git a/data/domains/yelp.xml.in b/data/domains/yelp.xml.in
+index 32fdcf03..8ac8bd7b 100644
+--- a/data/domains/yelp.xml.in
++++ b/data/domains/yelp.xml.in
+@@ -1,8 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?><!-- -*- indent-tabs-mode: nil -*- -->
+ 
+ <!--
+-Making a change? Make sure to run:
+-$ make yelp.pot
++Making a change? From the build directory, run:
++
++$ ninja yelp.pot
++
++Otherwise, translators will never see it.
+ -->
+ 
+ <l10n xmlns="http://projects.gnome.org/yelp/gettext/"
+-- 
+GitLab
+
+
+From d9067138087939397ee21306fa847098dbec1281 Mon Sep 17 00:00:00 2001
+From: Shaun McCance <shaunm@gnome.org>
+Date: Sat, 28 Mar 2020 15:50:35 -0400
+Subject: [PATCH 6/6] Use MESON_INSTALL_DESTDIR_PREFIX
+
+---
+ src/link-gnome-help.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/link-gnome-help.sh b/src/link-gnome-help.sh
+index dac2eeb5..448460f7 100644
+--- a/src/link-gnome-help.sh
++++ b/src/link-gnome-help.sh
+@@ -2,7 +2,7 @@
+ 
+ set -e
+ 
+-gnome_help="${DESTDIR}/${MESON_INSTALL_PREFIX}/bin/gnome-help"
++gnome_help="${MESON_INSTALL_DESTDIR_PREFIX}/bin/gnome-help"
+ 
+ rm -f "${gnome_help}"
+ ln -s yelp "${gnome_help}"
+-- 
+GitLab
+
+diff --git a/libyelp/yelp-marshal.c b/libyelp/yelp-marshal.c
+new file mode 100644
+index 0000000..b062a03
+--- /dev/null
++++ b/libyelp/yelp-marshal.c
+@@ -0,0 +1,98 @@
++/* This file is generated by glib-genmarshal, do not modify it. This code is licensed under the same license as the containing project. Note that it links to GLib, so must comply with the LGPL linking clauses. */
++#include <glib-object.h>
++
++#ifdef G_ENABLE_DEBUG
++#define g_marshal_value_peek_boolean(v)  g_value_get_boolean (v)
++#define g_marshal_value_peek_char(v)     g_value_get_schar (v)
++#define g_marshal_value_peek_uchar(v)    g_value_get_uchar (v)
++#define g_marshal_value_peek_int(v)      g_value_get_int (v)
++#define g_marshal_value_peek_uint(v)     g_value_get_uint (v)
++#define g_marshal_value_peek_long(v)     g_value_get_long (v)
++#define g_marshal_value_peek_ulong(v)    g_value_get_ulong (v)
++#define g_marshal_value_peek_int64(v)    g_value_get_int64 (v)
++#define g_marshal_value_peek_uint64(v)   g_value_get_uint64 (v)
++#define g_marshal_value_peek_enum(v)     g_value_get_enum (v)
++#define g_marshal_value_peek_flags(v)    g_value_get_flags (v)
++#define g_marshal_value_peek_float(v)    g_value_get_float (v)
++#define g_marshal_value_peek_double(v)   g_value_get_double (v)
++#define g_marshal_value_peek_string(v)   (char*) g_value_get_string (v)
++#define g_marshal_value_peek_param(v)    g_value_get_param (v)
++#define g_marshal_value_peek_boxed(v)    g_value_get_boxed (v)
++#define g_marshal_value_peek_pointer(v)  g_value_get_pointer (v)
++#define g_marshal_value_peek_object(v)   g_value_get_object (v)
++#define g_marshal_value_peek_variant(v)  g_value_get_variant (v)
++#else /* !G_ENABLE_DEBUG */
++/* WARNING: This code accesses GValues directly, which is UNSUPPORTED API.
++ *          Do not access GValues directly in your code. Instead, use the
++ *          g_value_get_*() functions
++ */
++#define g_marshal_value_peek_boolean(v)  (v)->data[0].v_int
++#define g_marshal_value_peek_char(v)     (v)->data[0].v_int
++#define g_marshal_value_peek_uchar(v)    (v)->data[0].v_uint
++#define g_marshal_value_peek_int(v)      (v)->data[0].v_int
++#define g_marshal_value_peek_uint(v)     (v)->data[0].v_uint
++#define g_marshal_value_peek_long(v)     (v)->data[0].v_long
++#define g_marshal_value_peek_ulong(v)    (v)->data[0].v_ulong
++#define g_marshal_value_peek_int64(v)    (v)->data[0].v_int64
++#define g_marshal_value_peek_uint64(v)   (v)->data[0].v_uint64
++#define g_marshal_value_peek_enum(v)     (v)->data[0].v_long
++#define g_marshal_value_peek_flags(v)    (v)->data[0].v_ulong
++#define g_marshal_value_peek_float(v)    (v)->data[0].v_float
++#define g_marshal_value_peek_double(v)   (v)->data[0].v_double
++#define g_marshal_value_peek_string(v)   (v)->data[0].v_pointer
++#define g_marshal_value_peek_param(v)    (v)->data[0].v_pointer
++#define g_marshal_value_peek_boxed(v)    (v)->data[0].v_pointer
++#define g_marshal_value_peek_pointer(v)  (v)->data[0].v_pointer
++#define g_marshal_value_peek_object(v)   (v)->data[0].v_pointer
++#define g_marshal_value_peek_variant(v)  (v)->data[0].v_pointer
++#endif /* !G_ENABLE_DEBUG */
++
++/* BOOLEAN:OBJECT (libyelp/yelp-marshal.list:1) */
++/* Prototype for -Wmissing-prototypes */
++G_BEGIN_DECLS
++G_GNUC_INTERNAL
++void yelp_marshal_BOOLEAN__OBJECT (GClosure     *closure,
++                                   GValue       *return_value,
++                                   guint         n_param_values,
++                                   const GValue *param_values,
++                                   gpointer      invocation_hint,
++                                   gpointer      marshal_data);
++G_END_DECLS
++void
++yelp_marshal_BOOLEAN__OBJECT (GClosure     *closure,
++                              GValue       *return_value,
++                              guint         n_param_values,
++                              const GValue *param_values,
++                              gpointer      invocation_hint G_GNUC_UNUSED,
++                              gpointer      marshal_data)
++{
++  typedef gboolean (*GMarshalFunc_BOOLEAN__OBJECT) (gpointer data1,
++                                                    gpointer arg1,
++                                                    gpointer data2);
++  GCClosure *cc = (GCClosure *) closure;
++  gpointer data1, data2;
++  GMarshalFunc_BOOLEAN__OBJECT callback;
++  gboolean v_return;
++
++  g_return_if_fail (return_value != NULL);
++  g_return_if_fail (n_param_values == 2);
++
++  if (G_CCLOSURE_SWAP_DATA (closure))
++    {
++      data1 = closure->data;
++      data2 = g_value_peek_pointer (param_values + 0);
++    }
++  else
++    {
++      data1 = g_value_peek_pointer (param_values + 0);
++      data2 = closure->data;
++    }
++  callback = (GMarshalFunc_BOOLEAN__OBJECT) (marshal_data ? marshal_data : cc->callback);
++
++  v_return = callback (data1,
++                       g_marshal_value_peek_object (param_values + 1),
++                       data2);
++
++  g_value_set_boolean (return_value, v_return);
++}
++
+
+diff --git a/libyelp/yelp-marshal.h b/libyelp/yelp-marshal.h
+new file mode 100644
+index 0000000..be7e097
+--- /dev/null
++++ b/libyelp/yelp-marshal.h
+@@ -0,0 +1,21 @@
++/* This file is generated by glib-genmarshal, do not modify it. This code is licensed under the same license as the containing project. Note that it links to GLib, so must comply with the LGPL linking clauses. */
++#ifndef __YELP_MARSHAL_MARSHAL_H__
++#define __YELP_MARSHAL_MARSHAL_H__
++
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++
++/* BOOLEAN:OBJECT (libyelp/yelp-marshal.list:1) */
++G_GNUC_INTERNAL
++void yelp_marshal_BOOLEAN__OBJECT (GClosure     *closure,
++                                   GValue       *return_value,
++                                   guint         n_param_values,
++                                   const GValue *param_values,
++                                   gpointer      invocation_hint,
++                                   gpointer      marshal_data);
++
++
++G_END_DECLS
++
++#endif /* __YELP_MARSHAL_MARSHAL_H__ */
+
+diff --git a/libyelp/yelp-types.h b/libyelp/yelp-types.h
+new file mode 100644
+index 0000000..333315b
+--- /dev/null
++++ b/libyelp/yelp-types.h
+@@ -0,0 +1,29 @@
++
++/* This file is generated by glib-mkenums, do not modify it. This code is licensed under the same license as the containing project. Note that it links to GLib, so must comply with the LGPL linking clauses. */
++
++#ifndef __LIBYELP_TYPES_H__
++#define __LIBYELP_TYPES_H__
++
++#include <glib-object.h>
++
++G_BEGIN_DECLS
++#include "./libyelp/yelp-document.h"
++#define YELP_TYPE_DOCUMENT_SIGNAL yelp_document_signal_get_type()
++GType yelp_document_signal_get_type (void);
++#include "./libyelp/yelp-settings.h"
++#define YELP_TYPE_SETTINGS_COLOR yelp_settings_color_get_type()
++GType yelp_settings_color_get_type (void);
++#define YELP_TYPE_SETTINGS_FONT yelp_settings_font_get_type()
++GType yelp_settings_font_get_type (void);
++#include "./libyelp/yelp-uri.h"
++#define YELP_TYPE_URI_DOCUMENT_TYPE yelp_uri_document_type_get_type()
++GType yelp_uri_document_type_get_type (void);
++/* #include "./libyelp/yelp-view.h" */
++/* #define YELP_TYPE_VIEW_STATE yelp_view_state_get_type() */
++/* GType yelp_view_state_get_type (void); */
++G_END_DECLS
++
++#endif /* __LIBYELP_TYPES_H__ */
++
++/* Generated data ends here */
++
+
+diff --git a/libyelp/yelp-types.c b/libyelp/yelp-types.c
+new file mode 100644
+index 0000000..f6e09ad
+--- /dev/null
++++ b/libyelp/yelp-types.c
+@@ -0,0 +1,111 @@
++
++/* This file is generated by glib-mkenums, do not modify it. This code is licensed under the same license as the containing project. Note that it links to GLib, so must comply with the LGPL linking clauses. */
++
++#include <glib-object.h>
++#include "yelp-types.h"
++
++/* enumerations from "./libyelp/yelp-document.h" */
++static const GEnumValue _yelp_document_signal_values[] = {
++  { YELP_DOCUMENT_SIGNAL_CONTENTS, "YELP_DOCUMENT_SIGNAL_CONTENTS", "contents" },
++  { YELP_DOCUMENT_SIGNAL_INFO, "YELP_DOCUMENT_SIGNAL_INFO", "info" },
++  { YELP_DOCUMENT_SIGNAL_ERROR, "YELP_DOCUMENT_SIGNAL_ERROR", "error" },
++  { 0, NULL, NULL }
++};
++
++GType
++yelp_document_signal_get_type (void)
++{
++  static GType type = 0;
++
++  if (!type)
++    type = g_enum_register_static ("YelpDocumentSignal", _yelp_document_signal_values);
++
++  return type;
++}
++
++/* enumerations from "./libyelp/yelp-settings.h" */
++static const GEnumValue _yelp_settings_color_values[] = {
++  { YELP_SETTINGS_COLOR_BASE, "YELP_SETTINGS_COLOR_BASE", "color-base" },
++  { YELP_SETTINGS_COLOR_TEXT, "YELP_SETTINGS_COLOR_TEXT", "color-text" },
++  { YELP_SETTINGS_NUM_COLORS, "YELP_SETTINGS_NUM_COLORS", "num-colors" },
++  { 0, NULL, NULL }
++};
++
++GType
++yelp_settings_color_get_type (void)
++{
++  static GType type = 0;
++
++  if (!type)
++    type = g_enum_register_static ("YelpSettingsColor", _yelp_settings_color_values);
++
++  return type;
++}
++static const GEnumValue _yelp_settings_font_values[] = {
++  { YELP_SETTINGS_FONT_VARIABLE, "YELP_SETTINGS_FONT_VARIABLE", "font-variable" },
++  { YELP_SETTINGS_FONT_FIXED, "YELP_SETTINGS_FONT_FIXED", "font-fixed" },
++  { YELP_SETTINGS_NUM_FONTS, "YELP_SETTINGS_NUM_FONTS", "num-fonts" },
++  { 0, NULL, NULL }
++};
++
++GType
++yelp_settings_font_get_type (void)
++{
++  static GType type = 0;
++
++  if (!type)
++    type = g_enum_register_static ("YelpSettingsFont", _yelp_settings_font_values);
++
++  return type;
++}
++
++/* enumerations from "./libyelp/yelp-uri.h" */
++static const GEnumValue _yelp_uri_document_type_values[] = {
++  { YELP_URI_DOCUMENT_TYPE_UNRESOLVED, "YELP_URI_DOCUMENT_TYPE_UNRESOLVED", "unresolved" },
++  { YELP_URI_DOCUMENT_TYPE_DOCBOOK, "YELP_URI_DOCUMENT_TYPE_DOCBOOK", "docbook" },
++  { YELP_URI_DOCUMENT_TYPE_MALLARD, "YELP_URI_DOCUMENT_TYPE_MALLARD", "mallard" },
++  { YELP_URI_DOCUMENT_TYPE_MAN, "YELP_URI_DOCUMENT_TYPE_MAN", "man" },
++  { YELP_URI_DOCUMENT_TYPE_INFO, "YELP_URI_DOCUMENT_TYPE_INFO", "info" },
++  { YELP_URI_DOCUMENT_TYPE_TEXT, "YELP_URI_DOCUMENT_TYPE_TEXT", "text" },
++  { YELP_URI_DOCUMENT_TYPE_HTML, "YELP_URI_DOCUMENT_TYPE_HTML", "html" },
++  { YELP_URI_DOCUMENT_TYPE_XHTML, "YELP_URI_DOCUMENT_TYPE_XHTML", "xhtml" },
++  { YELP_URI_DOCUMENT_TYPE_HELP_LIST, "YELP_URI_DOCUMENT_TYPE_HELP_LIST", "help-list" },
++  { YELP_URI_DOCUMENT_TYPE_NOT_FOUND, "YELP_URI_DOCUMENT_TYPE_NOT_FOUND", "not-found" },
++  { YELP_URI_DOCUMENT_TYPE_EXTERNAL, "YELP_URI_DOCUMENT_TYPE_EXTERNAL", "external" },
++  { YELP_URI_DOCUMENT_TYPE_ERROR, "YELP_URI_DOCUMENT_TYPE_ERROR", "error" },
++  { 0, NULL, NULL }
++};
++
++GType
++yelp_uri_document_type_get_type (void)
++{
++  static GType type = 0;
++
++  if (!type)
++    type = g_enum_register_static ("YelpUriDocumentType", _yelp_uri_document_type_values);
++
++  return type;
++}
++
++/* enumerations from "./libyelp/yelp-view.h" */
++static const GEnumValue _yelp_view_state_values[] = {
++  { YELP_VIEW_STATE_BLANK, "YELP_VIEW_STATE_BLANK", "blank" },
++  { YELP_VIEW_STATE_LOADING, "YELP_VIEW_STATE_LOADING", "loading" },
++  { YELP_VIEW_STATE_LOADED, "YELP_VIEW_STATE_LOADED", "loaded" },
++  { YELP_VIEW_STATE_ERROR, "YELP_VIEW_STATE_ERROR", "error" },
++  { 0, NULL, NULL }
++};
++
++#GType
++#yelp_view_state_get_type (void)
++#{
++#  static GType type = 0;
++#
++#  if (!type)
++#    type = g_enum_register_static ("YelpViewState", _yelp_view_state_values);
++#
++#  return type;
++#}
++
++/* Generated data ends here */
++
+

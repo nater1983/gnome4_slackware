@@ -1,0 +1,5 @@
+VALADIR="usr/share/"`ls /usr/share/|grep "vala-"|awk -F"/" '{print $1}'`"/vapi"
+mkdir -p "$CWD/pre-install/webkit2gtk4.1"
+wget -c -P "$CWD/pre-install/webkit2gtk4.1" https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/webkit2gtk-4.1.vapi
+wget -c -P "$CWD/pre-install/webkit2gtk4.1" https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/webkit2gtk-web-extension-4.1.vapi
+wget -c -P "$CWD/pre-install/webkit2gtk4.1" https://gitlab.gnome.org/GNOME/vala/-/raw/0.56.17/vapi/javascriptcoregtk-4.1.vapi

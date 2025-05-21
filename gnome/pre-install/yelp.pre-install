@@ -1,0 +1,1 @@
+sed -i 's/YELP_TYPE_VIEW_STATE/YELP_TYPE_VIEW/g' libyelp/yelp-view.c

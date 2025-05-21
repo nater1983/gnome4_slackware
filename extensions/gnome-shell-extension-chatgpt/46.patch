@@ -1,26 +1,75 @@
-From 7c66290fb9d9497b58e94932612f88e3a60ad3dd Mon Sep 17 00:00:00 2001
+From 7bd72fe50e35c163809523b96ff9674cd544eb4b Mon Sep 17 00:00:00 2001
 From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
-Date: Sun, 2 Feb 2025 14:16:51 -0600
-Subject: [PATCH 2/2] Fix toggle on and off issue
+Date: Sat, 17 May 2025 15:52:04 -0500
+Subject: [PATCH] Update window.js
 
-This fix's an issue where if you toggle off the extension and later what to return to it the extension doesn't activate even though it claims to be enabled.
 ---
- chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js | 5 -----
- 1 file changed, 5 deletions(-)
+ window.js | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
-index 426b467..77b1a4e 100644
---- a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
-+++ b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/extension.js
-@@ -15,11 +15,6 @@ export default class ChatGPTGnomeDesktopExtension extends Extension {
-     }
+diff --git a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
+index 9f254a6..67207c8 100644
+--- a/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
++++ b/chatgpt-gnome-desktop@chatgpt-gnome-desktop/window.js
+@@ -2,7 +2,6 @@ imports.gi.versions.Gtk = '3.0';
+ imports.gi.versions.WebKit2 = '4.1';
  
-     enable() {
--        if (this.initialized) {
--            log('Extension already initialized');
--            return;
--        }
--        this.initialized = true;
+ const GLib = imports.gi.GLib;
+-const System = imports.system;
+ const Gtk = imports.gi.Gtk;
+ const WebKit2 = imports.gi.WebKit2;
  
-         log('Initializing extension');
-         this.button = new St.Bin({
+@@ -26,19 +25,33 @@ function createWindow(x, y) {
+     log('Creating window');
+     const appWindow = new Gtk.Window({
+         type: Gtk.WindowType.TOPLEVEL,
+-        //type: null, //Gtk.WindowPosition.POPUP,
+         default_width: 350,
+         default_height: 550,
+         title: 'ChatGPT'
+     });
+ 
+-    appWindow.set_decorated(false);
++    appWindow.set_decorated(false); // Keep it undecorated
+     appWindow.set_keep_above(true);
+ 
+     log(`Calculated position: x=${x}, y=${y}`);
+-
+     appWindow.move(x, y);
+ 
++    // Create draggable area
++    const dragArea = new Gtk.EventBox();
++    dragArea.set_visible_window(false);
++    dragArea.set_above_child(false);
++    dragArea.set_size_request(350, 30); // 30px tall invisible drag bar
++
++    dragArea.connect('button-press-event', (widget, event) => {
++        appWindow.begin_move_drag(
++            event.button,
++            event.x_root,
++            event.y_root,
++            event.time
++        );
++        return true;
++    });
++
+     const scrolledWindow = new Gtk.ScrolledWindow();
+     const cookieStorage = prepareCookieStorage();
+     const webContext = WebKit2.WebContext.get_default();
+@@ -49,9 +62,15 @@ function createWindow(x, y) {
+     scrolledWindow.add(webView);
+     webView.load_uri('https://chat.openai.com/chat');
+ 
+-    appWindow.add(scrolledWindow);
++    // Layout: draggable area + web view
++    const vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL });
++    vbox.pack_start(dragArea, false, false, 0);
++    vbox.pack_start(scrolledWindow, true, true, 0);
++
++    appWindow.add(vbox);
+     appWindow.connect('destroy', () => Gtk.main_quit());
+     appWindow.show_all();
++
+     log('Window created and shown at calculated position');
+ }
+ 

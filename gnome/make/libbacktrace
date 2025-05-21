@@ -1,0 +1,9 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-gnu-ld \
+    --with-system-libunwind \
+    --enable-shared
+make
+make install DESTDIR=$PKG

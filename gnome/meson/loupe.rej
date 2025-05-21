@@ -1,0 +1,8 @@
+--- gnome/meson/loupe	2025-03-08 23:52:08.273266884 -0600
++++ gnome/meson/loupe	2025-05-16 18:27:30.702021378 -0500
+@@ -1,4 +1,4 @@
+-mkdir build
++mkdir -p build
+ cd build
+   CFLAGS="$SLKCFLAGS" \
+   CXXFLAGS="$SLKCFLAGS" \

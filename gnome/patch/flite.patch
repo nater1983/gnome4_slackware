@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/flite/flite-2.2-texinfo-7.0.patch

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                   |-----handy-ruler------------------------------------------------------|
+python3-pillow_heif: python3-pillow_heif (Python bindings to libheif)
+python3-pillow_heif:
+python3-pillow_heif: Python bindings to libheif for working with HEIF images and plugin
+python3-pillow_heif: for Pillow.
+python3-pillow_heif: * Decoding of 8, 10, 12 bit HEIC and AVIF files.
+python3-pillow_heif: * Encoding of 8, 10, 12 bit HEIC and AVIF files.
+python3-pillow_heif: * Adding HEIF support to Pillow in one line of code as a plugin.
+python3-pillow_heif: * Support of multiple images in one file and a PrimaryImage attribute.
+python3-pillow_heif: * EXIF, XMP, IPTC read & write support.
+python3-pillow_heif: * Adding & removing thumbnails.
+python3-pillow_heif: Homepage: https://github.com/bigcat88/pillow_heif

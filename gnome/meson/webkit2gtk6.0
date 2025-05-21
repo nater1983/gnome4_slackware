@@ -1,0 +1,19 @@
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DPORT=GTK \
+    -DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkitgtk-6.0 \
+    -DENABLE_GAMEPAD=OFF \
+    -DENABLE_MINIBROWSER=ON \
+    -DENABLE_JOURNALD_LOG=OFF \
+    -DENABLE_SPEECH_SYNTHESIS=ON \
+    -DUSE_SYSTEM_MALLOC=on \
+    -DUSE_GTK4=ON \
+    -DCMAKE_SKIP_RPATH=ON \
+    -DUSE_JPEGXL=ON \
+    -Wno-dev \
+    -G Ninja \
+    ..
+"${NINJA:=ninja}" -j$(expr $(nproc) / 2)
+DESTDIR=$PKG $NINJA -j1 install

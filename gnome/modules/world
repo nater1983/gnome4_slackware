@@ -3,13 +3,14 @@ cozy
 emblem
 Image-ExifTool
 eyedropper
+# Gaphor
 poetry_core
 generic
 exceptiongroup
 python-webencodings
 flit_scm
 gaphas
-tinycss2
+python3-tinycss2
 pydot
 jedi
 parso
@@ -58,3 +59,78 @@ zxcvbn
 zxcvbn_rs_py
 pykcs11
 secrets
+hidapi
+boatswain
+Shortwave
+amberol
+decoder
+#Pika Backup/Borgbackup
+borgbackup
+cachetools
+setuptools_rust
+python3-semantic_version
+maturin
+cryptography
+python3-google-api-core
+python3-google-api-python-client
+python3-google-auth
+python3-google-auth-httplib2
+python3-google-cloud-core
+python3-google-cloud-storage
+python3-google-crc32c
+python3-google-resumable-media
+python3-googleapis-common-protos
+python3-guzzle_sphinx_theme
+python3-httplib2
+python3-msgpack
+python3-oauth2client
+python3-protobuf
+python3-pyasn1
+python3-pyasn1-modules
+python3-pydrive2
+pyopenssl
+python3-rsa
+python3-typing_extensions
+python3-uritemplate
+# pure_protobuf
+python3-poetry-dynamic-versioning
+tomlkit
+python3-dunamai
+pure_protobuf
+#Komikku
+python3-beautifulsoup4
+python3-colorthief
+python3-curl_cffi
+python3-dateparser
+python3-dateutil
+python3-emoji
+python3-entrypoints
+python3-jaraco.functools
+python3-keyring
+python3-magic
+python3-more-itertools
+python3-natsort
+python3-piexif
+python3-pillow_heif
+python3-pytz
+python3-rarfile
+python3-regex
+python3-soupsieve
+python3-tzlocal
+python3-unidecode
+#Gnome Firmware
+# fwupd - in gnome-software module
+gnome-firmware
+# Commit
+blueprint-compiler
+Commit
+# video-trimmer
+video-trimmer
+# Plots
+python3-lark
+python3-opengl
+python3-pyproject-metadata
+python3-numpy
+python3-freetype
+python3-glm
+Plots

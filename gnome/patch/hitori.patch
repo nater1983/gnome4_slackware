@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/hitori/hitori-dbus-activatable.patch

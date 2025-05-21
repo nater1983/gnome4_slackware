@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/yelp/yelp-meson.patch
+patch -Np1 -i $CWD/patch/yelp/yelp-CVE-2025-3155.patch

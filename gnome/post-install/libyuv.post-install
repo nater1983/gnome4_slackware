@@ -1,0 +1,2 @@
+#Remove static libraries
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.a

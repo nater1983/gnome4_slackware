@@ -1,0 +1,16 @@
+# Remove all extra bits included in the base libnma package
+# This package is _ONLY_ for the gtk4 lib
+rm -r $PKG/usr/doc
+rm -r $PKG/usr/include
+rm -r $PKG/usr/share/glib-2.0
+rm -r $PKG/usr/share/gtk-doc
+rm -r $PKG/usr/share/locale
+rm -f $PKG/usr/share/vala/vapi/libnma.deps
+rm -f $PKG/usr/share/vala/vapi/libnma.vapi
+rm -f $PKG/usr/share/gir-1.0/NMA-1.0.gir
+
+rm $PKG/usr/lib${LIBDIRSUFFIX}/girepository-1.0/NMA-1.0.typelib
+rm $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/libnma.pc
+rm $PKG/usr/lib${LIBDIRSUFFIX}/libnma.so.0.0.0
+rm $PKG/usr/lib${LIBDIRSUFFIX}/libnma.so.0
+rm $PKG/usr/lib${LIBDIRSUFFIX}/libnma.so

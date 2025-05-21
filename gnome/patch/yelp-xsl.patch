@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/yelp-xsl/yelp-xsl-CVE-2025-3155.patch

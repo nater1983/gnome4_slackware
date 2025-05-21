@@ -3,14 +3,13 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
-  --enable-shared=yes \
-  --enable-static=no \
-  --enable-introspection=yes \
-  --disable-debug \
-  --disable-more-warnings \
-  --disable-tests \
-  --with-mdns=avahi \
-  --build=$ARCH-slackware-linux
+    --enable-shared=yes \
+    --enable-static=no \
+    --enable-introspection=yes \
+    --disable-debug \
+    --disable-more-warnings \
+    --disable-tests \
+    --with-mdns=avahi
 
 make
 make install DESTDIR=$PKG

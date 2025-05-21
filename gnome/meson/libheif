@@ -1,8 +1,12 @@
+sed -i '/install(CODE "execute_process(COMMAND/ s|\${CMAKE_INSTALL_PREFIX}/||g' examples/CMakeLists.txt
+
 mkdir cmake-build
 cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DWITH_LIBDE265_PLUGIN:BOOL=ON \
+    -DWITH_FFMPEG_DECODER=ON \
+    -DWITH_X265=ON \
     -DWITH_RAV1E=ON \
     -DWITH_SvtEnc=ON \
     -DWITH_DAV1D=ON \

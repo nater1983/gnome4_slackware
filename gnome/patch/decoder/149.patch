@@ -1,0 +1,60 @@
+From ddcc448b0b7b9fe3453d6beea1b53e643cb70001 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ball=C3=B3=20Gy=C3=B6rgy?= <ballogyor@gmail.com>
+Date: Sun, 13 Apr 2025 10:47:51 +0200
+Subject: [PATCH] Add D-Bus service file
+
+And mark the application as D-Bus activatable. This allows application
+launchers to activate it via D-Bus.
+---
+ data/com.belmoussaoui.Decoder.desktop.in.in |  1 +
+ data/com.belmoussaoui.Decoder.service.in    |  3 +++
+ data/meson.build                            | 12 ++++++++++++
+ 3 files changed, 16 insertions(+)
+ create mode 100644 data/com.belmoussaoui.Decoder.service.in
+
+diff --git a/data/com.belmoussaoui.Decoder.desktop.in.in b/data/com.belmoussaoui.Decoder.desktop.in.in
+index d8a64aa..14b59c9 100644
+--- a/data/com.belmoussaoui.Decoder.desktop.in.in
++++ b/data/com.belmoussaoui.Decoder.desktop.in.in
+@@ -8,6 +8,7 @@ Categories=Utility;GTK;GNOME;Scanning;
+ # Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+ Keywords=QR;Scan;Generate;Code;
+ StartupNotify=true
++DBusActivatable=true
+ # Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+ Icon=@icon@
+ # Translators: Do NOT translate or transliterate these categories
+diff --git a/data/com.belmoussaoui.Decoder.service.in b/data/com.belmoussaoui.Decoder.service.in
+new file mode 100644
+index 0000000..3375e47
+--- /dev/null
++++ b/data/com.belmoussaoui.Decoder.service.in
+@@ -0,0 +1,3 @@
++[D-BUS Service]
++Name=@app-id@
++Exec=@bindir@/decoder --gapplication-service
+diff --git a/data/meson.build b/data/meson.build
+index 87a47ef..f02850a 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -66,5 +66,17 @@ test('Validate schema file', glib_compile_schemas,
+   args: ['--strict', '--dry-run', meson.current_source_dir()]
+ )
+ 
++# D-Bus service file
++service_conf = configuration_data()
++service_conf.set('app-id', application_id)
++service_conf.set('bindir', bindir)
++configure_file(
++    input: '@0@.service.in'.format(base_id),
++    output: '@0@.service'.format(application_id),
++    configuration: service_conf,
++    install: true,
++    install_dir: datadir / 'dbus-1' / 'services'
++)
++
+ subdir('icons')
+ subdir('resources')
+-- 
+GitLab
+

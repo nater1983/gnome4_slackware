@@ -1,0 +1,7 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-gtk4=yes
+make
+make install DESTDIR=$PKG

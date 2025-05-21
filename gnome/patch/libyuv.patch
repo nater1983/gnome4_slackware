@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/libyuv/libyuv-0002-Use-a-proper-so-version.patch
+patch -Np1 -i $CWD/patch/libyuv/libyuv-0003-Link-against-shared-library.patch

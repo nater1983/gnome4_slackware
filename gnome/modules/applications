@@ -10,6 +10,7 @@ seahorse
 snapshot
 zenity
 callaudiod
+umockdev
 feedbackd
 telepathy-glib
 folks
@@ -63,6 +64,7 @@ libgedit-amtk
 libgedit-gfls
 libgedit-tepl
 gedit
+gedit-plugins
 meld
 ghex
 gst-plugins-rs
@@ -77,4 +79,5 @@ goffice
 gnumeric
 gnome-usage
 gnome-network-displays
-typing_extensions
+text-engine
+extension-manager
