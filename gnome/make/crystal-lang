@@ -1,3 +1,4 @@
+cd crystal-lang*
 chmod 755 {bin,lib,share}
 
 mv {bin,lib,share} $PKG/usr/
