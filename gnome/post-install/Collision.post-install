@@ -1,0 +1,1 @@
+install -vDm 0644 nautilus-extension/collision-extension.py -t $PKG/usr/share/nautilus-python/extensions
