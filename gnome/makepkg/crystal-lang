@@ -1,2 +1,1 @@
-PKGVERSION="${PKGVERSION%-*}"         # Remove the last field (-1_gfs.txz)
-PKGVERSION="${PKGVERSION##*-}"          # Extract version (removes everything before last -)
+PKGVERSION="1.16.3"         # Remove the last field (-1_gfs.txz)
