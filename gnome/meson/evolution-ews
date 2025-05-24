@@ -4,6 +4,7 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}" \
     -DENABLE_CODE_COVERAGE=OFF \
     -DBUILD_TESTING=OFF \
+    -DWITH_MSPACK=OFF \
      -G Ninja
       "${NINJA:=ninja}"
       DESTDIR=$PKG $NINJA install
