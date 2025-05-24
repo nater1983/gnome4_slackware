@@ -1,6 +1,6 @@
 mkdir -p $PKG/etc/xdg/autostart
 
-cat << 'EOF' > ~/.config/autostart/gnome-terminal-server.desktop
+cat << 'EOF' > $PKG/etc/xdg/autostart/gnome-terminal-server.desktop
 [Desktop Entry]
 Type=Application
 Name=GNOME Terminal Server
