@@ -16,7 +16,7 @@ jedi
 parso
 better_exceptions
 defusedxml
-dulwich
+python3-dulwich
 gaphor
 identity
 typescript
