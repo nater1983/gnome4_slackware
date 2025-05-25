@@ -24,7 +24,7 @@ poetry_core
 click
 curl_cffi
 python_dbusmock
-beautifulsoup4
+python3-beautifulsoup4
 emoji
 exceptiongroup
 fonttools
