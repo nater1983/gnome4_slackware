@@ -52,7 +52,7 @@ gst-rtsp-server
 gstreamer-vaapi
 rygel
 totem
-liblouis
+python3-liblouis
 orca
 gtksourceview4
 evince
