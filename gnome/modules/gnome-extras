@@ -17,7 +17,6 @@ html5lib
 python3-toml
 python2-setuptools-scm
 functools-lru-cache
-python2-soupsieve
 python-zipp
 python3-soupsieve
 poetry_core
