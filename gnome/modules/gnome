@@ -46,7 +46,7 @@ webp-pixbuf-loader
 xdg-desktop-portal-gnome
 gnome-control-center
 libei
-argcomplete
+python3-argcomplete
 mutter
 evolution-data-server
 gnome-autoar
