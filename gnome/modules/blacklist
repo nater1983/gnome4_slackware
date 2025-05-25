@@ -17,7 +17,7 @@ typogrify
 webencodings
 wheel
 vala
-libsoup
+libsoup3
 toml
 at-spi2-core
 gi-docgen
@@ -33,6 +33,7 @@ glib-networking
 graphviz
 adwaita-icon-theme
 adwaita-icon-theme-legacy
+adwaita-fonts-ttf
 libdaemon
 avahi
 pangomm
