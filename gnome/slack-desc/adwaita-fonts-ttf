@@ -5,16 +5,16 @@
 # make exactly 11 lines for the formatting to be correct. It's also
 # customary to leave one space after the ':'.
 
-             |-----handy-ruler------------------------------------------------------|
-adwaita-fonts: adwaita-fonts (The typefaces for GNOME)
-adwaita-fonts:
-adwaita-fonts: This repository contains the build system for Adwaita Sans,
-adwaita-fonts: a variation of Inter, and Adwaita Mono, Iosevka customized to match
-adwaita-fonts: Inter.
-adwaita-fonts:
-adwaita-fonts: Homepage: https://gitlab.gnome.org/GNOME/adwaita-fonts
-adwaita-fonts:
-adwaita-fonts:
-adwaita-fonts:
-adwaita-fonts:
+                 |-----handy-ruler------------------------------------------------------|
+adwaita-fonts-ttf: adwaita-fonts-ttf (The typefaces for GNOME)
+adwaita-fonts-ttf:
+adwaita-fonts-ttf: This repository contains the build system for Adwaita Sans,
+adwaita-fonts-ttf: a variation of Inter, and Adwaita Mono, Iosevka customized to match
+adwaita-fonts-ttf: Inter.
+adwaita-fonts-ttf:
+adwaita-fonts-ttf: Homepage: https://gitlab.gnome.org/GNOME/adwaita-fonts
+adwaita-fonts-ttf:
+adwaita-fonts-ttf:
+adwaita-fonts-ttf:
+adwaita-fonts-ttf:
 
