@@ -1,5 +1,5 @@
-gtk
-glib
+gtk4
+glib2
 gobject-introspection
 gjs
 vte
@@ -8,7 +8,7 @@ libxml2
 python-build
 docutils
 hatch_vcs
-hatchling
+python-hatchling
 installer
 lxml
 pillow
@@ -16,7 +16,7 @@ smartypants
 toml
 typogrify
 webencodings
-wheel
+python-wheel
 vala
 libsoup3
 toml
@@ -37,15 +37,15 @@ adwaita-icon-theme-legacy
 adwaita-fonts-ttf
 libdaemon
 avahi
-pangomm
-glibmm
-cairomm
-gtkmm
+pangomm2
+glibmm2
+cairomm1
+gtkmm4
 libgtop
 dconf-editor
-geoclue
+geoclue2
 gsettings-desktop-schemas
-pygobject
+pygobject3
 xdg-desktop-portal
 gnome-keyring
 dav1d
