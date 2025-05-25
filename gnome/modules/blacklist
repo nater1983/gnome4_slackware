@@ -4,7 +4,7 @@ gobject-introspection
 gjs
 vte
 gexiv2
-build
+python-build
 docutils
 hatch_vcs
 hatchling
