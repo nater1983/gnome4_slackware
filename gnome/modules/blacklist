@@ -3,6 +3,7 @@ glib
 gobject-introspection
 gjs
 vte
+gexiv2
 build
 docutils
 hatch_vcs
@@ -21,7 +22,7 @@ toml
 at-spi2-core
 gi-docgen
 cairo
-gcr
+gcr4
 cargo-c
 librsvg
 libgusb
