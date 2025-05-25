@@ -1,3 +1,6 @@
+python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
+
 mkdir -p build
 cd build
   CFLAGS="$SLKCFLAGS" \
@@ -8,6 +11,3 @@ cd build
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
-
-python3 -m build --wheel --no-isolation
-python3 -m installer --destdir "$PKG" dist/*.whl
