@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-autohide-battery
 SRCNAM=autohide-battery
-VERSION=${VERSION:-56}
+VERSION=${VERSION:-57}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=42d48fe21c00291111d9e34de45ea255c8a100b4
+_commit=fec8c4568ee4cda64b24fd3807dc9f7dc61ebf82
 
 ARCH=noarch
 
