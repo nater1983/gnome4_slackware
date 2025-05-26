@@ -51,7 +51,7 @@ construct
 dateutil
 decorator
 pep517
-pycryptodomex
+python3-pycryptodomex
 pykeepass
 pyotp
 validators
