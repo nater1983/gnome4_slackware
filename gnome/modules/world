@@ -26,7 +26,7 @@ gtranslator
 gnome-commander
 khronos
 lorem
-mutagen
+python3-mutagen
 mat2
 metadata-cleaner
 mousai
@@ -147,3 +147,8 @@ dialect
 python3-unicodedata2
 python3-fonttools
 webfont-kit-generator
+# cozy
+python3-peewee
+libdazzle
+gst-plugins-ugly
+cozy
