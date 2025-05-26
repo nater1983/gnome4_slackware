@@ -26,7 +26,6 @@ python_dbusmock
 python3-beautifulsoup4
 emoji
 exceptiongroup
-fonttools
 freetype-py
 gaphas
 pyglm
