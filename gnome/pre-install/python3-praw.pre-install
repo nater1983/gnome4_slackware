@@ -1,0 +1,1 @@
+sed -i -e '/"update_checker >=0.18",/d' pyproject.toml
