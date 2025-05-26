@@ -12,11 +12,11 @@ launchers to activate it via D-Bus.
  3 files changed, 15 insertions(+)
  create mode 100644 data/org.gnome.World.Citations.service.in
 
-diff --git a/meson.build b/meson.build
+diff --git a/data/meson.build b/data/meson.build
 index 7dd74ec..222a3a9 100644
---- a/meson.build
-+++ b/meson.build
-@@ -78,3 +78,14 @@ if glib_compile_schemas.found()
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -74,3 +74,14 @@ if glib_compile_schemas.found()
      ],
    )
  endif
