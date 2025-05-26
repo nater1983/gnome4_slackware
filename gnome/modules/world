@@ -139,3 +139,7 @@ crystal-lang
 Collision
 # citations
 citations
+# dialect
+python3-click
+python3-gtts
+dialect
