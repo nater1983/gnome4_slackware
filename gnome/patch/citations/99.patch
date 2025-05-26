@@ -16,7 +16,7 @@ diff --git a/meson.build b/meson.build
 index 7dd74ec..222a3a9 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -74,3 +74,14 @@ if glib_compile_schemas.found()
+@@ -78,3 +78,14 @@ if glib_compile_schemas.found()
      ],
    )
  endif
