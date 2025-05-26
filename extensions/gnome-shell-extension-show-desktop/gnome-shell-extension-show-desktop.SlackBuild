@@ -26,12 +26,12 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-show-desktop
 SRCNAM=Show-Desktop-Button
-VERSION=${VERSION:-44}
+VERSION=${VERSION:-46}
 TAG=_gfs
 BUILD=${BUILD:-1}
 ARCH=noarch
 PKGTYPE=${PKGTYPE:-txz}
-_commit=212f25e2520e6be72e5bbae1bb6c1614abf843b6
+_commit=c6b8b8dfd79694580233319ebeef87d5411eb36b
 
 if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   echo "$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE"
