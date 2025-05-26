@@ -143,3 +143,7 @@ citations
 python3-click
 python3-gtts
 dialect
+# webfont-kit-generator
+python3-unicodedata2
+python3-fonttools
+webfont-kit-generator
