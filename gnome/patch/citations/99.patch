@@ -13,7 +13,7 @@ launchers to activate it via D-Bus.
  create mode 100644 data/org.gnome.World.Citations.service.in
 
 diff --git a/data/meson.build b/data/meson.build
-index d305bb6..eda4504 100644
+index d305bb6..ac79357 100644
 --- a/data/meson.build
 +++ b/data/meson.build
 @@ -74,4 +74,15 @@ if glib_compile_schemas.found()
@@ -25,7 +25,7 @@ index d305bb6..eda4504 100644
 +service_conf.set('app-id', application_id)
 +service_conf.set('bindir', bindir)
 +configure_file(
-+  input: '@0@.service.in'.format(base_id),
++ input: '@0@.service.in'.format(base_id),
 +  output: '@0@.service'.format(application_id),
 +  configuration: service_conf,
 +  install_dir: datadir / 'dbus-1' / 'services'
