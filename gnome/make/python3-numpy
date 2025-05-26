@@ -1,0 +1,56 @@
+PYTHON_VERSIONS="3"
+# You may want to force numpy to link against a special kind of ATLAS
+#
+ATLAS_SHARED="${ATLAS_SHARED:-yes}"
+ATLAS_SHARED=$(echo "$ATLAS_SHARED"|cut -b 1|tr a-z A-Z)
+ATLAS_NO_THREADS="${ATLAS_NO_THREADS:-no}"
+ATLAS_NO_THREADS=$(echo "$ATLAS_NO_THREADS"|cut -b 1|tr a-z A-Z)
+
+if [ "$ATLAS_SHARED" = "Y" ]; then
+  if [ "$ATLAS_NO_THREADS" = "Y" ]; then
+    echo -e "[atlas]\natlas_libs = satlas" >> site.cfg
+    echo -e "lapack_libs = satlas\nlapack_atlas = satlas\n" >> site.cfg
+  fi
+else
+  if [ "$ATLAS_NO_THREADS" = "Y" ]; then
+    echo -e "[atlas]\natlas_libs = f77blas,cblas,atlas" >> site.cfg
+    echo -e "lapack_libs = lapack\nlapack_atlas = lapack\n" >> site.cfg
+  else
+    echo -e "[atlas]\natlas_libs = ptf77blas,ptcblas,atlas" >> site.cfg
+    echo -e "lapack_libs = ptlapack\nlapack_atlas = ptlapack\n" >> site.cfg
+  fi
+fi
+
+NO_UMFPACK=${NO_UMFPACK:-yes}
+case "$NO_UMFPACK" in
+ [yY]|[yY][eE][sS]) NO_UMFPACK="y" ;;
+                 *) NO_UMFPACK="" ;;
+esac
+
+if [ ! "$NO_UMFPACK" ]; then
+  echo -e "[amd]\nlibrary_dirs = /usr/lib${LIBDIRSUFFIX}" >> site.cfg
+  echo -e "include_dirs = /usr/include/amd\namd_libs = amd\n" >> site.cfg
+  echo -e "[umfpack]\nlibrary_dirs = /usr/lib${LIBDIRSUFFIX}" >> site.cfg
+  echo -e "include_dirs = /usr/include/umfpack\numfpack_libs = umfpack\n" \
+          >> site.cfg
+fi
+
+DEBUG=${DEBUG:-no}
+case "$DEBUG" in
+ [yY]|[yY][eE][sS]) DEBUG="y" ;;
+                 *) DEBUG="" ;;
+esac
+
+for v in $PYTHON_VERSIONS ; do
+  if [ $(which python$v 2>/dev/null) ]; then
+    if [ ! "$DEBUG" ]; then
+      NPY_RELAXED_STRIDES_CHECKING=${NPY_RSC:-1} python$v -m build --wheel --no-isolation -Csetup-args="-Dallow-noblas=true"
+python$v -m installer --destdir "$PKG" dist/*.whl
+
+      find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
+      | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+    else
+   echo "debug here"
+    fi
+  fi
+done
