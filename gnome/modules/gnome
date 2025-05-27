@@ -33,8 +33,9 @@ pillow_heif
 libheif
 unifdef
 gtksourceview
-rest
+librest
 gnome-online-accounts
+libcamera
 pipewire-libcamera
 libnma-gtk4
 NetworkManager-openvpn-gtk4
@@ -54,9 +55,9 @@ gnome-shell
 gnome-session
 libdaemon
 openrc-settingsd
-langtable
+python3-langtable
 python3-hatch_fancy_pypi_readme
-attrs
+python3-attrs
 libfprint
 fprintd
 gdm
@@ -68,5 +69,4 @@ gnome-browser-connector
 ibus-gtk4
 cantarell-fonts
 xvfb
-libcamera
 gnome-user-docs
