@@ -32,7 +32,7 @@ libavif
 pillow_heif
 libheif
 unifdef
-gtksourceview
+gtksourceview5
 librest
 gnome-online-accounts
 libcamera
