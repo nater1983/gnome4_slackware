@@ -67,7 +67,7 @@ find -L . \
 mkdir -p $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru
 cp -r * $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru/
 mkdir -p $PKG/usr/share/glib-2.0
-mv schemas $PKG/usr/share/glib-2.0
+mv $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru/schemas $PKG/usr/share/glib-2.0
 
 mkdir -p $PKG/usr/share/locale
 for po_file in $(find po -name "*.po"); do
