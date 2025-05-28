@@ -53,9 +53,14 @@ mkdir -p $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl
 cp -r * $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/
 rm -rf $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/makefile
 
+mkdir -p $PKG/usr/share/glib-2.0/
+mv $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/schemas/ $PKG/usr/share/glib-2.0/
+
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a LICENSE README.md $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
 mkdir -p $PKG/install
 if [ -f $CWD/slack-required ]; then cat $CWD/slack-required > $PKG/install/slack-required; fi
