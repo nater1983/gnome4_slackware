@@ -180,6 +180,13 @@ no_usr_dups() {
   fi
 }
 
+no_systemd() {
+  # If there are systemd file's remove them:
+if [ -d "$PKG"/usr/lib${LIBDIRSUFFIX}/systemd ]; then
+        rm -r "$PKG"/usr/lib${LIBDIRSUFFIX}/systemd
+fi
+}
+
 precheck() {
   # Initialize return value
   RETVAL=0
@@ -489,6 +496,7 @@ build_mod_pkg() {
         no_usr_share_doc
         no_usr_doc_prgnam
         no_usr_dups
+        no_systemd
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
