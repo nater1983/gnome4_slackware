@@ -182,9 +182,9 @@ no_usr_dups() {
 
 no_systemd() {
   # If there are systemd file's remove them:
-if [ -d usr/lib${LIBDIRSUFFIX}/systemd ]; then
-        rm -r usr/lib${LIBDIRSUFFIX}/systemd
-fi
+  if [ -d "usr/lib${LIBDIRSUFFIX}/systemd" ]; then
+    rm -r usr/lib${LIBDIRSUFFIX}/systemd
+  fi
 }
 
 precheck() {
