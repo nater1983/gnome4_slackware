@@ -1,3 +1,4 @@
 patch -Np1 -i $CWD/patch/mutter/0001-meson-Update-the-syprof-wrap-to-47.alpha-and-sysprof.patch
 patch -Np1 -i $CWD/patch/mutter/0001-gschema-Enable-fractional-scaling-experimental-featu.patch
 patch -Np1 -i $CWD/patch/mutter/mutter-48.0-upstream_fixes-1.patch
+patch -Np1 -i $CWD/patch/mutter/4465.patch
