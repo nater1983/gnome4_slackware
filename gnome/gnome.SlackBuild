@@ -61,7 +61,6 @@ if [[ "$src_archive" == *.deb ]]; then
   ( cd "$tempdir" && ar x "$src_archive" )
   local data_archive=$(find "$tempdir" -name 'data.tar.*' | head -n 1)
 
-  # Determine the number of toplevel entries
   local count=$(tar -tf "$data_archive" | grep -o '^[^/]\+' | sort -u | wc -l)
 
   if [ "$count" -eq 1 ]; then
@@ -75,8 +74,10 @@ if [[ "$src_archive" == *.deb ]]; then
   else
     mkdir -p "$(pkgbase $1)"
     tar -C "$tempdir" -xf "$data_archive" || return 1
-    # move all files into the pkgbase dir
-    find "$tempdir" -mindepth 1 -maxdepth 1 -exec mv {} "$(pkgbase $1)/" \;
+    # Move all extracted files (including hidden) to pkgbase dir
+    shopt -s dotglob
+    mv "$tempdir"/* "$(pkgbase $1)/"
+    shopt -u dotglob
   fi
 
   rm -rf "$tempdir"
