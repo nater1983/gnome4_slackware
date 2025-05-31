@@ -38,6 +38,7 @@ pkgbase() {
     'gz' ) PKGRETURN=$(basename $1 .tar.gz) ;;
     'bz2' ) PKGRETURN=$(basename $1 .tar.bz2) ;;
     'xz' ) PKGRETURN=$(basename $1 .tar.xz) ;;
+    'deb' ) PKGRETURN=$(basename $1 .deb) ;;
     *) PKGRETURN=$(basename $1) ;;
   esac
   echo $PKGRETURN
