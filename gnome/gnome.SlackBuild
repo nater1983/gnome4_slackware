@@ -55,34 +55,20 @@ extract_archive() {
   # Find the archive first:
   local src_archive=$(find $CWD/src -name ${1} | tail -1)
 
-# Handle .deb files
-if [[ "$src_archive" == *.deb ]]; then
-  local tempdir=$(mktemp -d)
-  ( cd "$tempdir" && ar x "$src_archive" )
-  local data_archive=$(find "$tempdir" -name 'data.tar.*' | head -n 1)
-
-  local count=$(tar -tf "$data_archive" | grep -o '^[^/]\+' | sort -u | wc -l)
-
-  if [ "$count" -eq 1 ]; then
+  if [[ "$src_archive" == *.deb ]]; then
+    local tempdir=$(mktemp -d)
+    ( cd "$tempdir" && ar x "$src_archive" )
+    local data_archive=$(find "$tempdir" -name 'data.tar.*' | head -n 1)
+    
+    mkdir -p "$(pkgbase "$1")"
     tar -C "$tempdir" -xf "$data_archive" || return 1
-    local topdir="$(tar -tf "$data_archive" | grep -o '^[^/]\+' | sort -u)"
-    if [ "$topdir" != "$(pkgbase $1)" ]; then
-      mv "$tempdir/$topdir" "$(pkgbase $1)"
-    else
-      mv "$tempdir/$topdir" .
-    fi
-  else
-    mkdir -p "$(pkgbase $1)"
-    tar -C "$tempdir" -xf "$data_archive" || return 1
-    # Move all extracted files (including hidden) to pkgbase dir
-    shopt -s dotglob
-    mv "$tempdir"/* "$(pkgbase $1)/"
-    shopt -u dotglob
+    
+    # Move everything from tempdir into pkgbase dir
+    find "$tempdir" -mindepth 1 -maxdepth 1 -exec mv -t "$(pkgbase "$1")" -- {} +
+
+    rm -rf "$tempdir"
+    return 0
   fi
-
-  rm -rf "$tempdir"
-  return 0
-fi
 
   # Regular tar-based logic
   if [ $(tar -tf $src_archive | grep -o '^[^/]\+' | sort -u | wc -l) -eq 1 ]; then
