@@ -1,0 +1,25 @@
+From 05c619b058b5de86f10bf2b09d7b722ece653d2d Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sat, 31 May 2025 14:05:03 -0500
+Subject: [PATCH] Use gi.require_version('Soup', '3.0')
+
+Use gi.require_version('Soup', '3.0') fix's an issue when no soup version is specified.
+---
+ src/wikipedia.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/wikipedia.py b/src/wikipedia.py
+index f912374..500cf3a 100644
+--- a/src/wikipedia.py
++++ b/src/wikipedia.py
+@@ -3,8 +3,8 @@
+ # SPDX-License-Identifier: GPL-3.0-or-later
+ 
+ 
+-import json, urllib.parse
+-
++import json, urllib.parse, gi
++gi.require_version('Soup', '3.0')
+ from gi.repository import Soup
+ 
+ 
