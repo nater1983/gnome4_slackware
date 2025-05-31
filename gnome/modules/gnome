@@ -68,5 +68,5 @@ jq
 gnome-browser-connector
 ibus-gtk4
 cantarell-fonts
-xvfb
+xvfb-run
 gnome-user-docs
