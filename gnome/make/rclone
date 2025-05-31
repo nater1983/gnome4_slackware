@@ -1,4 +1,5 @@
-mkdir -p $PKG/usr/bin/
-mkdir -p $PKG/usr/man/man1/
-cp rclone $PKG/usr/bin/
-cp rclone.1 $PKG/usr/man/man1/
+#mkdir -p $PKG/usr/bin/
+#mkdir -p $PKG/usr/man/man1/
+#cp rclone $PKG/usr/bin/
+#cp rclone.1 $PKG/usr/man/man1/
+cp -av usr $PKG
