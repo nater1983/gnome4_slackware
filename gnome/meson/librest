@@ -7,6 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Dca_certificates=true \
     -Dca_certificates_path=/etc/ssl/certs \
+    -Dvapi=true \
     -Dtests=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
