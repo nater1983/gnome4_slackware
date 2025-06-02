@@ -3,6 +3,7 @@ osinfo-db
 libosinfo
 yajl
 numactl
+openwsman
 libvirt
 libvirt-glib
 libvirt-python
@@ -17,7 +18,6 @@ snappy
 vde2
 virglrenderer
 libslirp
-openwsman
 qemu
 virt-manager
 libcacard
