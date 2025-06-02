@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/totem-pl-parser/totem-pl-parser-c99.patch
