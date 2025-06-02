@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/libosinfo/0adf38535637ec668e658d43f04f60f11f51574f.patch
