@@ -3,7 +3,7 @@ msgraph
 gnome-desktop
 geoclue2
 geocode-glib
-libgweather
+libgweather4
 gnome-settings-daemon
 colord-gtk
 gsound
