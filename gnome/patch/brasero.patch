@@ -1,0 +1,4 @@
+patch -Np1 -i $CWD/patch/brasero/brasero-appdata.patch
+patch -Np1 -i $CWD/patch/brasero/brasero-better-error.patch
+patch -Np1 -i $CWD/patch/brasero/brasero-cell-renderer.patch
+patch -Np1 -i $CWD/patch/brasero/brasero-multidrag-treeview.patch
