@@ -50,6 +50,7 @@ gnome-control-center
 libei
 python3-argcomplete
 mutter
+libgdata
 evolution-data-server
 gnome-autoar
 gnome-shell
