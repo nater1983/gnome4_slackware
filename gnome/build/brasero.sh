@@ -110,15 +110,6 @@ for LOC in $MODS; do
     continue
   fi
 
-  # Get the latest commit date and hash
-  cd ${LOC}-temp || continue
-  COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
-  cd ..
-
-  # Rename the directory with commit info
-  NEW_DIR="${LOC}-${COMMIT_INFO}"
-  mv ${LOC}-temp ${NEW_DIR}
-
   echo ">>   Checked out ${LOC} as ${NEW_DIR}"
   pushd ${NEW_DIR}
     git checkout ${DEFBRANCH}
@@ -131,6 +122,15 @@ for LOC in $MODS; do
       git checkout $(git rev-list -n 1 --before="`date -d $THEDATE`" $BRANCH)
     fi
   popd
+
+  # Get the latest commit date and hash
+  cd ${LOC}-temp || continue
+  COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
+  cd ..
+
+  # Rename the directory with commit info
+  NEW_DIR="${LOC}-${COMMIT_INFO}"
+  mv ${LOC}-temp ${NEW_DIR}
 
   # Remove git metadata if SHRINK is enabled:
   if [ "$SHRINK" = "YES" ]; then
