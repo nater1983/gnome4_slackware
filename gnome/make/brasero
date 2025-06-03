@@ -4,8 +4,8 @@ CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
-    --docdir=/usr/doc/$PRGNAM-$VERSION \
-    --htmldir=/usr/doc/$PRGNAM-$VERSION/html \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --htmldir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION/html \
     --disable-gtk-doc \
     --enable-search \
     --enable-playlist \
