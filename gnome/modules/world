@@ -163,3 +163,6 @@ python3-praw
 # python3-beautifulsoup4 -- found in a previous application
 python3-mistune
 giara
+# brasero
+gnome-common
+brasero
