@@ -15,7 +15,7 @@ CWD=$(pwd)
 CLEANUP="YES"
  
 # Checkout at a custom date instead of today:
-CUSTDATE="YES"
+CUSTDATE="NO"
 
 # Forced overwriting of existing tarballs:
 FORCE="NO"
@@ -30,7 +30,7 @@ GNOMEGITURI="https://github.com/GNOME/"
 DEFMODS="brasero"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="master"
+DEFBRANCH="98342080aa1a05c3543ff45f383681012d4a53c8"
 #DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
