@@ -1,0 +1,387 @@
+From fa0a88d6fb6dbde4a10b2e761dcf1237d97968f5 Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Fri, 31 May 2024 20:35:07 +0100
+Subject: [PATCH] Replace 'BaobabCellRendererProgress' with native
+ 'GtkCellRendererProgress'
+
+Baobab cell renderer is broken in brasero (displaying black bars). It
+can be fixed, but the color idea is a bit confusing as it's not clear
+what they mean. Theming is one other issue. So, we replace it with the
+native 'GtkCellRendererProgress' from GTK3.
+
+Baobab has made the same replacement during it's GTK4 port in 2021, so
+it looks consistent with the rest of the ecosystem.
+---
+ src/Makefile.am                     |   2 -
+ src/baobab-cell-renderer-progress.c | 251 ----------------------------
+ src/baobab-cell-renderer-progress.h |  57 -------
+ src/brasero-data-disc.c             |   5 +-
+ 4 files changed, 2 insertions(+), 313 deletions(-)
+ delete mode 100644 src/baobab-cell-renderer-progress.c
+ delete mode 100644 src/baobab-cell-renderer-progress.h
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 55b933f3c..59fb13fe3 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -91,8 +91,6 @@ brasero_SOURCES = \
+ 	brasero-file-filtered.c         \
+ 	brasero-filter-option.h         \
+ 	brasero-filter-option.c         \
+-	baobab-cell-renderer-progress.c         \
+-	baobab-cell-renderer-progress.h         \
+ 	brasero-multi-song-props.h         \
+ 	brasero-multi-song-props.c         \
+ 	brasero-rename.h         \
+diff --git a/src/baobab-cell-renderer-progress.c b/src/baobab-cell-renderer-progress.c
+deleted file mode 100644
+index c494cafaa..000000000
+--- a/src/baobab-cell-renderer-progress.c
++++ /dev/null
+@@ -1,251 +0,0 @@
+-/* baobab-cell-renderer-progress.c
+- *
+- * Copyright (C) 2006 Paolo Borelli
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Library General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Library General Public License for more details.
+- *
+- * You should have received a copy of the GNU Library General Public
+- * License along with this library; if not, write to the
+- * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
+- */
+-
+-#include "config.h"
+-#include <stdlib.h>
+-
+-#include "baobab-cell-renderer-progress.h"
+-
+-#define BAOBAB_CELL_RENDERER_PROGRESS_GET_PRIVATE(object) (G_TYPE_INSTANCE_GET_PRIVATE ((object),                        \
+-                                                           BAOBAB_TYPE_CELL_RENDERER_PROGRESS, \
+-                                                           BaobabCellRendererProgressPrivate))
+-
+-enum
+-{
+-  PROP_0,
+-  PROP_PERC
+-}; 
+-
+-struct _BaobabCellRendererProgressPrivate
+-{
+-  double perc;
+-};
+-
+-G_DEFINE_TYPE (BaobabCellRendererProgress, baobab_cell_renderer_progress, GTK_TYPE_CELL_RENDERER)
+-
+-static void
+-baobab_cell_renderer_progress_init (BaobabCellRendererProgress *cellprogress)
+-{
+-  cellprogress->priv = BAOBAB_CELL_RENDERER_PROGRESS_GET_PRIVATE (cellprogress);
+-  cellprogress->priv->perc = 0;
+-
+-  g_object_set (cellprogress,
+-                "mode", GTK_CELL_RENDERER_MODE_INERT,
+-		NULL);
+-  gtk_cell_renderer_set_padding (GTK_CELL_RENDERER (cellprogress), 4, 4);
+-}
+-
+-GtkCellRenderer*
+-baobab_cell_renderer_progress_new (void)
+-{
+-  return g_object_new (BAOBAB_TYPE_CELL_RENDERER_PROGRESS, NULL);
+-}
+-
+-static void
+-baobab_cell_renderer_progress_get_property (GObject *object,
+-					    guint param_id,
+-					    GValue *value,
+-					    GParamSpec *pspec)
+-{
+-  BaobabCellRendererProgress *cellprogress = BAOBAB_CELL_RENDERER_PROGRESS (object);
+-  
+-  switch (param_id)
+-    {
+-    case PROP_PERC:
+-      g_value_set_double (value, cellprogress->priv->perc);
+-      break;
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+-    }
+-}
+-
+-static void
+-baobab_cell_renderer_progress_set_property (GObject *object,
+-					    guint param_id,
+-					    const GValue *value,
+-					    GParamSpec   *pspec)
+-{
+-  BaobabCellRendererProgress *cellprogress = BAOBAB_CELL_RENDERER_PROGRESS (object);
+-
+-  switch (param_id)
+-    {
+-    case PROP_PERC:
+-      cellprogress->priv->perc = g_value_get_double (value);
+-      break;
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+-    }
+-}
+-
+-/* we simply have a fixed size */
+-
+-#define FIXED_WIDTH   70
+-#define FIXED_HEIGHT  8
+-
+-static void
+-baobab_cell_renderer_progress_get_size (GtkCellRenderer *cell,
+-					GtkWidget       *widget,
+-					const GdkRectangle    *cell_area,
+-					gint            *x_offset,
+-					gint            *y_offset,
+-					gint            *width,
+-					gint            *height)
+-{
+-  gint calc_width, calc_height;
+-  gint xpad, ypad;
+-  gfloat xalign, yalign;
+-
+-  gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
+-
+-  calc_width  = xpad * 2 + FIXED_WIDTH;
+-  calc_height = ypad * 2 + FIXED_HEIGHT;
+-
+-  if (width)
+-    *width = calc_width;
+-
+-  if (height)
+-    *height = calc_height;
+-
+-  gtk_cell_renderer_get_alignment (cell, &xalign, &yalign);
+-  if (cell_area)
+-  {
+-    if (x_offset)
+-    {
+-      *x_offset = xalign * (cell_area->width - calc_width);
+-      *x_offset = MAX (*x_offset, 0);
+-    }
+-
+-    if (y_offset)
+-    {
+-      *y_offset = yalign * (cell_area->height - calc_height);
+-      *y_offset = MAX (*y_offset, 0);
+-    }
+-  }
+-}
+-
+-static void
+-set_color_according_to_perc (cairo_t *cr, double value)
+-{
+-  static GdkColor red;
+-  static GdkColor yellow;
+-  static GdkColor green;
+-  static gboolean colors_initialized = FALSE;
+-
+-  if (!colors_initialized)
+-    {
+-      /* hardcoded tango colors */
+-      gdk_color_parse ("#cc0000", &red);
+-      gdk_color_parse ("#edd400", &yellow);
+-      gdk_color_parse ("#73d216", &green);
+-
+-      colors_initialized = TRUE;
+-    }
+-
+-  if (value <= 0)
+-    {
+-      cairo_set_source_rgb (cr, 1, 1, 1);
+-      return;
+-    }
+-  else if (value <= 33.33)
+-    {
+-      gdk_cairo_set_source_color (cr, &green);
+-      return;
+-    }
+-  else if (value <= 66.66)
+-    {
+-      gdk_cairo_set_source_color (cr, &yellow);
+-      return;
+-    }
+-  else if (value <= 100.0)
+-    {
+-      gdk_cairo_set_source_color (cr, &red);
+-      return;
+-    }
+-  else
+-    g_assert_not_reached ();
+-}
+-
+-static void
+-baobab_cell_renderer_progress_render (GtkCellRenderer *cell,
+-				      cairo_t         *cr,
+-				      GtkWidget       *widget,
+-				      const GdkRectangle    *background_area,
+-				      const GdkRectangle    *cell_area,
+-				      GtkCellRendererState flags)
+-{
+-  BaobabCellRendererProgress *cellprogress = BAOBAB_CELL_RENDERER_PROGRESS (cell);
+-  gint x, y, w, h, perc_w;
+-  gint xpad, ypad;
+-  gboolean is_rtl;
+-
+-  is_rtl = gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL;
+-
+-  gtk_cell_renderer_get_padding (cell, &xpad, &ypad);
+-  x = cell_area->x + xpad;
+-  y = cell_area->y + ypad;
+-  
+-  w = cell_area->width - xpad * 2;
+-  h = cell_area->height - ypad * 2;
+-
+-  /*
+-   * we always use a white bar with black
+-   * border and green/yellow/red progress...
+-   * I know it's not theme friendly, but we don't
+-   * want a plain progress bar
+-   */
+-
+-  cairo_rectangle (cr, x, y, w, h);
+-  cairo_set_source_rgb (cr, 1, 1, 1);
+-  cairo_fill (cr);
+-
+-  perc_w = w * MAX (0, cellprogress->priv->perc) / 100;
+-
+-  cairo_rectangle (cr, is_rtl ? (x + w - perc_w) : x, y, perc_w, h);
+-  set_color_according_to_perc (cr, cellprogress->priv->perc);
+-  cairo_fill (cr);
+-
+-  cairo_rectangle (cr, x, y, w, h);
+-  cairo_set_source_rgb (cr, 0, 0, 0);
+-  cairo_fill (cr);
+-}
+-
+-static void
+-baobab_cell_renderer_progress_class_init (BaobabCellRendererProgressClass *klass)
+-{
+-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-  GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS (klass);
+-  
+-  object_class->get_property = baobab_cell_renderer_progress_get_property;
+-  object_class->set_property = baobab_cell_renderer_progress_set_property;
+-  
+-  cell_class->get_size = baobab_cell_renderer_progress_get_size;
+-  cell_class->render = baobab_cell_renderer_progress_render;
+-
+-  g_object_class_install_property (object_class,
+-				   PROP_PERC,
+-				   g_param_spec_double ("perc",
+-						        "percentage",
+-						        "precentage",
+-						        -1, 100, 0,
+-						        G_PARAM_READWRITE));
+-
+-  g_type_class_add_private (object_class,
+-			    sizeof (BaobabCellRendererProgressPrivate));
+-}
+diff --git a/src/baobab-cell-renderer-progress.h b/src/baobab-cell-renderer-progress.h
+deleted file mode 100644
+index 26f3b980a..000000000
+--- a/src/baobab-cell-renderer-progress.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/* baobab-cell-renderer-progress.h
+- *
+- * Copyright (C) 2006 Paolo Borelli
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Library General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Library General Public License for more details.
+- *
+- * You should have received a copy of the GNU Library General Public
+- * License along with this library; if not, write to the
+- * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
+- */
+-
+-#ifndef __BAOBAB_CELL_RENDERER_PROGRESS_H__
+-#define __BAOBAB_CELL_RENDERER_PROGRESS_H__
+-
+-#include <gtk/gtk.h>
+-
+-G_BEGIN_DECLS
+-
+-#define BAOBAB_TYPE_CELL_RENDERER_PROGRESS (baobab_cell_renderer_progress_get_type ())
+-#define BAOBAB_CELL_RENDERER_PROGRESS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), BAOBAB_TYPE_CELL_RENDERER_PROGRESS, BaobabCellRendererProgress))
+-#define BAOBAB_CELL_RENDERER_PROGRESS_CLASS(klass)	  (G_TYPE_CHECK_CLASS_CAST ((klass), BAOBAB_TYPE_CELL_RENDERER_PROGRESS, BaobabCellRendererProgressClass))
+-#define BAOBAB_IS_CELL_RENDERER_PROGRESS(obj)	  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), BAOBAB_TYPE_CELL_RENDERER_PROGRESS))
+-#define BAOBAB_IS_CELL_RENDERER_PROGRESS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), BAOBAB_TYPE_CELL_RENDERER_PROGRESS))
+-#define BAOBAB_CELL_RENDERER_PROGRESS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), BAOBAB_TYPE_CELL_RENDERER_PROGRESS, BaobabCellRendererProgressClass))
+-
+-typedef struct _BaobabCellRendererProgress         BaobabCellRendererProgress;
+-typedef struct _BaobabCellRendererProgressClass    BaobabCellRendererProgressClass;
+-typedef struct _BaobabCellRendererProgressPrivate  BaobabCellRendererProgressPrivate;
+-
+-struct _BaobabCellRendererProgress
+-{
+-  GtkCellRenderer parent_instance;
+-  
+-  /*< private >*/
+-  BaobabCellRendererProgressPrivate *priv;
+-};
+-
+-struct _BaobabCellRendererProgressClass
+-{
+-  GtkCellRendererClass parent_class;
+-};
+-
+-GType		 baobab_cell_renderer_progress_get_type (void) G_GNUC_CONST;
+-GtkCellRenderer* baobab_cell_renderer_progress_new      (void);
+-
+-G_END_DECLS
+-
+-#endif  /* __BAOBAB_CELL_RENDERER_PROGRESS_H__ */
+diff --git a/src/brasero-data-disc.c b/src/brasero-data-disc.c
+index 1fcb22376..b6b424ba3 100644
+--- a/src/brasero-data-disc.c
++++ b/src/brasero-data-disc.c
+@@ -36,7 +36,6 @@
+ #include "brasero-misc.h"
+ 
+ #include "eggtreemultidnd.h"
+-#include "baobab-cell-renderer-progress.h"
+ 
+ #include "brasero-data-disc.h"
+ #include "brasero-file-filtered.h"
+@@ -2369,14 +2368,14 @@ brasero_data_disc_init (BraseroDataDisc *object)
+ 	gtk_tree_view_column_set_sort_column_id (column, BRASERO_DATA_TREE_MODEL_MIME_DESC);
+ 
+ 	/* Space column */
+-	renderer = baobab_cell_renderer_progress_new ();
++	renderer = gtk_cell_renderer_progress_new ();
+ 	column = gtk_tree_view_column_new ();
+ 	gtk_tree_view_column_pack_start (column, renderer, FALSE);
+ 
+ 	gtk_tree_view_column_add_attribute (column, renderer,
+ 					    "visible", BRASERO_DATA_TREE_MODEL_SHOW_PERCENT);
+ 	gtk_tree_view_column_add_attribute (column, renderer,
+-					    "perc", BRASERO_DATA_TREE_MODEL_PERCENT);
++					    "value", BRASERO_DATA_TREE_MODEL_PERCENT);
+ 	gtk_tree_view_column_set_title (column, _("Space"));
+ 
+ 	gtk_tree_view_append_column (GTK_TREE_VIEW (priv->tree), column);
+-- 
+GitLab
+
