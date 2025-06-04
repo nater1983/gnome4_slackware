@@ -1,7 +1,7 @@
 # List packages with an $ARCH of "noarch" (i.e. packages
 # that contain no binaries) here:
 gnome-backgrounds
-adwaita-fonts
+adwaita-fonts-ttf
 gnome-app-list
 showtime
 adwaita-icon-theme
