@@ -9,3 +9,4 @@ adwaita-icon-theme-legacy
 typescript
 mat2
 spice-protocol
+xvfb-run
