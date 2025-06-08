@@ -15,7 +15,7 @@ diff --git a/data/meson.build b/data/meson.build
 index 764c57d3..6fe7ed80 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -109,85 +109,75 @@ i18n.merge_file(
+@@ -109,85 +109,77 @@ i18n.merge_file(
    install_dir: join_paths(session_pkgdatadir, 'sessions')
  )
  
