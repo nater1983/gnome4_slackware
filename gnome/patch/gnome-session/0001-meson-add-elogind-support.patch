@@ -12,10 +12,10 @@ API. Add an option for elogind users.
  3 files changed, 71 insertions(+), 62 deletions(-)
 
 diff --git a/data/meson.build b/data/meson.build
-index 764c57d3..14ef5705 100644
+index 764c57d3..2985f786 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -109,71 +109,65 @@ i18n.merge_file(
+@@ -109,72 +109,65 @@ i18n.merge_file(
    install_dir: join_paths(session_pkgdatadir, 'sessions')
  )
  
@@ -121,6 +121,7 @@ index 764c57d3..14ef5705 100644
 -    'gnome-session-x11@.target',
 -    'gnome-session-x11.target',
 -  ]
+-endif
 +  systemd_target = files('gnome-session-wayland@.target',
 +                         'gnome-session-wayland.target',
 +                         'gnome-session@.target',
@@ -139,8 +140,16 @@ index 764c57d3..14ef5705 100644
 +      'gnome-session-x11-services-ready.target',
 +    ]
 +  endif
- endif
  
+ install_data(
+   systemd_target,
+@@ -188,6 +181,7 @@ install_data(
+   rename: 'override.conf',
+   install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
+ )
++endif
+ 
+ # FIXME: https://github.com/systemd/systemd/issues/37104
  install_data(
 diff --git a/meson.build b/meson.build
 index 361b388c..7fbaf45e 100644
