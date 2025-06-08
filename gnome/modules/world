@@ -96,7 +96,7 @@ python3-typing_extensions
 python3-uritemplate
 # pure_protobuf
 python3-poetry-dynamic-versioning
-tomlkit
+python3-tomlkit
 python3-dunamai
 pure_protobuf
 #Komikku
