@@ -49,7 +49,7 @@ index 764c57d3..6fe7ed80 100644
 +      install_dir: systemd_userunitdir / 'gnome-session@@0@.target.d'.format(
 +        session),
 +    )
-+  endif
++  endforeach
  
 -configure_file(
 -  input: 'gnome.session.conf.in',
