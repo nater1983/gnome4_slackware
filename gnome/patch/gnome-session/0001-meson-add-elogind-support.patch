@@ -39,10 +39,10 @@ index 764c57d3..279d100a 100644
 +      wanted_targets += 'Wants=@0@.target'.format(component)
 +    endforeach
 +
-+ /*   required_targets = []
-+    foreach component: required_components
-+      wanted_targets += 'Requires=@0@.target'.format(component)
-+    endforeach */
++ #   required_targets = []
++ #   foreach component: required_components
++ #     wanted_targets += 'Requires=@0@.target'.format(component)
++ #   endforeach
 +
 +    configure_file(
 +      input: session + '.session.conf.in',
