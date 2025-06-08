@@ -174,7 +174,7 @@ index 361b388c..7fbaf45e 100644
 -              libsystemd_dep.version().version_compare('< 248'))
 -
  session_bin_deps = session_deps + [
--   libsystemd_dep,
+   libsystemd_dep,
    dependency('gio-unix-2.0', version: glib_req_version),
  ]
  
@@ -204,6 +204,15 @@ index 781d8eea..56798ac6 100644
  option('systemduserunitdir', type: 'string', description: 'Directory for systemd user service files')
  option('docbook', type: 'boolean', value: true, description: 'build documentation')
  option('man', type: 'boolean', value: true, description: 'build documentation (requires xmlto)')
--- 
-GitLab
+diff --git a/meson.build b/meson.build
+index 7fbaf45e..2374bed4 100644
+--- a/meson.build
++++ b/meson.build
+@@ -91,7 +91,6 @@ session_deps = [
+ ]
+ 
+ session_bin_deps = session_deps + [
+-  libsystemd_dep,
+   dependency('gio-unix-2.0', version: glib_req_version),
+ ]
 
