@@ -201,6 +201,13 @@ no_systemd() {
   fi
 }
 
+no_systemd1() {
+  # If there are systemd file's remove them:
+  if [ -d "usr/lib64/systemd" ]; then
+    rm -fr usr/lib64/systemd
+  fi
+}
+
 precheck() {
   # Initialize return value
   RETVAL=0
