@@ -12,10 +12,10 @@ API. Add an option for elogind users.
  3 files changed, 71 insertions(+), 62 deletions(-)
 
 diff --git a/data/meson.build b/data/meson.build
-index 764c57d3..6fe7ed80 100644
+index 764c57d3..279d100a 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -109,85 +109,77 @@ i18n.merge_file(
+@@ -109,20 +109,28 @@ i18n.merge_file(
    install_dir: join_paths(session_pkgdatadir, 'sessions')
  )
  
@@ -39,6 +39,11 @@ index 764c57d3..6fe7ed80 100644
 +      wanted_targets += 'Wants=@0@.target'.format(component)
 +    endforeach
 +
++    required_targets = []
++    foreach component: required_components
++      wanted_targets += 'Requires=@0@.target'.format(component)
++    endforeach
++
 +    configure_file(
 +      input: session + '.session.conf.in',
 +      output: session + '.session.conf',
@@ -51,15 +56,9 @@ index 764c57d3..6fe7ed80 100644
 +    )
 +  endforeach
  
--configure_file(
--  input: 'gnome.session.conf.in',
--  output: 'gnome.session.conf',
--  configuration: {
--    'wants_components': '\n'.join(wanted_targets),
--    'requires_components': '\n'.join(required_targets),
--  },
--  install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
--)
+ configure_file(
+   input: 'gnome.session.conf.in',
+@@ -136,45 +144,43 @@ configure_file(
  
  # Install the other necessary systemd scaffolding
  
@@ -70,18 +69,6 @@ index 764c57d3..6fe7ed80 100644
 -  'gnome-session-monitor.service',
 -  'gnome-session-failed.service',
 -]
--
--foreach service: systemd_service
--  configure_file(
--    input: service + '.in',
--    output: service,
--    install: true,
--    install_dir: systemd_userunitdir,
--    configuration: {
--      'libexecdir': session_libexecdir,
--    },
--  )
--endforeach
 +if use_systemd
 +  systemd_service = ['gnome-session-manager@.service',
 +                     'gnome-session-signal-init.service',
@@ -98,8 +85,20 @@ index 764c57d3..6fe7ed80 100644
 +      configuration: unit_conf
 +    )
 +  endforeach
-+  endif
-+
++endif
+ 
+-foreach service: systemd_service
+-  configure_file(
+-    input: service + '.in',
+-    output: service,
+-    install: true,
+-    install_dir: systemd_userunitdir,
+-    configuration: {
+-      'libexecdir': session_libexecdir,
+-    },
+-  )
+-endforeach
+ 
 -systemd_target = [
 -  'gnome-session-wayland@.target',
 -  'gnome-session-wayland.target',
@@ -138,31 +137,8 @@ index 764c57d3..6fe7ed80 100644
 +    ]
 +  endif
  
--install_data(
--  systemd_target,
--  install_dir: systemd_userunitdir
--)
-+  install_data(
-+    systemd_target,
-+    install_dir: systemd_userunitdir
-+  )
- 
- # Install resource limits that are applied to GNOME-launched apps
- 
--install_data(
--  'app-override.scope.conf',
--  rename: 'override.conf',
--  install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
--)
-+  install_data(
-+    'gnome-launched-override.scope.conf',
-+    rename: 'override.conf',
-+    install_dir : join_paths(systemd_userunitdir, 'gnome-launched-.scope.d')
-+  )
- 
- # FIXME: https://github.com/systemd/systemd/issues/37104
  install_data(
-
+   systemd_target,
 diff --git a/meson.build b/meson.build
 index 361b388c..7fbaf45e 100644
 --- a/meson.build
