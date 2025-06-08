@@ -174,7 +174,7 @@ index 361b388c..7fbaf45e 100644
 -              libsystemd_dep.version().version_compare('< 248'))
 -
  session_bin_deps = session_deps + [
-   libsystemd_dep,
+-   libsystemd_dep,
    dependency('gio-unix-2.0', version: glib_req_version),
  ]
  
