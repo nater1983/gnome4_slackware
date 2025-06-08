@@ -1,1 +1,2 @@
-mv $PKG/usr/lib $PKG/
+cp -av $PKG/usr/lib/* $PKG/lib
+rm -fr $PKG/usr/lib
