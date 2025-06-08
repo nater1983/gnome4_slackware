@@ -45,8 +45,9 @@ forge-sparks
 wike
 Impression
 gnome-dictionary
-argon2-cffi-bindings
-argon2-cffi
+# secrets
+python3-argon2-cffi-bindings
+python3-argon2-cffi
 construct
 dateutil
 decorator
@@ -59,6 +60,7 @@ zxcvbn
 zxcvbn_rs_py
 pykcs11
 secrets
+# boatswain
 hidapi
 boatswain
 Shortwave
