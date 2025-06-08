@@ -12,7 +12,7 @@ flit_scm
 gaphas
 python3-tinycss2
 pydot
-jedi
+python3-jedi
 parso
 better_exceptions
 defusedxml
