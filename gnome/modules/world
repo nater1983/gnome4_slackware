@@ -98,7 +98,7 @@ python3-uritemplate
 python3-poetry-dynamic-versioning
 python3-tomlkit
 python3-dunamai
-pure_protobuf
+pure-protobuf
 #Komikku
 python3-beautifulsoup4
 python3-colorthief
