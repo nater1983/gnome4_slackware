@@ -85,7 +85,7 @@ index 764c57d3..279d100a 100644
 +      configuration: unit_conf
 +    )
 +  endforeach
-+/*endif*/ 
++endif
 -foreach service: systemd_service
 -  configure_file(
 -    input: service + '.in',
