@@ -1,4 +1,2 @@
 mkdir -p $PKG/etc/ld.so.conf.d
 echo "/usr/lib${LIBDIRSUFFIX}/mutter-16/" > $PKG/etc/ld.so.conf.d/mutter.conf
-sed -i 's/^Version:[[:space:]]*48\.3\.1$/Version: 49.alpha.0/' "$PKG/usr/lib64/pkgconfig/libmutter-16.pc"
-sed -i 's/^Version:[[:space:]]*48\.3\.1$/Version: 49.alpha.0/' "$PKG/usr/lib64/pkgconfig/mutter-"{clutter,cogl,mtk}"-16.pc"
