@@ -98,7 +98,8 @@ index 764c57d3..6fe7ed80 100644
 +      configuration: unit_conf
 +    )
 +  endforeach
- 
++  endif
++
 -systemd_target = [
 -  'gnome-session-wayland@.target',
 -  'gnome-session-wayland.target',
