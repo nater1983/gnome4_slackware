@@ -518,6 +518,7 @@ build_mod_pkg() {
         no_usr_doc_prgnam
         no_usr_dups
         no_systemd
+        no_systemd1
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
