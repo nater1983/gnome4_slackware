@@ -12,18 +12,64 @@ API. Add an option for elogind users.
  3 files changed, 71 insertions(+), 62 deletions(-)
 
 diff --git a/data/meson.build b/data/meson.build
-index bd66ff01..ab9453e9 100644
+index 764c57d3..6fe7ed80 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -113,69 +113,71 @@ install_data(
- unit_conf = configuration_data()
- unit_conf.set('libexecdir', session_libexecdir)
+@@ -109,85 +109,75 @@ i18n.merge_file(
+   install_dir: join_paths(session_pkgdatadir, 'sessions')
+ )
  
--systemd_service = ['gnome-session-manager@.service',
--                    'gnome-session-signal-init.service',
--                    'gnome-session-restart-dbus.service',
--                    'gnome-session-monitor.service',
--                    'gnome-session-failed.service']
+-# Generate the systemd session configuration. In this mode, gnome-session lets
+-# systemd start and manage the necessary session components. These are defined
+-# via systemd unit files. The list of required components to start comes via a
+-# drop-in file for gnome-session@<session>.target
+-
+-wanted_targets = []
+-foreach component: wanted_components
+-  wanted_targets += 'Wants=@0@.target'.format(component)
+-endforeach
+-
+-required_targets = []
+-foreach component: required_components
+-  wanted_targets += 'Requires=@0@.target'.format(component)
+-endforeach
++  foreach session, req_components: required_components
++    wanted_targets = []
++    foreach component: req_components
++      wanted_targets += 'Wants=@0@.target'.format(component)
++    endforeach
++
++    configure_file(
++      input: session + '.session.conf.in',
++      output: session + '.session.conf',
++      configuration: {
++        'requires_component': shell_component[session],
++        'wants_required_components': '\n'.join(wanted_targets),
++      },
++      install_dir: systemd_userunitdir / 'gnome-session@@0@.target.d'.format(
++        session),
++    )
++  endif
+ 
+-configure_file(
+-  input: 'gnome.session.conf.in',
+-  output: 'gnome.session.conf',
+-  configuration: {
+-    'wants_components': '\n'.join(wanted_targets),
+-    'requires_components': '\n'.join(required_targets),
+-  },
+-  install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
+-)
+ 
+ # Install the other necessary systemd scaffolding
+ 
+-systemd_service = [
+-  'gnome-session-manager@.service',
+-  'gnome-session-signal-init.service',
+-  'gnome-session-restart-dbus.service',
+-  'gnome-session-monitor.service',
+-  'gnome-session-failed.service',
+-]
 -
 -foreach service: systemd_service
 -  configure_file(
@@ -31,7 +77,9 @@ index bd66ff01..ab9453e9 100644
 -    output: service,
 -    install: true,
 -    install_dir: systemd_userunitdir,
--    configuration: unit_conf
+-    configuration: {
+-      'libexecdir': session_libexecdir,
+-    },
 -  )
 -endforeach
 +if use_systemd
@@ -51,22 +99,23 @@ index bd66ff01..ab9453e9 100644
 +    )
 +  endforeach
  
--systemd_target = files('gnome-session-wayland@.target',
--                        'gnome-session-wayland.target',
--                        'gnome-session@.target',
--                        'gnome-session.target',
--                        'gnome-session-pre.target',
--                        'gnome-session-manager.target',
--                        'gnome-session-initialized.target',
--                        'gnome-session-shutdown.target',
--                        'gnome-session-failed.target',
--                        )
+-systemd_target = [
+-  'gnome-session-wayland@.target',
+-  'gnome-session-wayland.target',
+-  'gnome-session@.target',
+-  'gnome-session.target',
+-  'gnome-session-pre.target',
+-  'gnome-session-manager.target',
+-  'gnome-session-initialized.target',
+-  'gnome-session-shutdown.target',
+-  'gnome-session-failed.target',
+-  'gnome-session-x11-services.target',
+-  'gnome-session-x11-services-ready.target',
+-]
 -if have_x11
 -  systemd_target += [
 -    'gnome-session-x11@.target',
 -    'gnome-session-x11.target',
--    'gnome-session-x11-services.target',
--    'gnome-session-x11-services-ready.target',
 -  ]
 -endif
 +  systemd_target = files('gnome-session-wayland@.target',
@@ -97,10 +146,12 @@ index bd66ff01..ab9453e9 100644
 +    install_dir: systemd_userunitdir
 +  )
  
+ # Install resource limits that are applied to GNOME-launched apps
+ 
 -install_data(
--  'gnome-launched-override.scope.conf',
+-  'app-override.scope.conf',
 -  rename: 'override.conf',
--  install_dir : join_paths(systemd_userunitdir, 'gnome-launched-.scope.d')
+-  install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
 -)
 +  install_data(
 +    'gnome-launched-override.scope.conf',
@@ -108,51 +159,26 @@ index bd66ff01..ab9453e9 100644
 +    install_dir : join_paths(systemd_userunitdir, 'gnome-launched-.scope.d')
 +  )
  
--foreach session, req_components: required_components
--  wanted_targets = []
--  foreach component: req_components
--    wanted_targets += 'Wants=@0@.target'.format(component)
-+  foreach session, req_components: required_components
-+    wanted_targets = []
-+    foreach component: req_components
-+      wanted_targets += 'Wants=@0@.target'.format(component)
-+    endforeach
-+
-+    configure_file(
-+      input: session + '.session.conf.in',
-+      output: session + '.session.conf',
-+      configuration: {
-+        'requires_component': shell_component[session],
-+        'wants_required_components': '\n'.join(wanted_targets),
-+      },
-+      install_dir: systemd_userunitdir / 'gnome-session@@0@.target.d'.format(
-+        session),
-+    )
-   endforeach
--
--  configure_file(
--    input: session + '.session.conf.in',
--    output: session + '.session.conf',
--    configuration: {
--      'requires_component': shell_component[session],
--      'wants_required_components': '\n'.join(wanted_targets),
--    },
--    install_dir: systemd_userunitdir / 'gnome-session@@0@.target.d'.format(
--      session),
--  )
--endforeach
-+endif
- 
- data = files('hardware-compatibility')
- 
+ # FIXME: https://github.com/systemd/systemd/issues/37104
+ install_data(
 diff --git a/meson.build b/meson.build
-index e5f0a5e3..8fe1659f 100644
+index 361b388c..7fbaf45e 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -114,16 +114,22 @@ enable_session_selector = get_option('session_selector')
- session_bin_deps += dependency('gio-unix-2.0', version: glib_req_version)
+@@ -90,17 +90,23 @@ session_deps = [
+   dependency('json-glib-1.0', version: '>= 0.10')
+ ]
  
- # Check for systemd
+-libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
+-config_h.set('SYSTEMD_STRICT_ENV',
+-              libsystemd_dep.version().version_compare('< 248'))
+-
+ session_bin_deps = session_deps + [
+   libsystemd_dep,
+   dependency('gio-unix-2.0', version: glib_req_version),
+ ]
+ 
++# Check for systemd
 +use_systemd = get_option('logind_provider') == 'systemd'
 +if use_systemd
 +  libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
@@ -168,24 +194,16 @@ index e5f0a5e3..8fe1659f 100644
    systemd_dep = dependency('systemd', version: '>= 242', required: true)
    systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir',
                                                   pkgconfig_define: ['prefix', session_prefix])
- endif
- 
--libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
--session_bin_deps += libsystemd_dep
--
- configure_file(
-   output: 'config.h',
-   configuration: config_h
 diff --git a/meson_options.txt b/meson_options.txt
-index 96c253fd..93023db6 100644
+index 781d8eea..56798ac6 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
 @@ -1,4 +1,5 @@
  option('deprecation_flags', type: 'boolean', value: false, description: 'use *_DISABLE_DEPRECATED flags')
 +option('logind_provider', type: 'combo', choices: ['systemd', 'elogind'], value: 'systemd', description: 'logind implementation')
- option('session_selector', type: 'boolean', value: false, description: 'enable building a custom session selector dialog')
  option('systemduserunitdir', type: 'string', description: 'Directory for systemd user service files')
  option('docbook', type: 'boolean', value: true, description: 'build documentation')
+ option('man', type: 'boolean', value: true, description: 'build documentation (requires xmlto)')
 -- 
 GitLab
 
