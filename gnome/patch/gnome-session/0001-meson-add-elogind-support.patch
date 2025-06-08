@@ -33,7 +33,7 @@ index 764c57d3..279d100a 100644
 -foreach component: required_components
 -  wanted_targets += 'Requires=@0@.target'.format(component)
 -endforeach
-+foreach session: wanted_compnents
++if use_systemd
 +    wanted_targets = []
 +    foreach component: wanted_components
 +      wanted_targets += 'Wants=@0@.target'.format(component)
@@ -54,7 +54,7 @@ index 764c57d3..279d100a 100644
 +      install_dir: systemd_userunitdir / 'gnome-session@@0@.target.d'.format(
 +        session),
 +    )
-+endforeach
++endif
  
  configure_file(
    input: 'gnome.session.conf.in',
