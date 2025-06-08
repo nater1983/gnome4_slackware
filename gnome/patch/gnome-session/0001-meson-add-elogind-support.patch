@@ -33,7 +33,7 @@ index 764c57d3..279d100a 100644
 -foreach component: required_components
 -  wanted_targets += 'Requires=@0@.target'.format(component)
 -endforeach
-+foreach session, wanted_compnents
++foreach session: wanted_compnents
 +    wanted_targets = []
 +    foreach component: wanted_components
 +      wanted_targets += 'Wants=@0@.target'.format(component)
