@@ -6,5 +6,5 @@ revision = v0.3.1
 depth = 1
 
 [subproject]
-meson_options = -Dudevdir=/lib -Dintrospection=true
+meson_options = -Dudevdir=/lib/udev -Dintrospection=true
 EOF
