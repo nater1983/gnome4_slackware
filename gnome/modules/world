@@ -5,7 +5,7 @@ exiftool
 eyedropper
 # Gaphor
 poetry_core
-generic
+python3-generic
 exceptiongroup
 python-webencodings
 flit_scm
