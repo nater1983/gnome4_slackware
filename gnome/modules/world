@@ -50,7 +50,7 @@ python3-argon2-cffi-bindings
 python3-argon2-cffi
 construct
 dateutil
-decorator
+python3-decorator
 pep517
 python3-pycryptodomex
 pykeepass
