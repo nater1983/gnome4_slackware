@@ -2,7 +2,7 @@ mkdir build
 cd build
   CFLAGS="$SLKCFLAGS -fno-semantic-interposition" \
   CXXFLAGS="$SLKCFLAGS -fno-semantic-interposition" \
-  LDFLAGS+=" -Wl,-Bsymbolic-functions" \
+  LDFLAGS+="$SLKCFLAGS -Wl,-Bsymbolic-functions" \
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
