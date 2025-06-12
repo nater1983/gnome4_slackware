@@ -1,0 +1,5 @@
+
+patch -Np1 -i $CWD/patch/libsoup3/450.patch
+patch -Np1 -i $CWD/patch/libsoup3/451.patch
+patch -Np1 -i $CWD/patch/libsoup3/452.patch
+patch -Np1 -i $CWD/patch/libsoup3/453.patch
