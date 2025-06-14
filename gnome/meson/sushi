@@ -1,7 +1,7 @@
 mkdir build
 cd build
-  CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
+  CFLAGS="$SLKCFLAGS -Wdeprecated-declarations" \
+  CXXFLAGS="$SLKCFLAGS -Wdeprecated-declarations" \
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
