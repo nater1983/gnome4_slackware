@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/polari/" > $PKG/etc/ld.so.conf.d/polari.conf
