@@ -33,7 +33,7 @@ index 00000000..fa36f9aa
 +# Build and install these
 +install_headers('http_parser.h')
 +
-+libhttp_parser = both_libraries('http_parser',
++libhttp_parser = shared_libraries('http_parser',
 +      sources: 'http_parser.c',
 +      c_args: [ '-Wall', '-Wextra', '-fexceptions' ],
 +      soversion: meson.project_version().split('.')[0],
