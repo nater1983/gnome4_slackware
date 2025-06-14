@@ -1,0 +1,1 @@
+mv $PKG/etc/fprintd.conf $PKG/etc/fprintd.conf.new
