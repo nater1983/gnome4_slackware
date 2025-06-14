@@ -177,3 +177,10 @@ raw-thumbnailer
 # Authenticator
 zbar
 Authenticator
+# Cheese
+cogl
+clutter
+clutter-gtk
+clutter-gst
+gnome-video-effects
+cheese
