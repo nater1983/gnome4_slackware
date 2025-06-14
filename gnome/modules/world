@@ -174,3 +174,6 @@ dLeyna
 font-manager
 # raw-thumbnailer
 raw-thumbnailer
+# Authenticator
+zbar
+Authenticator
