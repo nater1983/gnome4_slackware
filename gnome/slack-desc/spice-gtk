@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
          |-----handy-ruler------------------------------------------------------|
-spice-gtk: spice-gtk (spice gtk client/libraries)
-spice-gtk:
+spice-gtk: spice-gtk (Client library using GLib and GTK+)
 spice-gtk:
 spice-gtk: A Gtk client and libraries for spice remote desktop servers.
 spice-gtk:
+spice-gtk: Homepage: https://gitlab.freedesktop.org/spice/spice-gtk
 spice-gtk:
 spice-gtk:
 spice-gtk:
 spice-gtk:
-spice-gtk: https://www.spice-space.org
+spice-gtk:
 spice-gtk:
