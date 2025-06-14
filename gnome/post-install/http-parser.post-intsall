@@ -1,1 +1,1 @@
-rm -f $PKG/usr/lib${LIBDIRSUFFIX}/*.a
+rm -f $PKG/usr/lib*/*.a
