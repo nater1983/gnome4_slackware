@@ -54,6 +54,7 @@ gstreamer-vaapi
 rygel
 totem
 python3-liblouis
+pyatspi
 orca
 gtksourceview4
 evince
