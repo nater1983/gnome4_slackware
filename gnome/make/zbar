@@ -1,0 +1,12 @@
+autoreconf -fi
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --with-gnu-ld \
+    --with-qt=no \
+    --disable-video
+make
+make install DESTDIR=$PKG
