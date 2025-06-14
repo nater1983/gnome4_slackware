@@ -65,3 +65,19 @@ index 77fb64e..d31c3e9 100644
  
    return retval;
  }
+
+diff --git a/src/libsushi/sushi-utils.h b/src/libsushi/sushi-utils.h
+index 814174b..8637090 100644
+--- a/src/libsushi/sushi-utils.h
++++ b/src/libsushi/sushi-utils.h
+@@ -26,8 +26,8 @@
+ #ifndef __SUSHI_UTILS_H__
+ #define __SUSHI_UTILS_H__
+ 
+-#include <evince-document.h>
+-#include <evince-view.h>
++#include <papers/4.0/papers-document.h>
++#include <papers/4.0/papers-view.h>
+ #include <gdk/gdk.h>
+ #include <gio/gio.h>
+ #include <gst/gst.h>
