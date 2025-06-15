@@ -184,3 +184,6 @@ clutter-gtk
 clutter-gst
 gnome-video-effects
 cheese
+# Snapshot
+gst-plugins-rs
+snapshot
