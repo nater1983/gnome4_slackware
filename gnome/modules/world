@@ -121,6 +121,7 @@ python3-regex
 python3-soupsieve
 python3-tzlocal
 python3-unidecode
+python3-modern.colorthief
 komikku
 #Gnome Firmware
 # fwupd - in gnome-software module
