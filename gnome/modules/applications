@@ -7,7 +7,6 @@ protobuf-c
 libshumate
 gnome-maps
 seahorse
-snapshot
 zenity
 callaudiod
 umockdev
@@ -17,6 +16,7 @@ folks
 gom
 sofia-sip
 libpeas
+libpeas2
 calls
 cantarell-fonts
 gnome-characters
@@ -34,7 +34,7 @@ grilo-plugins
 gnome-music
 tpm2-tss
 libfdk-aac
-freerdp
+freerdp3
 gnome-remote-desktop
 gnome-text-editor
 gnome-tour
@@ -52,7 +52,9 @@ gst-rtsp-server
 gstreamer-vaapi
 rygel
 totem
-liblouis
+python3-liblouis
+pyatspi
+python3-dasbus
 orca
 gtksourceview4
 evince
@@ -81,3 +83,5 @@ gnome-usage
 gnome-network-displays
 text-engine
 extension-manager
+polari
+devhelp
