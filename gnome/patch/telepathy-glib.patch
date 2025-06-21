@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/telepathy-glib/telepathy-glib-pr3-test-cm-with-newer-glib.patch
+patch -Np1 -i $CWD/patch/telepathy-glib/telepathy-glib-function-type-cast.patch
