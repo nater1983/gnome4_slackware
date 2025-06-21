@@ -1,0 +1,12 @@
+mkdir -p build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -D with-usb-ids-path=/usr/share/hwdata/usb.ids \
+    -D with-pci-ids-path=/usr/share/hwdata/pci.ids
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

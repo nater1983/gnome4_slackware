@@ -1,0 +1,4 @@
+mkdir -p $PKG/usr/bin/
+mkdir -p $PKG/usr/man/man1/
+cp usr/bin/xvfb-run $PKG/usr/bin/
+cp usr/share/man/man1/xvfb-run.1.gz $PKG/usr/man/man1/

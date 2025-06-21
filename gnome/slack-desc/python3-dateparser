@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                  |-----handy-ruler------------------------------------------------------|
+python3-dateparser: python3-dateparser (Python parser for human readable dates)
+python3-dateparser:
+python3-dateparser: Support for almost every existing date format: absolute dates,
+python3-dateparser: relative dates ("two weeks ago" or "tomorrow"), timestamps, etc.
+python3-dateparser: Support for more than 200 language locales.
+python3-dateparser: Language autodetection
+python3-dateparser:
+python3-dateparser:
+python3-dateparser: Homepage: https://github.com/scrapinghub/dateparser
+python3-dateparser:
+python3-dateparser:

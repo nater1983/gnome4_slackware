@@ -1,0 +1,8 @@
+blueprint-compiler
+python3-praw
+python3-prawcore
+python3-websocket-client
+python3-dateutil
+python3-beautifulsoup4
+python3-mistune
+python3-update-checker

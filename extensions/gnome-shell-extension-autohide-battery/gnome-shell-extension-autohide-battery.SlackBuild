@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-autohide-battery
 SRCNAM=autohide-battery
-VERSION=${VERSION:-56}
+VERSION=${VERSION:-57}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=42d48fe21c00291111d9e34de45ea255c8a100b4
+_commit=fec8c4568ee4cda64b24fd3807dc9f7dc61ebf82
 
 ARCH=noarch
 
@@ -52,7 +52,7 @@ rm -rf $SRCNAM
 git clone https://github.com/ai/autohide-battery.git
 cd $SRCNAM
 git checkout $_commit
-patch -Np1 -i $CWD/72.patch
+#patch -Np1 -i $CWD/72.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -67,7 +67,7 @@ find -L . \
 mkdir -p $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru
 cp -r * $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru/
 mkdir -p $PKG/usr/share/glib-2.0
-cp -r schemas $PKG/usr/share/glib-2.0
+mv $PKG/usr/share/gnome-shell/extensions/autohide-battery@sitnik.ru/schemas $PKG/usr/share/glib-2.0
 
 mkdir -p $PKG/usr/share/locale
 for po_file in $(find po -name "*.po"); do
@@ -83,6 +83,8 @@ mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CHANGELOG.md README.md LICENSE \
       $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc

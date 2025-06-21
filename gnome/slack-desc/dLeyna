@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+dLeyna: dLeyna (Services and D-Bus APIs for UPnP access)
+dLeyna:
+dLeyna: dLeyna is a set of services and D-Bus APIs that aim to simplify access
+dLeyna: to UPnP and DLNA media devices in a network.
+dLeyna:
+dLeyna:
+dLeyna:
+dLeyna: Homepage: https://gitlab.gnome.org/World/dLeyna
+dLeyna:
+dLeyna:
+dLeyna:

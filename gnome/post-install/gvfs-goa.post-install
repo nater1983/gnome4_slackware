@@ -1,0 +1,14 @@
+# Build only for GOA/Onedrive:
+
+rm -fr $PKG/usr/share/locale/
+rm -fr $PKG/usr/share/glib-2.0/
+rm -fr $PKG/usr/share/polkit-1/
+rm -fr $PKG/usr/share/GConf/
+rm -fr $PKG/usr/man/
+rm -fr $PKG/usr/lib64/
+rm -f $PKG/usr/libexec/gvfs-{afc,gphoto2,mtp,udisks2}-volume-monitor
+rm -f $PKG/usr/libexec/gvfsd-{admin,afc,afp,afp-browse,archive,cdda,computer,dav,dnssd,ftp,fuse,gphoto2,http,localtest,metadata,mtp,network,recent,sftp,smb,smb-browse,trash,wsdd}
+rm -f $PKG/usr/libexec/gvfsd
+rm -f $PKG/usr/share/dbus-1/services/org.gtk.vfs.{AfcVolumeMonitor,Daemon,GPhoto2VolumeMonitor,MTPVolumeMonitor,Metadata,UDisks2VolumeMonitor}.service
+rm -f $PKG/usr/share/gvfs/mounts/{admin,afc,afp,afp-browse,archive,cdda,computer,dav+sd,dav,dns-sd,ftp,ftpis,ftps,gphoto2,http,localtest,mtp,network,recent,sftp,smb-browse,smb,trash,wsdd}.mount
+rm -f $PKG/usr/share/gvfs/remote-volume-monitors/{afc,gphoto2,mtp,udisks2}.monitor

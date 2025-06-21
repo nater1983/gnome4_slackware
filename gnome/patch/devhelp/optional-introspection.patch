@@ -1,0 +1,131 @@
+From 0e2e1de8015abc77ead34e25d9822a183b1f214d Mon Sep 17 00:00:00 2001
+From: Mart Raudsepp <leio@gentoo.org>
+Date: Sun, 3 Oct 2021 23:51:25 +0300
+Subject: [PATCH] build: Add optionality for introspection build
+
+---
+ devhelp/meson.build | 2 ++
+ meson_options.txt   | 6 ++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/devhelp/meson.build b/devhelp/meson.build
+index 010e563f..fac15888 100644
+--- a/devhelp/meson.build
++++ b/devhelp/meson.build
+@@ -120,6 +120,7 @@ PKG_CONFIG.generate(
+   requires_private: LIBDEVHELP_PRIVATE_DEPS
+ )
+ 
++if get_option('introspection')
+ libdevhelp_gir = GNOME.generate_gir(
+   libdevhelp_shared_lib,
+   export_packages: 'libdevhelp-@0@'.format(LIBDEVHELP_API_VERSION_FULL),
+@@ -140,3 +141,4 @@ libdevhelp_gir = GNOME.generate_gir(
+     '--quiet',
+   ],
+ )
++endif
+diff --git a/meson_options.txt b/meson_options.txt
+index 17dc85f5..c69a2906 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -10,6 +10,12 @@ option(
+   description: 'Build the API reference'
+ )
+ 
++option(
++  'introspection',
++  type: 'boolean', value: true,
++  description: 'Build GObject Introspection data'
++)
++
+ option(
+   'plugin_emacs',
+   type: 'boolean', value: false,
+-- 
+2.32.0
+
+From 65263db8386f769bfb177d03f7aac418898f4dbb Mon Sep 17 00:00:00 2001
+From: Mohammed Sadiq <sadiq@sadiqpk.org>
+Date: Wed, 30 Nov 2022 16:19:08 +0530
+Subject: [PATCH] plugins: Fix GNU Emacs plugin
+
+`start-process-shell-command` is supposed to have the command string as
+the third argument.  The old convention has been removed since GNU Emacs 28
+---
+ plugins/devhelp.el | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/devhelp.el b/plugins/devhelp.el
+index 705f4c7e..886f19a0 100644
+--- a/plugins/devhelp.el
++++ b/plugins/devhelp.el
+@@ -4,14 +4,14 @@
+ (defun devhelp-word-at-point ()
+   "Searches for the current word in Devhelp"
+   (interactive)
+-  (start-process-shell-command "devhelp" nil "devhelp" "-s" (current-word))
++  (start-process-shell-command "devhelp" nil (concat "devhelp -s " (current-word)))
+   (set-process-query-on-exit-flag (get-process "devhelp") nil)
+   )
+ (defun devhelp-assistant-word-at-point ()
+   "Searches for the current work in the Devhelp assistant"
+   (interactive)
+   (setq w (current-word))
+-  (start-process-shell-command "devhelp" nil "devhelp" "-a" w)
++  (start-process-shell-command "devhelp" nil (concat "devhelp -s " w))
+   (set-process-query-on-exit-flag (get-process "devhelp") nil)
+   )
+ 
+-- 
+GitLab
+
+From 23148b2157d0269799e5eee15c236fe49d06da25 Mon Sep 17 00:00:00 2001
+From: Mohammed Sadiq <sadiq@sadiqpk.org>
+Date: Wed, 30 Nov 2022 16:32:52 +0530
+Subject: [PATCH] plugins: Fix a copy paste typo
+
+---
+ plugins/devhelp.el | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/devhelp.el b/plugins/devhelp.el
+index 886f19a0..fb46b96c 100644
+--- a/plugins/devhelp.el
++++ b/plugins/devhelp.el
+@@ -11,7 +11,7 @@
+   "Searches for the current work in the Devhelp assistant"
+   (interactive)
+   (setq w (current-word))
+-  (start-process-shell-command "devhelp" nil (concat "devhelp -s " w))
++  (start-process-shell-command "devhelp" nil (concat "devhelp -a " w))
+   (set-process-query-on-exit-flag (get-process "devhelp") nil)
+   )
+ 
+-- 
+GitLab
+
+From 71fc14da025b92fc38d8b13b546302ff281a7584 Mon Sep 17 00:00:00 2001
+From: Emmanuele Bassi <ebassi@gnome.org>
+Date: Tue, 20 Sep 2022 14:11:40 +0100
+Subject: [PATCH] Post-release version bump to 43.1
+
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 724136f2..8dc4e78e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -6,7 +6,7 @@
+ project(
+   'devhelp', 'c',
+   meson_version: '>= 0.57',
+-  version: '43.0',
++  version: '43.1',
+   default_options: ['warning_level=2']
+ )
+ 
+-- 
+GitLab

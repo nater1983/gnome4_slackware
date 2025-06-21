@@ -1,0 +1,10 @@
+NOCONFIGURE=1 ./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-python=python3 \
+    --docdir=/usr/doc/${PKGNAME}-${MODULAR_PACKAGE_VERSION}
+make
+make install DESTDIR=$PKG

@@ -1,0 +1,89 @@
+From 794100684e395c3b2425a37455bf4223e535a3d8 Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Sun, 26 May 2024 11:07:23 +0100
+Subject: [PATCH] Replace invalid signal name '2G-file' with 'G2-file' in line
+ with property naming
+
+Fixes the following warnings:
+
+(brasero:14413): GLib-GObject-CRITICAL **: 11:06:21.760: g_signal_newv: assertion 'g_signal_is_valid_name (signal_name)' failed
+(brasero:14413): GLib-GObject-CRITICAL **: 11:06:21.763: ../../../gobject/gsignal.c:2533: signal '2G-file' is invalid for instance '0x558be516ea20' of type 'BraseroTrackDataCfg'
+
+Valid signal names start with a letter. Else the behavior is undefined
+as per GLib documentation.
+
+Also, it would be nice to have hypen ('-') than underscores ('_') in
+signal names which brasero uses. But, it's a huge change with less
+chances of getting reviewed. And GLib takes care of converting the
+underscores to hypens anyways. So, let's not change that for now.
+---
+ libbrasero-burn/brasero-data-project.c   | 2 +-
+ libbrasero-burn/brasero-status-dialog.c  | 2 +-
+ libbrasero-burn/brasero-track-data-cfg.c | 4 ++--
+ src/brasero-data-disc.c                  | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/libbrasero-burn/brasero-data-project.c b/libbrasero-burn/brasero-data-project.c
+index 102d6d3ef..90f91056b 100644
+--- a/libbrasero-burn/brasero-data-project.c
++++ b/libbrasero-burn/brasero-data-project.c
+@@ -4427,7 +4427,7 @@ brasero_data_project_class_init (BraseroDataProjectClass *klass)
+ 			  1,
+ 			  G_TYPE_STRING);
+ 	brasero_data_project_signals [G2_FILE_SIGNAL] = 
+-	    g_signal_new ("2G_file",
++	    g_signal_new ("G2_file",
+ 			  G_TYPE_FROM_CLASS (klass),
+ 			  G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+ 			  0,
+diff --git a/libbrasero-burn/brasero-status-dialog.c b/libbrasero-burn/brasero-status-dialog.c
+index 555d45998..483aeae45 100644
+--- a/libbrasero-burn/brasero-status-dialog.c
++++ b/libbrasero-burn/brasero-status-dialog.c
+@@ -396,7 +396,7 @@ brasero_status_dialog_wait_for_session (BraseroStatusDialog *dialog)
+ 					  G_CALLBACK (brasero_status_dialog_joliet_rename_cb),
+ 					  dialog);
+ 			g_signal_connect (track,
+-					  "2G-file",
++					  "G2-file",
+ 					  G_CALLBACK (brasero_status_dialog_2G_file_cb),
+ 					  dialog);
+ 			g_signal_connect (track,
+diff --git a/libbrasero-burn/brasero-track-data-cfg.c b/libbrasero-burn/brasero-track-data-cfg.c
+index b684326b8..54fe35712 100644
+--- a/libbrasero-burn/brasero-track-data-cfg.c
++++ b/libbrasero-burn/brasero-track-data-cfg.c
+@@ -3344,7 +3344,7 @@ brasero_track_data_cfg_init (BraseroTrackDataCfg *object)
+ 			  G_CALLBACK (brasero_track_data_cfg_deep_directory),
+ 			  object);
+ 	g_signal_connect (priv->tree,
+-			  "2G-file",
++			  "G2-file",
+ 			  G_CALLBACK (brasero_track_data_cfg_2G_file),
+ 			  object);
+ 	g_signal_connect (priv->tree,
+@@ -3504,7 +3504,7 @@ brasero_track_data_cfg_class_init (BraseroTrackDataCfgClass *klass)
+ 			  1,
+ 			  G_TYPE_STRING);
+ 	brasero_track_data_cfg_signals [G2_FILE] = 
+-	    g_signal_new ("2G_file",
++	    g_signal_new ("G2_file",
+ 			  G_TYPE_FROM_CLASS (klass),
+ 			  G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+ 			  0,
+diff --git a/src/brasero-data-disc.c b/src/brasero-data-disc.c
+index 1fcb22376..458bb5043 100644
+--- a/src/brasero-data-disc.c
++++ b/src/brasero-data-disc.c
+@@ -1412,7 +1412,7 @@ brasero_data_disc_set_track (BraseroDataDisc *disc,
+ 	                  disc);
+ 
+ 	g_signal_connect (track,
+-			  "2G-file",
++			  "G2-file",
+ 			  G_CALLBACK (brasero_data_disc_2G_file_cb),
+ 			  disc);
+ 	g_signal_connect (track,
+-- 
+GitLab
+

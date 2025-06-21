@@ -1,0 +1,23 @@
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+PYTHON=/usr/bin/python3 \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --disable-static \
+    --with-python \
+    --with-legacy \
+    --with-ftp
+make
+make install DESTDIR=$PKG
+
+python3 -m compileall "${PKG}$PYTHON3LIB"
+python3 -O -m compileall "${PKG}$PYTHON3LIB"

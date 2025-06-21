@@ -57,12 +57,15 @@ unzip -qq build/CoverflowAltTab@palatis.blogspot.com.shell-extension.zip -d \
 mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/locale \
     $PKG/usr/share 
 
-glib-compile-schemas $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/schemas
+mkdir -p $PKG/usr/share/glib-2.0/
+mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/schemas $PKG/usr/share/glib-2.0/
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CONTRIBUTORS.md COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION || exit 1
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc

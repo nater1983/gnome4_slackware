@@ -1,0 +1,7 @@
+# Install profile scripts:
+mkdir -p $PKG/etc/profile.d/
+cp -a $CWD/post-install/glib2/libglib2.{csh,sh} $PKG/etc/profile.d/
+chown root:root $PKG/etc/profile.d/*
+chmod 755 $PKG/etc/profile.d/*
+mv $PKG/etc/profile.d/libglib2.csh $PKG/etc/profile.d/libglib2.csh.new
+mv $PKG/etc/profile.d/libglib2.sh $PKG/etc/profile.d/libglib2.sh.new

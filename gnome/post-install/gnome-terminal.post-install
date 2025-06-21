@@ -1,0 +1,10 @@
+mkdir -p $PKG/etc/xdg/autostart
+
+cat << 'EOF' > $PKG/etc/xdg/autostart/gnome-terminal-server.desktop
+[Desktop Entry]
+Type=Application
+Name=GNOME Terminal Server
+Exec=/usr/libexec/gnome-terminal-server
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+EOF

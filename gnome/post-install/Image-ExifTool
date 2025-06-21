@@ -1,2 +1,0 @@
-find $PKG -name perllocal.pod -o -name ".packlist" -o -name "*.bs" | xargs rm -f || true
-find $PKG -depth -type d -empty -delete || true

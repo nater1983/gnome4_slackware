@@ -1,0 +1,22 @@
+From 2b5686498990514060672f5e81d898288e9c3548 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 4 Aug 2024 03:16:53 +0000
+Subject: [PATCH] Fix pkgconfig name for glycin-1.pc to remove the error of not
+finding glycin-1.pc in PKG-CONFIG path
+
+---
+diff --git a/libglycin/meson.build b/libglycin/meson.build
+index 3192e06..068acde 100644
+--- a/libglycin/meson.build
++++ b/libglycin/meson.build
+@@ -155,7 +155,7 @@ foreach package : packages
+             # Listed as "C headers" in docs
+             header: f'glycin@suffix@.h',
+             # Listed as "pkg-config files" in docs
+-            export_packages: f'libglycin@suffix@-1',
++            export_packages: f'glycin@suffix@-1',
+             install: true,
+             env: pkg_uninstalled_path,
+         )
+-- 
+GitLab

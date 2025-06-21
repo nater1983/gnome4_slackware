@@ -1,0 +1,4 @@
+mkdir -p $PKG/usr/bin/
+mkdir -p $PKG/usr/man/man1/
+cp usr/bin/rclone $PKG/usr/bin/
+cp usr/share/man/man1/rclone.1 $PKG/usr/man/man1/

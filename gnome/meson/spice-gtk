@@ -1,0 +1,28 @@
+mkdir -p build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dusb-ids-path=/usr/share/hwdata/usb.ids \
+    -Dgtk=enabled \
+    -Dwayland-protocols=enabled \
+    -Dwebdav=enabled \
+    -Dusbredir=enabled \
+    -Dlibcap-ng=enabled \
+    -Dpolkit=enabled \
+    -Dpie=true \
+    -Dcoroutine=auto \
+    -Dintrospection=enabled \
+    -Dvapi=enabled \
+    -Dalignment-checks=false \
+    -Dlz4=enabled \
+    -Dsasl=enabled \
+    -Dopus=enabled \
+    -Dsmartcard=enabled \
+    -Dgtk_doc=disabled \
+    -Drecorder=false
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

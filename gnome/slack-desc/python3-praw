@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+python3-praw: python3-praw (The Python Reddit API Wrapper)
+python3-praw:
+python3-praw: PRAW, an acronym for "Python Reddit API Wrapper", is a Python package
+python3-praw: that allows for simple access to Reddit's API. PRAW aims to be easy
+python3-praw: to use and internally follows all of Reddit's API rules. 
+python3-praw:
+python3-praw: Homepage: https://github.com/praw-dev/praw
+python3-praw:
+python3-praw:
+python3-praw:
+python3-praw:
