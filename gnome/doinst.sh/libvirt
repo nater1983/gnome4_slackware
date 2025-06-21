@@ -23,3 +23,14 @@ preserve_perms() {
 }
 
 preserve_perms etc/rc.d/rc.libvirt.new
+
+# If not already there, start the daemon from /etc/rc.d/rc.local
+if [ ! "$(grep rc\.libvirt etc/rc.d/rc.local)" ]; then
+  cat << EOF >> etc/rc.d/rc.local
+
+# Start spice-vdagent:
+if [ -x /etc/rc.d/rc.libvirt ]; then
+  /etc/rc.d/rc.libvirt start
+fi
+EOF
+fi
