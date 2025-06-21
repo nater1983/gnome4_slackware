@@ -7,5 +7,6 @@ gcab
 xdg-desktop-portal-gtk
 libostree
 flatpak
+flatpak-builder
 gnome-software
 gnome-app-list
