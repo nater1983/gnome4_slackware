@@ -42,7 +42,7 @@ index 00000000..09230337
 --- /dev/null
 +++ b/meson.build
 @@ -0,0 +1,409 @@
-+project('fdk-aac', 'cpp', 'c', version: '2.0.2')
++project('fdk-aac', 'cpp', 'c', version: '2.0.3')
 +
 +fdk_aac_inc = [include_directories(
 +  'libAACdec/include',
