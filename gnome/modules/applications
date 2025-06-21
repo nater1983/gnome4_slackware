@@ -12,6 +12,7 @@ callaudiod
 umockdev
 feedbackd
 telepathy-glib
+telepathy-mission-control
 folks
 gom
 sofia-sip
