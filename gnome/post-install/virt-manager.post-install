@@ -1,0 +1,2 @@
+install -Dpm 0644 $CWD/post-install/virt-manager/org.freedesktop.policykit.pkexec.virt-manager.policy -t  $PKG/usr/share/polkit-1/actions
+sed -i "s|Exec=.*|Exec=pkexec virt-manager|" $PKG/usr/share/applications/virt-manager.desktop
