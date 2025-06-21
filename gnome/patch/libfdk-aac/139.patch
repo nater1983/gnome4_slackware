@@ -41,7 +41,7 @@ new file mode 100644
 index 00000000..09230337
 --- /dev/null
 +++ b/meson.build
-@@ -0,0 +1,409 @@
+@@ -0,0 +1,411 @@
 +project('fdk-aac', 'cpp', 'c', version: '2.0.3')
 +
 +fdk_aac_inc = [include_directories(
@@ -423,6 +423,8 @@ index 00000000..09230337
 +fdk_aac = library(
 +  'fdk_aac',
 +  fdk_aac_src,
++  version: '2.0.3',
++  soversion: '2',
 +  dependencies: [m_dep],
 +  include_directories : fdk_aac_inc,
 +  install : true,
