@@ -1,4 +1,5 @@
 NOCONFIGURE=1 ./autogen.sh
+autoreconf -vif
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
