@@ -29,7 +29,7 @@ preserve_perms etc/rc.d/rc.vde2.new
   cat << EOF >> etc/rc.d/rc.local
 
 # Start vde2:
-    if [ -x /etc/rc.d/rc.vde2 ]; then
+if [ -x /etc/rc.d/rc.vde2 ]; then
   /etc/rc.d/rc.vde2 start
 fi
 EOF
