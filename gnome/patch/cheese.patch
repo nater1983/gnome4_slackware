@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/cheese/cheese-c99.patch
+patch -Np1 -i $CWD/patch/cheese/73.patch
