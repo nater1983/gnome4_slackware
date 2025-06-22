@@ -1,0 +1,14 @@
+NOCONFIGURE=1 ./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --disable-maintainer-mode \
+    --enable-debug=no \
+    --enable-shared \
+    --enable-compile-warnings=no \
+    --disable-pcsc \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+make
+make install DESTDIR=$PKG
