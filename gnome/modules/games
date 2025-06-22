@@ -1,4 +1,6 @@
-libgnome-games-support # Obsolete
+# Obsolete
+libgnome-games-support
+# Not Obsolete
 libgnome-games-support2
 libmanette
 gnome-chess
