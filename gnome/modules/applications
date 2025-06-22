@@ -30,6 +30,8 @@ gnome-font-viewer
 gnome-initial-setup
 libmediaart
 libdmapsharing
+totem-pl-parser
+liboauth
 grilo
 grilo-plugins
 gnome-music
