@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/rc.d
+install -m 0755 $CWD/post-install/vde2/rc.vde2 $PKG/etc/rc.d/rc.vde2.new
