@@ -14,7 +14,6 @@ cd build
     -Dintrospection=true \
     -Dinstalled_tests=false \
     -Dlibportal=true \
-    -Dpython3=false \
     -Dprofile=default
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
