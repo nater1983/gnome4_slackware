@@ -1,0 +1,13 @@
+NOCONFIGURE=1 ./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+--disable-dependency-tracking \
+  --disable-silent-rules \
+  --enable-static=no \
+  --enable-utils \
+  --enable-examples
+make
+make install DESTDIR=$PKG
