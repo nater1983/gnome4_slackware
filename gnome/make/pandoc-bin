@@ -1,0 +1,3 @@
+mkdir -p $PKG/usr/bin
+rm usr/bin/{pandoc-lua,pandoc-server}
+mv usr/share/man $PKG/usr/
