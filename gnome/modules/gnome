@@ -73,5 +73,4 @@ xvfb-run
 gnome-user-docs
 rtkit
 malcontent
-gnome-initial-setup
 xdg-user-dirs-gtk
