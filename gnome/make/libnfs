@@ -9,6 +9,6 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-static=no \
   --enable-utils \
   --enable-examples
-make
 make clean
+make
 make install DESTDIR=$PKG
