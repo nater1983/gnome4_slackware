@@ -10,4 +10,5 @@ CXXFLAGS="$SLKCFLAGS" \
   --enable-utils \
   --enable-examples
 make
+make clean
 make install DESTDIR=$PKG
