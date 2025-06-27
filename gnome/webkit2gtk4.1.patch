@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/webkit2gtk4.1/20bc4d8a29552f695efcfae8f4f459954dbc2855.patch
