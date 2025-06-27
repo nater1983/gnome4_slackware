@@ -1,0 +1,1946 @@
+From 20bc4d8a29552f695efcfae8f4f459954dbc2855 Mon Sep 17 00:00:00 2001
+From: Anne van Kesteren <annevk@annevk.nl>
+Date: Fri, 20 Jun 2025 07:55:32 -0700
+Subject: [PATCH] Rename domWindow() to window()
+ https://bugs.webkit.org/show_bug.cgi?id=294750
+
+Reviewed by Tyler Wilcock.
+
+Addresses an existing FIXME and makes the name consistent with
+protectedWindow().
+
+Except for ScriptCachedFrameData.cpp where it created a conflict, local
+variables have been renamed as well.
+
+Canonical link: https://commits.webkit.org/296441@main
+---
+ .../Modules/applepay/ApplePaySession.cpp      |  2 +-
+ .../MediaKeySystemController.cpp              |  2 +-
+ .../Modules/identity/DigitalCredential.cpp    |  2 +-
+ .../mediacontrols/MediaControlsHost.cpp       |  2 +-
+ .../mediastream/UserMediaController.cpp       |  6 +--
+ .../Modules/mediastream/UserMediaRequest.cpp  |  2 +-
+ .../Modules/permissions/Permissions.cpp       |  6 +--
+ .../Modules/screen-wake-lock/WakeLock.cpp     |  2 +-
+ .../WebCore/Modules/webaudio/AudioContext.cpp | 10 ++---
+ Source/WebCore/Modules/webxr/WebXRSession.cpp |  2 +-
+ Source/WebCore/Modules/webxr/WebXRSystem.cpp  |  2 +-
+ .../AcceleratedEffectStackUpdater.cpp         |  4 +-
+ .../AnimationTimelinesController.cpp          |  4 +-
+ .../bindings/js/JSDOMBindingSecurity.cpp      |  8 ++--
+ .../WebCore/bindings/js/JSDocumentCustom.cpp  |  2 +-
+ Source/WebCore/bindings/js/JSEventListener.h  |  8 ++--
+ .../bindings/js/JSHTMLElementCustom.cpp       |  2 +-
+ .../bindings/js/ScriptCachedFrameData.cpp     |  4 +-
+ .../WebCore/bindings/js/ScriptController.cpp  |  2 +-
+ Source/WebCore/dom/DOMImplementation.cpp      |  2 +-
+ Source/WebCore/dom/DeviceMotionEvent.cpp      |  2 +-
+ Source/WebCore/dom/DeviceOrientationEvent.cpp |  2 +-
+ Source/WebCore/dom/Document.cpp               | 40 +++++++++----------
+ Source/WebCore/dom/Document.h                 |  3 +-
+ Source/WebCore/dom/DocumentFullscreen.cpp     |  2 +-
+ Source/WebCore/dom/Element.cpp                |  6 +--
+ Source/WebCore/dom/Event.cpp                  |  2 +-
+ Source/WebCore/dom/EventPath.cpp              |  2 +-
+ Source/WebCore/dom/IdleDeadline.cpp           |  2 +-
+ Source/WebCore/dom/Node.cpp                   |  4 +-
+ Source/WebCore/dom/Range.cpp                  |  2 +-
+ Source/WebCore/dom/ScriptExecutionContext.cpp |  4 +-
+ Source/WebCore/dom/ShadowRoot.cpp             |  2 +-
+ Source/WebCore/dom/TrustedType.cpp            |  2 +-
+ Source/WebCore/dom/UserGestureIndicator.cpp   |  2 +-
+ Source/WebCore/editing/FrameSelection.cpp     |  2 +-
+ Source/WebCore/history/CachedFrame.cpp        |  8 ++--
+ Source/WebCore/history/CachedPage.cpp         |  4 +-
+ Source/WebCore/html/HTMLCanvasElement.cpp     |  4 +-
+ Source/WebCore/html/HTMLDocument.cpp          |  4 +-
+ Source/WebCore/html/HTMLMediaElement.cpp      | 10 ++---
+ Source/WebCore/html/HTMLVideoElement.cpp      |  4 +-
+ Source/WebCore/html/MediaElementSession.cpp   |  2 +-
+ Source/WebCore/html/OffscreenCanvas.cpp       |  4 +-
+ Source/WebCore/html/PermissionsPolicy.cpp     |  2 +-
+ .../html/canvas/WebGLRenderingContextBase.cpp |  2 +-
+ .../inspector/agents/InspectorDOMAgent.cpp    |  4 +-
+ .../agents/InspectorDOMStorageAgent.cpp       |  2 +-
+ .../agents/InspectorIndexedDBAgent.cpp        |  6 +--
+ Source/WebCore/loader/DocumentLoader.cpp      |  6 +--
+ .../loader/DocumentThreadableLoader.cpp       |  2 +-
+ Source/WebCore/loader/FrameLoader.cpp         | 36 ++++++++---------
+ Source/WebCore/loader/ImageLoader.cpp         |  4 +-
+ Source/WebCore/loader/PolicyChecker.cpp       |  4 +-
+ .../loader/ResourceTimingInformation.cpp      |  2 +-
+ Source/WebCore/page/DOMWindowExtension.cpp    |  2 +-
+ Source/WebCore/page/EventHandler.cpp          |  2 +-
+ Source/WebCore/page/History.cpp               |  2 +-
+ Source/WebCore/page/IntersectionObserver.cpp  |  2 +-
+ Source/WebCore/page/LocalDOMWindow.cpp        |  6 +--
+ Source/WebCore/page/LocalFrame.cpp            |  8 ++--
+ Source/WebCore/page/Location.cpp              |  6 +--
+ Source/WebCore/page/Page.cpp                  |  4 +-
+ Source/WebCore/page/Performance.cpp           |  4 +-
+ Source/WebCore/page/PerformanceMark.cpp       |  2 +-
+ Source/WebCore/page/PerformanceObserver.cpp   |  2 +-
+ Source/WebCore/page/Quirks.cpp                |  8 ++--
+ Source/WebCore/page/ios/FrameIOS.mm           |  4 +-
+ .../VideoPresentationModelVideoElement.mm     |  2 +-
+ Source/WebCore/style/StyleAdjuster.cpp        |  2 +-
+ Source/WebCore/testing/Internals.cpp          | 36 ++++++++---------
+ .../service/ServiceWorkerClientData.cpp       |  2 +-
+ .../worklets/PaintWorkletGlobalScope.cpp      |  4 +-
+ Source/WebCore/xml/XMLHttpRequest.cpp         |  2 +-
+ .../xml/parser/XMLDocumentParserLibxml2.cpp   |  2 +-
+ .../API/glib/DOM/DOMObjectCache.cpp           |  6 +--
+ .../API/gtk/DOM/WebKitDOMDOMWindow.cpp        |  8 ++--
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp  |  2 +-
+ .../cocoa/PlaybackSessionManager.mm           |  2 +-
+ .../WebKitLegacy/mac/DOM/DOMAbstractView.mm   |  2 +-
+ Source/WebKitLegacy/mac/DOM/DOMDocument.mm    |  4 +-
+ Source/WebKitLegacy/mac/WebView/WebFrame.mm   |  6 +--
+ 82 files changed, 197 insertions(+), 198 deletions(-)
+
+diff --git a/Source/WebCore/Modules/applepay/ApplePaySession.cpp b/Source/WebCore/Modules/applepay/ApplePaySession.cpp
+index 0710b0d36e0d..1a9f651cb1bd 100644
+--- a/Source/WebCore/Modules/applepay/ApplePaySession.cpp
++++ b/Source/WebCore/Modules/applepay/ApplePaySession.cpp
+@@ -643,7 +643,7 @@ ExceptionOr<void> ApplePaySession::completeMerchantValidation(JSC::JSGlobalObjec
+         return Exception { ExceptionCode::TypeError };
+ 
+     auto& document = *downcast<Document>(scriptExecutionContext());
+-    auto& window = *document.domWindow();
++    auto& window = *document.window();
+ 
+     String errorMessage;
+     auto merchantSession = PaymentMerchantSession::fromJS(state, asObject(merchantSessionValue), errorMessage);
+diff --git a/Source/WebCore/Modules/encryptedmedia/MediaKeySystemController.cpp b/Source/WebCore/Modules/encryptedmedia/MediaKeySystemController.cpp
+index 89d59a0528b1..08bfed12e1ba 100644
+--- a/Source/WebCore/Modules/encryptedmedia/MediaKeySystemController.cpp
++++ b/Source/WebCore/Modules/encryptedmedia/MediaKeySystemController.cpp
+@@ -67,7 +67,7 @@ void provideMediaKeySystemTo(Page& page, MediaKeySystemClient& client)
+ 
+ void MediaKeySystemController::logRequestMediaKeySystemDenial(Document& document)
+ {
+-    if (RefPtr window = document.domWindow())
++    if (RefPtr window = document.window())
+         window->printErrorMessage("Not allowed to access MediaKeySystem."_str);
+ }
+ 
+diff --git a/Source/WebCore/Modules/identity/DigitalCredential.cpp b/Source/WebCore/Modules/identity/DigitalCredential.cpp
+index 716768d7cbe1..756b0526c09a 100644
+--- a/Source/WebCore/Modules/identity/DigitalCredential.cpp
++++ b/Source/WebCore/Modules/identity/DigitalCredential.cpp
+@@ -119,7 +119,7 @@ void DigitalCredential::discoverFromExternalSource(const Document& document, Cre
+     }
+ 
+     RefPtr frame = document.frame();
+-    RefPtr window = document.domWindow();
++    RefPtr window = document.window();
+     if (!frame || !window) {
+         LOG(DigitalCredentials, "Preconditions for DigitalCredential.get() are not met");
+         promise.reject(ExceptionCode::InvalidStateError, "Preconditions for calling .get() are not met."_s);
+diff --git a/Source/WebCore/Modules/mediacontrols/MediaControlsHost.cpp b/Source/WebCore/Modules/mediacontrols/MediaControlsHost.cpp
+index 47c21e2678bb..5e51b2e0cd1b 100644
+--- a/Source/WebCore/Modules/mediacontrols/MediaControlsHost.cpp
++++ b/Source/WebCore/Modules/mediacontrols/MediaControlsHost.cpp
+@@ -909,7 +909,7 @@ RefPtr<MediaSession> MediaControlsHost::mediaSession() const
+     if (!mediaElement)
+         return { };
+ 
+-    RefPtr window = mediaElement->document().domWindow();
++    RefPtr window = mediaElement->document().window();
+     if (!window)
+         return { };
+ 
+diff --git a/Source/WebCore/Modules/mediastream/UserMediaController.cpp b/Source/WebCore/Modules/mediastream/UserMediaController.cpp
+index 59e7ce6f1afd..30af08e47101 100644
+--- a/Source/WebCore/Modules/mediastream/UserMediaController.cpp
++++ b/Source/WebCore/Modules/mediastream/UserMediaController.cpp
+@@ -62,13 +62,13 @@ void provideUserMediaTo(Page* page, UserMediaClient* client)
+ 
+ void UserMediaController::logGetUserMediaDenial(Document& document)
+ {
+-    if (RefPtr window = document.domWindow())
++    if (RefPtr window = document.window())
+         window->printErrorMessage("Not allowed to call getUserMedia."_s);
+ }
+ 
+ void UserMediaController::logGetDisplayMediaDenial(Document& document)
+ {
+-    if (RefPtr window = document.domWindow())
++    if (RefPtr window = document.window())
+         window->printErrorMessage("Not allowed to call getDisplayMedia."_s);
+ }
+ 
+@@ -77,7 +77,7 @@ void UserMediaController::logEnumerateDevicesDenial(Document& document)
+     // We redo the check to print to the console log.
+     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Camera, document);
+     PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document);
+-    if (RefPtr window = document.domWindow())
++    if (RefPtr window = document.window())
+         window->printErrorMessage("Not allowed to call enumerateDevices."_s);
+ }
+ 
+diff --git a/Source/WebCore/Modules/mediastream/UserMediaRequest.cpp b/Source/WebCore/Modules/mediastream/UserMediaRequest.cpp
+index d1e3a90718b0..118e99d31f24 100644
+--- a/Source/WebCore/Modules/mediastream/UserMediaRequest.cpp
++++ b/Source/WebCore/Modules/mediastream/UserMediaRequest.cpp
+@@ -164,7 +164,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
+     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
+ 
+     Ref document = downcast<Document>(*scriptExecutionContext());
+-    RefPtr localWindow = document->domWindow();
++    RefPtr localWindow = document->window();
+     RefPtr mediaDevices = localWindow ? NavigatorMediaDevices::mediaDevices(localWindow->protectedNavigator()) : nullptr;
+     if (mediaDevices)
+         mediaDevices->willStartMediaCapture(!!audioDevice, !!videoDevice);
+diff --git a/Source/WebCore/Modules/permissions/Permissions.cpp b/Source/WebCore/Modules/permissions/Permissions.cpp
+index 1f1df3173f7a..dc5cd1fce678 100644
+--- a/Source/WebCore/Modules/permissions/Permissions.cpp
++++ b/Source/WebCore/Modules/permissions/Permissions.cpp
+@@ -240,11 +240,11 @@ void Permissions::query(JSC::Strong<JSC::JSObject> permissionDescriptorValue, DO
+ 
+ static std::optional<PermissionState> determineGeolocationPermissionState(PermissionState permissionState, const Document& document)
+ {
+-    RefPtr domWindow = document.domWindow();
+-    if (!domWindow)
++    RefPtr window = document.window();
++    if (!window)
+         return std::nullopt;
+ 
+-    RefPtr geolocation = NavigatorGeolocation::optionalGeolocation(domWindow->protectedNavigator());
++    RefPtr geolocation = NavigatorGeolocation::optionalGeolocation(window->protectedNavigator());
+ 
+     switch (permissionState) {
+     case PermissionState::Granted:
+diff --git a/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp b/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp
+index 7a57c4af391d..a8c5ac748432 100644
+--- a/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp
++++ b/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp
+@@ -67,7 +67,7 @@ void WakeLock::request(WakeLockType lockType, Ref<DeferredPromise>&& promise)
+ 
+     // FIXME: The permission check can likely be dropped once the specification gets updated to only
+     // require transient activation (https://github.com/w3c/screen-wake-lock/pull/326).
+-    bool hasTransientActivation = document->domWindow() && document->domWindow()->hasTransientActivation();
++    bool hasTransientActivation = document->window() && document->window()->hasTransientActivation();
+     PermissionController::shared().query(document->clientOrigin(), PermissionDescriptor { PermissionName::ScreenWakeLock }, *document->page(), PermissionQuerySource::Window, [this, protectedThis = Ref { *this }, document = Ref { *document }, hasTransientActivation, promise = WTFMove(promise), lockType](std::optional<PermissionState> permission) mutable {
+         if (!permission || *permission == PermissionState::Prompt) {
+             if (hasTransientActivation || m_wasPreviouslyAuthorizedDueToTransientActivation) {
+diff --git a/Source/WebCore/Modules/webaudio/AudioContext.cpp b/Source/WebCore/Modules/webaudio/AudioContext.cpp
+index b3a6a03042ed..b27d8953e611 100644
+--- a/Source/WebCore/Modules/webaudio/AudioContext.cpp
++++ b/Source/WebCore/Modules/webaudio/AudioContext.cpp
+@@ -94,7 +94,7 @@ static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
+     RefPtr mainDocument = document.mainFrameDocument();
+     if (document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && mainDocument && mainDocument->hasHadUserInteraction())
+         return true;
+-    RefPtr window = document.domWindow();
++    RefPtr window = document.window();
+     return window && window->hasTransientActivation();
+ }
+ 
+@@ -213,8 +213,8 @@ AudioTimestamp AudioContext::getOutputTimestamp()
+ 
+     DOMHighResTimeStamp performanceTime = 0.0;
+     RefPtr document = this->document();
+-    if (document && document->domWindow())
+-        performanceTime = std::max(document->domWindow()->protectedPerformance()->relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
++    if (document && document->window())
++        performanceTime = std::max(document->window()->protectedPerformance()->relativeTimeFromTimeOriginInReducedResolution(position.timestamp), 0.0);
+ 
+     return { position.position.seconds(), performanceTime };
+ }
+@@ -521,7 +521,7 @@ std::optional<MediaSessionGroupIdentifier> AudioContext::mediaSessionGroupIdenti
+ static bool hasPlayBackAudioSession(Document* document)
+ {
+ #if ENABLE(DOM_AUDIO_SESSION)
+-    RefPtr window = document ? document->domWindow() : nullptr;
++    RefPtr window = document ? document->window() : nullptr;
+ 
+     RefPtr navigator = window ? window->optionalNavigator() : nullptr;
+     RefPtr audioSession = navigator ? NavigatorAudioSession::audioSession(*navigator) : nullptr;
+@@ -557,7 +557,7 @@ std::optional<NowPlayingInfo> AudioContext::nowPlayingInfo() const
+ 
+     RefPtr document = this->document();
+     RefPtr page = document ? document->page() : nullptr;
+-    RefPtr window = document ? document->domWindow() : nullptr;
++    RefPtr window = document ? document->window() : nullptr;
+     if (!page || !window)
+         return { };
+ 
+diff --git a/Source/WebCore/Modules/webxr/WebXRSession.cpp b/Source/WebCore/Modules/webxr/WebXRSession.cpp
+index 749d6bc8c00a..9e9f69b391b2 100644
+--- a/Source/WebCore/Modules/webxr/WebXRSession.cpp
++++ b/Source/WebCore/Modules/webxr/WebXRSession.cpp
+@@ -714,7 +714,7 @@ bool WebXRSession::posesCanBeReported(const Document& document) const
+ {
+     // 1. If session’s relevant global object is not the current global object, return false.
+     RefPtr sessionDocument = downcast<Document>(scriptExecutionContext());
+-    if (!sessionDocument || sessionDocument->domWindow() != document.domWindow())
++    if (!sessionDocument || sessionDocument->window() != document.window())
+         return false;
+ 
+     // 2. If session's visibilityState is "hidden", return false.
+diff --git a/Source/WebCore/Modules/webxr/WebXRSystem.cpp b/Source/WebCore/Modules/webxr/WebXRSystem.cpp
+index aec245de6bbe..56aafb4a2d51 100644
+--- a/Source/WebCore/Modules/webxr/WebXRSystem.cpp
++++ b/Source/WebCore/Modules/webxr/WebXRSystem.cpp
+@@ -489,7 +489,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
+     // 3. Let global object be the relevant Global object for the XRSystem on which this method was invoked.
+     bool immersive = isImmersive(mode);
+     Ref protectedDocument { document };
+-    RefPtr globalObject = protectedDocument->domWindow();
++    RefPtr globalObject = protectedDocument->window();
+     if (!globalObject) {
+         promise.reject(Exception { ExceptionCode::InvalidAccessError });
+         return;
+diff --git a/Source/WebCore/animation/AcceleratedEffectStackUpdater.cpp b/Source/WebCore/animation/AcceleratedEffectStackUpdater.cpp
+index e5db0392426c..54c0a644e6f4 100644
+--- a/Source/WebCore/animation/AcceleratedEffectStackUpdater.cpp
++++ b/Source/WebCore/animation/AcceleratedEffectStackUpdater.cpp
+@@ -46,8 +46,8 @@ AcceleratedEffectStackUpdater::AcceleratedEffectStackUpdater(Document& document)
+ {
+     auto now = MonotonicTime::now();
+     m_timeOrigin = now.secondsSinceEpoch();
+-    if (RefPtr domWindow = document.domWindow())
+-        m_timeOrigin -= Seconds::fromMilliseconds(domWindow->performance().relativeTimeFromTimeOriginInReducedResolution(now));
++    if (RefPtr window = document.window())
++        m_timeOrigin -= Seconds::fromMilliseconds(window->performance().relativeTimeFromTimeOriginInReducedResolution(now));
+ }
+ 
+ void AcceleratedEffectStackUpdater::updateEffectStacks()
+diff --git a/Source/WebCore/animation/AnimationTimelinesController.cpp b/Source/WebCore/animation/AnimationTimelinesController.cpp
+index f4a6bf43adac..f9618f3bf6fc 100644
+--- a/Source/WebCore/animation/AnimationTimelinesController.cpp
++++ b/Source/WebCore/animation/AnimationTimelinesController.cpp
+@@ -292,12 +292,12 @@ void AnimationTimelinesController::resumeAnimations()
+ 
+ ReducedResolutionSeconds AnimationTimelinesController::liveCurrentTime() const
+ {
+-    return m_document->domWindow()->nowTimestamp();
++    return m_document->window()->nowTimestamp();
+ }
+ 
+ std::optional<Seconds> AnimationTimelinesController::currentTime()
+ {
+-    if (!m_document->domWindow())
++    if (!m_document->window())
+         return std::nullopt;
+ 
+     if (!m_cachedCurrentTime)
+diff --git a/Source/WebCore/bindings/js/JSDOMBindingSecurity.cpp b/Source/WebCore/bindings/js/JSDOMBindingSecurity.cpp
+index 77ec900fb7ff..8ca9fb959f17 100644
+--- a/Source/WebCore/bindings/js/JSDOMBindingSecurity.cpp
++++ b/Source/WebCore/bindings/js/JSDOMBindingSecurity.cpp
+@@ -40,7 +40,7 @@ void printErrorMessageForFrame(LocalFrame* frame, const String& message)
+ {
+     if (!frame)
+         return;
+-    frame->document()->domWindow()->printErrorMessage(message);
++    frame->document()->window()->printErrorMessage(message);
+ }
+ 
+ // FIXME: Refactor to share code with LocalDOMWindow::crossDomainAccessErrorMessage.
+@@ -86,11 +86,11 @@ static inline bool canAccessDocument(JSC::JSGlobalObject* lexicalGlobalObject, D
+     case ThrowSecurityError: {
+         VM& vm = lexicalGlobalObject->vm();
+         auto scope = DECLARE_THROW_SCOPE(vm);
+-        throwSecurityError(*lexicalGlobalObject, scope, targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::No));
++        throwSecurityError(*lexicalGlobalObject, scope, targetDocument->window()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::No));
+         break;
+     }
+     case LogSecurityError:
+-        printErrorMessageForFrame(targetDocument->frame(), targetDocument->domWindow()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
++        printErrorMessageForFrame(targetDocument->frame(), targetDocument->window()->crossDomainAccessErrorMessage(active, IncludeTargetOrigin::Yes));
+         break;
+     case DoNotReportSecurityError:
+         break;
+@@ -103,7 +103,7 @@ bool BindingSecurity::shouldAllowAccessToFrame(JSGlobalObject& lexicalGlobalObje
+ {
+     if (BindingSecurity::shouldAllowAccessToFrame(&lexicalGlobalObject, &frame, DoNotReportSecurityError))
+         return true;
+-    message = frame.document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(lexicalGlobalObject), IncludeTargetOrigin::No);
++    message = frame.document()->window()->crossDomainAccessErrorMessage(activeDOMWindow(lexicalGlobalObject), IncludeTargetOrigin::No);
+     return false;
+ }
+ 
+diff --git a/Source/WebCore/bindings/js/JSDocumentCustom.cpp b/Source/WebCore/bindings/js/JSDocumentCustom.cpp
+index d9356cc755dc..e8f99db3f43b 100644
+--- a/Source/WebCore/bindings/js/JSDocumentCustom.cpp
++++ b/Source/WebCore/bindings/js/JSDocumentCustom.cpp
+@@ -56,7 +56,7 @@ JSObject* cachedDocumentWrapper(JSGlobalObject& lexicalGlobalObject, JSDOMGlobal
+     if (auto* wrapper = getCachedWrapper(globalObject.world(), document))
+         return wrapper;
+ 
+-    RefPtr window = document.domWindow();
++    RefPtr window = document.window();
+     if (!window)
+         return nullptr;
+ 
+diff --git a/Source/WebCore/bindings/js/JSEventListener.h b/Source/WebCore/bindings/js/JSEventListener.h
+index d8c8d4afb739..f11b8eaf0cf3 100644
+--- a/Source/WebCore/bindings/js/JSEventListener.h
++++ b/Source/WebCore/bindings/js/JSEventListener.h
+@@ -113,8 +113,8 @@ inline JSC::JSValue windowEventHandlerAttribute(DOMWindow& window, const AtomStr
+ 
+ inline JSC::JSValue windowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, DOMWrapperWorld& isolatedWorld)
+ {
+-    if (RefPtr domWindow = element.document().domWindow())
+-        return eventHandlerAttribute(*domWindow, eventType, isolatedWorld);
++    if (RefPtr window = element.document().window())
++        return eventHandlerAttribute(*window, eventType, isolatedWorld);
+     return JSC::jsNull();
+ }
+ 
+@@ -127,8 +127,8 @@ inline void setWindowEventHandlerAttribute(DOMWindow& window, const AtomString&
+ template<typename JSMaybeErrorEventListener>
+ inline void setWindowEventHandlerAttribute(HTMLElement& element, const AtomString& eventType, JSC::JSValue listener, JSC::JSObject& jsEventTarget)
+ {
+-    if (RefPtr domWindow = element.document().domWindow())
+-        domWindow->setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
++    if (RefPtr window = element.document().window())
++        window->setAttributeEventListener<JSMaybeErrorEventListener>(eventType, listener, *jsEventTarget.globalObject());
+ }
+ 
+ inline JSC::JSObject* JSEventListener::ensureJSFunction(ScriptExecutionContext& scriptExecutionContext) const
+diff --git a/Source/WebCore/bindings/js/JSHTMLElementCustom.cpp b/Source/WebCore/bindings/js/JSHTMLElementCustom.cpp
+index 67d75506f4e2..4a35aa3df3f2 100644
+--- a/Source/WebCore/bindings/js/JSHTMLElementCustom.cpp
++++ b/Source/WebCore/bindings/js/JSHTMLElementCustom.cpp
+@@ -69,7 +69,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
+ 
+     RefPtr registry = document->activeCustomElementRegistry();
+     if (!registry) {
+-        RefPtr window = document->domWindow();
++        RefPtr window = document->window();
+         if (!window)
+             return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
+ 
+diff --git a/Source/WebCore/bindings/js/ScriptCachedFrameData.cpp b/Source/WebCore/bindings/js/ScriptCachedFrameData.cpp
+index 05bb45cf58c3..da02f0a0370c 100644
+--- a/Source/WebCore/bindings/js/ScriptCachedFrameData.cpp
++++ b/Source/WebCore/bindings/js/ScriptCachedFrameData.cpp
+@@ -81,8 +81,8 @@ void ScriptCachedFrameData::restore(LocalFrame& frame)
+         if (auto* window = m_windows.get(world).get())
+             windowProxy->setWindow(window->vm(), *window);
+         else {
+-            ASSERT(frame.document()->domWindow());
+-            auto& domWindow = *frame.document()->domWindow();
++            ASSERT(frame.document()->window());
++            auto& domWindow = *frame.document()->window();
+             if (&windowProxy->wrapped() == &domWindow)
+                 continue;
+ 
+diff --git a/Source/WebCore/bindings/js/ScriptController.cpp b/Source/WebCore/bindings/js/ScriptController.cpp
+index 5e71ef6937b1..acafba4199a7 100644
+--- a/Source/WebCore/bindings/js/ScriptController.cpp
++++ b/Source/WebCore/bindings/js/ScriptController.cpp
+@@ -633,7 +633,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world,
+     if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
+         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
+             token.forEachImpactedDocument([](Document& document) {
+-                if (RefPtr window = document.domWindow())
++                if (RefPtr window = document.window())
+                     window->consumeTransientActivation();
+             });
+         });
+diff --git a/Source/WebCore/dom/DOMImplementation.cpp b/Source/WebCore/dom/DOMImplementation.cpp
+index e678d20a1a27..e744adf4acfd 100644
+--- a/Source/WebCore/dom/DOMImplementation.cpp
++++ b/Source/WebCore/dom/DOMImplementation.cpp
+@@ -113,7 +113,7 @@ ExceptionOr<Ref<XMLDocument>> DOMImplementation::createDocument(const AtomString
+ 
+     RefPtr<Element> documentElement;
+     if (!qualifiedName.isEmpty()) {
+-        ASSERT(!document->domWindow()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
++        ASSERT(!document->window()); // If domWindow is not null, createElementNS could find CustomElementRegistry and arbitrary scripts.
+         auto result = document->createElementNS(namespaceURI, qualifiedName);
+         if (result.hasException())
+             return result.releaseException();
+diff --git a/Source/WebCore/dom/DeviceMotionEvent.cpp b/Source/WebCore/dom/DeviceMotionEvent.cpp
+index fc15e6b53d93..272debbfc615 100644
+--- a/Source/WebCore/dom/DeviceMotionEvent.cpp
++++ b/Source/WebCore/dom/DeviceMotionEvent.cpp
+@@ -139,7 +139,7 @@ void DeviceMotionEvent::initDeviceMotionEvent(const AtomString& type, bool bubbl
+ #if ENABLE(DEVICE_ORIENTATION)
+ void DeviceMotionEvent::requestPermission(Document& document, PermissionPromise&& promise)
+ {
+-    RefPtr window = document.domWindow();
++    RefPtr window = document.window();
+     if (!window || !document.page())
+         return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+ 
+diff --git a/Source/WebCore/dom/DeviceOrientationEvent.cpp b/Source/WebCore/dom/DeviceOrientationEvent.cpp
+index 31cf7f8778de..418a4b18a924 100644
+--- a/Source/WebCore/dom/DeviceOrientationEvent.cpp
++++ b/Source/WebCore/dom/DeviceOrientationEvent.cpp
+@@ -123,7 +123,7 @@ void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type,
+ #if ENABLE(DEVICE_ORIENTATION)
+ void DeviceOrientationEvent::requestPermission(Document& document, PermissionPromise&& promise)
+ {
+-    RefPtr window = document.domWindow();
++    RefPtr window = document.window();
+     if (!window || !document.page())
+         return promise.reject(Exception { ExceptionCode::InvalidStateError, "No browsing context"_s });
+ 
+diff --git a/Source/WebCore/dom/Document.cpp b/Source/WebCore/dom/Document.cpp
+index b9dc187de66e..094000cf7ad7 100644
+--- a/Source/WebCore/dom/Document.cpp
++++ b/Source/WebCore/dom/Document.cpp
+@@ -1804,7 +1804,7 @@ static inline bool operator<(char32_t a, const UnicodeCodePointRange& b)
+ 
+ RefPtr<CustomElementRegistry> Document::customElementRegistryForBindings()
+ {
+-    if (RefPtr window = document().domWindow())
++    if (RefPtr window = document().window())
+         return &window->ensureCustomElementRegistry();
+     return customElementRegistry();
+ }
+@@ -2010,7 +2010,7 @@ ExceptionOr<Ref<Element>> Document::createElementNS(const AtomString& namespaceU
+ 
+ DocumentEventTiming* Document::documentEventTimingFromNavigationTiming()
+ {
+-    RefPtr window = domWindow();
++    RefPtr window = this->window();
+     if (!window)
+         return nullptr;
+     RefPtr navigationTiming = window->performance().navigationTiming();
+@@ -3434,7 +3434,7 @@ void Document::frameDestroyed()
+     // detachFromFrame() must be called before destroying the Frame.
+     RELEASE_ASSERT(!m_frame);
+ 
+-    if (RefPtr window = domWindow())
++    if (RefPtr window = this->window())
+         window->frameDestroyed();
+ 
+     FrameDestructionObserver::frameDestroyed();
+@@ -3446,7 +3446,7 @@ void Document::willDetachPage()
+ #if ENABLE(CONTENT_CHANGE_OBSERVER)
+     contentChangeObserver().willDetachPage();
+ #endif
+-    if (domWindow() && frame())
++    if (window() && frame())
+         InspectorInstrumentation::frameWindowDiscarded(protectedFrame().releaseNonNull(), protectedWindow().get());
+ }
+ 
+@@ -4081,7 +4081,7 @@ ExceptionOr<void> Document::setBodyOrFrameset(RefPtr<HTMLElement>&& newBody)
+ 
+ Location* Document::location() const
+ {
+-    auto* window = domWindow();
++    auto* window = this->window();
+     return window ? &window->location() : nullptr;
+ }
+ 
+@@ -4291,7 +4291,7 @@ void Document::enqueuePaintTimingEntryIfNeeded()
+     if (!supportsPaintTiming())
+         return;
+ 
+-    if (!domWindow() || !view())
++    if (!window() || !view())
+         return;
+ 
+     // To make sure we don't report paint while the layer tree is still frozen.
+@@ -5540,7 +5540,7 @@ void Document::runResizeSteps()
+     if (m_needsVisualViewportResizeEvent) {
+         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending resize events to visualViewport");
+         m_needsVisualViewportResizeEvent = false;
+-        if (RefPtr window = domWindow())
++        if (RefPtr window = this->window())
+             window->visualViewport().dispatchEvent(Event::create(eventNames().resizeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+     }
+ }
+@@ -5626,7 +5626,7 @@ void Document::runScrollSteps()
+     if (m_needsVisualViewportScrollEvent) {
+         LOG_WITH_STREAM(Events, stream << "Document " << this << " sending scroll events to visualViewport");
+         m_needsVisualViewportScrollEvent = false;
+-        if (RefPtr window = domWindow())
++        if (RefPtr window = this->window())
+             window->visualViewport().dispatchEvent(Event::create(eventNames().scrollEvent, Event::CanBubble::No, Event::IsCancelable::No));
+     }
+ }
+@@ -5780,7 +5780,7 @@ void Document::processCaptureStateDidChange(Function<bool(const Page&)>&& isPage
+     if (!page)
+         return;
+ 
+-    RefPtr window = domWindow();
++    RefPtr window = this->window();
+     RefPtr mediaSession = window ? NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator()) : nullptr;
+     if (!mediaSession)
+         return;
+@@ -5854,7 +5854,7 @@ void Document::voiceActivityDetected()
+     if (!isFullyActive() || hidden() || !hasMutedAudioCaptureDevice())
+         return;
+ 
+-    RefPtr window = domWindow();
++    RefPtr window = this->window();
+     RefPtr mediaSession = window ? NavigatorMediaSession::mediaSessionIfExists(window->protectedNavigator()) : nullptr;
+     if (!mediaSession)
+         return;
+@@ -5976,7 +5976,7 @@ void Document::adjustFocusedNodeOnNodeRemoval(Node& node, NodeRemoval nodeRemova
+         setFocusNavigationStartingNode(focusedElement.get());
+ 
+         if (settings().navigationAPIEnabled())
+-            domWindow()->navigation().setFocusChanged(FocusDidChange::No);
++            window()->navigation().setFocusChanged(FocusDidChange::No);
+     }
+ }
+ 
+@@ -6319,7 +6319,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
+     if (m_focusedElement) {
+ 
+         if (settings().navigationAPIEnabled())
+-            domWindow()->navigation().setFocusChanged(FocusDidChange::Yes);
++            window()->navigation().setFocusChanged(FocusDidChange::Yes);
+ 
+ #if PLATFORM(GTK)
+         // GTK relies on creating the AXObjectCache when a focus change happens.
+@@ -8560,8 +8560,8 @@ void Document::resumeScriptedAnimationControllerCallbacks()
+ void Document::serviceRequestAnimationFrameCallbacks()
+ {
+     RefPtr scriptedAnimationController = m_scriptedAnimationController;
+-    if (scriptedAnimationController && domWindow())
+-        scriptedAnimationController->serviceRequestAnimationFrameCallbacks(domWindow()->frozenNowTimestamp());
++    if (scriptedAnimationController && window())
++        scriptedAnimationController->serviceRequestAnimationFrameCallbacks(window()->frozenNowTimestamp());
+ }
+ 
+ void Document::serviceCaretAnimation()
+@@ -8572,11 +8572,11 @@ void Document::serviceCaretAnimation()
+ void Document::serviceRequestVideoFrameCallbacks()
+ {
+ #if ENABLE(VIDEO)
+-    if (!domWindow())
++    if (!window())
+         return;
+ 
+     bool isServicingRequestVideoFrameCallbacks = false;
+-    forEachMediaElement([now = domWindow()->frozenNowTimestamp(), &isServicingRequestVideoFrameCallbacks](auto& element) {
++    forEachMediaElement([now = window()->frozenNowTimestamp(), &isServicingRequestVideoFrameCallbacks](auto& element) {
+         RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(element);
+         if (videoElement && videoElement->shouldServiceRequestVideoFrameCallbacks()) {
+             isServicingRequestVideoFrameCallbacks = true;
+@@ -9260,7 +9260,7 @@ bool Document::hasRecentUserInteractionForNavigationFromJS() const
+     if (UserGestureIndicator::processingUserGesture(this))
+         return true;
+ 
+-    RefPtr window = domWindow();
++    RefPtr window = this->window();
+     if (!window || window->lastActivationTimestamp().isInfinity())
+         return false;
+ 
+@@ -10514,12 +10514,12 @@ StyleOriginatedTimelinesController& Document::ensureStyleOriginatedTimelinesCont
+ 
+ void Document::updateAnimationsAndSendEvents()
+ {
+-    RefPtr domWindow = this->domWindow();
+-    if (!domWindow)
++    RefPtr window = this->window();
++    if (!window)
+         return;
+ 
+     if (CheckedPtr timelinesController = this->timelinesController())
+-        timelinesController->updateAnimationsAndSendEvents(domWindow->frozenNowTimestamp());
++        timelinesController->updateAnimationsAndSendEvents(window->frozenNowTimestamp());
+ }
+ 
+ void Document::updateStaleScrollTimelines()
+diff --git a/Source/WebCore/dom/Document.h b/Source/WebCore/dom/Document.h
+index b1bc867ef878..d3d99bbd1e65 100644
+--- a/Source/WebCore/dom/Document.h
++++ b/Source/WebCore/dom/Document.h
+@@ -1012,8 +1012,7 @@ class Document
+     void createDOMWindow();
+     void takeDOMWindowFrom(Document&);
+ 
+-    // FIXME: Consider renaming to window().
+-    LocalDOMWindow* domWindow() const { return m_domWindow.get(); }
++    LocalDOMWindow* window() const { return m_domWindow.get(); }
+     inline RefPtr<LocalDOMWindow> protectedWindow() const; // Defined in DocumentInlines.h.
+ 
+     // In DOM Level 2, the Document's LocalDOMWindow is called the defaultView.
+diff --git a/Source/WebCore/dom/DocumentFullscreen.cpp b/Source/WebCore/dom/DocumentFullscreen.cpp
+index 96b3684500fb..1310c3e2d510 100644
+--- a/Source/WebCore/dom/DocumentFullscreen.cpp
++++ b/Source/WebCore/dom/DocumentFullscreen.cpp
+@@ -172,7 +172,7 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
+     if (auto error = fullscreenElementReadyCheck(checkType, element))
+         return handleError(error, EmitErrorEvent::Yes, WTFMove(completionHandler));
+ 
+-    if (RefPtr window = document().domWindow(); !window || !window->consumeTransientActivation())
++    if (RefPtr window = document().window(); !window || !window->consumeTransientActivation())
+         return handleError("Cannot request fullscreen without transient activation."_s, EmitErrorEvent::Yes, WTFMove(completionHandler));
+ 
+     if (UserGestureIndicator::processingUserGesture() && UserGestureIndicator::currentUserGesture()->gestureType() == UserGestureType::EscapeKey)
+diff --git a/Source/WebCore/dom/Element.cpp b/Source/WebCore/dom/Element.cpp
+index 00fb4902029f..330571fed7d2 100644
+--- a/Source/WebCore/dom/Element.cpp
++++ b/Source/WebCore/dom/Element.cpp
+@@ -1299,7 +1299,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping,
+         // If the element is the scrolling element and is not potentially scrollable,
+         // invoke scroll() on window with options as the only argument, and terminate these steps.
+         // FIXME: Scrolling an independently scrollable body is broken: webkit.org/b/161612.
+-        RefPtr window = document->domWindow();
++        RefPtr window = document->window();
+         if (!window)
+             return;
+ 
+@@ -3286,7 +3286,7 @@ static bool canAttachAuthorShadowRoot(const Element& element)
+     }
+ 
+     if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+-        if (RefPtr window = element.document().domWindow()) {
++        if (RefPtr window = element.document().window()) {
+             RefPtr registry = window->customElementRegistry();
+             if (registry && registry->isShadowDisabled(localName))
+                 return false;
+@@ -3508,7 +3508,7 @@ CustomElementReactionQueue* Element::reactionQueue() const
+ 
+ CustomElementRegistry* Element::customElementRegistry() const
+ {
+-    if (RefPtr window = document().domWindow())
++    if (RefPtr window = document().window())
+         window->ensureCustomElementRegistry(); // Create the global registry before querying since registryForElement doesn't ensure it.
+     return CustomElementRegistry::registryForElement(*this);
+ }
+diff --git a/Source/WebCore/dom/Event.cpp b/Source/WebCore/dom/Event.cpp
+index e7e5fc0ada18..02bf73b4983c 100644
+--- a/Source/WebCore/dom/Event.cpp
++++ b/Source/WebCore/dom/Event.cpp
+@@ -185,7 +185,7 @@ DOMHighResTimeStamp Event::timeStampForBindings(ScriptExecutionContext& context)
+     RefPtr<Performance> performance;
+     if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(context))
+         performance = globalScope->performance();
+-    else if (RefPtr window = downcast<Document>(context).domWindow())
++    else if (RefPtr window = downcast<Document>(context).window())
+         performance = window->performance();
+ 
+     if (!performance)
+diff --git a/Source/WebCore/dom/EventPath.cpp b/Source/WebCore/dom/EventPath.cpp
+index c7721b254f8d..7ad33be56a8d 100644
+--- a/Source/WebCore/dom/EventPath.cpp
++++ b/Source/WebCore/dom/EventPath.cpp
+@@ -118,7 +118,7 @@ void EventPath::buildPath(Node& originalTarget, Event& event)
+                 if (auto* document = dynamicDowncast<Document>(*node); document && event.type() != eventNames().loadEvent) {
+                     ASSERT(target);
+                     if (target) {
+-                        if (RefPtr window = document->domWindow())
++                        if (RefPtr window = document->window())
+                             m_path.append(EventContext { EventContext::Type::Window, node.get(), window.get(), target.get(), closedShadowDepth });
+                     }
+                 }
+diff --git a/Source/WebCore/dom/IdleDeadline.cpp b/Source/WebCore/dom/IdleDeadline.cpp
+index 952b2c98d395..2facba529eb9 100644
+--- a/Source/WebCore/dom/IdleDeadline.cpp
++++ b/Source/WebCore/dom/IdleDeadline.cpp
+@@ -36,7 +36,7 @@ namespace WebCore {
+ 
+ DOMHighResTimeStamp IdleDeadline::timeRemaining(Document& document) const
+ {
+-    RefPtr window { document.domWindow() };
++    RefPtr window { document.window() };
+     if (!window || m_didTimeout == DidTimeout::Yes)
+         return 0;
+     Ref performance = window->performance();
+diff --git a/Source/WebCore/dom/Node.cpp b/Source/WebCore/dom/Node.cpp
+index 5a1889e639c1..51a40062c869 100644
+--- a/Source/WebCore/dom/Node.cpp
++++ b/Source/WebCore/dom/Node.cpp
+@@ -2460,7 +2460,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
+ 
+ #if PLATFORM(IOS_FAMILY)
+     if (targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
+-        if (RefPtr window = document->domWindow())
++        if (RefPtr window = document->window())
+             window->incrementScrollEventListenersCount();
+     }
+ 
+@@ -2512,7 +2512,7 @@ static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomStri
+ 
+ #if PLATFORM(IOS_FAMILY)
+     if (&targetNode == document.ptr() && typeInfo.type() == EventType::scroll) {
+-        if (RefPtr window = document->domWindow())
++        if (RefPtr window = document->window())
+             window->decrementScrollEventListenersCount();
+     }
+ 
+diff --git a/Source/WebCore/dom/Range.cpp b/Source/WebCore/dom/Range.cpp
+index ca257f480903..d21fd7b260dd 100644
+--- a/Source/WebCore/dom/Range.cpp
++++ b/Source/WebCore/dom/Range.cpp
+@@ -1138,7 +1138,7 @@ void Range::updateFromSelection(const SimpleRange& value)
+ 
+ LocalDOMWindow* Range::window() const
+ {
+-    return m_isAssociatedWithSelection ? m_ownerDocument->domWindow() : nullptr;
++    return m_isAssociatedWithSelection ? m_ownerDocument->window() : nullptr;
+ }
+ 
+ SimpleRange makeSimpleRange(const Range& range)
+diff --git a/Source/WebCore/dom/ScriptExecutionContext.cpp b/Source/WebCore/dom/ScriptExecutionContext.cpp
+index 203ceb652b0f..b8d72bb5867e 100644
+--- a/Source/WebCore/dom/ScriptExecutionContext.cpp
++++ b/Source/WebCore/dom/ScriptExecutionContext.cpp
+@@ -715,7 +715,7 @@ ServiceWorkerContainer* ScriptExecutionContext::serviceWorkerContainer()
+ {
+     NavigatorBase* navigator = nullptr;
+     if (auto* document = dynamicDowncast<Document>(*this)) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             navigator = window->optionalNavigator();
+     } else
+         navigator = downcast<WorkerGlobalScope>(*this).optionalNavigator();
+@@ -727,7 +727,7 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
+ {
+     NavigatorBase* navigator = nullptr;
+     if (auto* document = dynamicDowncast<Document>(*this)) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             navigator = &window->navigator();
+     } else
+         navigator = &downcast<WorkerGlobalScope>(*this).navigator();
+diff --git a/Source/WebCore/dom/ShadowRoot.cpp b/Source/WebCore/dom/ShadowRoot.cpp
+index 161dd7617633..8ea15b17bda7 100644
+--- a/Source/WebCore/dom/ShadowRoot.cpp
++++ b/Source/WebCore/dom/ShadowRoot.cpp
+@@ -214,7 +214,7 @@ CustomElementRegistry* ShadowRoot::registryForBindings() const
+     if (usesNullCustomElementRegistry())
+         return nullptr;
+     auto* registry = customElementRegistry();
+-    if (RefPtr window = document().domWindow(); window && !registry)
++    if (RefPtr window = document().window(); window && !registry)
+         registry = &window->ensureCustomElementRegistry();
+     return registry;
+ }
+diff --git a/Source/WebCore/dom/TrustedType.cpp b/Source/WebCore/dom/TrustedType.cpp
+index 831534fcba7c..b7a675a9487a 100644
+--- a/Source/WebCore/dom/TrustedType.cpp
++++ b/Source/WebCore/dom/TrustedType.cpp
+@@ -121,7 +121,7 @@ Variant<std::monostate, Exception, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<Tru
+ {
+     RefPtr<TrustedTypePolicy> protectedPolicy;
+     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+-        if (RefPtr window = document->domWindow())
++        if (RefPtr window = document->window())
+             protectedPolicy = WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(*window)->defaultPolicy();
+     } else if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+         protectedPolicy = WindowOrWorkerGlobalScopeTrustedTypes::trustedTypes(*workerGlobalScope)->defaultPolicy();
+diff --git a/Source/WebCore/dom/UserGestureIndicator.cpp b/Source/WebCore/dom/UserGestureIndicator.cpp
+index 0316b86fc421..aa19c1c0c4e9 100644
+--- a/Source/WebCore/dom/UserGestureIndicator.cpp
++++ b/Source/WebCore/dom/UserGestureIndicator.cpp
+@@ -145,7 +145,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
+         // https://html.spec.whatwg.org/multipage/interaction.html#user-activation-processing-model
+         // When a user interaction causes firing of an activation triggering input event in a Document...
+         // NOTE: Only activate the relevent DOMWindow when the gestureType is an ActivationTriggering one
+-        RefPtr window = document->domWindow();
++        RefPtr window = document->window();
+         if (window && gestureType == UserGestureType::ActivationTriggering)
+             window->notifyActivated(currentToken()->startTime());
+     }
+diff --git a/Source/WebCore/editing/FrameSelection.cpp b/Source/WebCore/editing/FrameSelection.cpp
+index f8bb46a0ef97..b0f5dc6f1c71 100644
+--- a/Source/WebCore/editing/FrameSelection.cpp
++++ b/Source/WebCore/editing/FrameSelection.cpp
+@@ -2381,7 +2381,7 @@ void FrameSelection::updateAppearance()
+     // Start blinking with a black caret. Be sure not to restart if we're
+     // already blinking in the right location.
+     if (shouldBlink && !caretAnimator().isActive()) {
+-        if (document && document->domWindow())
++        if (document && document->window())
+             caretAnimator().start();
+ 
+         caretAnimator().setVisible(true);
+diff --git a/Source/WebCore/history/CachedFrame.cpp b/Source/WebCore/history/CachedFrame.cpp
+index ba519278c2ab..587ed376a654 100644
+--- a/Source/WebCore/history/CachedFrame.cpp
++++ b/Source/WebCore/history/CachedFrame.cpp
+@@ -151,7 +151,7 @@ void CachedFrameBase::restore()
+     if (m_isMainFrame && localFrame) {
+         localFrame->loader().client().didRestoreFrameHierarchyForCachedFrame();
+ 
+-        if (RefPtr domWindow = m_document->domWindow(); domWindow && domWindow->scrollEventListenerCount()) {
++        if (RefPtr window = m_document->window(); window && window->scrollEventListenerCount()) {
+             // FIXME: Use Document::hasListenerType(). See <rdar://problem/9615482>.
+             if (RefPtr page = frame->page())
+                 page->chrome().client().setNeedsScrollNotifications(*localFrame, true);
+@@ -180,8 +180,8 @@ CachedFrame::CachedFrame(Frame& frame)
+         m_childFrames.append(makeUniqueRef<CachedFrame>(*child));
+ 
+     if (document) {
+-        RELEASE_ASSERT(document->domWindow());
+-        RELEASE_ASSERT(document->domWindow()->frame());
++        RELEASE_ASSERT(document->window());
++        RELEASE_ASSERT(document->window()->frame());
+ 
+         // Active DOM objects must be suspended before we cache the frame script data.
+         document->suspend(ReasonForSuspension::BackForwardCache);
+@@ -229,7 +229,7 @@ CachedFrame::CachedFrame(Frame& frame)
+ 
+ #if PLATFORM(IOS_FAMILY)
+     if (m_isMainFrame && localFrame) {
+-        if (RefPtr domWindow = document->domWindow(); domWindow && domWindow->scrollEventListenerCount()) {
++        if (RefPtr window = document->window(); window && window->scrollEventListenerCount()) {
+             if (RefPtr page = frame.page())
+                 page->chrome().client().setNeedsScrollNotifications(*localFrame, false);
+         }
+diff --git a/Source/WebCore/history/CachedPage.cpp b/Source/WebCore/history/CachedPage.cpp
+index 2ce6fc29301f..1c3c77cb91c8 100644
+--- a/Source/WebCore/history/CachedPage.cpp
++++ b/Source/WebCore/history/CachedPage.cpp
+@@ -185,10 +185,10 @@ void CachedPage::restore(Page& page)
+             frameView->updateContentsSize();
+     }
+ 
+-    if (CheckedRef backForwardController = page.backForward(); page.settings().navigationAPIEnabled() && focusedDocument->domWindow() && backForwardController->currentItem()) {
++    if (CheckedRef backForwardController = page.backForward(); page.settings().navigationAPIEnabled() && focusedDocument->window() && backForwardController->currentItem()) {
+         Ref currentItem = *backForwardController->currentItem();
+         auto allItems = backForwardController->allItems();
+-        focusedDocument->domWindow()->navigation().updateForReactivation(allItems, currentItem);
++        focusedDocument->window()->navigation().updateForReactivation(allItems, currentItem);
+     }
+ 
+     firePageShowEvent(page);
+diff --git a/Source/WebCore/html/HTMLCanvasElement.cpp b/Source/WebCore/html/HTMLCanvasElement.cpp
+index 6b4c7aebe519..41fb3c1b7b0c 100644
+--- a/Source/WebCore/html/HTMLCanvasElement.cpp
++++ b/Source/WebCore/html/HTMLCanvasElement.cpp
+@@ -322,7 +322,7 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
+ 
+     if (isWebGPUType(contextId)) {
+         RefPtr<GPU> gpu;
+-        if (RefPtr window = document().domWindow()) {
++        if (RefPtr window = document().window()) {
+             // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
+             gpu = window->protectedNavigator()->gpu();
+         }
+@@ -445,7 +445,7 @@ WebGLRenderingContextBase* HTMLCanvasElement::createContextWebGL(WebGLVersion ty
+ #if ENABLE(WEBXR)
+     // https://immersive-web.github.io/webxr/#xr-compatible
+     if (attrs.xrCompatible) {
+-        if (RefPtr window = document().domWindow()) {
++        if (RefPtr window = document().window()) {
+             // FIXME: how to make this sync without blocking the main thread?
+             // For reference: https://immersive-web.github.io/webxr/#ref-for-dom-webglcontextattributes-xrcompatible
+             NavigatorWebXR::xr(window->navigator()).ensureImmersiveXRDeviceIsSelected([]() { });
+diff --git a/Source/WebCore/html/HTMLDocument.cpp b/Source/WebCore/html/HTMLDocument.cpp
+index a4f8562893c2..4c327e375923 100644
+--- a/Source/WebCore/html/HTMLDocument.cpp
++++ b/Source/WebCore/html/HTMLDocument.cpp
+@@ -123,8 +123,8 @@ std::optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollectio
+ 
+     Ref element = *documentNamedItem(name);
+     if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(element.get()); iframe) [[unlikely]] {
+-        if (RefPtr domWindow = iframe->contentWindow())
+-            return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(domWindow) };
++        if (RefPtr window = iframe->contentWindow())
++            return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { WTFMove(window) };
+     }
+ 
+     return Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>> { RefPtr<Element> { WTFMove(element) } };
+diff --git a/Source/WebCore/html/HTMLMediaElement.cpp b/Source/WebCore/html/HTMLMediaElement.cpp
+index 16f329ee60d9..91a808e5555a 100644
+--- a/Source/WebCore/html/HTMLMediaElement.cpp
++++ b/Source/WebCore/html/HTMLMediaElement.cpp
+@@ -3775,7 +3775,7 @@ void HTMLMediaElement::fastSeek(const MediaTime& time)
+ #if ENABLE(MEDIA_STREAM)
+ void HTMLMediaElement::setAudioOutputDevice(String&& deviceId, DOMPromiseDeferred<void>&& promise)
+ {
+-    RefPtr window = document().domWindow();
++    RefPtr window = document().window();
+     RefPtr mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr;
+     if (!mediaDevices) {
+         promise.reject(Exception { ExceptionCode::NotAllowedError });
+@@ -7396,7 +7396,7 @@ void HTMLMediaElement::setPlayerIdentifierForVideoElement()
+     if (!page || page->mediaPlaybackIsSuspended())
+         return;
+ 
+-    RefPtr window = document().domWindow();
++    RefPtr window = document().window();
+     if (!window)
+         return;
+ 
+@@ -7415,7 +7415,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
+     if (!page || page->mediaPlaybackIsSuspended())
+         return;
+ 
+-    RefPtr window = document().domWindow();
++    RefPtr window = document().window();
+     if (!window)
+         return;
+ 
+@@ -8708,8 +8708,8 @@ void HTMLMediaElement::updateRateChangeRestrictions()
+ 
+ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality() const
+ {
+-    RefPtr domWindow = document().domWindow();
+-    double timestamp = domWindow ? domWindow->nowTimestamp().milliseconds() : 0;
++    RefPtr window = document().window();
++    double timestamp = window ? window->nowTimestamp().milliseconds() : 0;
+ 
+     VideoPlaybackQualityMetrics currentVideoPlaybackQuality;
+ #if ENABLE(MEDIA_SOURCE)
+diff --git a/Source/WebCore/html/HTMLVideoElement.cpp b/Source/WebCore/html/HTMLVideoElement.cpp
+index 9aaa8b31644c..d49f2aeaefeb 100644
+--- a/Source/WebCore/html/HTMLVideoElement.cpp
++++ b/Source/WebCore/html/HTMLVideoElement.cpp
+@@ -754,10 +754,10 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
+         return;
+ 
+     auto videoFrameMetadata = player()->videoFrameMetadata();
+-    if (!videoFrameMetadata || !document().domWindow())
++    if (!videoFrameMetadata || !document().window())
+         return;
+ 
+-    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().domWindow()->protectedPerformance());
++    processVideoFrameMetadataTimestamps(*videoFrameMetadata, document().window()->protectedPerformance());
+ 
+     Ref protectedThis { *this };
+ 
+diff --git a/Source/WebCore/html/MediaElementSession.cpp b/Source/WebCore/html/MediaElementSession.cpp
+index 3cff52df9a14..01aa81624700 100644
+--- a/Source/WebCore/html/MediaElementSession.cpp
++++ b/Source/WebCore/html/MediaElementSession.cpp
+@@ -1592,7 +1592,7 @@ MediaSession* MediaElementSession::mediaSession() const
+     if (!element)
+         return nullptr;
+ 
+-    auto* window = element->document().domWindow();
++    auto* window = element->document().window();
+     if (!window)
+         return nullptr;
+     return &NavigatorMediaSession::mediaSession(window->protectedNavigator());
+diff --git a/Source/WebCore/html/OffscreenCanvas.cpp b/Source/WebCore/html/OffscreenCanvas.cpp
+index 590a3062c82a..d8e897f11aea 100644
+--- a/Source/WebCore/html/OffscreenCanvas.cpp
++++ b/Source/WebCore/html/OffscreenCanvas.cpp
+@@ -234,8 +234,8 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
+                 if (auto* gpu = globalScope->protectedNavigator()->gpu())
+                     m_context = GPUCanvasContext::create(*this, *gpu);
+             } else if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+-                if (RefPtr domWindow = document->domWindow()) {
+-                    if (auto* gpu = domWindow->protectedNavigator()->gpu())
++                if (RefPtr window = document->window()) {
++                    if (auto* gpu = window->protectedNavigator()->gpu())
+                         m_context = GPUCanvasContext::create(*this, *gpu);
+                 }
+             }
+diff --git a/Source/WebCore/html/PermissionsPolicy.cpp b/Source/WebCore/html/PermissionsPolicy.cpp
+index f8dee2e19b91..2428cbc3c275 100644
+--- a/Source/WebCore/html/PermissionsPolicy.cpp
++++ b/Source/WebCore/html/PermissionsPolicy.cpp
+@@ -305,7 +305,7 @@ static bool computeFeatureEnabled(PermissionsPolicy::Feature feature, const Docu
+     bool enabled = checkPermissionsPolicy(document.permissionsPolicy(), feature, origin, document.securityOrigin().data());
+     // FIXME: Spec suggests generating violation report for Reporting API but we only add log now.
+     if (!enabled && shouldReportViolation == PermissionsPolicy::ShouldReportViolation::Yes) {
+-        if (RefPtr window = document.domWindow())
++        if (RefPtr window = document.window())
+             window->printErrorMessage(makeString("Permission policy '"_s, toFeatureNameForLogging(feature), "' check failed for document with origin '"_s, origin.toString(), "'."_s));
+     }
+ 
+diff --git a/Source/WebCore/html/canvas/WebGLRenderingContextBase.cpp b/Source/WebCore/html/canvas/WebGLRenderingContextBase.cpp
+index bd660ee7e599..79e249bddf64 100644
+--- a/Source/WebCore/html/canvas/WebGLRenderingContextBase.cpp
++++ b/Source/WebCore/html/canvas/WebGLRenderingContextBase.cpp
+@@ -2845,7 +2845,7 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
+         return;
+     }
+ 
+-    auto* window = canvas->document().domWindow();
++    auto* window = canvas->document().window();
+     if (!window) {
+         m_attributes.xrCompatible = false;
+         promise.reject(Exception { ExceptionCode::InvalidStateError });
+diff --git a/Source/WebCore/inspector/agents/InspectorDOMAgent.cpp b/Source/WebCore/inspector/agents/InspectorDOMAgent.cpp
+index 5b748b022053..8eda8202608f 100644
+--- a/Source/WebCore/inspector/agents/InspectorDOMAgent.cpp
++++ b/Source/WebCore/inspector/agents/InspectorDOMAgent.cpp
+@@ -1061,7 +1061,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::E
+     if (includeAncestors.value_or(true)) {
+         for (RefPtr ancestor = node->parentOrShadowHostNode(); ancestor; ancestor = ancestor->parentOrShadowHostNode())
+             ancestors.append(ancestor.get());
+-        if (auto* window = node->document().domWindow())
++        if (auto* window = node->document().window())
+             ancestors.append(window);
+     }
+ 
+@@ -3228,7 +3228,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
+         .release();
+     stats->setViewport(WTFMove(viewportJSON));
+ 
+-    if (RefPtr window = mediaElement->document().domWindow())
++    if (RefPtr window = mediaElement->document().window())
+         stats->setDevicePixelRatio(window->devicePixelRatio());
+ 
+     if (videoTrack) {
+diff --git a/Source/WebCore/inspector/agents/InspectorDOMStorageAgent.cpp b/Source/WebCore/inspector/agents/InspectorDOMStorageAgent.cpp
+index fdeb3835c783..3d04f5e9f3de 100644
+--- a/Source/WebCore/inspector/agents/InspectorDOMStorageAgent.cpp
++++ b/Source/WebCore/inspector/agents/InspectorDOMStorageAgent.cpp
+@@ -167,7 +167,7 @@ String InspectorDOMStorageAgent::storageId(Storage& storage)
+ {
+     auto* document = storage.frame()->document();
+     ASSERT(document);
+-    auto* window = document->domWindow();
++    auto* window = document->window();
+     ASSERT(window);
+     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
+     bool isLocalStorage = window->optionalLocalStorage() == &storage;
+diff --git a/Source/WebCore/inspector/agents/InspectorIndexedDBAgent.cpp b/Source/WebCore/inspector/agents/InspectorIndexedDBAgent.cpp
+index 0ce40bef894d..e0f9b5c91d17 100644
+--- a/Source/WebCore/inspector/agents/InspectorIndexedDBAgent.cpp
++++ b/Source/WebCore/inspector/agents/InspectorIndexedDBAgent.cpp
+@@ -540,11 +540,11 @@ static Inspector::Protocol::ErrorStringOr<Document*> documentFromFrame(LocalFram
+ 
+ static Inspector::Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* document)
+ {
+-    RefPtr domWindow = document->domWindow();
+-    if (!domWindow)
++    RefPtr window = document->window();
++    if (!window)
+         return makeUnexpected("Missing window for given document"_s);
+ 
+-    IDBFactory* idbFactory = WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(*domWindow);
++    IDBFactory* idbFactory = WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(*window);
+     if (!idbFactory)
+         makeUnexpected("Missing IndexedDB factory of window for given document"_s);
+     
+diff --git a/Source/WebCore/loader/DocumentLoader.cpp b/Source/WebCore/loader/DocumentLoader.cpp
+index 965eb9b5b0a0..736df761a661 100644
+--- a/Source/WebCore/loader/DocumentLoader.cpp
++++ b/Source/WebCore/loader/DocumentLoader.cpp
+@@ -448,8 +448,8 @@ void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadM
+ #endif
+ 
+     if (RefPtr document = this->document()) {
+-        if (RefPtr domWindow = document->domWindow())
+-            domWindow->protectedPerformance()->navigationFinished(metrics);
++        if (RefPtr window = document->window())
++            window->protectedPerformance()->navigationFinished(metrics);
+     }
+ 
+     ASSERT_UNUSED(resource, m_mainResource == &resource);
+@@ -1364,7 +1364,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
+         if (!isLoading())
+             return;
+ 
+-        if (RefPtr window = document->domWindow()) {
++        if (RefPtr window = document->window()) {
+             window->prewarmLocalStorageIfNecessary();
+ 
+             if (m_mainResource) {
+diff --git a/Source/WebCore/loader/DocumentThreadableLoader.cpp b/Source/WebCore/loader/DocumentThreadableLoader.cpp
+index ac87c3f70e0a..90c656866e19 100644
+--- a/Source/WebCore/loader/DocumentThreadableLoader.cpp
++++ b/Source/WebCore/loader/DocumentThreadableLoader.cpp
+@@ -683,7 +683,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
+     if (options().initiatorContext == InitiatorContext::Worker)
+         finishedTimingForWorkerLoad(resourceTiming);
+     else {
+-        if (RefPtr window = document().domWindow())
++        if (RefPtr window = document().window())
+             window->protectedPerformance()->addResourceTiming(WTFMove(resourceTiming));
+     }
+ 
+diff --git a/Source/WebCore/loader/FrameLoader.cpp b/Source/WebCore/loader/FrameLoader.cpp
+index 4b5a02c54b1e..77b97c47e7c8 100644
+--- a/Source/WebCore/loader/FrameLoader.cpp
++++ b/Source/WebCore/loader/FrameLoader.cpp
+@@ -599,7 +599,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
+         DatabaseManager::singleton().stopDatabases(*document, nullptr);
+ 
+         if (document->settings().navigationAPIEnabled() && !m_doNotAbortNavigationAPI && unloadEventPolicy != UnloadEventPolicy::UnloadAndPageHide) {
+-            RefPtr window = frame->document()->domWindow();
++            RefPtr window = frame->document()->window();
+             window->protectedNavigation()->abortOngoingNavigationIfNeeded();
+         }
+     }
+@@ -868,7 +868,7 @@ void FrameLoader::didBeginDocument(bool dispatch, LocalDOMWindow* previousWindow
+         navigationType = m_documentLoader->triggeringAction().navigationAPIType();
+     }
+ 
+-    if (document->settings().navigationAPIEnabled() && document->domWindow() && !document->protectedSecurityOrigin()->isOpaque())
++    if (document->settings().navigationAPIEnabled() && document->window() && !document->protectedSecurityOrigin()->isOpaque())
+         document->protectedWindow()->protectedNavigation()->initializeForNewWindow(navigationType, previousWindow);
+ 
+     protectedHistory()->restoreDocumentState();
+@@ -1299,7 +1299,7 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
+     protectedHistory()->updateForSameDocumentNavigation();
+ 
+     auto navigationType = determineNavigationType(m_loadType, historyHandling);
+-    if (document->settings().navigationAPIEnabled() && document->domWindow() && history().currentItem())
++    if (document->settings().navigationAPIEnabled() && document->window() && history().currentItem())
+         document->protectedWindow()->protectedNavigation()->updateForNavigation(*history().currentItem(), navigationType, ShouldCopyStateObjectFromCurrentEntry::Yes);
+ 
+     // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
+@@ -1478,7 +1478,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
+ 
+     if (loadType == FrameLoadType::Reload) {
+         if (m_frame->document() && m_frame->document()->settings().navigationAPIEnabled()) {
+-            if (RefPtr domWindow = frame->document()->domWindow()) {
++            if (RefPtr window = frame->document()->window()) {
+                 RefPtr<SerializedScriptValue> stateObject;
+                 if (RefPtr currentItem = history().currentItem())
+                     stateObject = currentItem->navigationAPIStateObject();
+@@ -2170,7 +2170,7 @@ void FrameLoader::stopForUserCancel(bool deferCheckLoadComplete)
+     stopAllLoaders();
+ 
+     if (m_frame->document()->settings().navigationAPIEnabled()) {
+-        RefPtr window = m_frame->document()->domWindow();
++        RefPtr window = m_frame->document()->window();
+         window->protectedNavigation()->abortOngoingNavigationIfNeeded();
+     }
+ 
+@@ -2329,9 +2329,9 @@ void FrameLoader::commitProvisionalLoad()
+         if (pdl) {
+             canTriggerCrossDocumentViewTransition = pdl->navigationCanTriggerCrossDocumentViewTransition(*document, !!cachedPage);
+ 
+-            RefPtr domWindow = document->domWindow();
++            RefPtr window = document->window();
+             auto navigationAPIType = pdl->triggeringAction().navigationAPIType();
+-            if (domWindow && navigationAPIType) {
++            if (window && navigationAPIType) {
+                 // FIXME: The NavigationActivation for pageswap should be created after the global
+                 // history update, but before the unload event (which might be delayed). Those steps
+                 // are currently intertwined, so this creates a fake/detached new history entry to
+@@ -2340,7 +2340,7 @@ void FrameLoader::commitProvisionalLoad()
+                 if (RefPtr page = frame->page(); page && *navigationAPIType != NavigationNavigationType::Reload)
+                     newItem = protectedHistory()->createItemWithLoader(page->historyItemClient(), pdl.get());
+ 
+-                activation = domWindow->protectedNavigation()->createForPageswapEvent(newItem.get(), pdl.get(), !!cachedPage);
++                activation = window->protectedNavigation()->createForPageswapEvent(newItem.get(), pdl.get(), !!cachedPage);
+             }
+         }
+         document->dispatchPageswapEvent(canTriggerCrossDocumentViewTransition, WTFMove(activation));
+@@ -2673,7 +2673,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
+ 
+     started();
+     Ref document = *cachedFrame.document();
+-    ASSERT(document->domWindow());
++    ASSERT(document->window());
+ 
+     clear(document.ptr(), true, true, cachedFrame.isMainFrame());
+ 
+@@ -2948,8 +2948,8 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
+             }
+         }
+ 
+-        if (RefPtr domWindow = m_frame->document() ? m_frame->document()->domWindow() : nullptr)
+-            domWindow->protectedPerformance()->scheduleNavigationObservationTaskIfNeeded();
++        if (RefPtr window = m_frame->document() ? m_frame->document()->window() : nullptr)
++            window->protectedPerformance()->scheduleNavigationObservationTaskIfNeeded();
+ 
+         auto& error = documentLoader->mainDocumentError();
+ 
+@@ -3074,7 +3074,7 @@ static bool scrollingSuppressedByNavigationAPI(Document* document)
+     if (!document || !document->settings().navigationAPIEnabled())
+         return false;
+ 
+-    RefPtr window = document->domWindow();
++    RefPtr window = document->window();
+     return window && window->navigation().suppressNormalScrollRestoration();
+ }
+ 
+@@ -3903,8 +3903,8 @@ static bool shouldAskForNavigationConfirmation(Document& document, const BeforeU
+ 
+ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoaderBeingNavigated)
+ {
+-    RefPtr domWindow = m_frame->document()->domWindow();
+-    if (!domWindow)
++    RefPtr window = m_frame->document()->window();
++    if (!window)
+         return true;
+ 
+     RefPtr document = m_frame->document();
+@@ -3918,7 +3918,7 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
+         ForbidPromptsScope forbidPrompts(m_frame->protectedPage().get());
+         ForbidSynchronousLoadsScope forbidSynchronousLoads(m_frame->page());
+         ForbidCopyPasteScope forbidCopyPaste(m_frame->page());
+-        domWindow->dispatchEvent(beforeUnloadEvent, domWindow->protectedDocument().get());
++        window->dispatchEvent(beforeUnloadEvent, window->protectedDocument().get());
+     }
+ 
+     if (!beforeUnloadEvent->defaultPrevented())
+@@ -4328,7 +4328,7 @@ bool FrameLoader::dispatchNavigateEvent(const URL& newURL, FrameLoadType loadTyp
+     RefPtr document = m_frame->document();
+     if (!document || !document->settings().navigationAPIEnabled())
+         return true;
+-    RefPtr window = document->domWindow();
++    RefPtr window = document->window();
+     if (!window)
+         return true;
+     // Download events are handled later in PolicyChecker::checkNavigationPolicy().
+@@ -4503,8 +4503,8 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
+     RefPtr currentItem = history().currentItem();
+ 
+     if (frame().document() && frame().document()->settings().navigationAPIEnabled() && fromItem && SecurityOrigin::create(item.url())->isSameOriginAs(SecurityOrigin::create(fromItem->url()))) {
+-        if (RefPtr domWindow = frame().document()->domWindow()) {
+-            if (RefPtr navigation = domWindow->navigation(); navigation->frame()) {
++        if (RefPtr window = frame().document()->window()) {
++            if (RefPtr navigation = window->navigation(); navigation->frame()) {
+                 if (navigation->dispatchTraversalNavigateEvent(item) == Navigation::DispatchResult::Aborted)
+                     return;
+                 // In case the event detached the frame.
+diff --git a/Source/WebCore/loader/ImageLoader.cpp b/Source/WebCore/loader/ImageLoader.cpp
+index 5cdf055809c2..0f5fef39e312 100644
+--- a/Source/WebCore/loader/ImageLoader.cpp
++++ b/Source/WebCore/loader/ImageLoader.cpp
+@@ -583,7 +583,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
+ {
+     m_decodingPromises.append(WTFMove(promise));
+ 
+-    if (!element().document().domWindow()) {
++    if (!element().document().window()) {
+         rejectDecodePromises("Inactive document."_s);
+         return;
+     }
+@@ -602,7 +602,7 @@ void ImageLoader::decode()
+ {
+     ASSERT(hasPendingDecodePromises());
+     
+-    if (!element().document().domWindow()) {
++    if (!element().document().window()) {
+         rejectDecodePromises("Inactive document."_s);
+         return;
+     }
+diff --git a/Source/WebCore/loader/PolicyChecker.cpp b/Source/WebCore/loader/PolicyChecker.cpp
+index 427d178b9236..aeeba89d9762 100644
+--- a/Source/WebCore/loader/PolicyChecker.cpp
++++ b/Source/WebCore/loader/PolicyChecker.cpp
+@@ -216,8 +216,8 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
+     if (!action.downloadAttribute().isNull()) {
+         RefPtr document = frame->document();
+         if (document && document->settings().navigationAPIEnabled()) {
+-            if (RefPtr domWindow = document->domWindow()) {
+-                if (!domWindow->protectedNavigation()->dispatchDownloadNavigateEvent(request.url(), action.downloadAttribute()))
++            if (RefPtr window = document->window()) {
++                if (!window->protectedNavigation()->dispatchDownloadNavigateEvent(request.url(), action.downloadAttribute()))
+                     return function({ }, nullptr, NavigationPolicyDecision::IgnoreLoad);
+             }
+         }
+diff --git a/Source/WebCore/loader/ResourceTimingInformation.cpp b/Source/WebCore/loader/ResourceTimingInformation.cpp
+index 1331a495d69f..e3b9f77f97a5 100644
+--- a/Source/WebCore/loader/ResourceTimingInformation.cpp
++++ b/Source/WebCore/loader/ResourceTimingInformation.cpp
+@@ -68,7 +68,7 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
+     if (!initiatorDocument)
+         return;
+ 
+-    RefPtr initiatorWindow = initiatorDocument->domWindow();
++    RefPtr initiatorWindow = initiatorDocument->window();
+     if (!initiatorWindow)
+         return;
+ 
+diff --git a/Source/WebCore/page/DOMWindowExtension.cpp b/Source/WebCore/page/DOMWindowExtension.cpp
+index 1a453edfb64d..e19ba6aece85 100644
+--- a/Source/WebCore/page/DOMWindowExtension.cpp
++++ b/Source/WebCore/page/DOMWindowExtension.cpp
+@@ -78,7 +78,7 @@ void DOMWindowExtension::resumeFromBackForwardCache()
+ {
+     ASSERT(frame());
+     ASSERT(m_disconnectedFrame == frame());
+-    ASSERT(frame()->document()->domWindow() == m_window);
++    ASSERT(frame()->document()->window() == m_window);
+ 
+     m_disconnectedFrame = nullptr;
+ 
+diff --git a/Source/WebCore/page/EventHandler.cpp b/Source/WebCore/page/EventHandler.cpp
+index 127ed15b208d..822c51f34a74 100644
+--- a/Source/WebCore/page/EventHandler.cpp
++++ b/Source/WebCore/page/EventHandler.cpp
+@@ -4233,7 +4233,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent& event)
+ 
+         if (event.key() == "Escape"_s) {
+             if (frame->settings().closeWatcherEnabled())
+-                frame->document()->domWindow()->closeWatcherManager().escapeKeyHandler(event);
++                frame->document()->window()->closeWatcherManager().escapeKeyHandler(event);
+             if (RefPtr activeModalDialog = frame->document()->activeModalDialog())
+                 activeModalDialog->queueCancelTask();
+             if (RefPtr topmostAutoPopover = frame->document()->topmostAutoPopover())
+diff --git a/Source/WebCore/page/History.cpp b/Source/WebCore/page/History.cpp
+index c03ece3a67ef..f2dfb5966f44 100644
+--- a/Source/WebCore/page/History.cpp
++++ b/Source/WebCore/page/History.cpp
+@@ -303,7 +303,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
+         return result.releaseException();
+ 
+     if (document->settings().navigationAPIEnabled()) {
+-        Ref navigation = document->domWindow()->navigation();
++        Ref navigation = document->window()->navigation();
+         if (!navigation->dispatchPushReplaceReloadNavigateEvent(fullURL, historyBehavior == NavigationHistoryBehavior::Push ? NavigationNavigationType::Push : NavigationNavigationType::Replace, true, nullptr, data.get()))
+             return { };
+     }
+diff --git a/Source/WebCore/page/IntersectionObserver.cpp b/Source/WebCore/page/IntersectionObserver.cpp
+index 18df83beb8fd..66f518e0d17e 100644
+--- a/Source/WebCore/page/IntersectionObserver.cpp
++++ b/Source/WebCore/page/IntersectionObserver.cpp
+@@ -578,7 +578,7 @@ std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() con
+         if (!context)
+             return std::nullopt;
+         auto& document = downcast<Document>(*context);
+-        window = document.domWindow();
++        window = document.window();
+         if (!window)
+             return std::nullopt;
+     }
+diff --git a/Source/WebCore/page/LocalDOMWindow.cpp b/Source/WebCore/page/LocalDOMWindow.cpp
+index 5533587fcc05..9118f55128f0 100644
+--- a/Source/WebCore/page/LocalDOMWindow.cpp
++++ b/Source/WebCore/page/LocalDOMWindow.cpp
+@@ -400,7 +400,7 @@ bool LocalDOMWindow::canShowModalDialog(const LocalFrame& frame)
+ {
+     // Override support for layout testing purposes.
+     if (RefPtr document = frame.document()) {
+-        if (RefPtr window = document->domWindow()) {
++        if (RefPtr window = document->window()) {
+             if (window->m_canShowModalDialogOverride)
+                 return window->m_canShowModalDialogOverride.value();
+         }
+@@ -613,7 +613,7 @@ void LocalDOMWindow::resumeFromBackForwardCache()
+ bool LocalDOMWindow::isCurrentlyDisplayedInFrame() const
+ {
+     RefPtr frame = localFrame();
+-    return frame && frame->document()->domWindow() == this;
++    return frame && frame->document()->window() == this;
+ }
+ 
+ CustomElementRegistry& LocalDOMWindow::ensureCustomElementRegistry()
+@@ -2212,7 +2212,7 @@ void LocalDOMWindow::failedToRegisterDeviceMotionEventListener()
+     if (RegistrableDomain::uncheckedCreateFromRegistrableDomainString("chase.com"_s).matches(document()->url())) {
+         // Fire a fake DeviceMotionEvent with acceleration data to unblock the site's login flow.
+         protectedDocument()->postTask([](auto& context) {
+-            if (RefPtr window = downcast<Document>(context).domWindow()) {
++            if (RefPtr window = downcast<Document>(context).window()) {
+                 auto acceleration = DeviceMotionData::Acceleration::create();
+                 window->dispatchEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, DeviceMotionData::create(acceleration.copyRef(), acceleration.copyRef(), DeviceMotionData::RotationRate::create(), std::nullopt).ptr()));
+             }
+diff --git a/Source/WebCore/page/LocalFrame.cpp b/Source/WebCore/page/LocalFrame.cpp
+index 3eb118595a5a..018a1445506e 100644
+--- a/Source/WebCore/page/LocalFrame.cpp
++++ b/Source/WebCore/page/LocalFrame.cpp
+@@ -339,8 +339,8 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
+     }
+ 
+     m_doc = newDocument.copyRef();
+-    ASSERT(!m_doc || m_doc->domWindow());
+-    ASSERT(!m_doc || m_doc->domWindow()->frame() == this);
++    ASSERT(!m_doc || m_doc->window());
++    ASSERT(!m_doc || m_doc->window()->frame() == this);
+ 
+     // Don't use m_doc because it can be overwritten and we want to guarantee
+     // that the document is not destroyed during this function call.
+@@ -974,7 +974,7 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
+ 
+ LocalDOMWindow* LocalFrame::window() const
+ {
+-    return document() ? document()->domWindow() : nullptr;
++    return document() ? document()->window() : nullptr;
+ }
+ 
+ RefPtr<LocalDOMWindow> LocalFrame::protectedWindow() const
+@@ -1297,7 +1297,7 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
+     if (!m_doc)
+         return;
+ 
+-    if (RefPtr window = m_doc->domWindow())
++    if (RefPtr window = m_doc->window())
+         window->willDetachDocumentFromFrame();
+ 
+     protectedDocument()->detachFromFrame();
+diff --git a/Source/WebCore/page/Location.cpp b/Source/WebCore/page/Location.cpp
+index 57bc82b470b0..b9b9fa7f828f 100644
+--- a/Source/WebCore/page/Location.cpp
++++ b/Source/WebCore/page/Location.cpp
+@@ -270,7 +270,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
+ 
+     ASSERT(activeWindow.document());
+     ASSERT(localFrame->document());
+-    ASSERT(localFrame->document()->domWindow());
++    ASSERT(localFrame->document()->window());
+ 
+     Ref activeDocument = *activeWindow.document();
+     Ref targetDocument = *localFrame->document();
+@@ -279,7 +279,7 @@ void Location::reload(LocalDOMWindow& activeWindow)
+     // We allow one page to change the location of another. Why block attempts to reload?
+     // Other location operations simply block use of JavaScript URLs cross origin.
+     if (!activeDocument->protectedSecurityOrigin()->isSameOriginDomain(targetDocument->protectedSecurityOrigin())) {
+-        Ref targetWindow = *targetDocument->domWindow();
++        Ref targetWindow = *targetDocument->window();
+         targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow, IncludeTargetOrigin::Yes));
+         return;
+     }
+@@ -310,7 +310,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
+ 
+     // https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-location-interface:location-object-navigate
+     auto historyHandling = NavigationHistoryBehavior::Auto;
+-    if (!firstFrame->loader().isComplete() && firstFrame->document() && !firstFrame->document()->domWindow()->hasTransientActivation())
++    if (!firstFrame->loader().isComplete() && firstFrame->document() && !firstFrame->document()->window()->hasTransientActivation())
+         historyHandling = NavigationHistoryBehavior::Replace;
+ 
+     ASSERT(frame->window());
+diff --git a/Source/WebCore/page/Page.cpp b/Source/WebCore/page/Page.cpp
+index b082620fb5d5..e01b13f0039b 100644
+--- a/Source/WebCore/page/Page.cpp
++++ b/Source/WebCore/page/Page.cpp
+@@ -2250,7 +2250,7 @@ void Page::updateRendering()
+     });
+ 
+     for (auto& document : initialDocuments) {
+-        if (document && document->domWindow())
++        if (document && document->window())
+             document->protectedWindow()->unfreezeNowTimestamp();
+     }
+ 
+@@ -2765,7 +2765,7 @@ const String& Page::userStyleSheet() const
+ void Page::userAgentChanged()
+ {
+     forEachDocument([] (Document& document) {
+-        if (RefPtr window = document.domWindow()) {
++        if (RefPtr window = document.window()) {
+             if (RefPtr navigator = window->optionalNavigator())
+                 navigator->userAgentChanged();
+         }
+diff --git a/Source/WebCore/page/Performance.cpp b/Source/WebCore/page/Performance.cpp
+index fa6108cf598a..ab29ab76250c 100644
+--- a/Source/WebCore/page/Performance.cpp
++++ b/Source/WebCore/page/Performance.cpp
+@@ -142,7 +142,7 @@ PerformanceNavigation* Performance::navigation()
+ 
+     ASSERT(isMainThread());
+     if (!m_navigation)
+-        m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).domWindow());
++        m_navigation = PerformanceNavigation::create(downcast<Document>(*scriptExecutionContext()).window());
+     return m_navigation.get();
+ }
+ 
+@@ -153,7 +153,7 @@ PerformanceTiming* Performance::timing()
+ 
+     ASSERT(isMainThread());
+     if (!m_timing)
+-        m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).domWindow());
++        m_timing = PerformanceTiming::create(downcast<Document>(*scriptExecutionContext()).window());
+     return m_timing.get();
+ }
+ 
+diff --git a/Source/WebCore/page/PerformanceMark.cpp b/Source/WebCore/page/PerformanceMark.cpp
+index bfe0e45dafb0..ba19c9018ac4 100644
+--- a/Source/WebCore/page/PerformanceMark.cpp
++++ b/Source/WebCore/page/PerformanceMark.cpp
+@@ -46,7 +46,7 @@ static double performanceNow(ScriptExecutionContext& scriptExecutionContext)
+     // the ScriptExecutionContext to avoid this.
+ 
+     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+-        if (auto window = document->domWindow())
++        if (auto window = document->window())
+             return window->performance().now();
+     } else if (RefPtr workerGlobal = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+         return workerGlobal->performance().now();
+diff --git a/Source/WebCore/page/PerformanceObserver.cpp b/Source/WebCore/page/PerformanceObserver.cpp
+index 934b789a0ce1..8f3752bb1756 100644
+--- a/Source/WebCore/page/PerformanceObserver.cpp
++++ b/Source/WebCore/page/PerformanceObserver.cpp
+@@ -39,7 +39,7 @@ PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecution
+     : m_callback(WTFMove(callback))
+ {
+     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             m_performance = window->performance();
+     } else if (RefPtr workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext))
+         m_performance = workerGlobalScope->performance();
+diff --git a/Source/WebCore/page/Quirks.cpp b/Source/WebCore/page/Quirks.cpp
+index fd5a04d098ba..c2ee2d7c336e 100644
+--- a/Source/WebCore/page/Quirks.cpp
++++ b/Source/WebCore/page/Quirks.cpp
+@@ -820,7 +820,7 @@ bool Quirks::shouldBypassBackForwardCache() const
+ 
+     // Login issue on bankofamerica.com (rdar://104938789).
+     if (m_quirksData.isBankOfAmerica) {
+-        if (RefPtr window = document->domWindow()) {
++        if (RefPtr window = document->window()) {
+             if (window->hasEventListeners(eventNames().unloadEvent)) {
+                 static MainThreadNeverDestroyed<const AtomString> signInId("signIn"_s);
+                 static MainThreadNeverDestroyed<const AtomString> loadingClass("loading"_s);
+@@ -1123,11 +1123,11 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
+                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+             }
+ 
+-            RefPtr domWindow = document->domWindow();
+-            if (!domWindow)
++            RefPtr window = document->window();
++            if (!window)
+                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+ 
+-            ExceptionOr<RefPtr<WindowProxy>> proxyOrException =  domWindow->open(*domWindow, *domWindow, kinjaURL->string(), emptyAtom(), loginPopupWindowFeatureString);
++            ExceptionOr<RefPtr<WindowProxy>> proxyOrException =  window->open(*window, *window, kinjaURL->string(), emptyAtom(), loginPopupWindowFeatureString);
+             if (proxyOrException.hasException())
+                 return Quirks::StorageAccessResult::ShouldNotCancelEvent;
+             auto proxy = proxyOrException.releaseReturnValue();
+diff --git a/Source/WebCore/page/ios/FrameIOS.mm b/Source/WebCore/page/ios/FrameIOS.mm
+index 55bb127cc9a0..433748a3c3d4 100644
+--- a/Source/WebCore/page/ios/FrameIOS.mm
++++ b/Source/WebCore/page/ios/FrameIOS.mm
+@@ -839,8 +839,8 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
+ 
+ void LocalFrame::resetAllGeolocationPermission()
+ {
+-    if (document()->domWindow())
+-        document()->domWindow()->resetAllGeolocationPermission();
++    if (document()->window())
++        document()->window()->resetAllGeolocationPermission();
+ 
+     for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+         auto* localChild = dynamicDowncast<LocalFrame>(child.get());
+diff --git a/Source/WebCore/platform/cocoa/VideoPresentationModelVideoElement.mm b/Source/WebCore/platform/cocoa/VideoPresentationModelVideoElement.mm
+index 7ad5ca431fb8..058f3f14f369 100644
+--- a/Source/WebCore/platform/cocoa/VideoPresentationModelVideoElement.mm
++++ b/Source/WebCore/platform/cocoa/VideoPresentationModelVideoElement.mm
+@@ -295,7 +295,7 @@
+ 
+     if (finishedWithMedia && mode == MediaPlayer::VideoFullscreenModeNone) {
+         if (videoElement->document().isMediaDocument()) {
+-            if (auto* window = videoElement->document().domWindow())
++            if (auto* window = videoElement->document().window())
+                 window->history().back();
+         }
+     }
+diff --git a/Source/WebCore/style/StyleAdjuster.cpp b/Source/WebCore/style/StyleAdjuster.cpp
+index 1cc2f3ac4663..cdf2f6ba2c5b 100644
+--- a/Source/WebCore/style/StyleAdjuster.cpp
++++ b/Source/WebCore/style/StyleAdjuster.cpp
+@@ -303,7 +303,7 @@ static OptionSet<TouchAction> computeUsedTouchActions(const RenderStyle& style,
+ bool Adjuster::adjustEventListenerRegionTypesForRootStyle(RenderStyle& rootStyle, const Document& document)
+ {
+     auto regionTypes = computeEventListenerRegionTypes(document, rootStyle, document, { });
+-    if (RefPtr window = document.domWindow())
++    if (RefPtr window = document.window())
+         regionTypes.add(computeEventListenerRegionTypes(document, rootStyle, *window, { }));
+ 
+     bool changed = regionTypes != rootStyle.eventListenerRegionTypes();
+diff --git a/Source/WebCore/testing/Internals.cpp b/Source/WebCore/testing/Internals.cpp
+index 65c46f666aa5..7d6f56251c36 100644
+--- a/Source/WebCore/testing/Internals.cpp
++++ b/Source/WebCore/testing/Internals.cpp
+@@ -801,7 +801,7 @@ unsigned Internals::inflightBeaconsCount() const
+     if (!document)
+         return 0;
+ 
+-    auto* window = document->domWindow();
++    auto* window = document->window();
+     if (!window)
+         return 0;
+ 
+@@ -1009,10 +1009,10 @@ void Internals::setOverrideCachePolicy(CachePolicy policy)
+ 
+ ExceptionOr<void> Internals::setCanShowModalDialogOverride(bool allow)
+ {
+-    if (!contextDocument() || !contextDocument()->domWindow())
++    if (!contextDocument() || !contextDocument()->window())
+         return Exception { ExceptionCode::InvalidAccessError };
+ 
+-    contextDocument()->domWindow()->setCanShowModalDialogOverride(allow);
++    contextDocument()->window()->setCanShowModalDialogOverride(allow);
+     return { };
+ }
+ 
+@@ -1721,19 +1721,19 @@ void Internals::simulateSpeechSynthesizerVoiceListChange()
+     }
+ 
+     RefPtr document = contextDocument();
+-    if (!document || !document->domWindow())
++    if (!document || !document->window())
+         return;
+ 
+-    if (RefPtr synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow()))
++    if (RefPtr synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->window()))
+         synthesis->simulateVoicesListChange();
+ }
+ 
+ void Internals::enableMockSpeechSynthesizer()
+ {
+     auto document = contextDocument();
+-    if (!document || !document->domWindow())
++    if (!document || !document->window())
+         return;
+-    auto synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->domWindow());
++    auto synthesis = LocalDOMWindowSpeechSynthesis::speechSynthesis(*document->window());
+     if (!synthesis)
+         return;
+ 
+@@ -3272,7 +3272,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
+     if (!localMainFrame)
+         return nullptr;
+ 
+-    RefPtr window = localMainFrame->document()->domWindow();
++    RefPtr window = localMainFrame->document()->window();
+     if (!window)
+         return nullptr;
+ 
+@@ -5892,7 +5892,7 @@ bool Internals::userIsInteracting()
+ bool Internals::hasTransientActivation()
+ {
+     if (auto* document = contextDocument()) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             return window->hasTransientActivation();
+     }
+     return false;
+@@ -5901,7 +5901,7 @@ bool Internals::hasTransientActivation()
+ bool Internals::consumeTransientActivation()
+ {
+     if (auto* document = contextDocument()) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             return window->consumeTransientActivation();
+     }
+     return false;
+@@ -5919,7 +5919,7 @@ double Internals::lastHandledUserGestureTimestamp()
+ bool Internals::hasHistoryActionActivation()
+ {
+     if (auto* document = contextDocument()) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             return window->hasHistoryActionActivation();
+     }
+     return false;
+@@ -5928,7 +5928,7 @@ bool Internals::hasHistoryActionActivation()
+ bool Internals::consumeHistoryActionUserActivation()
+ {
+     if (auto* document = contextDocument()) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             return window->consumeHistoryActionUserActivation();
+     }
+     return false;
+@@ -7339,11 +7339,11 @@ bool Internals::destroySleepDisabler(unsigned identifier)
+ ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
+ {
+     auto* document = contextDocument();
+-    if (!document || !document->domWindow() || !document->settings().webXREnabled())
++    if (!document || !document->window() || !document->settings().webXREnabled())
+         return Exception { ExceptionCode::InvalidAccessError };
+ 
+     if (!m_xrTest) {
+-        auto* navigator = contextDocument()->domWindow()->optionalNavigator();
++        auto* navigator = contextDocument()->window()->optionalNavigator();
+         if (!navigator)
+             return Exception { ExceptionCode::InvalidAccessError };
+ 
+@@ -7462,13 +7462,13 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
+         return { };
+ 
+     auto* document = contextDocument();
+-    if (!document || !document->domWindow())
++    if (!document || !document->window())
+         return Exception { ExceptionCode::InvalidAccessError };
+ 
+     if (!document->settings().mediaSessionCoordinatorEnabled())
+         return Exception { ExceptionCode::InvalidAccessError };
+ 
+-    auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
++    auto& session = NavigatorMediaSession::mediaSession(document->window()->navigator());
+     auto mock = MockMediaSessionCoordinator::create(context, WTFMove(listener));
+     m_mockMediaSessionCoordinator = mock.ptr();
+     session.coordinator().setMediaSessionCoordinatorPrivate(WTFMove(mock));
+@@ -7549,7 +7549,7 @@ bool Internals::rangeIntersectsRange(const AbstractRange& a, const AbstractRange
+ String Internals::dumpStyleResolvers()
+ {
+     auto* document = contextDocument();
+-    if (!document || !document->domWindow())
++    if (!document || !document->window())
+         return { };
+ 
+     document->updateStyleIfNeeded();
+@@ -7719,7 +7719,7 @@ bool Internals::hasScopeBreakingHasSelectors() const
+ 
+ void Internals::setHistoryTotalStateObjectPayloadLimitOverride(uint32_t limit)
+ {
+-    RefPtr window = contextDocument() ? contextDocument()->domWindow() : nullptr;
++    RefPtr window = contextDocument() ? contextDocument()->window() : nullptr;
+     if (!window)
+         return;
+     window->history().setTotalStateObjectPayloadLimitOverride(limit);
+diff --git a/Source/WebCore/workers/service/ServiceWorkerClientData.cpp b/Source/WebCore/workers/service/ServiceWorkerClientData.cpp
+index 516e5c38d4b0..2e78c620656f 100644
+--- a/Source/WebCore/workers/service/ServiceWorkerClientData.cpp
++++ b/Source/WebCore/workers/service/ServiceWorkerClientData.cpp
+@@ -49,7 +49,7 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
+         return ServiceWorkerClientFrameType::None;
+ 
+     if (frame->isMainFrame()) {
+-        if (RefPtr window = document->domWindow()) {
++        if (RefPtr window = document->window()) {
+             if (window->opener())
+                 return ServiceWorkerClientFrameType::Auxiliary;
+         }
+diff --git a/Source/WebCore/worklets/PaintWorkletGlobalScope.cpp b/Source/WebCore/worklets/PaintWorkletGlobalScope.cpp
+index 4f8e74ccf240..0c89a678d4cc 100644
+--- a/Source/WebCore/worklets/PaintWorkletGlobalScope.cpp
++++ b/Source/WebCore/worklets/PaintWorkletGlobalScope.cpp
+@@ -56,9 +56,9 @@ PaintWorkletGlobalScope::PaintWorkletGlobalScope(Document& document, Ref<VM>&& v
+ 
+ double PaintWorkletGlobalScope::devicePixelRatio() const
+ {
+-    if (!responsibleDocument() || !responsibleDocument()->domWindow())
++    if (!responsibleDocument() || !responsibleDocument()->window())
+         return 1.0;
+-    return responsibleDocument()->domWindow()->devicePixelRatio();
++    return responsibleDocument()->window()->devicePixelRatio();
+ }
+ 
+ PaintDefinition::PaintDefinition(const AtomString& name, JSC::JSObject* paintConstructor, Ref<CSSPaintCallback>&& paintCallback, Vector<AtomString>&& inputProperties, Vector<String>&& inputArguments)
+diff --git a/Source/WebCore/xml/XMLHttpRequest.cpp b/Source/WebCore/xml/XMLHttpRequest.cpp
+index a837f546d756..0e7d649f73df 100644
+--- a/Source/WebCore/xml/XMLHttpRequest.cpp
++++ b/Source/WebCore/xml/XMLHttpRequest.cpp
+@@ -903,7 +903,7 @@ void XMLHttpRequest::didFail(std::optional<ScriptExecutionContextIdentifier>, co
+ 
+     bool wasAbortedByClient = false;
+     if (auto* document = this->document()) {
+-        if (auto* window = document->domWindow())
++        if (auto* window = document->window())
+             wasAbortedByClient = window->isStopping();
+     }
+ 
+diff --git a/Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp b/Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp
+index 73cc3d55113d..3c48aede0c79 100644
+--- a/Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp
++++ b/Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp
+@@ -815,7 +815,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
+ 
+     bool willConstructCustomElement = false;
+     if (!m_parsingFragment) {
+-        if (RefPtr window = m_currentNode->document().domWindow()) {
++        if (RefPtr window = m_currentNode->document().window()) {
+             if (RefPtr registry = window->customElementRegistry(); registry) [[unlikely]]
+                 willConstructCustomElement = registry->findInterface(qName);
+         }
+diff --git a/Source/WebKit/WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp b/Source/WebKit/WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp
+index d87688458d26..452e08d4e195 100644
+--- a/Source/WebKit/WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp
++++ b/Source/WebKit/WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp
+@@ -97,11 +97,11 @@ class DOMObjectCacheFrameObserver final: public WebCore::FrameDestructionObserve
+     {
+         ASSERT(!m_objects.contains(&data));
+ 
+-        auto* domWindow = m_frame->document()->domWindow();
+-        if (domWindow && (!m_domWindowObserver || m_domWindowObserver->window() != domWindow)) {
++        auto* window = m_frame->document()->window();
++        if (window && (!m_domWindowObserver || m_domWindowObserver->window() != window)) {
+             // New LocalDOMWindow, clear the cache and create a new DOMWindowObserver.
+             clear();
+-            m_domWindowObserver = makeUnique<DOMWindowObserver>(*domWindow, *this);
++            m_domWindowObserver = makeUnique<DOMWindowObserver>(*window, *this);
+         }
+ 
+         m_objects.append(&data);
+diff --git a/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp b/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp
+index e0cc954dd9b9..faa6ac17b7e6 100644
+--- a/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp
++++ b/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp
+@@ -1055,11 +1055,11 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
+     g_return_val_if_fail(message, FALSE);
+ 
+ #if ENABLE(USER_MESSAGE_HANDLERS)
+-    WebCore::LocalDOMWindow* domWindow = WebKit::core(window);
+-    if (!domWindow->shouldHaveWebKitNamespaceForWorld(WebCore::mainThreadNormalWorldSingleton()))
++    auto* window = WebKit::core(window);
++    if (!window->shouldHaveWebKitNamespaceForWorld(WebCore::mainThreadNormalWorldSingleton()))
+         return FALSE;
+ 
+-    auto webkitNamespace = domWindow->webkitNamespace();
++    auto webkitNamespace = window->webkitNamespace();
+     if (!webkitNamespace)
+         return FALSE;
+ 
+@@ -1067,7 +1067,7 @@ gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOM
+     if (!handler)
+         return FALSE;
+     
+-    auto* scriptExecutionContext = ((WebCore::ContextDestructionObserver*)domWindow)->scriptExecutionContext();
++    auto* scriptExecutionContext = ((WebCore::ContextDestructionObserver*)window)->scriptExecutionContext();
+     if (!scriptExecutionContext)
+         return FALSE;
+     
+diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+index 5c23bb5b7ab5..bb18efc7f89d 100644
+--- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
++++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+@@ -9512,7 +9512,7 @@ void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlig
+ void WebPage::createMediaSessionCoordinator(const String& identifier, CompletionHandler<void(bool)>&& completionHandler)
+ {
+     RefPtr document = m_mainFrame->coreLocalFrame()->document();
+-    if (!document || !document->domWindow()) {
++    if (!document || !document->window()) {
+         completionHandler(false);
+         return;
+     }
+diff --git a/Source/WebKit/WebProcess/cocoa/PlaybackSessionManager.mm b/Source/WebKit/WebProcess/cocoa/PlaybackSessionManager.mm
+index 2d31809fa2d3..ed1ead2f17ac 100644
+--- a/Source/WebKit/WebProcess/cocoa/PlaybackSessionManager.mm
++++ b/Source/WebKit/WebProcess/cocoa/PlaybackSessionManager.mm
+@@ -587,7 +587,7 @@
+         return;
+     }
+ 
+-    RefPtr window = mediaElement->document().domWindow();
++    RefPtr window = mediaElement->document().window();
+     if (!window) {
+         m_mediaSession = nullptr;
+         return;
+diff --git a/Source/WebKitLegacy/mac/DOM/DOMAbstractView.mm b/Source/WebKitLegacy/mac/DOM/DOMAbstractView.mm
+index fd1f307b3b98..955091c6e854 100644
+--- a/Source/WebKitLegacy/mac/DOM/DOMAbstractView.mm
++++ b/Source/WebKitLegacy/mac/DOM/DOMAbstractView.mm
+@@ -74,7 +74,7 @@ - (void)_disconnectFrame
+         return 0;
+     if (!wrapper->_internal)
+         return 0;
+-    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->domWindow();
++    return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->window();
+ }
+ 
+ DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
+diff --git a/Source/WebKitLegacy/mac/DOM/DOMDocument.mm b/Source/WebKitLegacy/mac/DOM/DOMDocument.mm
+index 9835d94c8e13..2ce48e53ecc2 100644
+--- a/Source/WebKitLegacy/mac/DOM/DOMDocument.mm
++++ b/Source/WebKitLegacy/mac/DOM/DOMDocument.mm
+@@ -694,7 +694,7 @@ - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)element pseudoElement
+     WebCore::JSMainThreadNullState state;
+     if (!element)
+         raiseTypeErrorException();
+-    auto* dv = IMPL->domWindow();
++    auto* dv = IMPL->window();
+     if (!dv)
+         return nil;
+     return kit(WTF::getPtr(dv->getComputedStyle(*core(element), pseudoElement)));
+@@ -708,7 +708,7 @@ - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSSt
+ - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement authorOnly:(BOOL)authorOnly
+ {
+     WebCore::JSMainThreadNullState state;
+-    auto* dv = IMPL->domWindow();
++    auto* dv = IMPL->window();
+     if (!dv)
+         return nil;
+     return kit(WTF::getPtr(dv->getMatchedCSSRules(core(element), pseudoElement, authorOnly)));
+diff --git a/Source/WebKitLegacy/mac/WebView/WebFrame.mm b/Source/WebKitLegacy/mac/WebView/WebFrame.mm
+index f6dd13e106de..56e000c36df7 100644
+--- a/Source/WebKitLegacy/mac/WebView/WebFrame.mm
++++ b/Source/WebKitLegacy/mac/WebView/WebFrame.mm
+@@ -1154,7 +1154,7 @@ - (BOOL)_isDisplayingStandaloneImage
+ 
+ - (unsigned)_pendingFrameUnloadEventCount
+ {
+-    return _private->coreFrame->document()->domWindow()->pendingUnloadEventListeners();
++    return _private->coreFrame->document()->window()->pendingUnloadEventListeners();
+ }
+ 
+ #if PLATFORM(IOS_FAMILY)
+@@ -2049,8 +2049,8 @@ - (NSMutableDictionary *)_cacheabilityDictionary
+     if (frameLoader.subframeLoader().containsPlugins())
+         [result setObject:@YES forKey:WebFrameHasPlugins];
+     
+-    if (auto* domWindow = _private->coreFrame->document()->domWindow()) {
+-        if (domWindow->hasEventListeners(WebCore::eventNames().unloadEvent))
++    if (auto* window = _private->coreFrame->document()->window()) {
++        if (window->hasEventListeners(WebCore::eventNames().unloadEvent))
+             [result setObject:@YES forKey:WebFrameHasUnloadListener];
+     }
