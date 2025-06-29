@@ -1,0 +1,11 @@
+NOCONFIGURE=1 ./autogen.sh
+
+PYTHON=python3 \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --enable-python \
+    --disable-gtk-doc
+make
+make install DESTDIR=$PKG

@@ -12,6 +12,7 @@ callaudiod
 umockdev
 feedbackd
 telepathy-glib
+telepathy-mission-control
 folks
 gom
 sofia-sip
@@ -29,6 +30,8 @@ gnome-font-viewer
 gnome-initial-setup
 libmediaart
 libdmapsharing
+totem-pl-parser
+liboauth
 grilo
 grilo-plugins
 gnome-music
@@ -40,6 +43,7 @@ gnome-text-editor
 gnome-tour
 mod_dnssd
 gnome-user-share
+pandoc-bin
 gssdp
 gupnp
 gupnp-av
@@ -85,3 +89,4 @@ text-engine
 extension-manager
 polari
 devhelp
+gnome-power-manager

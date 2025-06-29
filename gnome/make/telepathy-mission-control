@@ -1,0 +1,15 @@
+NOCONFIGURE=1 ./autogen.sh
+
+PYTHON=python3 \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --disable-debug \
+    --enable-libaccounts-sso=no \
+    --enable-conn-setting=yes \
+    --with-connectivity=nm \
+    --enable-upower=no \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+make
+make install DESTDIR=$PKG

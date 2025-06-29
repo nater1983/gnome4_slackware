@@ -10,6 +10,7 @@ libvirt-python
 gtk-vnc
 spice-protocol
 spice
+spice-vdagent
 usbredir
 spice-gtk
 dtc

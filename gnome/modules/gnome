@@ -27,7 +27,7 @@ libyuv
 x265
 rav1e
 libde265
-SVT-AV1
+svt-av1
 pillow_heif
 libheif
 libavif
@@ -71,3 +71,6 @@ ibus-gtk4
 cantarell-fonts
 xvfb-run
 gnome-user-docs
+rtkit
+malcontent
+xdg-user-dirs-gtk

@@ -5,15 +5,15 @@
 # You must make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':' except on otherwise blank lines.
 
-                       |-----handy-ruler------------------------------------------------------|
-libgnome-games-support2: libgnome-games-support2 ( is a small library for Gnome retro games )
-libgnome-games-support2:
-libgnome-games-support2: A small library intended for internal use 
-libgnome-games-support2: by GNOME Games, but it may be used by others.
-libgnome-games-support2:
-libgnome-games-support2: Homepage: https://gitlab.gnome.org/GNOME/libgnome-games-support 
-libgnome-games-support2:
-libgnome-games-support2:
-libgnome-games-support2:
-libgnome-games-support2:
-libgnome-games-support2:
+                      |-----handy-ruler------------------------------------------------------|
+libgnome-games-support: libgnome-games-support ( is a small library for Gnome retro games )
+libgnome-games-support:
+libgnome-games-support: A small library intended for internal use 
+libgnome-games-support: by GNOME Games, but it may be used by others.
+libgnome-games-support:
+libgnome-games-support: Homepage: https://gitlab.gnome.org/GNOME/libgnome-games-support 
+libgnome-games-support:
+libgnome-games-support:
+libgnome-games-support:
+libgnome-games-support:
+libgnome-games-support:
