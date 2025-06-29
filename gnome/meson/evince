@@ -23,6 +23,7 @@ cd build
     -Dkeyring=enabled \
     -Dgtk_unix_print=enabled \
     -Dthumbnail_cache=enabled \
+    -Ddvi=disabled \
     -Dsystemduserunitdir=no
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
