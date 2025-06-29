@@ -1,3 +1,4 @@
+echo "0.57.0" | tee .tarball-version .version > /dev/null
 ./autogen.sh
 CFLAGS="$SLKCFLAGS -Wno-error=incompatible-pointer-types" \
 CXXFLAGS="$SLKCFLAGS" \
