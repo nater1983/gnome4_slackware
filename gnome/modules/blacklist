@@ -4,6 +4,7 @@ gobject-introspection
 gjs
 vte
 gexiv2
+libgexiv2
 libxml2
 python-build
 docutils
