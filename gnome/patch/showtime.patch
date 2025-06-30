@@ -1,0 +1,2 @@
+patch -Np1 -R -i $CWD/patch/showtime/ef1cebf8cb872d7c68664da1dc6e23e95263d13b.patch
+patch -Np1 -R -i $CWD/patch/showtime/ecd9a0354e6fc92e33e16959006bfc4089e07487.patch
