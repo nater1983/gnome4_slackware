@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gnome-calculator/58734539b3be976277f9898690845cc9e29bc0d1.patch.
