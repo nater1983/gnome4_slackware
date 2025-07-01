@@ -1,5 +1,5 @@
 # LFS Patches:
-sed "/  policy,/d" -i plugins/{power,wacom}/meson.build
+sed "/  policy,/d" -i plugins/power/meson.build
 
 # Need it if want to run tests
 sed -e 's/libsystemd/libelogind/' \
