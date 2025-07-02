@@ -1,2 +1,3 @@
 mkdir -p $PKG/etc/X11/xinit
 install -vDm 0755 $CWD/post-install/gnome-session/xinitrc.gnome -t $PKG/etc/X11/xinit
+install -vDm 0644 data/org.gnome.SessionManager.gschema.xml -t $PKG/usr/share/glib-2.0/schemas
