@@ -15,6 +15,7 @@ cd build
     -Dsystemdsystemunitdir=no \
     -Dsystemduserunitdir=no \
     -Dsysconfsubdir=/etc/gdm \
+    -Dx11-support=true \
     -Dinitial-vt=7
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
