@@ -1,1 +1,5 @@
+patch -Np1 -i $CWD/patch/gdm/0001-Xsession-Don-t-start-ssh-agent-by-default.patch
+patch -Np1 -i $CWD/patch/gdm/0003-add-wayland-session-script.patch
+patch -Np1 -i $CWD/patch/gdm/0004-fix-Xsession-language-in-gnome.patch
+patch -Np1 -i $CWD/patch/gdm/0001-DOWNSTREAM-use-bin-touch-instead-of-usr-bin-touch.patch
 patch -Np1 -i $CWD/patch/gdm/16ff9a65a242c556e3f10cdc8ed17a0027c60d6c.patch
