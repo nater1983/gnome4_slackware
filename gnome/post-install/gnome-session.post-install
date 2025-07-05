@@ -1,2 +1,5 @@
 mkdir -p $PKG/etc/X11/xinit
 install -vDm 0755 $CWD/post-install/gnome-session/xinitrc.gnome -t $PKG/etc/X11/xinit
+
+sed -e 's@^Exec=@&/usr/bin/dbus-run-session @' \
+    -i $PKG/usr/share/wayland-sessions/gnome-wayland.desktop
