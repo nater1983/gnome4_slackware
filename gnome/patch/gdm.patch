@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gdm/16ff9a65a242c556e3f10cdc8ed17a0027c60d6c.patch
