@@ -11,7 +11,6 @@ cd build
     -Dcogl_tests=false \
     -Dclutter_tests=false \
     -Dtests=disabled \
-    -Dx11=true \
     -Dbash_completion=false \
     -Dxwayland_initfd=auto \
     -Dinstalled_tests=false
