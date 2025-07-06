@@ -1,0 +1,80 @@
+From edca398a2b9c0f249a26bc9ce0d54bbc626e8434 Mon Sep 17 00:00:00 2001
+From: Khalid Abu Shawarib <kas@gnome.org>
+Date: Sun, 6 Jul 2025 13:47:46 +0300
+Subject: [PATCH 1/2] build: Fix auto compiling without avformat present
+
+---
+ src/extractor/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/extractor/meson.build b/src/extractor/meson.build
+index d5472ec5c..19b4d21b3 100644
+--- a/src/extractor/meson.build
++++ b/src/extractor/meson.build
+@@ -43,7 +43,7 @@ if libjpeg.found()
+   modules += [['extract-jpeg', 'tracker-extract-jpeg.c', ['10-jpeg.rule'], [libjpeg, tracker_miners_common_dep]]]
+ endif
+ 
+-if not get_option('libav').disabled()
++if avformat.found()
+   rules = ['15-libav-guess.rule', '90-libav-audio-generic.rule', '90-libav-video-generic.rule']
+   extract_libav_files = ['tracker-extract-libav.c', 'tracker-cue-sheet.c']
+   if gupnp_dlna.found()
+-- 
+GitLab
+
+
+From 1aafea9328a3d395cfcfdbeea7653c2aca641376 Mon Sep 17 00:00:00 2001
+From: Khalid Abu Shawarib <kas@gnome.org>
+Date: Sun, 6 Jul 2025 13:48:28 +0300
+Subject: [PATCH 2/2] build: Don't substitute quoted domain names inside dbus
+ service files
+
+Fixes: https://gitlab.gnome.org/GNOME/localsearch/-/issues/401
+---
+ src/control/meson.build | 2 ++
+ src/indexer/meson.build | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/control/meson.build b/src/control/meson.build
+index 1cf8f7735..478aee605 100644
+--- a/src/control/meson.build
++++ b/src/control/meson.build
+@@ -40,6 +40,7 @@ executable('localsearch-control-@0@'.format(tracker_api_major),
+ tmp_conf = configuration_data()
+ tmp_conf.merge_from(conf)
+ tmp_conf.set('dbusname', 'LocalSearch3.Control')
++tmp_conf.set ('DOMAIN_PREFIX', get_option('domain_prefix'))
+ if get_option('domain_prefix') == 'org.freedesktop'
+   tmp_conf.set ('SYSTEMD_SERVICE', 'SystemdService=localsearch-control-3.service')
+ else
+@@ -56,6 +57,7 @@ dbus_service_file = configure_file(
+ legacy_conf = configuration_data()
+ legacy_conf.merge_from(conf)
+ legacy_conf.set('dbusname', 'Tracker3.Miner.Files.Control')
++legacy_conf.set ('DOMAIN_PREFIX', get_option('domain_prefix'))
+ if get_option('domain_prefix') == 'org.freedesktop'
+   legacy_conf.set ('SYSTEMD_SERVICE', 'SystemdService=localsearch-control-3.service')
+ else
+diff --git a/src/indexer/meson.build b/src/indexer/meson.build
+index af54f4941..15928a124 100644
+--- a/src/indexer/meson.build
++++ b/src/indexer/meson.build
+@@ -82,6 +82,7 @@ if get_option('domain_prefix') != 'org.freedesktop'
+     tmp_conf = configuration_data()
+     tmp_conf.merge_from(conf)
+     tmp_conf.set ('DBUS_NAME', 'LocalSearch3')
++    tmp_conf.set ('DOMAIN_PREFIX', get_option('domain_prefix'))
+ 
+     domain_ontology_localsearch_service_file = configure_file(
+         input: 'org.freedesktop.Tracker3.Miner.Files.service.in',
+@@ -110,6 +111,7 @@ if get_option('domain_prefix') != 'org.freedesktop'
+     legacy_conf = configuration_data()
+     legacy_conf.merge_from(conf)
+     legacy_conf.set ('DBUS_NAME', 'Tracker3.Miner.Files')
++    legacy_conf.set ('DOMAIN_PREFIX', get_option('domain_prefix'))
+ 
+     legacy_domain_ontology_service_file = configure_file(
+         input: 'org.freedesktop.Tracker3.Miner.Files.service.in',
+-- 
+GitLab
