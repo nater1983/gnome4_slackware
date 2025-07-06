@@ -8,3 +8,6 @@ sed -e 's/libsystemd/libelogind/' \
 # Fixing backlight functionality in gnome-control-center:
 sed -e 's/(backlight->logind_proxy)/(0)/' \
     -i plugins/power/gsd-backlight.c
+
+rm -fr subprojects/*
+cp -av $CWD/pre-install/gnome-settings-daemon/*.wrap subprojects/
