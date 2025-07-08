@@ -192,3 +192,11 @@ gst-plugins-rs
 snapshot
 # nautilus-python
 nautilus-python
+# fwupd
+libxmlb
+gcab
+libsmbios
+protobuf-c
+python3-pefile
+libjcat
+fwupd
