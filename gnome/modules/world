@@ -8,7 +8,7 @@ poetry_core
 python3-generic
 exceptiongroup
 python-webencodings
-flit_scm
+python3-flit_scm
 gaphas
 python3-tinycss2
 pydot
