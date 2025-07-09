@@ -1,0 +1,35 @@
+From 85e2bd97f0f2eb723570bdac26daaebb831e52d4 Mon Sep 17 00:00:00 2001
+From: Marvin Schmidt <marv@exherbo.org>
+Date: Thu, 10 Feb 2022 12:43:39 +0100
+Subject: [PATCH] meson: drop unused argument for i18n.merge_file()
+
+Ignored in meson < 0.60.0, deprecated since 0.60.1 and fatal since 0.61.0.
+---
+ data/meson.build | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/data/meson.build b/data/meson.build
+index 3ebe5871..caea1175 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -44,16 +44,14 @@ install_data('org.gnome.Recipes-mime.xml',
+ install_data('org.gnome.Recipes-search-provider.ini',
+              install_dir: join_paths([datadir, 'gnome-shell/search-providers']))
+ 
+-i18n.merge_file('desktop-file',
+-                type: 'desktop',
++i18n.merge_file(type: 'desktop',
+                 output: 'org.gnome.Recipes.desktop',
+                 input: files('org.gnome.Recipes.desktop.in'),
+                 po_dir: po_dir,
+                 install: true,
+                 install_dir: join_paths([datadir,'applications']))
+ 
+-i18n.merge_file('appdata',
+-                 type: 'xml',
++i18n.merge_file( type: 'xml',
+                  output: 'org.gnome.Recipes.appdata.xml',
+                  input: files('appdata/org.gnome.Recipes.appdata.xml.in'),
+                  po_dir: po_dir,
+-- 
+GitLab
