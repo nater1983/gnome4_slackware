@@ -1,0 +1,4 @@
+wget -c -P "$CWD/pre-install/Junction" https://github.com/sonnyp/troll/archive/94ced56f1b08e6955f6c8325a04c74736d39b823/troll-94ced56f1b08e6955f6c8325a04c74736d39b823.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/Junction/troll-94ced56f1b08e6955f6c8325a04c74736d39b823.tar.gz -C troll
+rm -fr $CWD/pre-install/Junction/troll-94ced56f1b08e6955f6c8325a04c74736d39b823.tar.gz
+rm -fr $CWD/pre-install/Junction/
