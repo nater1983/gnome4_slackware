@@ -200,3 +200,5 @@ protobuf-c
 python3-pefile
 libjcat
 fwupd
+# gnome-recipes
+gnome-recipes
