@@ -204,3 +204,9 @@ fwupd
 gnome-recipes
 # Junction
 Junction
+# Curtail
+python3-scour
+pngquant
+jpegoptim
+oxipng
+Curtail
