@@ -5,4 +5,4 @@ cargo build --release $CARGOTARGET
 
 mkdir -p $PKG/usr/bin/
 
-find target -name $PRGNAM -exec install -m 755 {} $PKG/usr/bin/$PRGNAM \;
+find target -name $PKGNAME -exec install -m 755 {} $PKG/usr/bin/$PKGNAME \;
