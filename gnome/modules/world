@@ -71,7 +71,7 @@ borgbackup
 cachetools
 setuptools_rust
 python3-semantic_version
-maturin
+python3-maturin
 python3-cryptography
 python3-google-api-core
 python3-google-api-python-client
