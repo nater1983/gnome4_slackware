@@ -11,7 +11,7 @@ python-webencodings
 python3-flit_scm
 gaphas
 python3-tinycss2
-pydot
+python3-pydot
 python3-jedi
 parso
 better_exceptions
