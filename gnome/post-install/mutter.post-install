@@ -4,5 +4,8 @@ mkdir -p "$PKG/etc/ld.so.conf.d" && \
 echo "/usr/lib${LIBDIRSUFFIX}/mutter-$(basename -s .pc "$PKG"/usr/lib${LIBDIRSUFFIX}/pkgconfig/libmutter-*.pc \
       | sed 's/^libmutter-//' | sort -n | tail -1)/" \
   > "$PKG/etc/ld.so.conf.d/mutter.conf"
+echo "/usr/lib${LIBDIRSUFFIX}/mutter-$(basename -s .pc "$PKG"/usr/lib${LIBDIRSUFFIX}/pkgconfig/libmutter-*.pc \
+  | sed 's/^libmutter-//' | sort -n | tail -1)/plugins/" \
+  > "$PKG/etc/ld.so.conf.d/mutter.conf"
 install -vDm 0644 data/dbus-interfaces/org.gnome.Mutter.* -t $PKG/usr/share/dbus-1/interfaces
 install -vDm 0644 data/dbus-interfaces/org.gnome.SettingsDaemon.* -t $PKG/usr/share/dbus-1/interfaces
