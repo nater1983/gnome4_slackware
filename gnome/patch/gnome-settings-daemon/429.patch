@@ -1,0 +1,403 @@
+From 3b75a77985deab6c9161846e8674ad45ac4cdcf4 Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 7 Jul 2025 17:25:44 +0200
+Subject: [PATCH 1/4] media-keys: Use GAppLaunchContext directly
+
+The only advantage we might ever obtain from GDK here is integrating
+with startup notification for applications being launcher. However,
+we do just receive a timestamp, which is by itself not sufficient to
+integrate with startup notification on Wayland.
+
+While we think that through, using GTK has other side effects, so
+it's better to avoid GdkAppLaunchContext here altogether.
+---
+ plugins/media-keys/gsd-media-keys-manager.c | 21 ++++++++-------------
+ plugins/media-keys/main.c                   |  5 -----
+ plugins/media-keys/meson.build              |  1 -
+ 3 files changed, 8 insertions(+), 19 deletions(-)
+
+diff --git a/plugins/media-keys/gsd-media-keys-manager.c b/plugins/media-keys/gsd-media-keys-manager.c
+index 2811114ba..660a8ffc9 100644
+--- a/plugins/media-keys/gsd-media-keys-manager.c
++++ b/plugins/media-keys/gsd-media-keys-manager.c
+@@ -34,7 +34,6 @@
+ #include <glib.h>
+ #include <glib/gi18n.h>
+ #include <gio/gio.h>
+-#include <gdk/gdk.h>
+ #include <gio/gdesktopappinfo.h>
+ #include <gio/gunixfdlist.h>
+ 
+@@ -1001,13 +1000,12 @@ launch_app (GsdMediaKeysManager *manager,
+ 	    GAppInfo            *app_info,
+ 	    gint64               timestamp)
+ {
+-	GError *error = NULL;
+-        GdkAppLaunchContext *launch_context;
++        g_autoptr (GError) error = NULL;
++        g_autoptr (GAppLaunchContext) launch_context = NULL;
+ 
+         /* setup the launch context so the startup notification is correct */
+-        launch_context = gdk_display_get_app_launch_context (gdk_display_get_default ());
+-        gdk_app_launch_context_set_timestamp (launch_context, timestamp);
+-        set_launch_context_env (manager, G_APP_LAUNCH_CONTEXT (launch_context));
++        launch_context = g_app_launch_context_new ();
++        set_launch_context_env (manager, launch_context);
+ 
+         g_signal_connect_object (launch_context,
+                                  "launched",
+@@ -1019,9 +1017,7 @@ launch_app (GsdMediaKeysManager *manager,
+ 		g_warning ("Could not launch '%s': %s",
+ 			   g_app_info_get_commandline (app_info),
+ 			   error->message);
+-		g_error_free (error);
+ 	}
+-        g_object_unref (launch_context);
+ }
+ 
+ static void
+@@ -1279,7 +1275,7 @@ static void
+ do_home_key_action (GsdMediaKeysManager *manager,
+ 		    gint64               timestamp)
+ {
+-	GdkAppLaunchContext *launch_context;
++	g_autoptr (GAppLaunchContext) launch_context = NULL;
+ 	g_autoptr (GFile) file = NULL;
+ 	g_autoptr (GError) error = NULL;
+ 	g_autofree char *uri;
+@@ -1287,10 +1283,9 @@ do_home_key_action (GsdMediaKeysManager *manager,
+ 	file = g_file_new_for_path (g_get_home_dir ());
+ 	uri = g_file_get_uri (file);
+ 
+-	launch_context = gdk_display_get_app_launch_context (gdk_display_get_default ());
+-	gdk_app_launch_context_set_timestamp (launch_context, timestamp);
++	launch_context = g_app_launch_context_new ();
+ 
+-	if (!g_app_info_launch_default_for_uri (uri, G_APP_LAUNCH_CONTEXT (launch_context), &error))
++	if (!g_app_info_launch_default_for_uri (uri, launch_context, &error))
+ 		g_warning ("Failed to launch '%s': %s", uri, error->message);
+ }
+ 
+@@ -2578,7 +2573,7 @@ on_accelerator_activated (ShellKeyGrabber     *grabber,
+         if (!g_variant_dict_lookup (&dict, "device-node", "s", &device_node))
+               device_node = NULL;
+         if (!g_variant_dict_lookup (&dict, "timestamp", "u", &timestamp))
+-              timestamp = GDK_CURRENT_TIME;
++              timestamp = 0L;
+         if (!g_variant_dict_lookup (&dict, "action-mode", "u", &mode))
+               mode = 0;
+ 
+diff --git a/plugins/media-keys/main.c b/plugins/media-keys/main.c
+index 52ac0ea8a..e2de6c05f 100644
+--- a/plugins/media-keys/main.c
++++ b/plugins/media-keys/main.c
+@@ -1,13 +1,8 @@
+-#include <gtk/gtk.h>
+-
+ #include "gsd-main-helper.h"
+ #include "gsd-media-keys-manager.h"
+ 
+ int
+ main (int argc, char **argv)
+ {
+-        gtk_init ();
+-
+         return gsd_main_helper (GSD_TYPE_MEDIA_KEYS_MANAGER, argc, argv);
+ }
+-
+diff --git a/plugins/media-keys/meson.build b/plugins/media-keys/meson.build
+index 2d95686c9..5bd3f7632 100644
+--- a/plugins/media-keys/meson.build
++++ b/plugins/media-keys/meson.build
+@@ -29,7 +29,6 @@ deps = plugins_deps + [
+   gsettings_desktop_dep,
+   libcommon_dep,
+   gnome_desktop_dep,
+-  gtk_dep,
+   libgvc_dep,
+   libpulse_mainloop_glib_dep,
+   m_dep,
+-- 
+GitLab
+
+
+From 1fc185e7a509a778564a3a999cff7b8b74d3a299 Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 7 Jul 2025 17:29:03 +0200
+Subject: [PATCH 2/4] color: Use GAppLaunchContext to spawn color calibrator
+
+In a worse situation than media-keys, we don't even attempt to integrate
+with startup notification here, so using GdkAppLaunchContext is somewhat
+pointless.
+---
+ plugins/color/gsd-color-calibrate.c | 30 ++++++++++-------------------
+ plugins/color/main.c                |  5 -----
+ plugins/color/meson.build           |  1 -
+ 3 files changed, 10 insertions(+), 26 deletions(-)
+
+diff --git a/plugins/color/gsd-color-calibrate.c b/plugins/color/gsd-color-calibrate.c
+index 6796925d3..83beb6739 100644
+--- a/plugins/color/gsd-color-calibrate.c
++++ b/plugins/color/gsd-color-calibrate.c
+@@ -23,7 +23,6 @@
+ #include <glib/gi18n.h>
+ #include <colord.h>
+ #include <libnotify/notify.h>
+-#include <gdk/gdk.h>
+ 
+ #include "gsd-color-calibrate.h"
+ 
+@@ -76,39 +75,30 @@ gcm_session_async_helper_free (GcmSessionAsyncHelper *helper)
+ static void
+ gcm_session_exec_control_center (GsdColorCalibrate *calibrate)
+ {
+-        gboolean ret;
+-        GError *error = NULL;
+-        GAppInfo *app_info;
+-        GdkAppLaunchContext *launch_context;
++        g_autoptr (GError) error = NULL;
++        g_autoptr (GAppInfo) app_info = NULL;
++        g_autoptr (GAppLaunchContext) launch_context = NULL;
+ 
+         /* setup the launch context so the startup notification is correct */
+-        launch_context = gdk_display_get_app_launch_context (gdk_display_get_default ());
++        launch_context = g_app_launch_context_new ();
+         app_info = g_app_info_create_from_commandline (BINDIR "/gnome-control-center color",
+                                                        "gnome-control-center",
+                                                        G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION,
+                                                        &error);
+         if (app_info == NULL) {
+                 g_warning ("failed to create application info: %s",
+-                           error->message);
+-                g_error_free (error);
+-                goto out;
++                           error->message);\
++                return;
+         }
+ 
+         /* launch gnome-control-center */
+-        ret = g_app_info_launch (app_info,
+-                                 NULL,
+-                                 G_APP_LAUNCH_CONTEXT (launch_context),
+-                                 &error);
+-        if (!ret) {
++        if (!g_app_info_launch (app_info,
++                                NULL,
++                                G_APP_LAUNCH_CONTEXT (launch_context),
++                                &error)) {
+                 g_warning ("failed to launch gnome-control-center: %s",
+                            error->message);
+-                g_error_free (error);
+-                goto out;
+         }
+-out:
+-        g_object_unref (launch_context);
+-        if (app_info != NULL)
+-                g_object_unref (app_info);
+ }
+ 
+ static void
+diff --git a/plugins/color/main.c b/plugins/color/main.c
+index 1996a6d18..4d41bfeaf 100644
+--- a/plugins/color/main.c
++++ b/plugins/color/main.c
+@@ -1,13 +1,8 @@
+-#include <gtk/gtk.h>
+-
+ #include "gsd-main-helper.h"
+ #include "gsd-color-manager.h"
+ 
+ int
+ main (int argc, char **argv)
+ {
+-        gtk_init ();
+-
+         return gsd_main_helper (GSD_TYPE_COLOR_MANAGER, argc, argv);
+ }
+-
+diff --git a/plugins/color/meson.build b/plugins/color/meson.build
+index ed79538b9..1c5be07f4 100644
+--- a/plugins/color/meson.build
++++ b/plugins/color/meson.build
+@@ -14,7 +14,6 @@ deps = plugins_deps + [
+   libgeoclue_dep,
+   libnotify_dep,
+   libcommon_dep,
+-  gtk_dep,
+   m_dep,
+ ]
+ 
+-- 
+GitLab
+
+
+From 39f6b27c418c112a6e86865f431ccf6bfba89882 Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 7 Jul 2025 17:32:47 +0200
+Subject: [PATCH 3/4] print-notifications: Copy method from GTK to get paper
+ size
+
+This is just some nl_langinfo glue, we do not need all of GTK for
+this.
+---
+ meson.build                               |  7 ++++
+ plugins/print-notifications/gsd-printer.c | 41 ++++++++++++++++++++---
+ plugins/print-notifications/main.c        |  4 ---
+ plugins/print-notifications/meson.build   |  1 -
+ 4 files changed, 43 insertions(+), 10 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 671afcf83..61da83d30 100644
+--- a/meson.build
++++ b/meson.build
+@@ -189,6 +189,13 @@ if enable_cups
+     compile_args: cups_cflags
+   )
+   '''
++
++  if cc.has_header('langinfo.h')
++    foreach nl_enum: [ '_NL_PAPER_HEIGHT',
++                       '_NL_PAPER_WIDTH' ]
++      config_h.set('HAVE_' + nl_enum, cc.has_header_symbol('langinfo.h', nl_enum))
++    endforeach
++  endif
+ endif
+ 
+ # Rfkill
+diff --git a/plugins/print-notifications/gsd-printer.c b/plugins/print-notifications/gsd-printer.c
+index 596a20a72..f1770c9ff 100644
+--- a/plugins/print-notifications/gsd-printer.c
++++ b/plugins/print-notifications/gsd-printer.c
+@@ -23,10 +23,13 @@
+ #include <libnotify/notify.h>
+ #include <glib/gi18n.h>
+ #include <glib/gstdio.h>
+-#include <gtk/gtk.h>
+ #include <cups/cups.h>
+ #include <cups/ppd.h>
+ 
++#if defined(HAVE__NL_PAPER_HEIGHT) && defined(HAVE__NL_PAPER_WIDTH)
++#include <langinfo.h>
++#endif
++
+ /* FIXME: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/issues/860 */
+ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+ 
+@@ -744,14 +747,42 @@ printer_autoconfigure (gchar *printer_name)
+         g_free (commands_lowercase);
+ }
+ 
++#define NL_PAPER_GET(x)         \
++        ((union { char *string; unsigned int word; }) nl_langinfo(x)).word
++
+ /* Returns default page size for current locale */
+ static const gchar *
+ get_page_size_from_locale (void)
+ {
+-  if (g_str_equal (gtk_paper_size_get_default (), GTK_PAPER_NAME_LETTER))
+-    return "Letter";
+-  else
+-    return "A4";
++        char *locale;
++#if defined(HAVE__NL_PAPER_HEIGHT) && defined(HAVE__NL_PAPER_WIDTH)
++        int width = NL_PAPER_GET (_NL_PAPER_WIDTH);
++        int height = NL_PAPER_GET (_NL_PAPER_HEIGHT);
++
++        if (width == 210 && height == 297)
++                return "A4";
++
++        if (width == 216 && height == 279)
++                return "Letter";
++#endif
++
++#if defined(LC_PAPER)
++        locale = setlocale (LC_PAPER, NULL);
++#else
++        locale = setlocale (LC_MESSAGES, NULL);
++#endif
++
++        if (!locale)
++                return "A4";
++
++        /* CLDR 1.8.1
++         * http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/territory_language_information.html
++         */
++        if (g_regex_match_simple ("[^_.@]{2,3}_(BZ|CA|CL|CO|CR|GT|MX|NI|PA|PH|PR|SV|US|VE)",
++                                  locale, G_REGEX_ANCHORED, G_REGEX_MATCH_ANCHORED))
++                return "Letter";
++        else
++                return "A4";
+ }
+ 
+ static void
+diff --git a/plugins/print-notifications/main.c b/plugins/print-notifications/main.c
+index 5574bc563..6428efd79 100644
+--- a/plugins/print-notifications/main.c
++++ b/plugins/print-notifications/main.c
+@@ -1,12 +1,8 @@
+-#include <gtk/gtk.h>
+-
+ #include "gsd-main-helper.h"
+ #include "gsd-print-notifications-manager.h"
+ 
+ int
+ main (int argc, char **argv)
+ {
+-        gtk_init ();
+-
+         return gsd_main_helper (GSD_TYPE_PRINT_NOTIFICATIONS_MANAGER, argc, argv);
+ }
+diff --git a/plugins/print-notifications/meson.build b/plugins/print-notifications/meson.build
+index 9137d5c4a..58e5103ec 100644
+--- a/plugins/print-notifications/meson.build
++++ b/plugins/print-notifications/meson.build
+@@ -6,7 +6,6 @@ sources += main_helper_sources
+ 
+ deps = plugins_deps + [
+   cups_dep,
+-  gtk_dep,
+   libnotify_dep
+ ]
+ 
+-- 
+GitLab
+
+
+From ef9e66566835ef2bbc759eb69b2c4958211bbe3c Mon Sep 17 00:00:00 2001
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Mon, 7 Jul 2025 17:33:52 +0200
+Subject: [PATCH 4/4] build: Drop dependency on gtk4
+
+This is no longer used, thus far.
+---
+ meson.build                               | 1 -
+ plugins/print-notifications/gsd-printer.c | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 61da83d30..4afff67b3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -103,7 +103,6 @@ gio_dep = dependency('gio-2.0', version: '>= 2.53.0')
+ gio_unix_dep = dependency('gio-unix-2.0')
+ gnome_desktop_dep = dependency('gnome-desktop-4')
+ gsettings_desktop_dep = dependency('gsettings-desktop-schemas', version: '>= 46.beta')
+-gtk_dep = dependency('gtk4')
+ gweather_dep = dependency('gweather4')
+ libcanberra_dep = dependency('libcanberra')
+ libgeoclue_dep = dependency('libgeoclue-2.0', version: '>= 2.3.1')
+diff --git a/plugins/print-notifications/gsd-printer.c b/plugins/print-notifications/gsd-printer.c
+index f1770c9ff..646d55fe2 100644
+--- a/plugins/print-notifications/gsd-printer.c
++++ b/plugins/print-notifications/gsd-printer.c
+@@ -750,7 +750,7 @@ printer_autoconfigure (gchar *printer_name)
+ #define NL_PAPER_GET(x)         \
+         ((union { char *string; unsigned int word; }) nl_langinfo(x)).word
+ 
+-/* Returns default page size for current locale */
++/* Returns default page size for current locale. Copied from GTK */
+ static const gchar *
+ get_page_size_from_locale (void)
+ {
+-- 
+GitLab
