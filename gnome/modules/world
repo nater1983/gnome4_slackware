@@ -215,3 +215,8 @@ Fragments
 # apostrophe
 python3-pypandoc
 apostrophe
+# workbench
+vala-language-server
+biome
+gtkcsslanguageserver
+workbench
