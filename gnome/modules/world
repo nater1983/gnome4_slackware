@@ -37,7 +37,7 @@ Authenticator
 liboauth
 duplicity
 librsync
-fasteners
+python3-fasteners
 rclone
 deja-dup
 dialect
