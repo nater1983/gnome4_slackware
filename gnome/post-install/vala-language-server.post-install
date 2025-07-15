@@ -1,0 +1,1 @@
+install -vDm 0644 $CWD/post-install/vala-language-server/vala-language-server.1 -t $PKG/usr/man/man1
