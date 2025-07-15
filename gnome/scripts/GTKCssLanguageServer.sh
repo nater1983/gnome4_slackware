@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://github.com/JCWasmx86"
+GNOMEGITURI="https://github.com/JCWasmx86/"
 
 # Default list of modules to checkout:
 DEFMODS="GTKCssLanguageServer"
