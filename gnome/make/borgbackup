@@ -9,8 +9,8 @@ if [ -x /usr/bin/sphinx-build ]; then
   cd docs
 
   make html
-  mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-  cp -a _build/html $PKG/usr/doc/$PRGNAM-$VERSION
+  mkdir -p $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+  cp -a _build/html $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
 
   make man
   mkdir -p $PKG/usr/man/man1
