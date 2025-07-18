@@ -67,6 +67,7 @@ Shortwave
 amberol
 decoder
 #Pika Backup/Borgbackup
+python3-pkgconfig
 borgbackup
 cachetools
 setuptools_rust
