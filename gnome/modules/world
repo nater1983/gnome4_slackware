@@ -157,7 +157,7 @@ webfont-kit-generator
 # cozy
 python3-peewee
 libdazzle
-gst-plugins-ugly
+# gst-plugins-ugly - found in previous module
 cozy
 # giara
 # blueprint-compiler -- found in a previous application
