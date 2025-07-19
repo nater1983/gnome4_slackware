@@ -19,6 +19,7 @@ snappy
 vde2
 virglrenderer
 libslirp
+edk2-ovmf
 qemu
 virt-manager
 libcacard
