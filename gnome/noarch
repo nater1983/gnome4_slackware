@@ -11,3 +11,4 @@ mat2
 spice-protocol
 xvfb-run
 gnome-video-effects
+edk2-ovmf
