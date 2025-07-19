@@ -1,0 +1,7 @@
+mkdir -p $PKG/usr/share
+cp -r usr/share/edk2/ovmf $PKG/usr/share/edk2-ovmf-x64
+cp -r usr/share/edk2/ovmf-ia32 $PKG/usr/share/edk2-ovmf-ia32
+# Firmware-loading specifications; the files do not conflict with Qemu.
+cp -r usr/share/qemu $PKG/usr/share/qemu
+sed -i 's|edk2/ovmf|edk2-ovmf-x64|g' $PKG/usr/share/qemu/firmware/*x64*
+sed -i 's|edk2/ovmf|edk2-ovmf|g' $PKG/usr/share/qemu/firmware/*ia32*
