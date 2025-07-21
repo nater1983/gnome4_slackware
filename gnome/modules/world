@@ -221,3 +221,7 @@ vala-language-server
 biome
 gtkcsslanguageserver
 workbench
+# eartag
+python3-pillow
+python3-pyacoustid
+eartag
