@@ -14,7 +14,7 @@ python3-tinycss2
 python3-pydot
 python3-jedi
 parso
-better_exceptions
+python3-better-exceptions
 defusedxml
 python3-dulwich
 gaphor
