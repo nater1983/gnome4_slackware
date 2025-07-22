@@ -15,7 +15,7 @@ python3-pydot
 python3-jedi
 python3-parso
 python3-better-exceptions
-defusedxml
+python3-defusedxml
 python3-dulwich
 gaphor
 identity
