@@ -13,7 +13,7 @@ gaphas
 python3-tinycss2
 python3-pydot
 python3-jedi
-parso
+python3-parso
 python3-better-exceptions
 defusedxml
 python3-dulwich
