@@ -8,7 +8,6 @@ libgexiv2
 libxml2
 python-build
 python-docutils
-hatch_vcs
 python-hatchling
 python-installer
 python-lxml
