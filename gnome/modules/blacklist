@@ -14,13 +14,12 @@ python-installer
 python-lxml
 python-pillow
 python-smartypants
-toml
 python-typogrify
 python-webencodings
 python-wheel
+python-flit-core
 vala
 libsoup3
-toml
 at-spi2-core
 gi-docgen
 cairo
@@ -54,4 +53,3 @@ libaom
 nv-codec-headers
 libdisplay-info
 appstream-glib
-flit_core
