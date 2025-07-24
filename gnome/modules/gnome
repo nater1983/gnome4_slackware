@@ -58,6 +58,7 @@ libdaemon
 openrc-settingsd
 python3-langtable
 python3-hatch_fancy_pypi_readme
+python3-hatch_vcs
 python3-attrs
 libfprint
 fprintd
