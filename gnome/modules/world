@@ -53,12 +53,12 @@ dateutil
 python3-decorator
 pep517
 python3-pycryptodomex
-pykeepass
-pyotp
-validators
-zxcvbn
-zxcvbn_rs_py
-pykcs11
+python3-pykeepass
+python3-pyotp
+python3-validators
+python3-zxcvbn
+python3-zxcvbn_rs_py
+python3-pykcs11
 secrets
 # boatswain
 hidapi
@@ -69,8 +69,8 @@ decoder
 #Pika Backup/Borgbackup
 python3-pkgconfig
 borgbackup
-cachetools
-setuptools_rust
+python3-cachetools
+python3-setuptools-rust
 python3-semantic_version
 python3-maturin
 python3-cryptography
@@ -91,7 +91,7 @@ python3-protobuf
 python3-pyasn1
 python3-pyasn1-modules
 python3-pydrive2
-pyopenssl
+python3-pyopenssl
 python3-rsa
 python3-typing_extensions
 python3-uritemplate
