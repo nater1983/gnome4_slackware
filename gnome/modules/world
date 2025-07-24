@@ -6,8 +6,7 @@ eyedropper
 # Gaphor
 python3-poetry-core
 python3-generic
-exceptiongroup
-python-webencodings
+python3-exceptiongroup
 python3-flit_scm
 gaphas
 python3-tinycss2
