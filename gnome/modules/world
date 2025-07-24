@@ -4,7 +4,7 @@ emblem
 exiftool
 eyedropper
 # Gaphor
-poetry_core
+python3-poetry-core
 python3-generic
 exceptiongroup
 python-webencodings
@@ -225,3 +225,5 @@ workbench
 python3-pillow
 python3-pyacoustid
 eartag
+# python3-turtle
+python3-turtle
