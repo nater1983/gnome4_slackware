@@ -1,0 +1,19 @@
+diff --git a/src/utils.js b/src/utils.js
+index d82d425..ed4e755 100644
+--- a/src/utils.js
++++ b/src/utils.js
+@@ -218,7 +218,14 @@ export function getGridIconSize(iconSizeEnum, defaultIconSize) {
+ }
+ 
+ export function getCategoryDetails(iconTheme, currentCategory) {
+-    const extensionPath = ArcMenuManager.extension.path;
++    let extensionPath;
++
++    try {
++        extensionPath = ArcMenuManager.extension.path;
++    } catch (e) {
++        extensionPath = '/usr/share';
++    }
++}
+ 
+     let name = null, gicon = null, fallbackIcon = null;
