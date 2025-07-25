@@ -53,6 +53,7 @@ git clone https://gitlab.com/arcmenu/ArcMenu.git
 cd $SRCNAM
 git checkout $_commit
 sed -i -- 's/"45", "46", "47", "48"/"45", "46", "47", "48", "49"/g' metadata.json
+patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
