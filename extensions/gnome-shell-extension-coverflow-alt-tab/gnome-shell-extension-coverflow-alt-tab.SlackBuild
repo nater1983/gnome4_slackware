@@ -65,9 +65,6 @@ mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/db
 $PKG/usr/share/dbus-1/interfaces
 rm -fr $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/dbus-interfaces/
 
-mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/ui/icons/ $PKG/usr/share
-rm -fr $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/ui/
-
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CONTRIBUTORS.md COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION || exit 1
