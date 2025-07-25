@@ -1,5 +1,5 @@
 diff --git a/src/utils.js b/src/utils.js
-index d82d425..ed4e755 100644
+index d82d425..add7aa5 100644
 --- a/src/utils.js
 +++ b/src/utils.js
 @@ -218,7 +218,14 @@ export function getGridIconSize(iconSizeEnum, defaultIconSize) {
@@ -10,9 +10,9 @@ index d82d425..ed4e755 100644
 +    let extensionPath;
 +
 +    try {
-+        extensionPath = ArcMenuManager.extension.path;
++       extensionPath = ArcMenuManager.extension.path;
 +    } catch (e) {
-+        extensionPath = '/usr/share';
++       extensionPath = '/usr/share';
 +    }
 +}
  
