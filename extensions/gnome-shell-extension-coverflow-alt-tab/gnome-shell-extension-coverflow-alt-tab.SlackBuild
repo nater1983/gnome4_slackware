@@ -71,7 +71,7 @@ rm -fr $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.co
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CONTRIBUTORS.md COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION || exit 1
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
