@@ -65,7 +65,7 @@ make DESTDIR=${PKG} VERSION=$VERSION install
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
