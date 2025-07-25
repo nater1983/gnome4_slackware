@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-arc-menu
 SRCNAM=ArcMenu
-VERSION=${VERSION:-65}
+VERSION=${VERSION:-66}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=7e7b85be1dd00ddf76883765beabeb12ec71d558
+_commit=53b0c6df3bd7948b1d2c5afe7fea37c8f1b54396
 
 ARCH=noarch
 
@@ -61,10 +61,12 @@ find -L . \
 
 make ; make install DESTDIR=$PKG
 
+mv $PKG/usr/share/gnome-shell/extensions/arcmenu@arcmenu.com/icons/ $PKG/usr/share
+
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a COPYING README.md \
       $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
