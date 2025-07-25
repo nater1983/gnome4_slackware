@@ -1,7 +1,7 @@
-diff --git a/src/utils.js b/src/utils.js
+diff --git a/utils.js b/utils.js
 index d82d425..69c5ee1 100644
---- a/src/utils.js
-+++ b/src/utils.js
+--- a/utils.js
++++ b/utils.js
 @@ -218,7 +218,7 @@ export function getGridIconSize(iconSizeEnum, defaultIconSize) {
  }
  
