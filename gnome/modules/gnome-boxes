@@ -13,7 +13,7 @@ spice
 spice-vdagent
 usbredir
 spice-gtk
-dtc
+device-tree-compiler
 libnfs
 snappy
 vde2
