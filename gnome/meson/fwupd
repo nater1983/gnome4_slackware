@@ -11,7 +11,7 @@ cd build
     -Db_lto=true \
     -Dbuild=all \
     -Dsystemd=disabled \
-		-Delogind=enabled \
+    -Delogind=enabled \
     -Dfirmware-packager=true \
     -Dgcab:docs=false \
     -Dhsi=enabled \
