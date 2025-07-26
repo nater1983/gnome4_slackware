@@ -25,4 +25,5 @@ virt-manager
 libcacard
 phodav
 libovf-glib
+libmks
 gnome-boxes
