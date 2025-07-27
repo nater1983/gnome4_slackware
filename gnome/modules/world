@@ -230,3 +230,6 @@ python3-turtle
 # showtime
 gst-plugins-rs
 showtime
+# sound-juicer
+libmusicbrainz
+sound-juicer
