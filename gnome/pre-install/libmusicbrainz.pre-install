@@ -1,0 +1,2 @@
+sed -e 's/xmlErrorPtr /const xmlError */'     \
+    -i src/xmlParser.cc
