@@ -192,7 +192,7 @@ gst-plugins-rs
 snapshot
 # nautilus-python
 nautilus-python
-# fwupd
+# gnome-firmware
 libxmlb
 gcab
 libsmbios
@@ -200,6 +200,7 @@ protobuf-c
 python3-pefile
 libjcat
 fwupd
+gnome-firmware
 # gnome-recipes
 gnome-recipes
 # Junction
