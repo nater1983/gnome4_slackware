@@ -23,6 +23,7 @@ fi
 
 if ! grep -q '/usr/libexec/fwupd/fwupd' etc/rc.d/rc.local; then
   cat << 'EOF' >> etc/rc.d/rc.local
+
 # Start Firmware update daemon:
 if [ -x /usr/libexec/fwupd/fwupd ]; then
   echo "Starting Firmware Update Daemon: /usr/libexec/fwupd/fwupd &"
