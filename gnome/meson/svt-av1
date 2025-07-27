@@ -6,6 +6,7 @@ make -C ../cmake-build
 make -C ../cmake-build install DESTDIR=$PKG
 
 cd ../gstreamer-plugin
+sed -i -e '541d' -e '538d' gstsvtav1enc.c
 mkdir cmake-build
 cd cmake-build
   cmake .. \
