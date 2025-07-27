@@ -499,6 +499,17 @@ build_mod_pkg() {
       fi
 
       # If this package requires some doinst.sh material, add it here:
+      #if [ -r $CWD/doinst.sh/${PKGNAME} ]; then
+      #  mkdir -p $PKG/install
+      #  cat $CWD/doinst.sh/${PKGNAME} \
+      #    | sed -e "s#usr/lib#usr/lib${LIBDIRSUFFIX}#g" \
+      #    >> $PKG/install/doinst.sh
+      #else
+      #  cat $CWD/doinst.sh/${PKGNAME} \
+      #    > $PKG/install/doinst.sh
+      #fi
+
+      # If this package requires some doinst.sh material, add it here:
       if [ -r "$CWD/doinst.sh/${PKGNAME}" ]; then
         mkdir -p "$PKG/install"
         cat "$CWD/doinst.sh/${PKGNAME}" > "$PKG/install/doinst.sh"
