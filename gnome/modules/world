@@ -226,3 +226,6 @@ python3-pyacoustid
 eartag
 # python3-turtle
 python3-turtle
+# showtime
+gst-plugins-rs
+showtime
