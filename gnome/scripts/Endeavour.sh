@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://https://gitlab.gnome.org/World/"
+GNOMEGITURI="https://gitlab.gnome.org/World/"
 
 # Default list of modules to checkout:
 DEFMODS="Endeavour"
