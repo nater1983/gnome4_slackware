@@ -30,7 +30,7 @@ GNOMEGITURI="https://gitlab.gnome.org/World/"
 DEFMODS="Endeavour"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="master"
+DEFBRANCH="d3795f642c55ab3754bebcfc941df9603d873872"
 #DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
@@ -112,6 +112,7 @@ for LOC in $MODS; do
 
   # Get the latest commit date and hash
   cd ${LOC}-temp || continue
+  git checkout ${DEFBRANCH}
   COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
   cd ..
 
@@ -131,7 +132,7 @@ for LOC in $MODS; do
       git checkout $(git rev-list -n 1 --before="`date -d $THEDATE`" $BRANCH)
     fi
   popd
-
+  
   # Remove git metadata if SHRINK is enabled:
   if [ "$SHRINK" = "YES" ]; then
     echo ">>     Removing git metadata..."
