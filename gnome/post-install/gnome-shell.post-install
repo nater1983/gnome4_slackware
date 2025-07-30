@@ -2,5 +2,6 @@ install -vDm 0644 $CWD/post-install/gnome-shell/noise-texture.png -t $PKG/usr/sh
 mkdir -p $PKG/etc/ld.so.conf.d
 echo "/usr/lib${LIBDIRSUFFIX}/gnome-shell/" > $PKG/etc/ld.so.conf.d/shell.conf
 
+# Add autostart file for Gnome Shell
 install  -vDm 0644 $CWD/post-install/gnome-shell/org.gnome.Shell.desktop -t $PKG/usr/share/applications/
 sed -i "s|@bindir@|/usr/bin|g" "$PKG/usr/share/applications/org.gnome.Shell.desktop"
