@@ -1,0 +1,2 @@
+# REVERT autostart: Remove GNOME from OnlyShowIn
+patch -Np1 -i $CWD/patch/orca/252.patch
