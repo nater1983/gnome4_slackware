@@ -1,0 +1,24 @@
+From 5dca8c2b6d9d13785b4e209cb3d76b7c52263096 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Fri, 30 Jul 2025 23:05:44 -0400
+Subject: [PATCH] Revert: autostart: Remove GNOME from OnlyShowIn
+
+gnome-session no longer launches session services via .desktop files,
+and so instead gnome-settings-daemon-a11y-settings is now responsible
+for starting and stopping Orca as necessary.
+
+Thus, the .desktop file should not longer be used on GNOME
+---
+ orca-autostart.desktop.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ 
+diff --git a/orca-autostart.desktop.in b/orca-autostart.desktop.in
+index 172d84de3..73c66c16c 100644
+--- a/orca-autostart.desktop.in
++++ b/orca-autostart.desktop.in
+@@ -6,4 +6,4 @@ NoDisplay=true
+ AutostartCondition=GSettings org.gnome.desktop.a11y.applications screen-reader-enabled
+ X-GNOME-AutoRestart=true
+ #X-GNOME-Autostart-Phase=Initialization
+-OnlyShowIn=MATE;Unity;Cinnamon;
++OnlyShowIn=GNOME;MATE;Unity;Cinnamon;
