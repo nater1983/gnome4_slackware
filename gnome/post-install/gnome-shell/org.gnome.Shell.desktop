@@ -1,10 +1,13 @@
 [Desktop Entry]
-Name=Network Login
 Type=Application
-Exec=gapplication launch org.gnome.Shell.PortalHelper
-DBusActivatable=true
-NoDisplay=true
-# Translators: Do NOT translate or transliterate this text (this is an icon file name)!
-Icon=org.gnome.Shell.CaptivePortal
-StartupNotify=true
+Name=GNOME Shell
+Comment=Window management and application launching
+Exec=@bindir@/gnome-shell
+Categories=GNOME;GTK;Core;
 OnlyShowIn=GNOME;
+NoDisplay=true
+X-GNOME-Autostart-Phase=DisplayServer
+X-GNOME-Provides=panel;windowmanager;
+X-GNOME-Autostart-Notify=true
+X-GNOME-AutoRestart=false
+X-GNOME-HiddenUnderSystemd=@systemd_hidden@
