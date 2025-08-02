@@ -1,0 +1,36 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..1485670
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++/subprojects/libgnome-games-support
+\ No newline at end of file
+diff --git a/meson.build b/meson.build
+index e2e40fd..4c7f526 100644
+--- a/meson.build
++++ b/meson.build
+@@ -26,7 +26,7 @@ gee_dep = dependency ('gee-0.8')
+ gtk_dep = dependency ('gtk4', version: '>= 4.6')
+ adw_dep = dependency ('libadwaita-1', version: '>= 1.8.alpha')
+ librsvg_dep = dependency ('librsvg-2.0', version: '>=2.32.0')
+-libgnome_games_support_dep = dependency ('libgnome-games-support-2', version: '>= 2.0.0')
++libgnome_games_support_dep = dependency ('libgnome-games-support-3', version: '>= 3.0.0')
+ libmath_dep = cc.find_library('m')
+ 
+ subdir ('po')
+diff --git a/subprojects/libgnome-games-support.wrap b/subprojects/libgnome-games-support.wrap
+new file mode 100644
+index 0000000..48284dd
+--- /dev/null
++++ b/subprojects/libgnome-games-support.wrap
+@@ -0,0 +1,8 @@
++[wrap-git]
++directory = libgnome-games-support
++url = https://gitlab.gnome.org/wwarner/libgnome-games-support.git
++revision = master
++depth = 1
++
++[provide]
++libgnome-games-support-3 = lggs_dependency
+\ No newline at end of file
