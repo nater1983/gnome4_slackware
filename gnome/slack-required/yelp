@@ -1,5 +1,5 @@
 yelp-tools
-webkit2gtk4.1
+webkit2gtk6.0
 functools-lru-cache
 python3-webencodings
 python3-soupsieve
@@ -10,3 +10,4 @@ wpebackend-fdo
 geoclue2
 bubblewrap
 yelp-xsl
+AppStream
