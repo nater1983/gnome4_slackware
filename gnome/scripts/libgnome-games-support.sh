@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://github.com/wwarner/"
+GNOMEGITURI="https://gitlab.gnome.org/wwarner/"
 
 # Default list of modules to checkout:
 DEFMODS="libgnome-games-support"
