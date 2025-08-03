@@ -1,3 +1,6 @@
 # Remove duplicate display manager entries:
 rm -rf "$PKG/usr/share/wayland-sessions"
 rm -rf "$PKG/usr/share/xsessions"
+
+install -vDm 0644 $CWD/post-install/gnome-shell-extensions/metadata.json -t $PKG/usr/share/gnome-shell/extensions/donation@slackwarelinux.org
+install -vDm 0644 $CWD/post-install/gnome-shell-extensions/extension.js -t $PKG/usr/share/gnome-shell/extensions/donation@slackwarelinux.org
