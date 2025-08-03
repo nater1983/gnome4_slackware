@@ -8,8 +8,8 @@ index 0000000..1485670
 \ No newline at end of file
 diff --git a/meson.build2 b/meson.build2
 index 6e48975..26e4516 100644
---- a/meson.build2
-+++ b/meson.build2
+--- a/meson.build
++++ b/meson.build
 @@ -17,7 +17,7 @@ gee_dependency = dependency ('gee-0.8')
  gsound_dependency = dependency('gsound', version: '>= 1.0.2')
  gtk_dependency = dependency('gtk4', version: '>= 4.4')
