@@ -20,3 +20,14 @@ if [ -e usr/share/icons/hicolor/icon-theme.cache ]; then
     /usr/bin/gtk-update-icon-cache -f usr/share/icons/hicolor >/dev/null 2>&1
   fi
 fi
+
+if ! grep -q '/usr/libexec/fwupd/fwupd' etc/rc.d/rc.local; then
+  cat << 'EOF' >> etc/rc.d/rc.local
+
+# Start Firmware update daemon:
+if [ -x /usr/libexec/fwupd/fwupd ]; then
+  echo "Starting Firmware Update Daemon: /usr/libexec/fwupd/fwupd &"
+  /usr/libexec/fwupd/fwupd &
+fi
+EOF
+fi

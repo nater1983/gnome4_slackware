@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+workbench: workbench (Learn and prototype with GNOME technologies )
+workbench:
+workbench: Workbench goal is to let you experiment with GNOME technologies, no 
+workbench: matter if tinkering for the first time or building and testing a GTK
+workbench: user interface. Among other things, Workbench comes with:
+workbench: * realtime GTK/CSS preview
+workbench: * library of examples
+workbench: * JavaScript and Vala support
+workbench: * XML and Blueprint for describing user interface
+workbench: * syntax highlighting, undo/redo, autosave, session restore
+workbench: Homepage: https://github.com/sonnyp/Workbench

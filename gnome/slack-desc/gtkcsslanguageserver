@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
                     |-----handy-ruler------------------------------------------------------|
-python3-webencodings: python3-webencodings (Character encoding for the web)
-python3-webencodings:
-python3-webencodings: webencodings is a Python implementation of the WHATWG Encoding
-python3-webencodings: standard.
-python3-webencodings:
-python3-webencodings:
-python3-webencodings:
-python3-webencodings:
-python3-webencodings:
-python3-webencodings:
-python3-webencodings:
+gtkcsslanguageserver: gtkcsslanguageserver (Language server for GTK CSS )
+gtkcsslanguageserver:
+gtkcsslanguageserver: A language server for the GTK CSS flavor. Written for Workbench,
+gtkcsslanguageserver: probably supported at some point in GNOME Builder.
+gtkcsslanguageserver:
+gtkcsslanguageserver:
+gtkcsslanguageserver:
+gtkcsslanguageserver:
+gtkcsslanguageserver: Homepage: https://github.com/JCWasmx86/GTKCssLanguageServer
+gtkcsslanguageserver:
+gtkcsslanguageserver:
