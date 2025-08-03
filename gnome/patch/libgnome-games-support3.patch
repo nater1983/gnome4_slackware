@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/libgnome-games-support3/pkgconfig.patch
