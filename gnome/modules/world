@@ -4,18 +4,17 @@ emblem
 exiftool
 eyedropper
 # Gaphor
-poetry_core
+python3-poetry-core
 python3-generic
-exceptiongroup
-python-webencodings
-flit_scm
+python3-exceptiongroup
+python3-flit_scm
 gaphas
 python3-tinycss2
-pydot
+python3-pydot
 python3-jedi
-parso
-better_exceptions
-defusedxml
+python3-parso
+python3-better-exceptions
+python3-defusedxml
 python3-dulwich
 gaphor
 identity
@@ -37,10 +36,9 @@ Authenticator
 liboauth
 duplicity
 librsync
-fasteners
+python3-fasteners
 rclone
 deja-dup
-dialect
 forge-sparks
 wike
 Impression
@@ -53,12 +51,12 @@ dateutil
 python3-decorator
 pep517
 python3-pycryptodomex
-pykeepass
-pyotp
-validators
-zxcvbn
-zxcvbn_rs_py
-pykcs11
+python3-pykeepass
+python3-pyotp
+python3-validators
+python3-zxcvbn
+python3-zxcvbn_rs_py
+python3-pykcs11
 secrets
 # boatswain
 hidapi
@@ -67,12 +65,13 @@ Shortwave
 amberol
 decoder
 #Pika Backup/Borgbackup
+python3-pkgconfig
 borgbackup
-cachetools
-setuptools_rust
+python3-cachetools
+python3-setuptools-rust
 python3-semantic_version
-maturin
-cryptography
+python3-maturin
+python3-cryptography
 python3-google-api-core
 python3-google-api-python-client
 python3-google-auth
@@ -90,12 +89,13 @@ python3-protobuf
 python3-pyasn1
 python3-pyasn1-modules
 python3-pydrive2
-pyopenssl
+python3-pyopenssl
 python3-rsa
 python3-typing_extensions
 python3-uritemplate
 # pure_protobuf
 python3-poetry-dynamic-versioning
+python3-toml
 python3-tomlkit
 python3-dunamai
 pure-protobuf
@@ -156,7 +156,7 @@ webfont-kit-generator
 # cozy
 python3-peewee
 libdazzle
-gst-plugins-ugly
+# gst-plugins-ugly - found in previous module
 cozy
 # giara
 # blueprint-compiler -- found in a previous application
@@ -190,6 +190,52 @@ cheese
 # Snapshot
 gst-plugins-rs
 snapshot
-# Manuals
-foundry
-manuals
+# nautilus-python
+nautilus-python
+# gnome-firmware
+libxmlb
+gcab
+libsmbios
+protobuf-c
+python3-pefile
+libjcat
+fwupd
+gnome-firmware
+# gnome-recipes
+gnome-recipes
+# Junction
+Junction
+# Curtail
+python3-scour
+pngquant
+jpegoptim
+oxipng
+Curtail
+# Fragments
+Fragments
+# apostrophe
+python3-pypandoc
+apostrophe
+# workbench
+vala-language-server
+biome
+gtkcsslanguageserver
+workbench
+# eartag
+python3-pillow
+python3-pyacoustid
+eartag
+# python3-turtle
+python3-turtle
+# showtime
+gst-plugins-rs
+showtime
+# sound-juicer
+libmusicbrainz5
+sound-juicer
+# kooha
+kooha
+# gdm-settings
+gdm-settings
+# Endeavour
+Endeavour
