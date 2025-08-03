@@ -2,7 +2,7 @@ diff --git a/games/meson.build b/games/meson.build
 index 992fba5..62fce6b 100644
 --- a/games/meson.build
 +++ b/games/meson.build
-@@ -43,3 +43,13 @@ lggs = library('gnome-games-support-3',
+@@ -44,3 +44,13 @@ lggs = library('gnome-games-support-3',
      version: '3',
      dependencies: lggs_interface_deps,
  )
