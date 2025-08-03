@@ -1,0 +1,8 @@
+{
+  "uuid": "donation@slackwarelinux.org",
+  "name": "Donation Button",
+  "description": "Adds a donation button to the GNOME top bar",
+  "version": 1,
+  "shell-version": ["49"],
+  "url": "https://www.patreon.com/slackwarelinux"
+}
