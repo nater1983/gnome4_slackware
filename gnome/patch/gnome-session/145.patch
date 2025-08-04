@@ -11810,14 +11810,6 @@ diff --git a/meson.build b/meson.build
 index 216e4880..361b388c 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1,6 +1,6 @@
- project(
-   'gnome-session', 'c',
--  version: '49.beta',
-+  version: '49.alpha.1',
-   license: 'GPL2+',
-   default_options: 'buildtype=debugoptimized',
-   meson_version: '>= 0.60.0'
 @@ -78,7 +78,7 @@ endif
  
  add_project_arguments(common_flags + compiler_flags, language: 'c')
