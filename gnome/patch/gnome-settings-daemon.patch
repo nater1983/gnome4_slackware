@@ -1,4 +1,4 @@
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/keyboard-Use-ibus-sources-from-locale.patch
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/keyboard-sync-input-sources-to-accountsservice.patch
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/revert-gtk4-port.patch
-patch -Np1 -i $CWD/patch/gnome-settings-daemon/429.patch
+#patch -Np1 -i $CWD/patch/gnome-settings-daemon/429.patch
