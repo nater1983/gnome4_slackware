@@ -1,6 +1,7 @@
 gtk4
 glib2
 gobject-introspection
+mozjs140
 gjs
 vte
 gexiv2
@@ -55,4 +56,3 @@ nv-codec-headers
 libdisplay-info
 appstream-glib
 flit_core
-mozjs140
