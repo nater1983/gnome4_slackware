@@ -10,3 +10,5 @@ mv $PKG/usr/lib${LIBDIRSUFFIX}/libmozjs-140.so $PKG/usr/lib${LIBDIRSUFFIX}/libmo
   ln -sf libmozjs-140.so.0.0.0 libmozjs-140.so.0
   ln -sf libmozjs-140.so.0 libmozjs-140.so
 )
+
+install -vDm 0644 $CWD/post-install/mozjs140/README.md -t $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
