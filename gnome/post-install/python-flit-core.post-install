@@ -1,0 +1,3 @@
+# installing tests to a subdir of your project might not conflict the toplevel, but
+# don't do it anyway...
+rm -r "$PKG"/usr/lib${LIBDIRSUFFIX}/python*/site-packages/${SRCNAM}/tests/

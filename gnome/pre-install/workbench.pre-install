@@ -1,0 +1,13 @@
+# Remove Makfile since we only run meson build's here and not autotools.
+rm -f Makefile
+
+wget -c -P "$CWD/pre-install/workbench" https://github.com/sonnyp/troll/archive/8b0275948eedec9ed0378f9bdda1aa4aac3062ba/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/workbench/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz -C troll
+wget -c -P "$CWD/pre-install/workbench" https://gitlab.gnome.org/BrainBlasted/gi-typescript-definitions/-/archive/396fe147142e28a921f0745eff1a562c7a551843/gi-typescript-definitions-396fe147142e28a921f0745eff1a562c7a551843.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/workbench/gi-typescript-definitions-396fe147142e28a921f0745eff1a562c7a551843.tar.gz -C gi-types
+wget -c -P "$CWD/pre-install/workbench" https://github.com/workbenchdev/demos/archive/6f3c2a2e9faca443116afc6539a32ba4d11baf8f/demos-6f3c2a2e9faca443116afc6539a32ba4d11baf8f.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/workbench/demos-6f3c2a2e9faca443116afc6539a32ba4d11baf8f.tar.gz -C demos
+rm -fr $CWD/pre-install/workbench/troll-8b0275948eedec9ed0378f9bdda1aa4aac3062ba.tar.gz
+rm -fr $CWD/pre-install/workbench/demos-6f3c2a2e9faca443116afc6539a32ba4d11baf8f.tar.gz
+rm -fr $CWD/pre-install/workbench/gi-typescript-definitions-396fe147142e28a921f0745eff1a562c7a551843.tar.gz
+rm -fr $CWD/pre-install/workbench/

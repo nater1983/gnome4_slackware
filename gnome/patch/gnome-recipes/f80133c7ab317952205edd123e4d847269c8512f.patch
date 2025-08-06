@@ -1,0 +1,65 @@
+From f80133c7ab317952205edd123e4d847269c8512f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Piotr=20Dr=C4=85g?= <piotrdrag@gmail.com>
+Date: Sun, 17 Feb 2019 14:32:21 +0100
+Subject: [PATCH] build: Use i18n.merge_file for .desktop and .appdata
+
+Also added in Meson 0.37.0.
+---
+ data/meson.build | 28 ++++++++++++++--------------
+ meson.build      |  1 +
+ 2 files changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/data/meson.build b/data/meson.build
+index df775697..3ebe5871 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -44,21 +44,21 @@ install_data('org.gnome.Recipes-mime.xml',
+ install_data('org.gnome.Recipes-search-provider.ini',
+              install_dir: join_paths([datadir, 'gnome-shell/search-providers']))
+ 
+-msgfmt = find_program('msgfmt')
++i18n.merge_file('desktop-file',
++                type: 'desktop',
++                output: 'org.gnome.Recipes.desktop',
++                input: files('org.gnome.Recipes.desktop.in'),
++                po_dir: po_dir,
++                install: true,
++                install_dir: join_paths([datadir,'applications']))
+ 
+-custom_target('desktop-file',
+-              output: 'org.gnome.Recipes.desktop',
+-              input: files('org.gnome.Recipes.desktop.in'),
+-              install: true,
+-              install_dir: join_paths([datadir,'applications']),
+-              command: [msgfmt, '--desktop', '-d', '../po', '--template', '@INPUT@', '-o', '@OUTPUT@'])
+-
+-custom_target('appdata',
+-              output: 'org.gnome.Recipes.appdata.xml',
+-              input: files('appdata/org.gnome.Recipes.appdata.xml.in'),
+-              install: true,
+-              install_dir: join_paths([datadir,'metainfo']),
+-              command: [msgfmt, '--xml', '-d', '../po', '--template', '@INPUT@', '-o', '@OUTPUT@'])
++i18n.merge_file('appdata',
++                 type: 'xml',
++                 output: 'org.gnome.Recipes.appdata.xml',
++                 input: files('appdata/org.gnome.Recipes.appdata.xml.in'),
++                 po_dir: po_dir,
++                 install: true,
++                 install_dir: join_paths([datadir,'metainfo']))
+ 
+ configure_file(input: 'org.gnome.Recipes.service.in',
+                output: 'org.gnome.Recipes.service',
+diff --git a/meson.build b/meson.build
+index 3b461c4b..bb42cf8e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -101,6 +101,7 @@ pkgdatadir = join_paths([ get_option('prefix'),
+                           'gnome-recipes' ])
+ bindir = join_paths([ get_option('prefix'), 'bin' ])
+ schemadir = join_paths([ datadir, 'glib-2.0', 'schemas' ])
++po_dir = join_paths(meson.source_root(), 'po')
+ 
+ conf.set('G_LOG_USE_STRUCTURED', true)
+ conf.set_quoted('G_LOG_DOMAIN', 'org.gnome.Recipes')
+-- 
+GitLab

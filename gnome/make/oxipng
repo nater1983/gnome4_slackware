@@ -1,0 +1,8 @@
+CARGO_HOME=.cargo \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+cargo build --release $CARGOTARGET
+
+mkdir -p $PKG/usr/bin/
+
+find target -name $PKGNAME -exec install -m 755 {} $PKG/usr/bin/$PKGNAME \;

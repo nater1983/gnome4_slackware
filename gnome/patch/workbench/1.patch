@@ -1,0 +1,63 @@
+diff --git a/src/meson.build.orig b/src/meson.build
+--- a/src/meson.build.orig	2023-05-17 22:53:11.000000000 +0300
++++ b/src/meson.build	2023-05-22 15:09:39.525007345 +0300
+@@ -9,7 +9,7 @@
+ bin_conf.set('sourcedir', meson.source_root())
+ 
+ blueprint_compiler = find_program(
+-  '/app/bin/blueprint-compiler',
++  '/usr/bin/blueprint-compiler',
+ )
+ 
+ install_subdir('Library/demos', install_dir : join_paths(pkgdatadir, 'Library'))
+---
+
+diff --git a/src/bin.js b/src/bin.js
+index ae9005e3d..6dedf9017 100755
+--- a/src/bin.js
++++ b/src/bin.js
+@@ -20,7 +20,6 @@ if (!Xdp.Portal.running_under_flatpak()) {
+   console.error(
+     "Flatpak required\nWorkbench is only meant to be run sandboxed in a specific target environment.\nBypassing this will exposes users to arbitrary code execution and breakage.",
+   );
+-  exit(1);
+ }
+ 
+ globalThis.__DEV__ = pkg.name.endsWith(".Devel");
+---
+
+diff --git a/src/actions.js.orig b/src/actions.js
+--- a/src/actions.js.orig	2023-06-01 14:48:32.479900119 +0300
++++ b/src/actions.js	2023-06-01 14:48:43.933899408 +0300
+@@ -127,7 +127,7 @@
+     }
+ 
+     try {
+-      GLib.spawn_command_line_async(`sh -c "/bin/${name} > /dev/null 2>&1"`);
++      GLib.spawn_command_line_async(`sh -c "/usr/bin/${name} > /dev/null 2>&1"`);
+     } catch (err) {
+       logError(err);
+     }
+---
+
+diff --git a/src/about.js.orig b/src/about.js
+--- a/src/about.js.orig	2023-05-17 22:53:11.000000000 +0300
++++ b/src/about.js	2023-06-02 00:47:16.792951230 +0300
+@@ -11,7 +11,6 @@
+ import { getFlatpakInfo } from "./util.js";
+ 
+ export default function About({ application }) {
+-  const flatpak_info = getFlatpakInfo();
+ 
+   const debug_info = `
+ ${GLib.get_os_info("ID")} ${GLib.get_os_info("VERSION_ID")}
+@@ -20,7 +19,7 @@
+ Adw ${getGIRepositoryVersion(Adw)}
+ GTK ${getGIRepositoryVersion(Gtk)}
+ GLib ${getGLibVersion()}
+-Flatpak ${flatpak_info.get_string("Instance", "flatpak-version")}
++
+ ${getValaVersion()}
+ ${getBlueprintVersion()}
+ `.trim();
+---
