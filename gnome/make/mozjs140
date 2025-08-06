@@ -1,4 +1,4 @@
-mkdir -p obj
+cd firefox*
 # We're going to try using the provided mach build system.
 # First we need to provide a MOZCONFIG.
 MOZOBJ="obj"
