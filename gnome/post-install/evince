@@ -1,0 +1,2 @@
+rm -fr $PKG/usr/man/
+rm -fr $PKG/usr/share/
