@@ -6,23 +6,20 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Dplatform=gnome \
-    -Dviewer=true \
-    -Dpreviewer=true \
-    -Dthumbnailer=true \
+    -Dviewer=false \
+    -Dpreviewer=false \
+    -Dthumbnailer=false \
     -Dnautilus=false \
-    -Dcomics=enabled \
-    -Ddjvu=enabled \
-    -Dpdf=enabled \
-    -Dps=enabled \
-    -Dtiff=enabled \
-    -Dxps=enabled \
+    -Dcomics=disabled \
+    -Ddjvu=disabled \
+    -Dpdf=disabled \
+    -Dps=disabled \
+    -Dtiff=disabled \
+    -Dxps=disabled \
     -Dgtk_doc=false \
     -Duser_doc=false \
     -Dintrospection=true \
     -Ddbus=true \
-    -Dkeyring=enabled \
-    -Dgtk_unix_print=enabled \
-    -Dthumbnail_cache=enabled \
     -Dsystemduserunitdir=no
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
