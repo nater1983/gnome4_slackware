@@ -13,4 +13,4 @@ rm -fr $CWD/pre-install/workbench/gi-typescript-definitions-396fe147142e28a921f0
 rm -fr $CWD/pre-install/workbench/
 
 #sed -i 's/version=4\.0/version=3.0/' src/init.js
-sed -i 's|gi://GtkSource|gi://GtkSource?version=5.0|g' src/init.js
+sed -i 's|gi://GtkSource|gi://GtkSource?version=5|g' src/init.js
