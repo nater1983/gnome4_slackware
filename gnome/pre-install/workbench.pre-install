@@ -14,3 +14,4 @@ rm -fr $CWD/pre-install/workbench/
 
 #sed -i 's/version=4\.0/version=3.0/' src/init.js
 sed -i 's|gi://GtkSource|gi://GtkSource?version=5|g' src/init.js
+sed -i 's|gi://Vte|gi://Vte?version=3.91|g' src/init.js
