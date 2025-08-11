@@ -35,23 +35,17 @@ index d2a4af446..c4bff144f 100644
  ${getBlueprintVersion()}
  `.trim();
 diff --git a/src/bin.js b/src/bin.js
-index d65906231..030eaed90 100755
+index ae9005e3d..6dedf9017 100755
 --- a/src/bin.js
 +++ b/src/bin.js
-@@ -14,12 +14,7 @@ imports.package.init({
- });
- setConsoleLogDomain(pkg.name);
- 
--if (!Xdp.Portal.running_under_flatpak()) {
--  console.error(
--    "Flatpak required\nWorkbench is only meant to be run sandboxed in a specific target environment.\nBypassing this will exposes users to arbitrary code execution and breakage.",
--  );
+@@ -20,7 +20,6 @@ if (!Xdp.Portal.running_under_flatpak()) {
+   console.error(
+     "Flatpak required\nWorkbench is only meant to be run sandboxed in a specific target environment.\nBypassing this will exposes users to arbitrary code execution and breakage.",
+   );
 -  exit(1);
--}
-+Xdp.Portal.running_under_flatpak = () => true;
+ }
  
  globalThis.__DEV__ = pkg.name.endsWith(".Devel");
- if (__DEV__) {
 diff --git a/src/actions.js b/src/actions.js
 index 2d14b9898..df2c79bfd 100644
 --- a/src/actions.js
