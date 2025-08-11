@@ -59,3 +59,15 @@ index 2d14b9898..df2c79bfd 100644
      } catch (err) {
        console.error(err);
      }
+diff --git a/src/cli/bin.js b/src/cli/bin.js
+index b86c58240..b63aab42f 100755
+--- a/src/cli/bin.js
++++ b/src/cli/bin.js
+@@ -20,7 +20,7 @@ setConsoleLogDomain(app_id);
+ GLib.set_application_name("workbench-cli");
+ 
+ const resource = Gio.Resource.load(
+-  `/app/share/${app_id}/${app_id}.src.gresource`,
++  `/usr/share/${app_id}/${app_id}.src.gresource`,
+ );
+ resource._register();
