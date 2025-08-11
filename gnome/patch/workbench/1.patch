@@ -82,12 +82,54 @@ diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
 index 694fb19f9..78dd9acf8 100644
 --- a/src/Extensions/Extensions.js
 +++ b/src/Extensions/Extensions.js
-@@ -81,7 +81,7 @@ export function isTypeScriptAvailable() {
+@@ -81,7 +81,6 @@ export function isTypeScriptAvailable() {
  
  const llvm = "llvm18";
  const node = "node20";
 -const runtime = getFlatpakInfo().get_string("Application", "runtime");
-+const runtime = "host";
  const freedesktop_version = runtime.endsWith("master") ? "24.08" : "24.08";
  
  export function isTypeScriptEnabled() {
+diff --git a/build-aux/library.js b/build-aux/library.js
+index ec18b355e..aed4088ce 100755
+--- a/build-aux/library.js
++++ b/build-aux/library.js
+@@ -226,12 +226,8 @@ async function copyDirectory(source, destination) {
+   }
+ }
+ 
+-const key_file = new GLib.KeyFile();
+-key_file.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
+-// runtime/org.gnome.Sdk/x86_64/master
+-const [, , , runtime_version] = key_file
+-  .get_string("Application", "runtime")
+-  .split("/");
++// Assuming you've retrieved the runtime version from your system
++const runtime_version = "x86_64/master"; // Example runtime version obtained from system
+ 
+ function isDemoCompatible(demo) {
+   const demo_runtime_version = demo["runtime-version"];
+@@ -244,7 +240,22 @@ function isDemoCompatible(demo) {
+     return true;
+   }
+ 
+-  return +runtime_version >= +demo_runtime_version;
++  // Here you can parse the versions and compare them
++  const [demoArch, demoVersion] = demo_runtime_version.split("/");
++  const [systemArch, systemVersion] = runtime_version.split("/");
++  
++  // Assuming versions are in the format "major.minor" for simplicity
++  const [demoMajor, demoMinor] = demoVersion.split(".");
++  const [systemMajor, systemMinor] = systemVersion.split(".");
++
++  if (+systemMajor > +demoMajor) {
++    return true;
++  } else if (+systemMajor === +demoMajor && +systemMinor >= +demoMinor) {
++    return true;
++  }
++
++  return false;
+ }
+ 
++// Assuming loop.run() is part of your environment setup
+ loop.run();
