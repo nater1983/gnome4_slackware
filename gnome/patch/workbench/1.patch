@@ -77,6 +77,7 @@ index b86c58240..b63aab42f 100755
 +  `/usr/share/${app_id}/${app_id}.src.gresource`,
  );
  resource._register();
+
 diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
 index 694fb19f9..78dd9acf8 100644
 --- a/src/Extensions/Extensions.js
