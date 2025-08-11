@@ -115,3 +115,16 @@ index ec18b355e..aed4088ce 100755
  
 +// Assuming loop.run() is part of your environment setup
  loop.run();
+diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
+index 694fb19f9..564b064ae 100644
+--- a/src/Extensions/Extensions.js
++++ b/src/Extensions/Extensions.js
+@@ -81,7 +81,7 @@ export function isTypeScriptAvailable() {
+ 
+ const llvm = "llvm18";
+ const node = "node20";
+-const runtime = getFlatpakInfo().get_string("Application", "runtime");
++const runtime = "org.freedesktop.Sdk//24.08"; // fallback if not in Flatpak
+ const freedesktop_version = runtime.endsWith("master") ? "24.08" : "24.08";
+ 
+ export function isTypeScriptEnabled() {
