@@ -193,7 +193,6 @@ snapshot
 # nautilus-python
 nautilus-python
 # gnome-firmware
-libxmlb
 gcab
 libsmbios
 protobuf-c
