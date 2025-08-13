@@ -156,6 +156,7 @@ index c950e3b97..2a48ba19f 100644
 -    if not systemd.get_manager().is_systemd_managed():
          # Legacy behavior, here for backwards-compatibility. You really should
          # never rely on this. Run git blame and read the commit message!
+
 diff --git a/src/orca/orca.py b/src/orca/orca.py
 index 2a48ba19f..a494a5fa3 100644
 --- a/src/orca/orca.py
