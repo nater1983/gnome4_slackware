@@ -145,6 +145,17 @@ index 2e3f2cb9f..c950e3b97 100644
  
      try:
          debug.print_message(debug.LEVEL_INFO, "ORCA: Starting Atspi main event loop", True)
+diff --git a/src/orca/orca.py b/src/orca/orca.py
+index c950e3b97..2a48ba19f 100644
+--- a/src/orca/orca.py
++++ b/src/orca/orca.py
+@@ -218,7 +218,6 @@ def _show_preferences_on_signal(signum, frame):
+         msg = f"ORCA: EXCEPTION connecting to a11y applications (version incompatibility): {error}"
+         debug.print_message(debug.LEVEL_SEVERE, msg, True)
+ 
+-    if not systemd.get_manager().is_systemd_managed():
+         # Legacy behavior, here for backwards-compatibility. You really should
+         # never rely on this. Run git blame and read the commit message!
 diff --git a/src/orca/systemd.py b/src/orca/systemd.py
 deleted file mode 100644
 index 3094ced05..000000000
