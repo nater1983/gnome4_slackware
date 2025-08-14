@@ -53,3 +53,6 @@ nv-codec-headers
 libdisplay-info
 appstream-glib
 mozjs140
+meson-python
+python-numpy
+python-pyproject_metadata
