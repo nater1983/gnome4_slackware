@@ -195,17 +195,12 @@ no_usr_dups() {
 }
 
 no_systemd() {
-  # If there are systemd file's remove them:
-  if [ -d "usr/lib/systemd" ]; then
-    rm -fr usr/lib/systemd
-  fi
-}
-
-no_systemd1() {
-  # If there are systemd file's remove them:
-  if [ -d "usr/lib64/systemd" ]; then
-    rm -fr usr/lib64/systemd
-  fi
+  # Remove any systemd files if present:
+  for path in usr/lib/systemd usr/lib64/systemd; do
+    if [ -d "$path" ]; then
+      rm -rf "$path"
+    fi
+  done
 }
 
 precheck() {
@@ -524,7 +519,6 @@ build_mod_pkg() {
         no_usr_doc_prgnam
         no_usr_dups
         no_systemd
-        no_systemd1
         mkdir -p $PKG/install
         if [ -r $CWD/slack-desc/${PKGNAME} ]; then
           cat $CWD/slack-desc/${PKGNAME} > $PKG/install/slack-desc
