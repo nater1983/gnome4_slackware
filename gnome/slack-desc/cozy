@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+    |-----handy-ruler------------------------------------------------------|
+cozy: cozy (Listen to audio books)
+cozy:
+cozy: Do you like audio books? Then lets get cozy!
+cozy: Cozy is a audio book player. Here are some of the features:
+cozy: Import all your audio books into Cozy to browse them comfortably.
+cozy: Listen to your DRM free mp3, m4b, m4a (aac, ALAC, …), flac, ogg and 
+cozy: wav audio books. Remembers your playback position. Sleep timer.
+cozy: Playback speed control for each book individually.
+cozy: 
+cozy: https://github.com/geigi/cozy
+cozy:
