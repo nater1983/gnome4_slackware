@@ -7,15 +7,15 @@ cd build
     $GNOME_OPT_ARGS \
     -Dplatform=gnome \
     -Dviewer=false \
-    -Dpreviewer=false \
+    -Dpreviewer=true \
     -Dthumbnailer=false \
     -Dnautilus=false \
-    -Dcomics=disabled \
-    -Ddjvu=disabled \
-    -Dpdf=disabled \
-    -Dps=disabled \
-    -Dtiff=disabled \
-    -Dxps=disabled \
+    -Dcomics=enabled \
+    -Ddjvu=enabled \
+    -Dpdf=enabled \
+    -Dps=enabled \
+    -Dtiff=enabled \
+    -Dxps=enabled \
     -Dgtk_doc=false \
     -Duser_doc=false \
     -Dintrospection=true \
