@@ -1,0 +1,7 @@
+# Remove Makfile since we only run meson build's here and not autotools.
+rm -f Makefile
+
+wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/miniupnp/archive/9ff3c71bfb6c7f7bf525d6bda447387de7257aff/miniupnpc-9ff3c71bfb6c7f7bf525d6bda447387de7257aff.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/transmission/miniupnpc-9ff3c71bfb6c7f7bf525d6bda447387de7257aff.tar.gz -C miniupnpc
+rm -fr $CWD/pre-install/transmission/miniupnpc-9ff3c71bfb6c7f7bf525d6bda447387de7257aff.tar.gz
+rm -fr $CWD/pre-install/transmission/
