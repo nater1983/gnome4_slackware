@@ -2,7 +2,7 @@ wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/miniu
 wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/libnatpmp/archive/134fc89e2781e154e40042641f4d8bcbe42579f1/libnatpmp-134fc89e2781e154e40042641f4d8bcbe42579f1.tar.gz
 wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/dht/archive/0bbb8f4a5bd914b60de5e9fbb51573aa33a1cf18/dht-0bbb8f4a5bd914b60de5e9fbb51573aa33a1cf18.tar.gz
 wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/libutp/archive/490874c44a2ecf914404b0a20e043c9755fff47b/libutp-490874c44a2ecf914404b0a20e043c9755fff47b.tar.gz
-wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/libb64/archive/64ab5ed7693d7a063c43f9da64c7d8e4e9519ef4libb64-64ab5ed7693d7a063c43f9da64c7d8e4e9519ef4libb64.tar.gz
+wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/libb64/archive/64ab5ed7693d7a063c43f9da64c7d8e4e9519ef4/libb64-64ab5ed7693d7a063c43f9da64c7d8e4e9519ef4libb64.tar.gz
 
 tar --strip-components=1 -xzf $CWD/pre-install/transmission/miniupnp-b55145ec095652289a59c33603f3abafee898273.tar.gz -C third-party/miniupnp
 ( rm -fr third-party/miniupnpc ; ln -sf third-party/miniupnp/miniupnpc third-party/ )
