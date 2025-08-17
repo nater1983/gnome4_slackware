@@ -7,7 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Dplatform=gnome \
     -Dviewer=false \
-    -Dpreviewer=true \
+    -Dpreviewer=false \
     -Dthumbnailer=false \
     -Dnautilus=false \
     -Dcomics=enabled \
