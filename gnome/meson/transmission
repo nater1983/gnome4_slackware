@@ -2,6 +2,7 @@ mkdir cmake-build
 cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.12 \
     -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
     -DENABLE_CLI=ON \
     -DENABLE_QT=OFF \
