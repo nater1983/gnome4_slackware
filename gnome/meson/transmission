@@ -12,6 +12,7 @@ cd cmake-build
     -DENABLE_CLI=ON \
     -DUSE_SYSTEM_MINIUPNPC=OFF \
     -DUSE_SYSTEM_NATPMP=OFF \
+    -ENABLE_TESTS=OFF \
     -DUSE_GTK_VERSION=4
 make 
 make install/strip DESTDIR=$PKG
