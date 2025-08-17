@@ -1,4 +1,7 @@
 wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/miniupnp/archive/b55145ec095652289a59c33603f3abafee898273/miniupnpc-b55145ec095652289a59c33603f3abafee898273.tar.gz
 tar --strip-components=1 -xzf $CWD/pre-install/transmission/miniupnpc-b55145ec095652289a59c33603f3abafee898273.tar.gz -C third-party/miniupnpc
+wget -c -P "$CWD/pre-install/transmission" https://github.com/transmission/libnatpmp/archive/134fc89e2781e154e40042641f4d8bcbe42579f1/libnatpmp-134fc89e2781e154e40042641f4d8bcbe42579f1.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/transmission/libnatpmp-134fc89e2781e154e40042641f4d8bcbe42579f1.tar.gz -C third-party/libnatpmp
 rm -fr $CWD/pre-install/transmission/miniupnpc-b55145ec095652289a59c33603f3abafee898273.tar.gz
+rm -fr $CWD/pre-install/transmission/libnatpmp-134fc89e2781e154e40042641f4d8bcbe42579f1.tar.gz
 rm -fr $CWD/pre-install/transmission/
