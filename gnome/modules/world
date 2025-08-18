@@ -191,11 +191,11 @@ snapshot
 # nautilus-python
 nautilus-python
 # gnome-firmware
-gcab
-libsmbios
-protobuf-c
+# gcab -- found in a previous application
+# libsmbios-- found in a previous application
+# protobuf-c -- found in a previous application
 python3-pefile
-libjcat
+# libjcat -- found in a previous application
 fwupd
 gnome-firmware
 # gnome-recipes
