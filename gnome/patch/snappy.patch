@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/snappy/cmake_add_pkgconfig.patch

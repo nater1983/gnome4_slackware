@@ -1,0 +1,11 @@
+# Preserve only libspa-libcamera.so in $PKG/_keep
+mkdir -p "$PKG/_keep/usr/lib64/spa-0.2/libcamera"
+mv "$PKG/usr/lib64/spa-0.2/libcamera/libspa-libcamera.so" \
+   "$PKG/_keep/usr/lib64/spa-0.2/libcamera/"
+
+# Delete everything in $PKG except _keep
+find "$PKG" -mindepth 1 -maxdepth 1 ! -name '_keep' -exec rm -rf {} +
+
+# Restore preserved content
+mv "$PKG/_keep/"* "$PKG/"
+rmdir "$PKG/_keep"

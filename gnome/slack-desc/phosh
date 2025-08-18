@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+     |-----handy-ruler------------------------------------------------------|
+phosh: phosh (Phosh is a Wayland shell for mobile devices)
+phosh:
+phosh: A Wayland shell for GNOME on mobile devices. A pure Wayland shell for
+phosh: mobile devices like smart phones or small tablets which:
+phosh: * use touch input
+phosh: * are running battery powered most of the time
+phosh: * have limited screen space
+phosh: * have a limited number of buttons
+phosh: * might be docked to a keyboard, screen and other input devices
+phosh:
+phosh: Homepage: https://gitlab.gnome.org/World/Phosh/phosh

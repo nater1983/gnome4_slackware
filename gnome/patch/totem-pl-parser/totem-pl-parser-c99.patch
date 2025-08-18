@@ -1,0 +1,19 @@
+Return FALSE instead of NULL, to match the gboolean return type.
+
+Submitted upstream:
+
+  <https://gitlab.gnome.org/GNOME/totem-pl-parser/-/merge_requests/53>
+
+diff --git a/plparse/totem-pl-parser.c b/plparse/totem-pl-parser.c
+index 404deb395a229e53..5b9bcf301e2e2c4b 100644
+--- a/plparse/totem-pl-parser.c
++++ b/plparse/totem-pl-parser.c
+@@ -1334,7 +1334,7 @@ totem_pl_parser_save_finish (TotemPlParser   *parser,
+ 			     GAsyncResult    *async_result,
+ 			     GError         **error)
+ {
+-	g_return_val_if_fail (g_task_is_valid (async_result, parser), NULL);
++	g_return_val_if_fail (g_task_is_valid (async_result, parser), FALSE);
+ 
+ 	return g_task_propagate_boolean (G_TASK (async_result), error);
+ }

@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/libcamera/0003-libcamera-gcc15-gtest-workaround.patch

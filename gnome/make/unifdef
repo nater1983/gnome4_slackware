@@ -1,9 +1,9 @@
-make CFLAGS="$SLKCFLAGS" DESTDIR=$PKG
+make CFLAGS="$SLKCFLAGS -std=gnu17" DESTDIR=$PKG
 
 mkdir -p $PKG/usr/bin $PKG/usr/man/man1
 
 # manual install = less code than hacking 'make install'
-install -s -m0755 ${PKGNAME} $PKG/usr/bin
-install -m0755 ${PKGNAME}all.sh $PKG/usr/bin/${PKGNAME}all
-install -m0644 ${PKGNAME}.1 $PKG/usr/man/man1/${PKGNAME}.1
-install -m0644 ${PKGNAME}.1 $PKG/usr/man/man1/${PKGNAME}all.1
+install -s -m0755 unifdef $PKG/usr/bin
+install -m0755 unifdefall.sh $PKG/usr/bin/unifdefall
+install -m0644 unifdef.1 $PKG/usr/man/man1/unifdef.1
+install -m0644 unifdef.1 $PKG/usr/man/man1/unifdefall.1

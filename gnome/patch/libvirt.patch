@@ -1,0 +1,5 @@
+export VIRTUSER=${VIRTUSER:-root}
+export VIRTGROUP=${VIRTGROUP:-users}
+
+patch -Np1 -i $CWD/patch/libvirt/use-virtgroup-in-polkit-rules.diff
+sed -i -e "s,@VIRTGROUP@,$VIRTGROUP,g" src/remote/libvirtd.rules

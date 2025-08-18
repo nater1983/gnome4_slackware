@@ -1,0 +1,42 @@
+export VIRTUSER=${VIRTUSER:-root}
+export VIRTGROUP=${VIRTGROUP:-users}
+
+# we don't have augeas
+rm -fr $PKG/usr/share/augeas
+
+# this tree is recreated when starting the daemon
+rm -fR $PKG/var/run
+
+# add an rc.libvirt to start/stop/restart the daemon
+install -D -m 0755 $CWD/post-install/libvirt/rc.libvirt $PKG/etc/rc.d/rc.libvirt.new
+
+# we use $VIRTGROUP as our virtualization group, fix auth permissions, and
+# consider the fact that by default we got no certs
+sed -i \
+  -e "s|^\#unix_sock_group\ =\ \"libvirt\"|unix_sock_group = \"$VIRTGROUP\"|" \
+  -e "s|^\#unix_sock_rw_perms\ =\ \"0770\"|unix_sock_rw_perms = \"0770\"|" \
+  -e "s|^\#auth_unix_ro.*|auth_unix_ro = \"none\"|" \
+  -e "s|^\#auth_unix_rw.*|auth_unix_rw = \"none\"|" \
+  -e "s|^\#listen_tls|listen_tls|" \
+  $PKG/etc/libvirt/libvirtd.conf
+
+# still, we use $VIRTGROUP as our virtualization group
+sed -i \
+  -e "s|^\#group\ =\ \"root\"|group = \"$VIRTGROUP\"|" \
+  $PKG/etc/libvirt/qemu.conf
+
+# disable seccomp support or else VMs won't start with new libvirt/qemu combo
+# 20220212 bkw: this file doesn't exist if qemu wasn't installed. and
+# since qemu isn't in REQUIRES, it's optional, so the build shouldn't fail.
+if [ -e $PKG/etc/libvirt/qemu.conf ]; then
+  sed -i  "s|^\#seccomp_sandbox = 1|seccomp_sandbox = 0|" \
+    $PKG/etc/libvirt/qemu.conf
+fi
+
+#Move sysctl file's to the correct place.
+mkdir -p $PKG/etc
+$PKG/usr/lib/sysctl.d/60-qemu-postcopy-migration.conf $PKG/etc/sysctl.d
+rm -fr $PKG/usr/lib/sysctl.d
+
+#Remove firewalld policy's since we don't install firewalld
+rm -fr $PKG/usr/lib/firewalld/

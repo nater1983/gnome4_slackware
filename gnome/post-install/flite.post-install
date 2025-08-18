@@ -1,0 +1,17 @@
+# flite.1 written by SlackBuild author. The rest are from Debian.
+mkdir -p $PKG/usr/man/man1
+for i in $CWD/post-install/flite/*.1; do
+  gzip -9c < $i > $PKG/usr/man/man1/"$( basename "$i" )".gz
+done
+
+# the Debian package includes these 2 binaries that don't get installed
+# by 'make install'. They look useful enough, so:
+install -s -m0755 bin/t2p bin/flite_time $PKG/usr/bin
+
+# include any *.flitevox files the user downloaded.
+for file in $CWD/*.flitevox; do
+  [ -e "$file" ] && \
+    mkdir -p $PKG/usr/share/$PRGNAM && \
+    cat $file > $PKG/usr/share/$PRGNAM/"$( basename "$file" )" && \
+    EXTRA=yes
+done

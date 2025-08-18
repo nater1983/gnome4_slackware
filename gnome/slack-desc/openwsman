@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct. It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+openwsman: openwsman (Open source Implementation of WS-Management)
+openwsman:
+openwsman: Openwsman is a project intended to provide an open-source 
+openwsman: implementation of the Web Services Management specification
+openwsman: (WS-Management) and to expose system management information on the
+openwsman: Linux operating system using the WS-Management protocol. WS-Management
+openwsman: is based on a suite of web services specifications and usage
+openwsman: requirements that exposes a set of operations focused on and covers
+openwsman: all system management aspects.
+openwsman:
+openwsman: Homepage: https://github.com/Openwsman/openwsman

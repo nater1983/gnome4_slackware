@@ -1,0 +1,6 @@
+CARGO_HOME=.cargo \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+cargo cbuild --release $CARGOTARGET
+cargo install --no-track --root "${PKG}/usr" --path="."
+cargo cinstall --destdir=${PKG} --prefix=/usr --libdir=/usr/lib$LIBDIRSUFFIX

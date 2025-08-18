@@ -1,0 +1,15 @@
+sed -i 's/struct rb_io_t \*fptr;/struct rb_io \*fptr;/g' bindings/openwsman.i
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DPACKAGE_ARCHITECTURE=$ARCH \
+    -DBUILD_LIBCIM=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_TESTING=OFF \
+    -DBUILD_PYTHON=OFF \
+    -DBUILD_PYTHON3=ON \
+    -DBUILD_RUBY_GEM=ON \
+    -DBUILD_JAVA=OFF
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG

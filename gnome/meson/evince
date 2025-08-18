@@ -1,0 +1,30 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS -DHAVE_STRING_H -DHAVE_STDLIB_H" \
+  CXXFLAGS="$SLKCFLAGS -DHAVE_STRING_H -DHAVE_STDLIB_H" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dplatform=gnome \
+    -Dviewer=true \
+    -Dpreviewer=true \
+    -Dthumbnailer=true \
+    -Dnautilus=false \
+    -Dcomics=enabled \
+    -Ddjvu=enabled \
+    -Dpdf=enabled \
+    -Dps=enabled \
+    -Dtiff=enabled \
+    -Dxps=enabled \
+    -Dgtk_doc=false \
+    -Duser_doc=false \
+    -Dintrospection=true \
+    -Ddbus=true \
+    -Dkeyring=enabled \
+    -Dgtk_unix_print=enabled \
+    -Dthumbnail_cache=enabled \
+    -Ddvi=enabled \
+    -Dsystemduserunitdir=no
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

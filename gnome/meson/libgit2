@@ -1,0 +1,14 @@
+mkdir cmake-build
+cd cmake-build
+  cmake "Unix Makefiles" .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DREGEX_BACKEND=pcre \
+    -DUSE_SHA1=HTTPS \
+    -DUSE_HTTPS=OpenSSL \
+    -DUSE_HTTP_PARSER=system \
+    -DUSE_SSH=ON \
+    -DUSE_NTLMCLIENT=OFF \
+     -G Ninja
+      "${NINJA:=ninja}"
+      DESTDIR=$PKG $NINJA install
+    cd ..

@@ -1,0 +1,19 @@
+NOCONFIGURE=1 ./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --htmldir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION/html \
+    --disable-gtk-doc \
+    --enable-search \
+    --enable-playlist \
+    --enable-nautilus \
+    --enable-introspection \
+    --enable-libburnia
+sed -i -e 's! -shared ! -Wl,--as-needed\0!g' libtool
+make
+make install DESTDIR=$PKG
+
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/brasero3/plugins/*.la

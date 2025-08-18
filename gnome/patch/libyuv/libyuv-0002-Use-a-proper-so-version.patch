@@ -1,0 +1,26 @@
+From d121aab1c8389ea4896ce16e96e6903d251ec03a Mon Sep 17 00:00:00 2001
+From: Peter Lemenkov <lemenkov@gmail.com>
+Date: Fri, 21 Sep 2018 12:45:55 +0200
+Subject: [PATCH 1/8] Use a proper so-version
+
+Signed-off-by: Peter Lemenkov <lemenkov@gmail.com>
+Co-authored-by: Zephyr Lykos <fedora@mochaa.ws>
+---
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5df76856..8818270a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -184,6 +184,8 @@ if(WIN32)
+   set_target_properties( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
+ endif()
+ 
++set_target_properties   ( ${ly_lib_shared} PROPERTIES VERSION "0.0.1904" SOVERSION 0 )
++
+ # this creates the cpuid tool
+ add_executable      ( cpuid ${ly_base_dir}/util/cpuid.c )
+ target_link_libraries  ( cpuid ${ly_lib_static} )
+-- 
+2.49.0

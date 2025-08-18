@@ -1,0 +1,44 @@
+
+diff --git a/meson.build b/meson.build
+index cacde42d..1391a7c0 100644
+--- a/meson.build
++++ b/meson.build
+@@ -13,7 +13,8 @@ gkr_major_version = '3'
+ cc = meson.get_compiler('c')
+ gkr_prefix = get_option('prefix')
+ gkr_bindir = gkr_prefix / get_option('bindir')
+-gkr_pkglibdir = gkr_prefix / get_option('libdir') / 'gnome-keyring' / 'devel'
++gkr_libdir = gkr_prefix / get_option('pamdir')
++gkr_pkglibdir = gkr_prefix / get_option('libdir') / 'gnome-keyring' / 'devel'
+ config_h_inc = include_directories('.')
+ po_dir = meson.current_source_dir() / 'po'
+ source_root = meson.current_source_dir()
+diff --git a/meson_options.txt b/meson_options.txt
+index 43388727..48f3f91d 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -45,3 +45,9 @@ option('manpage',
+   value: true,
+   description: 'Build manpage',
+ )
++
++option('pamdir', 
++  type: 'string', 
++  value: '', 
++  description: 'Pam Library directory (e.g., lib or lib64)', 
++)
+
+
+diff --git a/pam/meson.build b/pam/meson.build
+index 66ecda23..5564d5b5 100644
+--- a/pam/meson.build
++++ b/pam/meson.build
+@@ -33,7 +33,7 @@ libpam_gkr = shared_library('pam_gnome_keyring',
+   link_depends: pam_gkr_symbolmap,
+   include_directories: config_h_inc,
+   install: true,
+-  install_dir: get_option('libdir') / 'security',
++  install_dir: get_option('pamdir'),
+ )
+ 
+ libpam_gkr_dep = declare_dependency(

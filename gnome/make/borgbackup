@@ -1,0 +1,22 @@
+export BORG_OPENSSL_PREFIX=/lib${LIBDIRSUFFIX}
+export BORG_LIBLZ4_PREFIX=/usr/lib${LIBDIRSUFFIX}/pkgconfig/
+export BORG_LIBZSTD_PREFIX=/usr/lib${LIBDIRSUFFIX}/pkgconfig/
+export BORG_LIBXXHASH_PREFIX=/usr/lib${LIBDIRSUFFIX}/pkgconfig/
+export BORG_LIBACL_PREFIX=/usr/lib${LIBDIRSUFFIX}/pkgconfig/
+python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" dist/*.whl
+
+if [ -x /usr/bin/sphinx-build ]; then
+  cd docs
+
+  make html
+  mkdir -p $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+  cp -a _build/html $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+
+  make man
+  mkdir -p $PKG/usr/man/man1
+  cp -a _build/man/*.1 $PKG/usr/man/man1
+  gzip -9 $PKG/usr/man/man1/*.1
+
+  cd ..
+fi

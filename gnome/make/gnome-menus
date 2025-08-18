@@ -1,0 +1,11 @@
+NOCONFIGURE=1 ./autogen.sh
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --enable-introspection=yes \
+    --enable-static=no
+make
+make install DESTDIR=$PKG

@@ -1,0 +1,38 @@
+CFLAGS="$SLKCFLAGS -Wl,-s" \
+CXXFLAGS="$SLKCFLAGS -Wl,-s" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --enable-shared \
+    --with-audio=alsa
+
+make
+make install prefix=$PKG/usr INSTALLLIBDIR=$PKG/usr/lib${LIBDIRSUFFIX}
+strip $PKG/usr/lib$LIBDIRSUFFIX/*.so.*.*
+rm $PKG/usr/lib$LIBDIRSUFFIX/libflite*.a
+
+# build the docs. NB don't replace subshells with "cd dir" and
+# "cd -", as they don't nest.
+( cd doc
+  # build the HTML docs.
+  make flite.html
+)
+  ( cd doc/html
+
+    # Upstream hardlinks index.html, use a symlink instead.
+    rm -f index.html
+    ln -s flite_toc.html index.html
+
+    # Also, we don't ship the PDF doc, so link to upstream's.
+    # Fix link to source package.
+    sed -i \
+      -e 's,HREF="flite.pdf",HREF="http://www.festvox.org/flite/doc/flite.pdf",' \
+      -e 's,\.tar\.gz,.tar.bz2,g' \
+      flite_toc.html
+  )
+
+# 20181114 bkw: always build the GNU info docs.
+( cd doc
+  makeinfo flite.texi
+  mkdir -p $PKG/usr/info
+  gzip -9c < flite.info > $PKG/usr/info/flite.info.gz
+)

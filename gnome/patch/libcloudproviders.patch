@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/libcloudproviders/eb1e9fad9376f76e87334a9b33b88f38320d4dcf.patch

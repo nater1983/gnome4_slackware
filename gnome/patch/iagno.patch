@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/iagno/0001-Reference-of-GtkChild-fields-is-handled-by-GtkBuilde.patch
+patch -Np1 -i $CWD/patch/iagno/0001-Don-t-alter-or-try-to-write-GtkChild-fields.patch

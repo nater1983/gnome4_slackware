@@ -1,0 +1,2 @@
+install -vDm 0644 build/src/gtex/Gtex-1.gir -t $PKG/usr/share/gir-1.0/
+install -vDm 0644 build/src/gtex/Gtex-1.typelib -t $PKG/usr/lib${LIBDIRSUFFIX}/girepository-1.0/

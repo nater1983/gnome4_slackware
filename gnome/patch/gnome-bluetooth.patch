@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gnome-bluetooth/gnome-bluetooth-47.1-build_fix-1.patch

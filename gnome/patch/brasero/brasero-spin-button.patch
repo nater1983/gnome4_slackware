@@ -1,0 +1,36 @@
+From e384e9dc34d4fc4259a96e13682df911f4835b8c Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Mon, 24 Jun 2024 19:22:28 +0100
+Subject: [PATCH] src: Fix 'GtkSpinButton' filling vertical space
+
+We set the GtkBox's valign to 'GTK_ALIGN_CENTER'. That way,
+'GtkSpinButton' would not fill vertically.
+
+Fixes https://gitlab.gnome.org/GNOME/brasero/-/issues/327
+---
+ src/brasero-split-dialog.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/brasero-split-dialog.c b/src/brasero-split-dialog.c
+index 0ed522668..3858cb46b 100644
+--- a/src/brasero-split-dialog.c
++++ b/src/brasero-split-dialog.c
+@@ -1111,6 +1111,7 @@ brasero_split_dialog_init (BraseroSplitDialog *object)
+ 	gtk_notebook_append_page (GTK_NOTEBOOK (priv->notebook), priv->player, NULL);
+ 
+ 	hbox2 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
++	gtk_widget_set_valign (hbox2, GTK_ALIGN_CENTER);
+ 	gtk_widget_show (hbox2);
+ 	gtk_notebook_append_page (GTK_NOTEBOOK (priv->notebook), hbox2, NULL);
+ 
+@@ -1129,6 +1130,7 @@ brasero_split_dialog_init (BraseroSplitDialog *object)
+ 	gtk_box_pack_start (GTK_BOX (hbox2), label, FALSE, FALSE, 0);
+ 
+ 	hbox2 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
++	gtk_widget_set_valign (hbox2, GTK_ALIGN_CENTER);
+ 	gtk_widget_show (hbox2);
+ 	gtk_notebook_append_page (GTK_NOTEBOOK (priv->notebook), hbox2, NULL);
+ 
+-- 
+GitLab
+

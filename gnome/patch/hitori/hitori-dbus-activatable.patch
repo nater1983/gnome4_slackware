@@ -1,0 +1,55 @@
+From 6a325b2910ca568f99bad2698acb06000b7630b9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ball=C3=B3=20Gy=C3=B6rgy?= <ballogyor@gmail.com>
+Date: Tue, 8 Apr 2025 19:42:28 +0200
+Subject: [PATCH] Add D-Bus service file
+
+And mark the application as D-Bus activatable. This allows application
+launchers to activate it via D-Bus.
+---
+ data/meson.build                 | 11 +++++++++++
+ data/org.gnome.Hitori.desktop.in |  1 +
+ data/org.gnome.Hitori.service.in |  3 +++
+ 3 files changed, 15 insertions(+)
+ create mode 100644 data/org.gnome.Hitori.service.in
+
+diff --git a/data/meson.build b/data/meson.build
+index c66a233..a9eae15 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -1,5 +1,16 @@
+ subdir('icons')
+ 
++service_conf = configuration_data()
++service_conf.set('bindir', join_paths(get_option('prefix'), get_option('bindir')))
++
++configure_file(
++  input: '@0@.service.in'.format(application_id),
++  output: '@0@.service'.format(application_id),
++  install: true,
++  install_dir: join_paths(get_option('datadir'), 'dbus-1', 'services'),
++  configuration: service_conf
++)
++
+ desktop_file = i18n.merge_file(
+   type: 'desktop',
+   input: '@0@.desktop.in'.format(application_id),
+diff --git a/data/org.gnome.Hitori.desktop.in b/data/org.gnome.Hitori.desktop.in
+index 7ed4e41..bf3b21d 100644
+--- a/data/org.gnome.Hitori.desktop.in
++++ b/data/org.gnome.Hitori.desktop.in
+@@ -10,3 +10,4 @@ Terminal=false
+ Type=Application
+ Categories=GTK;Game;LogicGame;
+ StartupNotify=true
++DBusActivatable=true
+diff --git a/data/org.gnome.Hitori.service.in b/data/org.gnome.Hitori.service.in
+new file mode 100644
+index 0000000..a3843f5
+--- /dev/null
++++ b/data/org.gnome.Hitori.service.in
+@@ -0,0 +1,3 @@
++[D-BUS Service]
++Name=org.gnome.Hitori
++Exec=@bindir@/hitori --gapplication-service
+-- 
+GitLab

@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/power-profiles-daemon/1.patch
+patch -Np1 -i $CWD/patch/power-profiles-daemon/respect-dpm-manual.patch

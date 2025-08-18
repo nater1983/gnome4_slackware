@@ -1,0 +1,4 @@
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+make
+make PREFIX=$PKG/usr install

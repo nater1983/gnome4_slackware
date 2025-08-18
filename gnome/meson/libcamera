@@ -1,0 +1,13 @@
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS -Wno-deprecated-declarations" \
+  CXXFLAGS="$SLKCFLAGS -Wno-deprecated-declarations" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS \
+    -Dv4l2=true \
+    -Dtracing=disabled \
+    -Dtest=true
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

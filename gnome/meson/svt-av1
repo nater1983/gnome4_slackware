@@ -1,0 +1,18 @@
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}"
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
+
+cd ../gstreamer-plugin
+sed -i -e '541d' -e '538d' gstsvtav1enc.c
+sed -i '82s|LIBRARY DESTINATION .*|LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gstreamer-1.0)|' CMakeLists.txt
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}"
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
+
+cd ../../

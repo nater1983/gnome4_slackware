@@ -14,6 +14,6 @@ geocode-glib: (finding an address from coordinates). It uses Nominatim service t
 geocode-glib: achieve that. It also caches (reverse-)geocoding requests for faster
 geocode-glib: results and to avoid unnecessary server load.
 geocode-glib:
-geocode-glib: https://git.gnome.org/browse/geocode-glib
+geocode-glib: https://gitlab.gnome.org/GNOME/geocode-glib
 geocode-glib:
 geocode-glib:

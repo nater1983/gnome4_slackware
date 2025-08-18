@@ -1,0 +1,16 @@
+cd gnome-browser-extension
+mkdir build
+cd build
+  CFLAGS="$SLKCFLAGS" \
+  CXXFLAGS="$SLKCFLAGS" \
+  meson setup ..\
+    "${GNOME_BUILD_ARGS[@]}" \
+    $GNOME_OPT_ARGS
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
+
+install -Dm644 build/*.json -t $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contrib/browser-extensions/
+install -Dm644 build/extension-{firefox,chrome}.zip -t $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contrib/browser-extensions/
+cp $CWD/post-install/gnome-browser-connector/README.extensions $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contrib/browser-extensions/
+rm -fr "$CWD/post-install/gnome-browser-connector/gnome-browser-extension-c5e13791ce0f08f0b6cc3edeb701e14bf00ece6a.tar.gz"

@@ -12,6 +12,8 @@ alabaster
 Sphinx
 libgit2
 libgit2-glib
+pygit2
+gitg
 template-glib
 jsonrpc-glib
 d-spy

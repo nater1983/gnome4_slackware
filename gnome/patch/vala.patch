@@ -1,3 +1,4 @@
+patch -Np1 -i $CWD/patch/vala/37813b8747dc9633f8cccba4a5a8b86955184789.patch
 # Don't use graphviz if it's not on the system.
 if ! /bin/ls /usr/man/man7/graphviz.7.gz 1> /dev/null 2> /dev/null ; then
   patch -Np1 -i $CWD/patch/vala/disable-graphviz.patch

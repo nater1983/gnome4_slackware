@@ -1,0 +1,14 @@
+libadwaita
+python3-poetry-core
+python3-generic
+python3-exceptiongroup
+python3-flit_scm
+python3-gaphas
+python3-tinycss2
+python3-webencodings
+python3-pydot
+python3-jedi
+python3-parso
+python3-better-exceptions
+python3-defusedxml
+python3-dulwich

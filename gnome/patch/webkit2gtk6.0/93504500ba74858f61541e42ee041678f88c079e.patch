@@ -1,0 +1,64 @@
+From 93504500ba74858f61541e42ee041678f88c079e Mon Sep 17 00:00:00 2001
+From: Michael Catanzaro <mcatanzaro@redhat.com>
+Date: Tue, 5 Aug 2025 08:37:03 -0700
+Subject: [PATCH] fatal error: 'bmalloc/TZoneHeap.h' file not found
+ https://bugs.webkit.org/show_bug.cgi?id=296888
+
+Unreviewed build fix.
+
+Canonical link: https://commits.webkit.org/298233@main
+---
+ Source/WebKit/Platform/IPC/Connection.h | 7 +++++--
+ Source/WebKit/Platform/IPC/Decoder.h    | 7 +++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebKit/Platform/IPC/Connection.h b/Source/WebKit/Platform/IPC/Connection.h
+index dd82d57ef958..2d35a5f620e0 100644
+--- a/Source/WebKit/Platform/IPC/Connection.h
++++ b/Source/WebKit/Platform/IPC/Connection.h
+@@ -35,8 +35,6 @@
+ #include "SyncRequestID.h"
+ #include "Timeout.h"
+ #include <atomic>
+-#include <bmalloc/TZoneHeap.h>
+-#include <bmalloc/bmalloc.h>
+ #include <new>
+ #include <tuple>
+ #include <wtf/Assertions.h>
+@@ -82,6 +80,11 @@
+ #include <wtf/glib/GSocketMonitor.h>
+ #endif
+ 
++#if !USE(SYSTEM_MALLOC)
++#include <bmalloc/TZoneHeap.h>
++#include <bmalloc/bmalloc.h>
++#endif
++
+ #if USE(UNIX_DOMAIN_SOCKETS)
+ #include <wtf/unix/UnixFileDescriptor.h>
+ #endif
+diff --git a/Source/WebKit/Platform/IPC/Decoder.h b/Source/WebKit/Platform/IPC/Decoder.h
+index 11f0de4ae504..3d93c67aa300 100644
+--- a/Source/WebKit/Platform/IPC/Decoder.h
++++ b/Source/WebKit/Platform/IPC/Decoder.h
+@@ -29,8 +29,6 @@
+ #include "MessageNames.h"
+ #include "ReceiverMatcher.h"
+ #include "SyncRequestID.h"
+-#include <bmalloc/TZoneHeap.h>
+-#include <bmalloc/bmalloc.h>
+ #include <memory>
+ #include <span>
+ #include <wtf/ArgumentCoder.h>
+@@ -47,6 +45,11 @@
+ #include "ImportanceAssertion.h"
+ #endif
+ 
++#if !USE(SYSTEM_MALLOC)
++#include <bmalloc/TZoneHeap.h>
++#include <bmalloc/bmalloc.h>
++#endif
++
+ #ifdef __OBJC__
+ typedef Class ClassStructPtr;
+ #else

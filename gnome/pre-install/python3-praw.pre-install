@@ -1,0 +1,1 @@
+sed -i 's/prawcore >=2\.4, <3/prawcore >=3.0.2, <4/' pyproject.toml

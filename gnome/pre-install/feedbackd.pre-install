@@ -1,0 +1,10 @@
+cat << EOF >  subprojects/gmobile.wrap
+[wrap-git]
+directory = gmobile
+url = https://gitlab.gnome.org/World/Phosh/gmobile.git
+revision = v0.3.1
+depth = 1
+
+[subproject]
+meson_options = -Dudevdir=/lib/udev -Dintrospection=true
+EOF

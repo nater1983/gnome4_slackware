@@ -1,0 +1,7 @@
+mkdir -p $PKG/usr/bin
+mkdir -p $PKG/usr/lib64/node_modules/typescript
+cp -pr package.json bin/ lib/ $PKG/usr/lib64/node_modules/typescript
+
+cd $PKG/usr/bin
+ln -s ../lib64/node_modules/typescript/bin/tsc
+ln -s ../lib64/node_modules/typescript/bin/tsserver

@@ -1,0 +1,1 @@
+install -pm 0644 liblouis/internal.h $PKG/usr/include/liblouis

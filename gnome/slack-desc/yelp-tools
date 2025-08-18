@@ -6,14 +6,14 @@
 # customary to leave one space after the ':' except on otherwise blank lines.
 
           |-----handy-ruler------------------------------------------------------|
-yelp-tools: yelp-tools (documentation checker)
+yelp-tools: yelp-tools (Create, manage, and publish documentation for Yelp)
 yelp-tools:
-yelp-tools: yelp-tools is a set of command-line tools to build and check
-yelp-tools: documentation.
+yelp-tools: yelp-tools is a collection of scripts and build utilities to help
+yelp-tools: create, manage, and publish documentation for Yelp and the web. Most
+yelp-tools: of the heavy lifting is done by packages like yelp-xsl and itstool.
+yelp-tools: This package just wraps things up in a developer-friendly way.
 yelp-tools:
-yelp-tools:
-yelp-tools: Homepage: http://projects.gnome.org/yelp/
-yelp-tools:
+yelp-tools: Homepage: https://gitlab.gnome.org/GNOME/yelp-tools
 yelp-tools:
 yelp-tools:
 yelp-tools:

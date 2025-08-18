@@ -1,0 +1,10 @@
+install -m755 -d $PKG/usr/include
+cp -a src/include/* $PKG/usr/include/
+cp -a out/public-include/* $PKG/usr/include/
+
+# Don't clobber the config file
+mv $PKG/etc/libsmbios/logging.conf $PKG/etc/libsmbios/logging.conf.new
+
+# Remove the ick, er, yum stuff
+rm -rf $PKG/etc/yum
+rm -rf $PKG/usr/lib/yum-plugins

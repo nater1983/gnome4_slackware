@@ -1,0 +1,14 @@
+export VIRTUSER=${VIRTUSER:-root}
+export VIRTGROUP=${VIRTGROUP:-users}
+
+# Some optional dependencies checks
+audit="dis" ; if pkg-config --exists audit ; then audit="en" ; fi
+bash_completion="" ; if pkg-config --exists bash-completion ; then
+  bash_completion="-Dbash_completion=enabled -Dbash_completion_dir=/usr/share/bash-completion/completions"
+fi
+libiscsi="dis" ; if pkg-config --exists libiscsi ; then libiscsi="en" ; fi
+
+rm -fR tests/vircaps2xmldata 
+
+# we have sysctld files in /etc/sysctl.d
+sed -i "s|prefix / 'lib' / 'sysctl.d'|sysconfdir / 'sysctl.d'|" src/remote/meson.build

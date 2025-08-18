@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/libpst/m4-python310.patch
+patch -Np1 -i $CWD/patch/libpst/0003-gcc-c23-changes.patch

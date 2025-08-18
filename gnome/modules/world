@@ -1,0 +1,248 @@
+elastic
+cozy
+emblem
+exiftool
+eyedropper
+# Gaphor
+python3-poetry-core
+python3-generic
+python3-exceptiongroup
+python3-flit_scm
+gaphas
+python3-tinycss2
+python3-pydot
+python3-jedi
+python3-parso
+python3-better-exceptions
+python3-defusedxml
+python3-dulwich
+gaphor
+identity
+typescript
+decibels
+libgda
+gtranslator
+gnome-commander
+khronos
+lorem
+python3-mutagen
+mat2
+metadata-cleaner
+mousai
+news_flash_gtk
+fractal
+zbar
+Authenticator
+liboauth
+duplicity
+librsync
+python3-fasteners
+rclone
+deja-dup
+forge-sparks
+wike
+Impression
+gnome-dictionary
+# secrets
+python3-argon2-cffi-bindings
+python3-argon2-cffi
+python3-construct
+python3-dateutil
+python3-decorator
+python3-pep517
+python3-pycryptodomex
+python3-pykcs11
+python3-pykeepass
+python3-pyotp
+python3-validators
+python3-zxcvbn
+python3-zxcvbn-python
+secrets
+# boatswain
+hidapi
+boatswain
+Shortwave
+amberol
+decoder
+#Pika Backup/Borgbackup
+python3-pkgconfig
+borgbackup
+python3-cachetools
+python3-setuptools-rust
+python3-semantic_version
+python3-maturin
+python3-cryptography
+python3-google-api-core
+python3-google-api-python-client
+python3-google-auth
+python3-google-auth-httplib2
+python3-google-cloud-core
+python3-google-cloud-storage
+python3-google-crc32c
+python3-google-resumable-media
+python3-googleapis-common-protos
+python3-guzzle_sphinx_theme
+python3-httplib2
+python3-msgpack
+python3-oauth2client
+python3-protobuf
+python3-pyasn1
+python3-pyasn1-modules
+python3-pydrive2
+python3-pyopenssl
+python3-rsa
+python3-typing_extensions
+python3-uritemplate
+pika-backup
+# pure_protobuf
+python3-poetry-dynamic-versioning
+python3-toml
+python3-tomlkit
+python3-dunamai
+pure-protobuf
+#Komikku
+python3-beautifulsoup4
+python3-colorthief
+python3-curl_cffi
+python3-dateparser
+python3-dateutil
+python3-emoji
+python3-entrypoints
+python3-jaraco.functools
+python3-jaraco.context
+python3-keyring
+python3-magic
+python3-more-itertools
+python3-natsort
+python3-piexif
+python3-pillow_heif
+python3-pytz
+python3-rarfile
+python3-regex
+python3-soupsieve
+python3-tzlocal
+python3-unidecode
+python3-modern.colorthief
+komikku
+#Gnome Firmware
+# fwupd - in gnome-software module
+gnome-firmware
+# Commit
+blueprint-compiler
+Commit
+# video-trimmer
+video-trimmer
+# Plots
+python3-lark
+python3-opengl
+python3-freetype
+python3-glm
+Plots
+# Collision
+crystal-lang
+Collision
+# citations
+citations
+# dialect
+python3-click
+python3-gtts
+dialect
+# webfont-kit-generator
+python3-unicodedata2
+python3-fonttools
+webfont-kit-generator
+# cozy
+python3-peewee
+libdazzle
+# gst-plugins-ugly - found in previous module
+cozy
+# giara
+# blueprint-compiler -- found in a previous application
+python3-websocket-client
+python3-prawcore
+python3-update-checker
+python3-praw
+# python3-dateutil -- found in a previous application
+# python3-beautifulsoup4 -- found in a previous application
+python3-mistune
+giara
+# brasero
+gnome-common
+brasero
+# dLeyna
+dLeyna
+# font-manager
+font-manager
+# raw-thumbnailer
+raw-thumbnailer
+# Authenticator
+zbar
+Authenticator
+# Cheese
+cogl
+clutter
+clutter-gtk
+clutter-gst
+gnome-video-effects
+cheese
+# Snapshot
+gst-plugins-rs
+snapshot
+# nautilus-python
+nautilus-python
+# gnome-firmware
+# gcab -- found in a previous application
+# libsmbios-- found in a previous application
+# protobuf-c -- found in a previous application
+python3-pefile
+# libjcat -- found in a previous application
+fwupd
+gnome-firmware
+# gnome-recipes
+gnome-recipes
+# Junction
+Junction
+# Curtail
+python3-scour
+pngquant
+jpegoptim
+oxipng
+Curtail
+# Fragments
+Fragments
+# apostrophe
+python3-pypandoc
+apostrophe
+# workbench
+vala-language-server
+biome
+gtkcsslanguageserver
+workbench
+# eartag
+python3-pillow
+python3-pyacoustid
+eartag
+# python3-turtle
+python3-turtle
+# showtime
+gst-plugins-rs
+showtime
+# sound-juicer
+libmusicbrainz5
+sound-juicer
+# kooha
+kooha
+# gdm-settings
+gdm-settings
+# Endeavour
+Endeavour
+# tags
+tags
+# transmission
+transmission
+# gnumeric
+goffice
+psiconv
+gnumeric
+# health
+health

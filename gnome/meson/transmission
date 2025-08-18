@@ -1,0 +1,18 @@
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.12 \
+    -DCMAKE_INSTALL_DOCDIR=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    -DENABLE_CLI=ON \
+    -DENABLE_QT=OFF \
+    -DENABLE_GTK=ON \
+    -DREBUILD_WEB=OFF \
+    -DENABLE_DAEMON=ON \
+    -DENABLE_CLI=ON \
+    -DUSE_SYSTEM_MINIUPNPC=OFF \
+    -DUSE_SYSTEM_NATPMP=OFF \
+    -DENABLE_TESTS=OFF \
+    -DUSE_GTK_VERSION=4
+make 
+make install/strip DESTDIR=$PKG

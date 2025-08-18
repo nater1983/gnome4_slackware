@@ -1,10 +1,10 @@
+echo "0.57.0" | tee .tarball-version .version > /dev/null
 ./autogen.sh
-CFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -Wno-error=incompatible-pointer-types" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
-    --docdir=/usr/doc/$PRGNAM-$VERSION \
-    $GRAPHVIZ_SUPPORT
+    --docdir=/usr/doc/$PRGNAM-$VERSION
 
 # Hack to build if valac isn't already installed:
 if [ ! -r /usr/bin/valac ]; then

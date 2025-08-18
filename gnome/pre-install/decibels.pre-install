@@ -1,0 +1,4 @@
+wget -c -P "$CWD/pre-install/decibels" https://gitlab.gnome.org/BrainBlasted/gi-typescript-definitions/-/archive/dbbaa0527556cd3ce5434c4a5072cd99348eff7a/gi-typescript-definitions-dbbaa0527556cd3ce5434c4a5072cd99348eff7a.tar.gz
+tar --strip-components=1 -xzf $CWD/pre-install/decibels/gi-typescript-definitions-dbbaa0527556cd3ce5434c4a5072cd99348eff7a.tar.gz -C gi-types
+rm -fr $CWD/pre-install/decibels/gi-typescript-definitions-dbbaa0527556cd3ce5434c4a5072cd99348eff7a.tar.gz
+rm -fr $CWD/pre-install/decibels/

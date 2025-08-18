@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+    |-----handy-ruler------------------------------------------------------|
+phoc: phoc (wlroots based Phone compositor as used on the Librem5.)
+phoc:
+phoc: A wlroots based Wayland compositor mostly used on mobile phones.
+phoc: Often used as part of Phosh but works perfectly well on its own.
+phoc:
+phoc:
+phoc: Homepage: https://gitlab.gnome.org/World/Phosh/phoc
+phoc:
+phoc:
+phoc:
+phoc:

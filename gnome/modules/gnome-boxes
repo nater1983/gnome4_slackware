@@ -3,12 +3,14 @@ osinfo-db
 libosinfo
 yajl
 numactl
+openwsman
 libvirt
 libvirt-glib
 libvirt-python
 gtk-vnc
 spice-protocol
 spice
+spice-vdagent
 usbredir
 spice-gtk
 device-tree-compiler
@@ -17,9 +19,11 @@ snappy
 vde2
 virglrenderer
 libslirp
+edk2-ovmf
 qemu
 virt-manager
 libcacard
 phodav
 libovf-glib
+libmks
 gnome-boxes

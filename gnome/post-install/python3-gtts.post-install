@@ -1,0 +1,1 @@
+install -vDm 0755 $CWD/post-install/python3-gtts/gtts-cli -t $PKG/usr/bin

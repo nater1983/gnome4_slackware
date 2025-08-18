@@ -1,0 +1,2 @@
+  sed -E -e '/SUPPORTED_BUILD_TYPES/s/Debug/None/' -i "cmake/CommonConfigOptions.cmake"
+  sed -E -e 's&^.*find_package\(SDL3\).*$&set(SDL3_FOUND OFF)&' -i "client/SDL/CMakeLists.txt"

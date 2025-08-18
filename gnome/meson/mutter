@@ -1,7 +1,8 @@
 mkdir build
 cd build
-  CFLAGS="$SLKCFLAGS" \
-  CXXFLAGS="$SLKCFLAGS" \
+  CFLAGS="$SLKCFLAGS -fno-semantic-interposition" \
+  CXXFLAGS="$SLKCFLAGS -fno-semantic-interposition" \
+  LDFLAGS+="$SLKCFLAGS -Wl,-Bsymbolic-functions" \
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
@@ -10,8 +11,9 @@ cd build
     -Dcogl_tests=false \
     -Dclutter_tests=false \
     -Dtests=disabled \
-    -Dsystemd=false \
     -Dx11=true \
+    -Dbash_completion=false \
+    -Dxwayland_initfd=auto \
     -Dinstalled_tests=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install

@@ -1,0 +1,22 @@
+From 4487408456a80e4aa2fa34f8993a8c08f6dae89c Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Mon, 1 Jul 2024 19:36:12 -0500
+Subject: [PATCH] Enable Introspection for gmobile
+
+---
+ meson.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 7e49679..aa0a2ab 100644
+--- a/meson.build
++++ b/meson.build
+@@ -17,7 +17,7 @@ if get_option('daemon')
+     'gmobile',
+     version: '>= 0.1.0',
+     fallback: ['gmobile', 'gmobile_dep'],
+-    default_options: ['examples=false', 'introspection=false', 'gtk_doc=false', 'tests=false'],
++    default_options: ['examples=false', 'introspection=true', 'gtk_doc=false', 'tests=false'],
+   )
+   gsound = dependency('gsound')
+   gudev = dependency('gudev-1.0', version: '>=232')

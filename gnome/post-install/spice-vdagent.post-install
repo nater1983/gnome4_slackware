@@ -1,0 +1,5 @@
+# Install an init script and an X.org configuration file
+install -m 0755 -D $CWD/post-install/spice-vdagent/rc.spice-vdagent \
+  $PKG/etc/rc.d/rc.spice-vdagent.new
+install -m 0644 -D $CWD/post-install/spice-vdagent/06-spice-vdagent.conf \
+  $PKG/usr/share/X11/xorg.conf.d/06-spice-vdagent.conf.new

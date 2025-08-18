@@ -1,0 +1,2 @@
+# Delete all .a files in the gstreamer-1.0 directory
+rm -f "$PKG/usr/lib64/gstreamer-1.0/"*.a

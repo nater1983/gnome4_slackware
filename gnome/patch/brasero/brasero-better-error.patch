@@ -1,0 +1,99 @@
+From 0374ff2cf6d7b1338afb8977658d3476b643c896 Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Sat, 1 Apr 2023 21:13:19 +0000
+Subject: [PATCH 1/3] libbrasero-burn: Fix incorrect condition during error
+ check
+
+If we don't have a GError set in priv->error, we report a generic
+error message along with the process exit code, else we report the
+actual GError message.
+---
+ libbrasero-burn/burn-process.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libbrasero-burn/burn-process.c b/libbrasero-burn/burn-process.c
+index bd0b8d56f..cad1e8da5 100644
+--- a/libbrasero-burn/burn-process.c
++++ b/libbrasero-burn/burn-process.c
+@@ -251,7 +251,7 @@ brasero_process_finished (BraseroProcess *self)
+ 
+ 	/* check if an error went undetected */
+ 	if (priv->return_status) {
+-		if (priv->error) {
++		if (!priv->error) {
+ 			brasero_job_error (BRASERO_JOB (self),
+ 					   g_error_new (BRASERO_BURN_ERROR,
+ 							BRASERO_BURN_ERROR_GENERAL,
+-- 
+GitLab
+
+
+From 8484a3a556602e19ff1f527f9b7988b6b88dfbc9 Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Sat, 1 Apr 2023 21:26:12 +0000
+Subject: [PATCH 2/3] cdrdao: Add better error message for "Unsupported track
+ mode" errors
+
+Add "Unsupported track mode" error to the list of supported error
+messages, so we display a better error message to the user.
+
+Fixes: #349
+---
+ plugins/cdrdao/burn-cdrdao.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/plugins/cdrdao/burn-cdrdao.c b/plugins/cdrdao/burn-cdrdao.c
+index 8ab3b6c88..f48eb47bb 100644
+--- a/plugins/cdrdao/burn-cdrdao.c
++++ b/plugins/cdrdao/burn-cdrdao.c
+@@ -248,6 +248,12 @@ brasero_cdrdao_read_stderr (BraseroProcess *process, const gchar *line)
+ 						BRASERO_BURN_ERROR_PERMISSION,
+ 						_("You do not have the required permissions to use this drive")));
+ 	}
++	else if (strstr (line, "Unsupported track mode")) {
++		brasero_job_error (BRASERO_JOB (cdrdao),
++				   g_error_new (BRASERO_BURN_ERROR,
++						BRASERO_BURN_ERROR_GENERAL,
++						_("Unsupported track mode in TOC/CUE file")));
++	}
+ 
+ 	return BRASERO_BURN_OK;
+ }
+-- 
+GitLab
+
+
+From 305b223f788e7265afcea590b319edddf11c9078 Mon Sep 17 00:00:00 2001
+From: sid <sidtosh4@gmail.com>
+Date: Sat, 1 Apr 2023 21:26:56 +0000
+Subject: [PATCH 3/3] cdrkit:	Add better error message for "Unsupported
+ sector size" errors
+
+Add "Unsupported sector size" error to the list of supported error
+messages, so we display a better error message to the user.
+
+Refer: https://gitlab.gnome.org/GNOME/brasero/-/issues/353
+---
+ plugins/cdrkit/burn-wodim.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/plugins/cdrkit/burn-wodim.c b/plugins/cdrkit/burn-wodim.c
+index be7e5b92e..1cbd16da2 100644
+--- a/plugins/cdrkit/burn-wodim.c
++++ b/plugins/cdrkit/burn-wodim.c
+@@ -150,6 +150,12 @@ brasero_wodim_stderr_read (BraseroProcess *process, const gchar *line)
+ 							     BRASERO_BURN_ERROR_MEDIUM_INVALID,
+ 							     _("The disc is not supported")));
+ 	}
++	else if (strstr (line, "Unsupported sector size")) {
++		brasero_job_error (BRASERO_JOB (process),
++				   g_error_new (BRASERO_BURN_ERROR,
++						BRASERO_BURN_ERROR_GENERAL,
++						_("Unsupported sector size in TOC/CUE file")));
++	}
+ 	/* REMINDER: these should not be necessary as we checked that already */
+ 	/**
+ 	else if (strstr (line, "cannot write medium - incompatible format") != NULL) {
+-- 
+GitLab
+

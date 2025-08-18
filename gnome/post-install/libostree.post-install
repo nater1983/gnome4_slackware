@@ -1,1 +1,2 @@
 mv $PKG/usr/lib/dracut/ $PKG/usr/lib64
+sed -i 's/\<systemd\>\s*//g' $PKG/etc/dracut.conf.d/ostree.conf

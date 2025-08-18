@@ -1,0 +1,2 @@
+# [PATCH] Revert commit 02172bda73663f63b603956a180c6c6fc6a3d187:
+#patch -Np1 -i $CWD/patch/glib2/a04de2de904aa74dc7e4a8a5df231b1561b86b35.patch

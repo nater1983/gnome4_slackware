@@ -1,0 +1,3 @@
+wget -c -P "$CWD/post-install/gnome-browser-connector" https://gitlab.gnome.org/GNOME/gnome-browser-extension/-/archive/c5e13791ce0f08f0b6cc3edeb701e14bf00ece6a/gnome-browser-extension-c5e13791ce0f08f0b6cc3edeb701e14bf00ece6a.tar.gz
+mkdir -p gnome-browser-extension
+tar --strip-components=1 -xzf $CWD/post-install/gnome-browser-connector/gnome-browser-extension-c5e13791ce0f08f0b6cc3edeb701e14bf00ece6a.tar.gz -C gnome-browser-extension

@@ -1,0 +1,1 @@
+sed -i 's/use_scm_version=True,/version='2.0',/g' setup.py

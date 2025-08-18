@@ -1,0 +1,2 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+echo "/usr/lib${LIBDIRSUFFIX}/sushi/" > $PKG/etc/ld.so.conf.d/sushi.conf

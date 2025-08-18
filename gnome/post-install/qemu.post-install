@@ -1,0 +1,24 @@
+export KVMGROUP=${KVMGROUP:-users}
+export BRIDGE_HELPER_SETUID=${BRIDGE_HELPER_SETUID:-yes}
+
+# Remove empty /var
+rm -rf $PKG/var
+
+# install some udev rules for /dev/kvm
+# Note: no udev rules for usb pasthrough when running qemu as non-root on linux hosts. See Section 2.11.2
+# https://qemu.weilnetz.de/doc/qemu-doc.html
+mkdir -p $PKG/lib/udev/rules.d/
+sed "s/@GROUP@/$KVMGROUP/" $CWD/post-install/qemu/65-kvm.rules \
+  > $PKG/lib/udev/rules.d/65-kvm.rules
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF \
+  | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+# create a symlink for qemu-kvm to support aqemu and such frontends
+# even though qemu now has a gtk gui.
+[ ! -z $KVMARCH ] && ln -s qemu-system-$KVMARCH $PKG/usr/bin/qemu-kvm
+
+# set qemu-bridge-helper setuid if requested
+if [ "$BRIDGE_HELPER_SETUID" = "yes" ]; then
+  chmod u+s $PKG/usr/libexec/qemu-bridge-helper
+fi

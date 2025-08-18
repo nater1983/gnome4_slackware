@@ -1,3 +1,5 @@
+mkdir cmake-build
+cd cmake-build
   cmake .. \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DJPEGXL_ENABLE_JNI:BOOL='false' \
@@ -27,5 +29,5 @@
     -DBUILD_TESTING:BOOL='false' \
     -DINSTALL_GTEST:BOOL=OFF \
     -DENABLE_FUZZERS_DEFAULT:BOOL='false'
-make -C ../build
-make -C ../build install DESTDIR=$PKG
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
