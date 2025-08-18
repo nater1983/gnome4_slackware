@@ -46,17 +46,16 @@ gnome-dictionary
 # secrets
 python3-argon2-cffi-bindings
 python3-argon2-cffi
-python3-build
 python3-construct
 python3-dateutil
 python3-decorator
-python3-flit_core
-python3-installer
 python3-pep517
 python3-pycryptodomex
+python3-pykcs11
 python3-pykeepass
 python3-pyotp
 python3-validators
+python3-zxcvbn
 python3-zxcvbn-python
 secrets
 # boatswain
