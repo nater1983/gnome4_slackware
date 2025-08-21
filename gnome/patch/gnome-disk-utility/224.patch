@@ -32,8 +32,8 @@ index 8ef29ff71..2afad3f46 100644
  ]
  
  executable(
--  'gsd-disk-utility-notify',
-+  'gnome-disk-utility-notify',
+-  'gnome-disk-utility-notify',
++  'gsd-disk-utility-notify',
    sources,
    include_directories: top_inc,
    dependencies: deps,
@@ -58,7 +58,7 @@ index 000000000..8e2a561b6
 +[Desktop Entry]
 +Type=Application
 +Name=gnome-disk-utility notification plugin for GNOME Settings Daemon
-+Exec=@libexecdir@/gnome-disk-utility-notify
++Exec=@libexecdir@/gsd-disk-utility-notify
 +OnlyShowIn=GNOME;
 +NoDisplay=true
 +X-GNOME-AutoRestart=true
