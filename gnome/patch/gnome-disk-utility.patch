@@ -1,0 +1,2 @@
+# Revert: Switch to systemd service
+patch -Np1 -i $CWD/gnome/patch/gnome-disk-utility/224.patch
