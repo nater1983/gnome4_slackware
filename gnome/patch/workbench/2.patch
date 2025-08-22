@@ -45,20 +45,6 @@ Subject: [PATCH] Support Flatpak < 1.15.6 for permissions (#992)
  create mode 100644 src/flatpak.js
  create mode 100644 test/isDeviceInputOverrideAvailable.test.js
 
-diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
-index d459920b2..694fb19f9 100644
---- a/src/Extensions/Extensions.js
-+++ b/src/Extensions/Extensions.js
-@@ -6,7 +6,8 @@ import Interface from "./Extensions.blp" with { type: "uri" };
- import illustration from "./extensions.svg";
- 
- import "./Extension.js";
--import { getFlatpakInfo, settings } from "../util.js";
-+import { settings } from "../util.js";
-+import { getFlatpakInfo } from "../flatpak.js";
- 
- export const action_extensions = new Gio.SimpleAction({
-   name: "extensions",
 diff --git a/src/Permissions/Permissions.blp b/src/Permissions/Permissions.blp
 index 86743400d..f84efeee1 100644
 --- a/src/Permissions/Permissions.blp
