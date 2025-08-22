@@ -1,0 +1,243 @@
+From aa93296968f55ee7a3731abf8ff56d6f96b3dd66 Mon Sep 17 00:00:00 2001
+From: Sonny <sonny@fastmail.net>
+Date: Wed, 11 Dec 2024 16:19:09 +0100
+Subject: [PATCH] Support Flatpak < 1.15.6 for permissions (#992)
+
+---
+ src/Extensions/Extensions.js                |  3 +-
+ src/Permissions/Permissions.blp             |  6 ++--
+ src/Permissions/Permissions.js              | 23 +++++++++----
+ src/about.js                                |  2 +-
+ src/flatpak.js                              | 36 +++++++++++++++++++++
+ src/util.js                                 | 20 ++----------
+ test/isDeviceInputOverrideAvailable.test.js | 29 +++++++++++++++++
+ 7 files changed, 90 insertions(+), 29 deletions(-)
+ create mode 100644 src/flatpak.js
+ create mode 100644 test/isDeviceInputOverrideAvailable.test.js
+
+diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
+index d459920b2..694fb19f9 100644
+--- a/src/Extensions/Extensions.js
++++ b/src/Extensions/Extensions.js
+@@ -6,7 +6,8 @@ import Interface from "./Extensions.blp" with { type: "uri" };
+ import illustration from "./extensions.svg";
+ 
+ import "./Extension.js";
+-import { getFlatpakInfo, settings } from "../util.js";
++import { settings } from "../util.js";
++import { getFlatpakInfo } from "../flatpak.js";
+ 
+ export const action_extensions = new Gio.SimpleAction({
+   name: "extensions",
+diff --git a/src/Permissions/Permissions.blp b/src/Permissions/Permissions.blp
+index 86743400d..f84efeee1 100644
+--- a/src/Permissions/Permissions.blp
++++ b/src/Permissions/Permissions.blp
+@@ -42,7 +42,7 @@ Adw.Dialog dialog {
+           }
+ 
+           Label {
+-            label: _("Workbench needs additional permissions. Please run the following command in a terminal and restart the app.");
++            label: _("Workbench needs additional permissions. Please run the following command in a terminal and restart Workbench.");
+             wrap: true;
+             justify: center;
+           }
+@@ -133,13 +133,13 @@ Adw.Dialog dialog {
+                 ]
+               }
+ 
+-              Adw.ActionRow {
++              Adw.ActionRow action_row_device {
+                 [prefix]
+                 Image {
+                   icon-name: "re.sonny.Workbench-gamepad-symbolic";
+                 }
+ 
+-                title: _("--device=input");
++                // title: _("--device=input");
+                 subtitle: _("Access to input device such as gamepads");
+ 
+                 styles [
+diff --git a/src/Permissions/Permissions.js b/src/Permissions/Permissions.js
+index c0561b579..3f46e4cd0 100644
+--- a/src/Permissions/Permissions.js
++++ b/src/Permissions/Permissions.js
+@@ -1,5 +1,4 @@
+ import Gio from "gi://Gio";
+-import GLib from "gi://GLib";
+ import Gtk from "gi://Gtk";
+ 
+ import { build } from "../../troll/src/main.js";
+@@ -8,7 +7,11 @@ import Interface from "./Permissions.blp" with { type: "uri" };
+ 
+ import illustration from "./permissions.svg";
+ 
+-import { getFlatpakInfo } from "../util.js";
++import {
++  getFlatpakId,
++  getFlatpakInfo,
++  isDeviceInputOverrideAvailable,
++} from "../flatpak.js";
+ 
+ const action_permissions = new Gio.SimpleAction({
+   name: "permissions",
+@@ -16,13 +19,19 @@ const action_permissions = new Gio.SimpleAction({
+ });
+ 
+ export function Permissions({ window }) {
+-  const { dialog, picture_illustration, label_command, button_info } =
+-    build(Interface);
++  const {
++    dialog,
++    picture_illustration,
++    label_command,
++    button_info,
++    action_row_device,
++  } = build(Interface);
+ 
+   picture_illustration.set_resource(illustration);
+-  label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=input ${GLib.getenv(
+-    "FLATPAK_ID",
+-  )}`;
++
++  const device = isDeviceInputOverrideAvailable() ? "input" : "all";
++  label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=${device} ${getFlatpakId()}`;
++  action_row_device.title = `--input=${device}`;
+ 
+   button_info.connect("clicked", () => {
+     new Gtk.UriLauncher({
+diff --git a/src/about.js b/src/about.js
+index ac059668d..fb6c427c2 100644
+--- a/src/about.js
++++ b/src/about.js
+@@ -8,7 +8,7 @@ import {
+   getGjsVersion,
+   getGLibVersion,
+ } from "../troll/src/util.js";
+-import { getFlatpakInfo } from "./util.js";
++import { getFlatpakInfo } from "./flatpak.js";
+ 
+ export default function About({ application }) {
+   const flatpak_info = getFlatpakInfo();
+diff --git a/src/flatpak.js b/src/flatpak.js
+new file mode 100644
+index 000000000..fc4d5f277
+--- /dev/null
++++ b/src/flatpak.js
+@@ -0,0 +1,36 @@
++import GLib from "gi://GLib";
++
++let flatpak_info;
++export function getFlatpakInfo() {
++  if (flatpak_info) return flatpak_info;
++  flatpak_info = new GLib.KeyFile();
++  try {
++    flatpak_info.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
++  } catch (err) {
++    if (!err.matches(GLib.FileError, GLib.FileError.NOENT)) {
++      console.error(err);
++    }
++    return null;
++  }
++  return flatpak_info;
++}
++
++export function getFlatpakId() {
++  return getFlatpakInfo().get_string("Application", "name");
++}
++
++// https://repology.org/project/flatpak/versions
++export function isDeviceInputOverrideAvailable(flatpak_version) {
++  flatpak_version ??= getFlatpakInfo().get_string(
++    "Instance",
++    "flatpak-version",
++  );
++
++  // https://github.com/flatpak/flatpak/releases/tag/1.15.6
++  return (
++    flatpak_version.localeCompare("1.15.6", undefined, {
++      numeric: true,
++      sensitivity: "base",
++    }) > -1
++  );
++}
+diff --git a/src/util.js b/src/util.js
+index 958307cb2..bb038efe2 100644
+--- a/src/util.js
++++ b/src/util.js
+@@ -3,6 +3,7 @@ import Gio from "gi://Gio";
+ import Xdp from "gi://Xdp";
+ import GObject from "gi://GObject";
+ import { getLanguage } from "./common.js";
++import { getFlatpakId } from "./flatpak.js";
+ 
+ export const portal = new Xdp.Portal();
+ 
+@@ -25,21 +26,6 @@ export function ensureDir(file) {
+   }
+ }
+ 
+-let flatpak_info;
+-export function getFlatpakInfo() {
+-  if (flatpak_info) return flatpak_info;
+-  flatpak_info = new GLib.KeyFile();
+-  try {
+-    flatpak_info.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
+-  } catch (err) {
+-    if (!err.matches(GLib.FileError, GLib.FileError.NOENT)) {
+-      console.error(err);
+-    }
+-    return null;
+-  }
+-  return flatpak_info;
+-}
+-
+ export { getLanguage };
+ 
+ export function listenProperty(object, property, fn, { initial = false } = {}) {
+@@ -158,8 +144,8 @@ export function makeDropdownFlat(dropdown) {
+ 
+ export function buildRuntimePath(...args) {
+   return GLib.build_filenamev([
+-    GLib.getenv("XDG_RUNTIME_DIR"),
+-    GLib.getenv("FLATPAK_ID"),
++    GLib.get_user_runtime_dir(),
++    getFlatpakId(),
+     ...args,
+   ]);
+ }
+diff --git a/test/isDeviceInputOverrideAvailable.test.js b/test/isDeviceInputOverrideAvailable.test.js
+new file mode 100644
+index 000000000..f7db4ebe2
+--- /dev/null
++++ b/test/isDeviceInputOverrideAvailable.test.js
+@@ -0,0 +1,29 @@
++import "../src/init.js";
++
++import tst, { assert } from "../troll/tst/tst.js";
++
++import { isDeviceInputOverrideAvailable } from "../src/flatpak.js";
++
++const test = tst("isDeviceInputOverrideAvailable");
++
++test("returns a boolean", () => {
++  assert.equal(typeof isDeviceInputOverrideAvailable(), "boolean");
++});
++
++test("returns true if Flatpak version is equal to 1.15.6", () => {
++  assert.equal(isDeviceInputOverrideAvailable("1.15.6"), true);
++});
++
++test("returns true if Flatpak version is higher than 1.15.6", () => {
++  assert.equal(isDeviceInputOverrideAvailable("1.15.7"), true);
++  assert.equal(isDeviceInputOverrideAvailable("1.16.5"), true);
++  assert.equal(isDeviceInputOverrideAvailable("2.15.4"), true);
++});
++
++test("returns false if Flatpak version is lower than 1.15.6", () => {
++  assert.equal(isDeviceInputOverrideAvailable("1.15.5"), false);
++  assert.equal(isDeviceInputOverrideAvailable("1.14.7"), false);
++  assert.equal(isDeviceInputOverrideAvailable("0.16.7"), false);
++});
++
++export default test;
