@@ -1,3 +1,33 @@
+diff --git a/src/Permissions/Permissions.js b/src/Permissions/Permissions.js
+index 3f46e4cd0..53907d477 100644
+--- a/src/Permissions/Permissions.js
++++ b/src/Permissions/Permissions.js
+@@ -13,6 +13,8 @@ import {
+   isDeviceInputOverrideAvailable,
+ } from "../flatpak.js";
+ 
++const device = isDeviceInputOverrideAvailable() ? "input" : "all";
++
+ const action_permissions = new Gio.SimpleAction({
+   name: "permissions",
+   parameter_type: null,
+@@ -29,7 +31,6 @@ export function Permissions({ window }) {
+ 
+   picture_illustration.set_resource(illustration);
+ 
+-  const device = isDeviceInputOverrideAvailable() ? "input" : "all";
+   label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=${device} ${getFlatpakId()}`;
+   action_row_device.title = `--input=${device}`;
+ 
+@@ -57,7 +58,7 @@ const missing_permissions = (() => {
+   return (
+     !shared.includes("network") ||
+     !sockets.includes("pulseaudio") ||
+-    !devices.includes("all")
++    !devices.includes(device)
+   );
+ })();
+
 From aa93296968f55ee7a3731abf8ff56d6f96b3dd66 Mon Sep 17 00:00:00 2001
 From: Sonny <sonny@fastmail.net>
 Date: Wed, 11 Dec 2024 16:19:09 +0100
