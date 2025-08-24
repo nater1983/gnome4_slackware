@@ -1,259 +1,183 @@
-diff --git a/src/Permissions/Permissions.js b/src/Permissions/Permissions.js
-index 3f46e4cd0..53907d477 100644
---- a/src/Permissions/Permissions.js
-+++ b/src/Permissions/Permissions.js
-@@ -13,6 +13,8 @@ import {
-   isDeviceInputOverrideAvailable,
- } from "../flatpak.js";
- 
-+const device = isDeviceInputOverrideAvailable() ? "input" : "all";
-+
- const action_permissions = new Gio.SimpleAction({
-   name: "permissions",
-   parameter_type: null,
-@@ -29,7 +31,6 @@ export function Permissions({ window }) {
- 
-   picture_illustration.set_resource(illustration);
- 
--  const device = isDeviceInputOverrideAvailable() ? "input" : "all";
-   label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=${device} ${getFlatpakId()}`;
-   action_row_device.title = `--input=${device}`;
- 
-@@ -57,7 +58,7 @@ const missing_permissions = (() => {
-   return (
-     !shared.includes("network") ||
-     !sockets.includes("pulseaudio") ||
--    !devices.includes("all")
-+    !devices.includes(device)
-   );
- })();
-
-From aa93296968f55ee7a3731abf8ff56d6f96b3dd66 Mon Sep 17 00:00:00 2001
-From: Sonny <sonny@fastmail.net>
-Date: Wed, 11 Dec 2024 16:19:09 +0100
-Subject: [PATCH] Support Flatpak < 1.15.6 for permissions (#992)
-
----
- src/Extensions/Extensions.js                |  3 +-
- src/Permissions/Permissions.blp             |  6 ++--
- src/Permissions/Permissions.js              | 23 +++++++++----
- src/about.js                                |  2 +-
- src/flatpak.js                              | 36 +++++++++++++++++++++
- src/util.js                                 | 20 ++----------
- test/isDeviceInputOverrideAvailable.test.js | 29 +++++++++++++++++
- 7 files changed, 90 insertions(+), 29 deletions(-)
- create mode 100644 src/flatpak.js
- create mode 100644 test/isDeviceInputOverrideAvailable.test.js
-
-diff --git a/src/Permissions/Permissions.blp b/src/Permissions/Permissions.blp
-index 86743400d..f84efeee1 100644
---- a/src/Permissions/Permissions.blp
-+++ b/src/Permissions/Permissions.blp
-@@ -42,7 +42,7 @@ Adw.Dialog dialog {
-           }
- 
-           Label {
--            label: _("Workbench needs additional permissions. Please run the following command in a terminal and restart the app.");
-+            label: _("Workbench needs additional permissions. Please run the following command in a terminal and restart Workbench.");
-             wrap: true;
-             justify: center;
-           }
-@@ -133,13 +133,13 @@ Adw.Dialog dialog {
-                 ]
-               }
- 
--              Adw.ActionRow {
-+              Adw.ActionRow action_row_device {
-                 [prefix]
-                 Image {
-                   icon-name: "re.sonny.Workbench-gamepad-symbolic";
-                 }
- 
--                title: _("--device=input");
-+                // title: _("--device=input");
-                 subtitle: _("Access to input device such as gamepads");
- 
-                 styles [
-diff --git a/src/Permissions/Permissions.js b/src/Permissions/Permissions.js
-index c0561b579..3f46e4cd0 100644
---- a/src/Permissions/Permissions.js
-+++ b/src/Permissions/Permissions.js
-@@ -1,5 +1,4 @@
- import Gio from "gi://Gio";
--import GLib from "gi://GLib";
- import Gtk from "gi://Gtk";
- 
- import { build } from "../../troll/src/main.js";
-@@ -8,7 +7,11 @@ import Interface from "./Permissions.blp" with { type: "uri" };
- 
- import illustration from "./permissions.svg";
- 
--import { getFlatpakInfo } from "../util.js";
-+import {
-+  getFlatpakId,
-+  getFlatpakInfo,
-+  isDeviceInputOverrideAvailable,
-+} from "../flatpak.js";
- 
- const action_permissions = new Gio.SimpleAction({
-   name: "permissions",
-@@ -16,13 +19,19 @@ const action_permissions = new Gio.SimpleAction({
- });
- 
- export function Permissions({ window }) {
--  const { dialog, picture_illustration, label_command, button_info } =
--    build(Interface);
-+  const {
-+    dialog,
-+    picture_illustration,
-+    label_command,
-+    button_info,
-+    action_row_device,
-+  } = build(Interface);
- 
-   picture_illustration.set_resource(illustration);
--  label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=input ${GLib.getenv(
--    "FLATPAK_ID",
--  )}`;
-+
-+  const device = isDeviceInputOverrideAvailable() ? "input" : "all";
-+  label_command.label = `flatpak override --user --share=network --socket=pulseaudio --device=${device} ${getFlatpakId()}`;
-+  action_row_device.title = `--input=${device}`;
- 
-   button_info.connect("clicked", () => {
-     new Gtk.UriLauncher({
-diff --git a/src/about.js b/src/about.js
-index ac059668d..fb6c427c2 100644
---- a/src/about.js
-+++ b/src/about.js
-@@ -8,7 +8,7 @@ import {
-   getGjsVersion,
-   getGLibVersion,
- } from "../troll/src/util.js";
--import { getFlatpakInfo } from "./util.js";
-+import { getFlatpakInfo } from "./flatpak.js";
- 
- export default function About({ application }) {
-   const flatpak_info = getFlatpakInfo();
-diff --git a/src/flatpak.js b/src/flatpak.js
-new file mode 100644
-index 000000000..fc4d5f277
---- /dev/null
-+++ b/src/flatpak.js
-@@ -0,0 +1,36 @@
-+import GLib from "gi://GLib";
-+
-+let flatpak_info;
-+export function getFlatpakInfo() {
-+  if (flatpak_info) return flatpak_info;
-+  flatpak_info = new GLib.KeyFile();
-+  try {
-+    flatpak_info.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
-+  } catch (err) {
-+    if (!err.matches(GLib.FileError, GLib.FileError.NOENT)) {
-+      console.error(err);
-+    }
-+    return null;
-+  }
-+  return flatpak_info;
-+}
-+
-+export function getFlatpakId() {
-+  return getFlatpakInfo().get_string("Application", "name");
-+}
-+
-+// https://repology.org/project/flatpak/versions
-+export function isDeviceInputOverrideAvailable(flatpak_version) {
-+  flatpak_version ??= getFlatpakInfo().get_string(
-+    "Instance",
-+    "flatpak-version",
-+  );
-+
-+  // https://github.com/flatpak/flatpak/releases/tag/1.15.6
-+  return (
-+    flatpak_version.localeCompare("1.15.6", undefined, {
-+      numeric: true,
-+      sensitivity: "base",
-+    }) > -1
-+  );
-+}
-diff --git a/src/util.js b/src/util.js
-index 958307cb2..bb038efe2 100644
---- a/src/util.js
-+++ b/src/util.js
-@@ -3,6 +3,7 @@ import Gio from "gi://Gio";
- import Xdp from "gi://Xdp";
- import GObject from "gi://GObject";
- import { getLanguage } from "./common.js";
-+import { getFlatpakId } from "./flatpak.js";
- 
- export const portal = new Xdp.Portal();
- 
-@@ -25,21 +26,6 @@ export function ensureDir(file) {
+diff --git a/build-aux/library.js b/build-aux/library.js
+index ec18b355e..c0a10ed73 100755
+--- a/build-aux/library.js
++++ b/build-aux/library.js
+@@ -226,25 +226,17 @@ async function copyDirectory(source, destination) {
    }
  }
  
--let flatpak_info;
--export function getFlatpakInfo() {
--  if (flatpak_info) return flatpak_info;
--  flatpak_info = new GLib.KeyFile();
--  try {
--    flatpak_info.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
--  } catch (err) {
--    if (!err.matches(GLib.FileError, GLib.FileError.NOENT)) {
--      console.error(err);
--    }
--    return null;
--  }
--  return flatpak_info;
--}
+-const key_file = new GLib.KeyFile();
+-key_file.load_from_file("/.flatpak-info", GLib.KeyFileFlags.NONE);
+-// runtime/org.gnome.Sdk/x86_64/master
+-const [, , , runtime_version] = key_file
+-  .get_string("Application", "runtime")
+-  .split("/");
 -
- export { getLanguage };
+ function isDemoCompatible(demo) {
+   const demo_runtime_version = demo["runtime-version"];
  
- export function listenProperty(object, property, fn, { initial = false } = {}) {
-@@ -158,8 +144,8 @@ export function makeDropdownFlat(dropdown) {
+-  if (demo_runtime_version === "master") {
+-    return runtime_version === "master";
+-  } else if (runtime_version === "master") {
++  if (!demo_runtime_version) {
+     return true;
+-  } else if (!demo_runtime_version) {
++  } 
++  if (demo_runtime_version ==="master') {
+     return true;
+   }
  
- export function buildRuntimePath(...args) {
-   return GLib.build_filenamev([
--    GLib.getenv("XDG_RUNTIME_DIR"),
--    GLib.getenv("FLATPAK_ID"),
-+    GLib.get_user_runtime_dir(),
-+    getFlatpakId(),
-     ...args,
-   ]);
+-  return +runtime_version >= +demo_runtime_version;
++  return true;
  }
-diff --git a/test/isDeviceInputOverrideAvailable.test.js b/test/isDeviceInputOverrideAvailable.test.js
-new file mode 100644
-index 000000000..f7db4ebe2
---- /dev/null
-+++ b/test/isDeviceInputOverrideAvailable.test.js
-@@ -0,0 +1,29 @@
-+import "../src/init.js";
+ 
+-loop.run();
++loop.run();
+\ No newline at end of file
+diff --git a/src/Document.js b/src/Document.js
+index cdef0217d..331d65db5 100644
+--- a/src/Document.js
++++ b/src/Document.js
+@@ -1,4 +1,4 @@
+-import Source from "gi://GtkSource";
++import Source from "gi://GtkSource?version=5";
+ import Gio from "gi://Gio";
+ import GLib from "gi://GLib";
+ 
+diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
+index 694fb19f9..0cdf717f0 100644
+--- a/src/Extensions/Extensions.js
++++ b/src/Extensions/Extensions.js
+@@ -81,8 +81,17 @@ export function isTypeScriptAvailable() {
+ 
+ const llvm = "llvm18";
+ const node = "node20";
+-const runtime = getFlatpakInfo().get_string("Application", "runtime");
+-const freedesktop_version = runtime.endsWith("master") ? "24.08" : "24.08";
 +
-+import tst, { assert } from "../troll/tst/tst.js";
++let freedesktop_version = "24.08";
++try {
++  const flatpak_info = getFlatpakInfo();
++  if (flatpak_info) {
++    const runtime = flatpak_info.get_string("Application", "runtime");
++    freedesktop_version = runtime && runtime.endsWith("master") ? "24.08" : "24.08";
++  }
++} catch (err) {
++  log(`Flatpak runtime info unavailable: ${err}`);
++}
+ 
+ export function isTypeScriptEnabled() {
+   return settings.get_boolean("typescript");
+diff --git a/src/Permissions/Permissions.js b/src/Permissions/Permissions.js
+index 53907d477..ab9929b3d 100644
+--- a/src/Permissions/Permissions.js
++++ b/src/Permissions/Permissions.js
+@@ -50,10 +50,17 @@ export function Permissions({ window }) {
+ }
+ 
+ const missing_permissions = (() => {
+-  const flatpak_info = getFlatpakInfo();
+-  const shared = flatpak_info.get_string_list("Context", "shared");
+-  const sockets = flatpak_info.get_string_list("Context", "sockets");
+-  const devices = flatpak_info.get_string_list("Context", "devices");
++  let shared = [], sockets = [], devices = [];
++  try {
++    const flatpak_info = getFlatpakInfo();
++    if (flatpak_info) {
++      shared = flatpak_info.get_string_list("Context", "shared");
++      sockets = flatpak_info.get_string_list("Context", "sockets");
++      devices = flatpak_info.get_string_list("Context", "devices");
++    }
++  } catch (_) {
 +
-+import { isDeviceInputOverrideAvailable } from "../src/flatpak.js";
++  }
+ 
+   return (
+     !shared.includes("network") ||
+diff --git a/src/Previewer/DBusPreviewer.js b/src/Previewer/DBusPreviewer.js
+index d56e9f891..0836a2936 100644
+--- a/src/Previewer/DBusPreviewer.js
++++ b/src/Previewer/DBusPreviewer.js
+@@ -10,6 +10,16 @@ const nodeInfo = Gio.DBusNodeInfo.new_for_xml(previewer_xml);
+ const interface_info = nodeInfo.interfaces[0];
+ 
+ const guid = Gio.dbus_generate_guid();
++const path_dir = buildRuntimePath();
 +
-+const test = tst("isDeviceInputOverrideAvailable");
++try {
++  Gio.File.new_for_path(path_dir).make_directory_with_parents(null);
++} catch (err) {
++  if (!err.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.EXISTS)) {
++    throw err;
++  }
++}
 +
-+test("returns a boolean", () => {
-+  assert.equal(typeof isDeviceInputOverrideAvailable(), "boolean");
-+});
+ const path = buildRuntimePath(`workbench_preview_dbus_socket_${Date.now()}`);
+ const server = Gio.DBusServer.new_sync(
+   `unix:path=${path}`,
+diff --git a/src/WorkbenchHoverProvider.js b/src/WorkbenchHoverProvider.js
+index 36a7c0f8b..fb84fba85 100644
+--- a/src/WorkbenchHoverProvider.js
++++ b/src/WorkbenchHoverProvider.js
+@@ -1,6 +1,6 @@
+ import GObject from "gi://GObject";
+ import Gtk from "gi://Gtk";
+-import Source from "gi://GtkSource";
++import Source from "gi://GtkSource?version=5";
+ 
+ import { rangeEquals } from "./lsp/LSP.js";
+ import { registerClass } from "./overrides.js";
+diff --git a/src/flatpak.js b/src/flatpak.js
+index fc4d5f277..53e1f7f2c 100644
+--- a/src/flatpak.js
++++ b/src/flatpak.js
+@@ -16,18 +16,32 @@ export function getFlatpakInfo() {
+ }
+ 
+ export function getFlatpakId() {
+-  return getFlatpakInfo().get_string("Application", "name");
++  try {
++    const info = getFlatpakInfo();
++    if (info) {
++      return info.get_string("Application", "name");
++    }
++  } catch (err) {
++    log(`No Flatpak Application group in /.flatpak-info: ${err}`);
++  }
 +
-+test("returns true if Flatpak version is equal to 1.15.6", () => {
-+  assert.equal(isDeviceInputOverrideAvailable("1.15.6"), true);
-+});
-+
-+test("returns true if Flatpak version is higher than 1.15.6", () => {
-+  assert.equal(isDeviceInputOverrideAvailable("1.15.7"), true);
-+  assert.equal(isDeviceInputOverrideAvailable("1.16.5"), true);
-+  assert.equal(isDeviceInputOverrideAvailable("2.15.4"), true);
-+});
-+
-+test("returns false if Flatpak version is lower than 1.15.6", () => {
-+  assert.equal(isDeviceInputOverrideAvailable("1.15.5"), false);
-+  assert.equal(isDeviceInputOverrideAvailable("1.14.7"), false);
-+  assert.equal(isDeviceInputOverrideAvailable("0.16.7"), false);
-+});
-+
-+export default test;
++  return "re.sonny.Workbench";
+ }
+ 
+ // https://repology.org/project/flatpak/versions
+ export function isDeviceInputOverrideAvailable(flatpak_version) {
+-  flatpak_version ??= getFlatpakInfo().get_string(
+-    "Instance",
+-    "flatpak-version",
+-  );
++  try {
++    flatpak_version ??= getFlatpakInfo()?.get_string(
++      "Instance",
++      "flatpak-version",
++    );
++  } catch (_) {
++    return false;
++  }
+ 
+   // https://github.com/flatpak/flatpak/releases/tag/1.15.6
+   return (
++    flatpak_version &&
+     flatpak_version.localeCompare("1.15.6", undefined, {
+       numeric: true,
+       sensitivity: "base",
+diff --git a/src/init.js b/src/init.js
+index f335f5c28..44433ac94 100644
+--- a/src/init.js
++++ b/src/init.js
+@@ -1,6 +1,6 @@
+ import "gi://GIRepository?version=2.0";
+ import Gtk from "gi://Gtk?version=4.0";
+-import Source from "gi://GtkSource";
++import Source from "gi://GtkSource?version=5";
+ import Adw from "gi://Adw";
+ import Vte from "gi://Vte";
+ import GObject from "gi://GObject";
