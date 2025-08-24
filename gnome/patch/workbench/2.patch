@@ -34,16 +34,7 @@ index ec18b355e..c0a10ed73 100755
 -loop.run();
 +loop.run();
 \ No newline at end of file
-diff --git a/src/Document.js b/src/Document.js
-index cdef0217d..331d65db5 100644
---- a/src/Document.js
-+++ b/src/Document.js
-@@ -1,4 +1,4 @@
--import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5.0";
- import Gio from "gi://Gio";
- import GLib from "gi://GLib";
- 
+
 diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
 index 694fb19f9..0cdf717f0 100644
 --- a/src/Extensions/Extensions.js
@@ -115,18 +106,7 @@ index d56e9f891..0836a2936 100644
  const path = buildRuntimePath(`workbench_preview_dbus_socket_${Date.now()}`);
  const server = Gio.DBusServer.new_sync(
    `unix:path=${path}`,
-diff --git a/src/WorkbenchHoverProvider.js b/src/WorkbenchHoverProvider.js
-index 36a7c0f8b..fb84fba85 100644
---- a/src/WorkbenchHoverProvider.js
-+++ b/src/WorkbenchHoverProvider.js
-@@ -1,6 +1,6 @@
- import GObject from "gi://GObject";
- import Gtk from "gi://Gtk";
--import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5.0";
- 
- import { rangeEquals } from "./lsp/LSP.js";
- import { registerClass } from "./overrides.js";
+
 diff --git a/src/flatpak.js b/src/flatpak.js
 index fc4d5f277..53e1f7f2c 100644
 --- a/src/flatpak.js
@@ -169,15 +149,3 @@ index fc4d5f277..53e1f7f2c 100644
      flatpak_version.localeCompare("1.15.6", undefined, {
        numeric: true,
        sensitivity: "base",
-diff --git a/src/init.js b/src/init.js
-index f335f5c28..44433ac94 100644
---- a/src/init.js
-+++ b/src/init.js
-@@ -1,6 +1,6 @@
- import "gi://GIRepository?version=2.0";
- import Gtk from "gi://Gtk?version=4.0";
--import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5.0";
- import Adw from "gi://Adw";
- import Vte from "gi://Vte";
- import GObject from "gi://GObject";
