@@ -1,5 +1,6 @@
 # Remove Makfile since we only run meson build's here and not autotools.
 rm -f Makefile
+cp -av $CWD/pre-install/workbench/app.gschema.xml data/
 
 wget -c -P "$CWD/pre-install/workbench" https://github.com/sonnyp/troll/archive/bccc2a7fd570d5e9d6845e8fa8e4d838f35f571b/troll-bccc2a7fd570d5e9d6845e8fa8e4d838f35f571b.tar.gz
 tar --strip-components=1 -xzf $CWD/pre-install/workbench/troll-bccc2a7fd570d5e9d6845e8fa8e4d838f35f571b.tar.gz -C troll
@@ -12,6 +13,5 @@ rm -fr $CWD/pre-install/workbench/demos-cd8b209df99294c72a5846ead00797db0bafa862
 rm -fr $CWD/pre-install/workbench/gi-typescript-definitions-396fe147142e28a921f0745eff1a562c7a551843.tar.gz
 rm -fr $CWD/pre-install/workbench/
 
-#sed -i 's/version=4\.0/version=3.0/' src/init.js
 sed -i 's|gi://GtkSource|gi://GtkSource?version=5|g' src/init.js
 sed -i 's|gi://Vte|gi://Vte?version=3.91|g' src/init.js
