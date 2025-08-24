@@ -40,7 +40,7 @@ index cdef0217d..331d65db5 100644
 +++ b/src/Document.js
 @@ -1,4 +1,4 @@
 -import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5";
++import Source from "gi://GtkSource?version=5.0";
  import Gio from "gi://Gio";
  import GLib from "gi://GLib";
  
@@ -123,7 +123,7 @@ index 36a7c0f8b..fb84fba85 100644
  import GObject from "gi://GObject";
  import Gtk from "gi://Gtk";
 -import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5";
++import Source from "gi://GtkSource?version=5.0";
  
  import { rangeEquals } from "./lsp/LSP.js";
  import { registerClass } from "./overrides.js";
@@ -177,7 +177,7 @@ index f335f5c28..44433ac94 100644
  import "gi://GIRepository?version=2.0";
  import Gtk from "gi://Gtk?version=4.0";
 -import Source from "gi://GtkSource";
-+import Source from "gi://GtkSource?version=5";
++import Source from "gi://GtkSource?version=5.0";
  import Adw from "gi://Adw";
  import Vte from "gi://Vte";
  import GObject from "gi://GObject";
