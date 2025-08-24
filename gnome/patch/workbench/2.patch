@@ -2,7 +2,7 @@ diff --git a/build-aux/library.js b/build-aux/library.js
 index ec18b355e..c0a10ed73 100755
 --- a/build-aux/library.js
 +++ b/build-aux/library.js
-@@ -226,25 +226,17 @@ async function copyDirectory(source, destination) {
+@@ -226,25 +226,24 @@
    }
  }
  
@@ -13,28 +13,33 @@ index ec18b355e..c0a10ed73 100755
 -  .get_string("Application", "runtime")
 -  .split("/");
 -
++
++
  function isDemoCompatible(demo) {
    const demo_runtime_version = demo["runtime-version"];
  
 -  if (demo_runtime_version === "master") {
 -    return runtime_version === "master";
 -  } else if (runtime_version === "master") {
++
++
 +  if (!demo_runtime_version) {
      return true;
 -  } else if (!demo_runtime_version) {
-+  } 
-+  if (demo_runtime_version ==="master') {
++  }
++
++
++  if (demo_runtime_version === "master") {
      return true;
    }
  
 -  return +runtime_version >= +demo_runtime_version;
++
 +  return true;
  }
  
--loop.run();
-+loop.run();
-\ No newline at end of file
-
+ loop.run();
+ ---
 diff --git a/src/Extensions/Extensions.js b/src/Extensions/Extensions.js
 index 694fb19f9..0cdf717f0 100644
 --- a/src/Extensions/Extensions.js
