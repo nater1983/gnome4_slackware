@@ -9,3 +9,8 @@ config() {
 }
 
 config etc/appstream.conf.new
+
+# Refresh AppStream cache after installation
+if [ -x usr/bin/appstreamcli ]; then
+  chroot . /usr/bin/appstreamcli refresh-cache --force
+fi
