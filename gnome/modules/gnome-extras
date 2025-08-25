@@ -38,7 +38,7 @@ shotwell
 libbacktrace
 blueprint-compiler
 http-parser
-pytest
+python3-pytest
 GPaste
 flite
 eog
