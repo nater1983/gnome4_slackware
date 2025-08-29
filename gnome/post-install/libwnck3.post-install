@@ -1,0 +1,2 @@
+mv $PKG/usr/bin/wnckprop $PKG/usr/bin/wnckprop3
+mv $PKG/usr/bin/wnck-urgency-monitor $PKG/usr/bin/wnck3-urgency-monitor
