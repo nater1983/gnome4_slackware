@@ -41,12 +41,19 @@ else:
 
             if os.path.isfile(src_file):
                 try:
-                    if not os.path.exists(dest_file):
-                        shutil.move(src_file, dest_file)
-                        moved_files.append(dest_file)
-                        print(f"Moved {dest_file}")
-                    else:
-                        print(f"Skipped {dest_file} (already exists in the destination)")
+                    if os.path.exists(dest_file):
+                        # Ask user if they want to overwrite
+                        choice = input(f"File '{dest_file}' already exists. Overwrite? (y/n): ").strip().lower()
+                        if choice != "y":
+                            print(f"Skipped {dest_file} (user chose not to overwrite)")
+                            continue
+                        # Remove existing file before moving
+                        os.remove(dest_file)
+
+                    shutil.move(src_file, dest_file)
+                    moved_files.append(dest_file)
+                    print(f"Moved {dest_file}")
+
                 except Exception as e:
                     print(f"Error moving file '{src_file}': {e}")
             else:
