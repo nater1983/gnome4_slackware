@@ -22,27 +22,6 @@ Part-of: <https://gitlab.gnome.org/GNOME/libgnome-games-support/-/merge_requests
  delete mode 100644 games/scores/history-file-importer.vala
  delete mode 100644 games/scores/importer.vala
 
-diff --git a/games/meson.build b/games/meson.build
-index c1a47ca..6c3f95b 100644
---- a/games/meson.build
-+++ b/games/meson.build
-@@ -15,9 +15,6 @@ lggs = static_library('gnome-games-support-3',
-         'scores/category.vala',
-         'scores/context.vala',
-         'scores/dialog.vala',
--        'scores/directory-importer.vala',
--        'scores/history-file-importer.vala',
--        'scores/importer.vala',
-         'scores/score.vala',
-     ],
-     install: true,
-@@ -33,4 +30,4 @@ lggs = static_library('gnome-games-support-3',
-     ],
-     vala_header: 'libgnome-games-support.h',
-     dependencies: lggs_interface_deps,
--)
-\ No newline at end of file
-+)
 diff --git a/games/scores/context.vala b/games/scores/context.vala
 index 6686a81..a291efe 100644
 --- a/games/scores/context.vala
