@@ -10713,7 +10713,7 @@ diff --git a/gnome-session/meson.build b/gnome-session/meson.build
 index 5861fa47..75a69c07 100644
 --- a/gnome-session/meson.build
 +++ b/gnome-session/meson.build
-@@ -1,42 +1,48 @@
+@@ -1,63 +1,70 @@
 -sources = files(
 -  'gsm-util.c',
 -  'leader-main.c'
@@ -10741,12 +10741,24 @@ index 5861fa47..75a69c07 100644
 -  install_dir: session_bindir
 +  install_dir: session_bindir,
 +  configuration: script_conf
-+)
-+
+ )
+ 
+-sources = files(
+-    'gsm-util.c',
+-    'leader-systemd.c',
+-)
+-
+-executable(
+-  meson.project_name() + '-init-worker',
+-  sources,
 +libgsmutil = static_library(
 +  'gsmutil',
 +  sources: 'gsm-util.c',
-+  include_directories: top_inc,
+   include_directories: top_inc,
+-  dependencies: session_bin_deps,
+-  c_args: cflags,
+-  install: true,
+-  install_dir: session_libexecdir
 +  dependencies: session_deps
  )
  
@@ -10770,19 +10782,29 @@ index 5861fa47..75a69c07 100644
 -  'gsm-util.c',
 -  'service-main.c'
 +  'main.c'
++)
++
++executable(
++  meson.project_name() + '-init-worker',
++  sources,
++  include_directories: top_inc,
++  dependencies: session_bin_deps,
++  c_args: cflags,
++  install: true,
++  install_dir: session_libexecdir
  )
  
  dbus_ifaces = [
-   'org.gnome.SessionManager',
+-  'org.gnome.SessionManager',
++'org.gnome.SessionManager',
 +  'org.gnome.SessionManager.Client',
    'org.gnome.SessionManager.ClientPrivate',
 +  'org.gnome.SessionManager.App',
    'org.gnome.SessionManager.Inhibitor',
    'org.gnome.SessionManager.Presence',
  ]
-@@ -55,18 +61,40 @@ foreach iface: dbus_ifaces
-   xml_dbus_docs += out[2] # docbook XML
- endforeach
+ 
+ xml_dbus_docs = []
  
 +cflags = [
 +  '-DLOCALE_DIR="@0@"'.format(session_localedir),
@@ -10790,10 +10812,16 @@ index 5861fa47..75a69c07 100644
 +  '-DLIBEXECDIR="@0@"'.format(session_libexecdir)
 +]
 +
+ foreach iface: dbus_ifaces
+   out = gnome.gdbus_codegen(
+     iface,
+@@ -71,17 +78,32 @@ foreach iface: dbus_ifaces
+ endforeach
+ 
  executable(
 -  meson.project_name() + '-service',
-+  meson.project_name() + '-binary',
-   sources,
+-  sources,
++  meson.project_name() + '-binary',  sources,
    include_directories: top_inc,
    dependencies: session_bin_deps,
    c_args: cflags,
