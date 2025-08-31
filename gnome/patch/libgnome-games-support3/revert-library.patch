@@ -46,10 +46,32 @@ index dfd17b1..ad65a57 100644
  subdir('tests')
 \ No newline at end of file
 diff --git a/games/meson.build b/games/meson.build
-index 2e4ccba..16e8c81 100644
+index 2e4ccba..a53fed1 100644
 --- a/games/meson.build
 +++ b/games/meson.build
-@@ -37,6 +37,12 @@ lggs = library('gnome-games-support-3',
+@@ -8,19 +8,16 @@ lggs_interface_deps = [
+     gtk_dependency,
+ ]
+ 
+-lggs = library('gnome-games-support-3',
++lggs = static_library('gnome-games-support-3',
+     [
+         'config.vapi',
+         'gridframe.vala',
+         'scores/category.vala',
+         'scores/context.vala',
+         'scores/dialog.vala',
+-        'scores/directory-importer.vala',
+-        'scores/history-file-importer.vala',
+-        'scores/importer.vala',
+         'scores/score.vala',
+     ],
+-    install: true,
++install: true,
+     install_dir: [
+         true, # default libdir
+         join_paths(includedir, includesubdir), # headers
+@@ -37,6 +34,7 @@ lggs = library('gnome-games-support-3',
          '--abi-stability',
          '--target-glib=2.44',
      ],
@@ -57,10 +79,5 @@ index 2e4ccba..16e8c81 100644
 +    soversion: soversion,
 +    version: library_version,
      dependencies: lggs_interface_deps,
-+)
-+
-+lggs_dependency = declare_dependency(
-+    link_with: lggs,
-+    include_directories: include_directories('.'),
  )
 \ No newline at end of file
