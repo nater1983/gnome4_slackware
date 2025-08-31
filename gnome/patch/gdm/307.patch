@@ -1722,13 +1722,14 @@ diff --git a/daemon/main.c b/daemon/main.c
 index 7015521a8..673a03103 100644
 --- a/daemon/main.c
 +++ b/daemon/main.c
-@@ -177,14 +177,16 @@ gdm_daemon_ensure_dirs (uid_t uid,
+@@ -151,16 +151,16 @@ gdm_daemon_ensure_dirs (uid_t uid,
  {
-         GError *error = NULL;
+         g_autoptr (GError) error = NULL;
  
 -        /* Set up /run/gdm */
--        if (!ensure_dir_with_perms (GDM_RUN_DIR, 0, 0, 0755, &error)) {
+-        if (!gdm_ensure_dir (GDM_RUN_DIR, 0, 0, 0755, FALSE, &error)) {
 -                g_warning ("Failed to create " GDM_RUN_DIR ": %s", error->message);
+-                g_clear_error (&error);
 +        /* Set up /var/run/gdm */
 +        if (!ensure_dir_with_perms (GDM_RAN_ONCE_MARKER_DIR, 0, gid, 0711, &error)) {
 +                g_critical (_("Failed to create ran once marker dir %s: %s"),
@@ -1736,8 +1737,9 @@ index 7015521a8..673a03103 100644
          }
  
          /* Set up /var/log/gdm */
-         if (!ensure_dir_with_perms (LOGDIR, 0, gid, 0711, &error)) {
+         if (!gdm_ensure_dir (LOGDIR, 0, gid, 0711, FALSE, &error)) {
 -                g_warning ("Failed to create " LOGDIR ": %s", error->message);
+-                g_clear_error (&error);
 +                g_critical (_("Failed to create LogDir %s: %s"),
 +                            LOGDIR, error->message);
          }
