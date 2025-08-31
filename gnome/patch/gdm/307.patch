@@ -1766,7 +1766,36 @@ index 7015521a8..673a03103 100644
 +                            LOGDIR, error->message);
          }
  }
+
+ diff --git a/daemon/gdm-manager.c b/daemon/gdm-manager.c
+index 46980e0aa..0dd50ad5d 100644
+--- a/daemon/gdm-manager.c
++++ b/daemon/gdm-manager.c
+@@ -2568,6 +2568,7 @@ gdm_manager_get_displays (GdmManager *manager,
+         return TRUE;
+ }
  
++#ifdef  WITH_PLYMOUTH
+ static void
+ on_graphics_unsupported (GdmLocalDisplayFactory *factory,
+                          GdmManager             *manager)
+@@ -2577,6 +2578,7 @@ on_graphics_unsupported (GdmLocalDisplayFactory *factory,
+                 manager->plymouth_is_running = FALSE;
+         }
+ }
++#endif
+ 
+ void
+ gdm_manager_stop (GdmManager *manager)
+@@ -2591,7 +2593,7 @@ gdm_manager_stop (GdmManager *manager)
+                                                       G_CALLBACK (on_graphics_unsupported),
+                                                       manager);
+         }
+-
++	
+ #ifdef HAVE_LIBXDMCP
+         if (manager->xdmcp_factory != NULL) {
+                 gdm_display_factory_stop (GDM_DISPLAY_FACTORY (manager->xdmcp_factory));
 diff --git a/daemon/meson.build b/daemon/meson.build
 index 26fe79bfc..aaf990e25 100644
 --- a/daemon/meson.build
