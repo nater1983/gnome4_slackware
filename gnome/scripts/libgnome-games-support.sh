@@ -24,13 +24,13 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/wwarner/"
+GNOMEGITURI="https://gitlab.gnome.org/GNOME/"
 
 # Default list of modules to checkout:
 DEFMODS="libgnome-games-support"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="b13187d71a3facaf9e1c55c85da5e3804a96fb47"
+DEFBRANCH="master"
 #DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
