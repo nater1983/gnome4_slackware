@@ -10850,6 +10850,27 @@ index 5861fa47..75a69c07 100644
  ]
  
  foreach unit: units
+diff --git a/gnome-session/meson.build b/gnome-session/meson.build
+index 74a09d9c..154618c6 100644
+--- a/gnome-session/meson.build
++++ b/gnome-session/meson.build
+@@ -38,16 +38,6 @@ sources = files(
+   'main.c'
+ )
+ 
+-executable(
+-  meson.project_name() + '-init-worker',
+-  sources,
+-  include_directories: top_inc,
+-  dependencies: session_bin_deps,
+-  c_args: cflags,
+-  install: true,
+-  install_dir: session_libexecdir
+-)
+-
+ dbus_ifaces = [
+ 'org.gnome.SessionManager',
+   'org.gnome.SessionManager.Client',
 diff --git a/gnome-session/org.gnome.SessionManager.App.xml b/gnome-session/org.gnome.SessionManager.App.xml
 new file mode 100644
 index 00000000..25949c8a
