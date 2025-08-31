@@ -14,7 +14,7 @@ cd build
     -Dsystemdsystemunitdir=no \
     -Dsystemduserunitdir=no \
     -Dsysconfsubdir=/etc/gdm \
-    -Dplymouth=false \
+    -Dplymouth=disabled \
     -Dinitial-vt=7
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
