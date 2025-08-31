@@ -1660,7 +1660,7 @@ index f73bccf61..10a5475f2 100644
 -                return FALSE;
 +        error = NULL;
 +        dir = g_file_new_for_path (gis_dir_path);
-+        if (!chown_recursively (dir, pwe->pw_uid, pwe->pw_gid, &error)) {
++        if (!gdm_chown_recursively (dir, pwe->pw_uid, pwe->pw_gid, &error)) {
 +                g_warning ("Failed to change ownership for %s: %s", gis_dir_path, error->message);
 +                g_error_free (error);
          }
