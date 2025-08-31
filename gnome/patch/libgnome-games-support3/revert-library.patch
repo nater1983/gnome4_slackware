@@ -105,15 +105,10 @@ index 6c3f95b..dd07492 100644
 \ No newline at end of file
 
 diff --git a/games/meson.build b/games/meson.build
-index dd07492..78af67c 100644
+index dd07492..b597a47 100644
 --- a/games/meson.build
 +++ b/games/meson.build
-@@ -10,11 +10,14 @@ lggs_interface_deps = [
- 
- lggs = library('gnome-games-support-3',
-     [   
-        'config.vapi',
-         'gridframe.vala',
+@@ -15,6 +15,9 @@ lggs = library('gnome-games-support-3',
          'scores/category.vala',
          'scores/context.vala',
          'scores/dialog.vala',
@@ -123,4 +118,3 @@ index dd07492..78af67c 100644
          'scores/score.vala',
      ],
      install: true,
-\ No newline at end of file
