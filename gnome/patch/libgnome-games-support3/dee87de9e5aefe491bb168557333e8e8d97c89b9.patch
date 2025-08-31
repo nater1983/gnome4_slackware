@@ -1,0 +1,70 @@
+From dee87de9e5aefe491bb168557333e8e8d97c89b9 Mon Sep 17 00:00:00 2001
+From: Michael Catanzaro <mcatanzaro@redhat.com>
+Date: Sat, 23 Aug 2025 18:22:54 -0500
+Subject: [PATCH] Remove add_scores_internal()
+
+This no longer needs to be separate.
+
+Part-of: <https://gitlab.gnome.org/GNOME/libgnome-games-support/-/merge_requests/26>
+---
+ games/scores/context.vala | 28 +++++++++++-----------------
+ 1 file changed, 11 insertions(+), 17 deletions(-)
+
+diff --git a/games/scores/context.vala b/games/scores/context.vala
+index a291efe..a013b77 100644
+--- a/games/scores/context.vala
++++ b/games/scores/context.vala
+@@ -253,40 +253,34 @@ public class Context : Object
+         yield stream.write_all_async (line.data, Priority.DEFAULT, cancellable, null);
+     }
+ 
+-    /* This is separate from add_score() for use by HistoryFileImporter.
+-     * At the next API break, we should merge this into add_score().
++    /**
++     * Returns true if a dialog was launched on attaining high score.
++     *
+      */
+-    internal async bool add_score_internal (Score score, Category category, Cancellable? cancellable) throws Error
++    public async bool add_score (long score, Category category, Cancellable? cancellable) throws Error
+     {
++        var the_score = new Score (score);
++
+         /* Check if category exists in the HashTable. Insert one if not. */
+         if (!scores_per_category.has_key (category))
+             scores_per_category.set (category, new Gee.ArrayList<Score> ());
+ 
+-        if (scores_per_category[category].add (score))
++        if (scores_per_category[category].add (the_score))
+             current_category = category;
+ 
+-        var high_score_added = is_high_score (score.score, category);
++        var high_score_added = is_high_score (the_score.score, category);
+         if (high_score_added && game_window != null)
+         {
+-            var dialog = new Dialog (this, category_type, style, score, current_category, icon_name);
+-            dialog.closed.connect (() => add_score_internal.callback ());
++            var dialog = new Dialog (this, category_type, style, the_score, current_category, icon_name);
++            dialog.closed.connect (() => add_score.callback ());
+             dialog.present (game_window);
+             yield;
+         }
+ 
+-        yield save_score_to_file (score, category, cancellable);
++        yield save_score_to_file (the_score, category, cancellable);
+         return high_score_added;
+     }
+ 
+-    /**
+-     * Returns true if a dialog was launched on attaining high score.
+-     *
+-     */
+-    public async bool add_score (long score, Category category, Cancellable? cancellable) throws Error
+-    {
+-        return yield add_score_internal (new Score (score), category, cancellable);
+-    }
+-
+     public delegate void NewGameFunc ();
+     public delegate void QuitAppFunc ();
+ 
+-- 
+GitLab
