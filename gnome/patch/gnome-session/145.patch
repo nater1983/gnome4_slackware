@@ -9813,16 +9813,6 @@ index 2cc129f9..ec1f5ce7 100644
  
 diff --git a/gnome-session/leader-main.c b/gnome-session/leader-main.c
 deleted file mode 100644
-index a91f2fa8..00000000
---- a/gnome-session/leader-main.c
-+++ /dev/null
-diff --git a/gnome-session/leader-main.c b/gnome-session/leader-main.c
-deleted file mode 100644
-index 511166d6..00000000
---- a/gnome-session/leader-main.c
-+++ /dev/null
-diff --git a/gnome-session/leader-main.c b/gnome-session/leader-main.c
-deleted file mode 100644
 index 511166d6..00000000
 --- a/gnome-session/leader-main.c
 +++ /dev/null
