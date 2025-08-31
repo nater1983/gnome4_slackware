@@ -1753,7 +1753,7 @@ index 7015521a8..673a03103 100644
 -                g_warning ("Failed to create " GDM_RUN_DIR ": %s", error->message);
 -                g_clear_error (&error);
 +        /* Set up /var/run/gdm */
-+        if (!gdm_ensure_dir (GDM_RAN_ONCE_MARKER_DIR, 0, gid, 0711, &error)) {
++        if (!gdm_ensure_dir (GDM_RAN_ONCE_MARKER_DIR, 0, gid, 0711, FALSE, &error)) {
 +                g_critical (_("Failed to create ran once marker dir %s: %s"),
 +                            GDM_RAN_ONCE_MARKER_DIR, error->message);
          }
