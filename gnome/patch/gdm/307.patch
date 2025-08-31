@@ -1957,7 +1957,8 @@ index 25b94f2e4..88df7ab07 100644
 -gdm_dyn_home_dir = (get_option('dyn-home-dir') != '')? get_option('dyn-home-dir') : gdm_run_dir / 'home'
 +ran_once_marker_dir = (get_option('ran-once-marker-dir') != '')? get_option('ran-once-marker-dir') : gdm_run_dir
 +gdm_xauth_dir = (get_option('xauth-dir') != '')? get_option('xauth-dir') : gdm_run_dir
-+gdm_screenshot_dir = (get_option('screenshot-dir') != '')? get_option('screenshot-dir') : gdm_run_dir / 'greeter'gdm_private_dbus_dir = (get_option('private-dbus-dir') != '')? get_option('private-dbus-dir') : gdm_run_dir / 'dbus'
++gdm_screenshot_dir = (get_option('screenshot-dir') != '')? get_option('screenshot-dir') : gdm_run_dir / 'greeter'
+ gdm_private_dbus_dir = (get_option('private-dbus-dir') != '')? get_option('private-dbus-dir') : gdm_run_dir / 'dbus'
  pam_prefix = (get_option('pam-prefix') != '')? get_option('pam-prefix') : get_option('sysconfdir')
  pam_profiles_dir = pam_prefix / 'pam.d'
  have_x11_support = get_option('x11-support')
