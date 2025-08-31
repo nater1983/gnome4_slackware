@@ -1,0 +1,66 @@
+diff --git a/meson.build b/meson.build
+index dfd17b1..ad65a57 100644
+--- a/meson.build
++++ b/meson.build
+@@ -2,11 +2,13 @@ project(
+     'libgnome-games-support', ['vala', 'c'],
+     version: '3.0.0',
+     license: 'LGPLv3+',
+-    meson_version: '>= 0.50.0',
++    meson_version: '>= 1.1',
+ )
+ 
+-# Increment this when a string change happens.
+-translation_version = '3'
++library_version = '4.1.0'
++soversion = library_version.split('.')[0]
++
++api_version = '3'
+ 
+ cc = meson.get_compiler('c')
+ valac = meson.get_compiler('vala')
+@@ -17,22 +19,16 @@ gio_dependency = dependency('gio-2.0', version: '>= 2.44.0')
+ glib_dependency = dependency('glib-2.0', version: '>= 2.44.0')
+ gtk_dependency = dependency('gtk4', version: '>= 4.2.0')
+ 
+-localedir = join_paths(get_option('prefix'), get_option('localedir'))
+ includedir = join_paths(get_option('prefix'), get_option('includedir'))
++localedir = join_paths(get_option('prefix'), get_option('localedir'))
+ 
+ conf = configuration_data()
+ conf.set_quoted('VERSION', meson.project_version())
+-conf.set_quoted('GETTEXT_PACKAGE', meson.project_name() + translation_version)
++conf.set_quoted('GETTEXT_PACKAGE', meson.project_name() + api_version)
+ conf.set_quoted('LOCALEDIR', localedir)
+ 
+ configure_file(output: 'config.h', configuration: conf)
+ 
+ subdir('po')
+ subdir('games')
+-
+-lggs_dependency = declare_dependency(
+-    link_with: lggs,
+-    include_directories: include_directories('games/.'),
+-)
+-
+ subdir('tests')
+\ No newline at end of file
+diff --git a/games/meson.build b/games/meson.build
+index 2e4ccba..16e8c81 100644
+--- a/games/meson.build
++++ b/games/meson.build
+@@ -37,6 +37,12 @@ lggs = library('gnome-games-support-3',
+         '--abi-stability',
+         '--target-glib=2.44',
+     ],
+-    version: '3',
++    soversion: soversion,
++    version: library_version,
+     dependencies: lggs_interface_deps,
++)
++
++lggs_dependency = declare_dependency(
++    link_with: lggs,
++    include_directories: include_directories('.'),
+ )
+\ No newline at end of file
