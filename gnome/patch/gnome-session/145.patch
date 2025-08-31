@@ -9821,6 +9821,11 @@ deleted file mode 100644
 index 511166d6..00000000
 --- a/gnome-session/leader-main.c
 +++ /dev/null
+diff --git a/gnome-session/leader-main.c b/gnome-session/leader-main.c
+deleted file mode 100644
+index 511166d6..00000000
+--- a/gnome-session/leader-main.c
++++ /dev/null
 @@ -1,251 +0,0 @@
 -/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 - *
