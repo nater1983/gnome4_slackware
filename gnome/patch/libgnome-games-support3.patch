@@ -1,1 +1,2 @@
 patch -Np1 -i $CWD/patch/libgnome-games-support3/revert-library.patch
+patch -Np1 -R -i $CWD/patch/libgnome-games-support3/b610c747398bbd1f0908a2e91926942532ed2160.patch
