@@ -1,5 +1,0 @@
-install -vDm 0644 $CWD/post-install/libgnome-games-support3/libgnome-games-support-3.pc -t $PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/
-sed -i \
-  -e "s,@LIB@,lib$LIBDIRSUFFIX,g" \
-  -e "s,@VERSION@,3.0.0,g" \
-  "$PKG/usr/lib$LIBDIRSUFFIX/pkgconfig/libgnome-games-support-3.pc"
