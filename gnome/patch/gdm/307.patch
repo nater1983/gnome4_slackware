@@ -1796,6 +1796,30 @@ index 46980e0aa..0dd50ad5d 100644
  #ifdef HAVE_LIBXDMCP
          if (manager->xdmcp_factory != NULL) {
                  gdm_display_factory_stop (GDM_DISPLAY_FACTORY (manager->xdmcp_factory));
+diff --git a/daemon/gdm-manager.c b/daemon/gdm-manager.c
+index 0dd50ad5d..56953fd2f 100644
+--- a/daemon/gdm-manager.c
++++ b/daemon/gdm-manager.c
+@@ -2568,17 +2568,17 @@ gdm_manager_get_displays (GdmManager *manager,
+         return TRUE;
+ }
+ 
+-#ifdef  WITH_PLYMOUTH
+ static void
+ on_graphics_unsupported (GdmLocalDisplayFactory *factory,
+                          GdmManager             *manager)
++#ifdef  WITH_PLYMOUTH
+ {
+         if (manager->plymouth_is_running) {
+                 plymouth_quit_without_transition ();
+                 manager->plymouth_is_running = FALSE;
+         }
+-}
+ #endif
++}
+ 
+ void
+ gdm_manager_stop (GdmManager *manager)
 diff --git a/daemon/meson.build b/daemon/meson.build
 index 26fe79bfc..aaf990e25 100644
 --- a/daemon/meson.build
