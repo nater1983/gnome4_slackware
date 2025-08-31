@@ -1,3 +1,13 @@
+diff --git a/po/meson.build b/po/meson.build
+index 5bdbecc..91918ba 100644
+--- a/po/meson.build
++++ b/po/meson.build
+@@ -1,2 +1,2 @@
+ i18n = import('i18n')
+-i18n.gettext(gettext_package, preset: 'glib')
+\ No newline at end of file
++i18n.gettext(meson.project_name() + api_version, preset: 'glib')
+\ No newline at end of file
 diff --git a/meson.build b/meson.build
 index dc21fcd..b009130 100644
 --- a/meson.build
