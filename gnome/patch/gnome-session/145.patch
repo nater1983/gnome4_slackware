@@ -10713,7 +10713,7 @@ diff --git a/gnome-session/meson.build b/gnome-session/meson.build
 index 5861fa47..75a69c07 100644
 --- a/gnome-session/meson.build
 +++ b/gnome-session/meson.build
-@@ -1,63 +1,70 @@
+@@ -1,63 +1,60 @@
 -sources = files(
 -  'gsm-util.c',
 -  'leader-main.c'
@@ -10739,15 +10739,15 @@ index 5861fa47..75a69c07 100644
 +  output: script,
    install: true,
 -  install_dir: session_bindir
+-)
+-
+-sources = files(
+-    'gsm-util.c',
+-    'leader-systemd.c',
 +  install_dir: session_bindir,
 +  configuration: script_conf
  )
  
--sources = files(
--    'gsm-util.c',
--    'leader-systemd.c',
--)
--
 -executable(
 -  meson.project_name() + '-init-worker',
 -  sources,
@@ -10782,16 +10782,6 @@ index 5861fa47..75a69c07 100644
 -  'gsm-util.c',
 -  'service-main.c'
 +  'main.c'
-+)
-+
-+executable(
-+  meson.project_name() + '-init-worker',
-+  sources,
-+  include_directories: top_inc,
-+  dependencies: session_bin_deps,
-+  c_args: cflags,
-+  install: true,
-+  install_dir: session_libexecdir
  )
  
  dbus_ifaces = [
@@ -10815,7 +10805,7 @@ index 5861fa47..75a69c07 100644
  foreach iface: dbus_ifaces
    out = gnome.gdbus_codegen(
      iface,
-@@ -71,17 +78,32 @@ foreach iface: dbus_ifaces
+@@ -71,17 +68,32 @@ foreach iface: dbus_ifaces
  endforeach
  
  executable(
@@ -10850,27 +10840,6 @@ index 5861fa47..75a69c07 100644
  ]
  
  foreach unit: units
-diff --git a/gnome-session/meson.build b/gnome-session/meson.build
-index 74a09d9c..154618c6 100644
---- a/gnome-session/meson.build
-+++ b/gnome-session/meson.build
-@@ -38,16 +38,6 @@ sources = files(
-   'main.c'
- )
- 
--executable(
--  meson.project_name() + '-init-worker',
--  sources,
--  include_directories: top_inc,
--  dependencies: session_bin_deps,
--  c_args: cflags,
--  install: true,
--  install_dir: session_libexecdir
--)
--
- dbus_ifaces = [
- 'org.gnome.SessionManager',
-   'org.gnome.SessionManager.Client',
 diff --git a/gnome-session/org.gnome.SessionManager.App.xml b/gnome-session/org.gnome.SessionManager.App.xml
 new file mode 100644
 index 00000000..25949c8a
