@@ -1,36 +1,15 @@
-diff --git a/.gitignore b/.gitignore
-new file mode 100644
-index 0000000..1485670
---- /dev/null
-+++ b/.gitignore
-@@ -0,0 +1 @@
-+/subprojects/libgnome-games-support
-\ No newline at end of file
 diff --git a/meson.build b/meson.build
-index 6e48975..26e4516 100644
+index d034f33..8bf3c30 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -17,7 +17,7 @@ gee_dependency = dependency ('gee-0.8')
+@@ -16,9 +16,7 @@ gee_dependency = dependency ('gee-0.8')
  gsound_dependency = dependency('gsound', version: '>= 1.0.2')
  gtk_dependency = dependency('gtk4', version: '>= 4.4')
  libadwaita_dependency = dependency('libadwaita-1', version: '>= 1.1')
--libgnome_games_support_dependency = dependency ('libgnome-games-support-2', version: '>= 2.0.0')
+-libgnome_games_support = subproject ('libgnome-games-support',
+-	    		             default_options: 'superproject_name=quadrapassel')
+-libgnome_games_support_dependency = libgnome_games_support.get_variable ('lggs_dependency')
 +libgnome_games_support_dependency = dependency ('libgnome-games-support-3', version: '>= 3.0.0')
  manette_dependency = dependency('manette-0.2', version: '>= 0.2.0')
  pango_dependency = dependency('pango')
  pango_cairo_dependency = dependency('pangocairo')
-diff --git a/subprojects/libgnome-games-support.wrap b/subprojects/libgnome-games-support.wrap
-new file mode 100644
-index 0000000..48284dd
---- /dev/null
-+++ b/subprojects/libgnome-games-support.wrap
-@@ -0,0 +1,8 @@
-+[wrap-git]
-+directory = libgnome-games-support
-+url = https://gitlab.gnome.org/wwarner/libgnome-games-support.git
-+revision = master
-+depth = 1
-+
-+[provide]
-+libgnome-games-support-3 = lggs_dependency
-\ No newline at end of file
