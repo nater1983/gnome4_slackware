@@ -46,24 +46,11 @@ index dfd17b1..ad65a57 100644
  subdir('tests')
 \ No newline at end of file
 diff --git a/games/meson.build b/games/meson.build
-index 2e4ccba..a53fed1 100644
+index 6c3f95b..3c94fb8 100644
 --- a/games/meson.build
 +++ b/games/meson.build
-@@ -8,19 +8,16 @@ lggs_interface_deps = [
-     gtk_dependency,
- ]
- 
--lggs = library('gnome-games-support-3',
-+lggs = static_library('gnome-games-support-3',
-     [
-         'config.vapi',
-         'gridframe.vala',
-         'scores/category.vala',
-         'scores/context.vala',
+@@ -17,7 +17,7 @@ lggs = static_library('gnome-games-support-3',
          'scores/dialog.vala',
--        'scores/directory-importer.vala',
--        'scores/history-file-importer.vala',
--        'scores/importer.vala',
          'scores/score.vala',
      ],
 -    install: true,
@@ -71,13 +58,28 @@ index 2e4ccba..a53fed1 100644
      install_dir: [
          true, # default libdir
          join_paths(includedir, includesubdir), # headers
-@@ -37,6 +34,7 @@ lggs = library('gnome-games-support-3',
-         '--abi-stability',
-         '--target-glib=2.44',
+@@ -25,9 +25,21 @@ lggs = static_library('gnome-games-support-3',
      ],
--    version: '3',
+     c_args: [
+         '-w',
+-	'-DGETTEXT_PACKAGE="@0@"'.format (gettext_package),
+-	'-DLOCALEDIR="@0@"'.format (localedir),
++        # https://github.com/mesonbuild/meson/issues/4763
++        '-include', 'config.h'
+     ],
+     vala_header: 'libgnome-games-support.h',
++    vala_vapi: 'libgnome-games-support-3.vapi',
++    vala_args: [
++        '--abi-stability',
++        '--target-glib=2.44',
++    ],
 +    soversion: soversion,
 +    version: library_version,
      dependencies: lggs_interface_deps,
  )
++
++lggs_dependency = declare_dependency(
++    link_with: lggs,
++    include_directories: include_directories('.'),
++)
 \ No newline at end of file
