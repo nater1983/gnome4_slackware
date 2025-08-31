@@ -190,7 +190,7 @@ deleted file mode 100644
 index 916191fc..00000000
 --- a/data/gnome.session.conf
 +++ /dev/null
-@@ -1,45 +0,0 @@
+@@ -1,48 +0,0 @@
 -[Unit]
 -# Basic services required by any GNOME session
 -Requires=gnome-session-basic-services.target
@@ -208,6 +208,9 @@ index 916191fc..00000000
 -# Notifies when events happen with printers: low on ink,
 -# jammed, job cancelled, etc etc etc
 -Wants=org.gnome.SettingsDaemon.PrintNotifications.target
+-
+-# org.freedesktop.ScreenSaver API
+-Wants=org.gnome.SettingsDaemon.ScreensaverProxy.target
 -
 -# Flushes PulseAudio sample cache whenever the
 -# sound theme changes
