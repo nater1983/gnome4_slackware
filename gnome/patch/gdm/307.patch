@@ -1808,8 +1808,8 @@ index 0dd50ad5d..56953fd2f 100644
  static void
  on_graphics_unsupported (GdmLocalDisplayFactory *factory,
                           GdmManager             *manager)
++#ifdef  WITH_PLYMOUTH
  {
- +#ifdef  WITH_PLYMOUTH
          if (manager->plymouth_is_running) {
                  plymouth_quit_without_transition ();
                  manager->plymouth_is_running = FALSE;
@@ -1820,6 +1820,20 @@ index 0dd50ad5d..56953fd2f 100644
  
  void
  gdm_manager_stop (GdmManager *manager)
+ diff --git a/daemon/gdm-manager.c b/daemon/gdm-manager.c
+index 56953fd2f..1521900a7 100644
+--- a/daemon/gdm-manager.c
++++ b/daemon/gdm-manager.c
+@@ -2571,8 +2571,8 @@ gdm_manager_get_displays (GdmManager *manager,
+ static void
+ on_graphics_unsupported (GdmLocalDisplayFactory *factory,
+                          GdmManager             *manager)
+-#ifdef  WITH_PLYMOUTH
+ {
++#ifdef  WITH_PLYMOUTH
+         if (manager->plymouth_is_running) {
+                 plymouth_quit_without_transition ();
+                 manager->plymouth_is_running = FALSE;
 diff --git a/daemon/meson.build b/daemon/meson.build
 index 26fe79bfc..aaf990e25 100644
 --- a/daemon/meson.build
