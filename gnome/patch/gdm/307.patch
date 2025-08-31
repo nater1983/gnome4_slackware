@@ -2010,6 +2010,22 @@ index 25b94f2e4..88df7ab07 100644
      'GDM PID file': gdm_pid_file,
      'GDM Defaults config': gdm_defaults_conf,
      'GDM Custom config': gdm_custom_conf,
+diff --git a/meson.build b/meson.build
+index cf72c24c4..300d0e06c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -33,8 +33,9 @@ gdm_run_dir = (get_option('run-dir') != '')? get_option('run-dir') : '/run/gdm'
+ gdm_runtime_conf = (get_option('runtime-conf') != '')? get_option('runtime-conf') : gdm_run_dir / 'custom.conf'
+ gdm_pid_file = (get_option('pid-file') != '')? get_option('pid-file') : gdm_run_dir / 'gdm.pid'
+ working_dir = (get_option('working-dir') != '')? get_option('working-dir') : gdm_prefix / get_option('localstatedir') / 'lib' / 'gdm'
+-gdm_xauth_dir = (get_option('xauth-dir') != '')? get_option('xauth-dir') : gdm_run_dir / 'xauth'
+-gdm_private_dbus_dir = (get_option('private-dbus-dir') != '')? get_option('private-dbus-dir') : gdm_run_dir / 'dbus'
++ran_once_marker_dir = (get_option('ran-once-marker-dir') != '')? get_option('ran-once-marker-dir') : gdm_run_dir
++gdm_xauth_dir = (get_option('xauth-dir') != '')? get_option('xauth-dir') : gdm_run_dir
++gdm_screenshot_dir = (get_option('screenshot-dir') != '')? get_option('screenshot-dir') : gdm_run_dir / 'greeter'gdm_private_dbus_dir = (get_option('private-dbus-dir') != '')? get_option('private-dbus-dir') : gdm_run_dir / 'dbus'
+ pam_prefix = (get_option('pam-prefix') != '')? get_option('pam-prefix') : get_option('sysconfdir')
+ pam_profiles_dir = pam_prefix / 'pam.d'
+ have_x11_support = get_option('x11-support')
 diff --git a/meson_options.txt b/meson_options.txt
 index 3f3865c7a..18f223ddf 100644
 --- a/meson_options.txt
