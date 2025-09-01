@@ -1,2 +1,2 @@
-install -vDm 0644 $CWD/pre-install/libgnome-games-support3/context.vala -t games/score1/context.vala
-install -vDm 0644 $CWD/pre-install/libgnome-games-support3/dialog.vala -t games/score1/dialog.vala
+install -vDm 0644 $CWD/pre-install/libgnome-games-support3/context.vala -t games/scores1/context.vala
+install -vDm 0644 $CWD/pre-install/libgnome-games-support3/dialog.vala -t games/scores1/dialog.vala
