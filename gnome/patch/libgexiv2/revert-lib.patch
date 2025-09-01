@@ -1,7 +1,7 @@
-diff --git a/meson.build b/meson.build
+diff --git a/gexiv2/meson.build b/gexiv2/meson.build
 index ad95c67..9924bf1 100644
---- a/meson.build
-+++ b/meson.build
+--- a/gexiv2/meson.build
++++ b/gexiv2/meson.build
 @@ -44,7 +44,7 @@ enum_sources = gnome.mkenums('gexiv2-enums',
  
  install_headers(gexiv2_headers, subdir : header_folder)
