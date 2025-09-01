@@ -1,0 +1,2 @@
+rm -fr $PKG/usr/{include,lib64}/
+find "$PKG" -type f -name "gnome-nibbles_libgnome-games-support.mo" -delete
