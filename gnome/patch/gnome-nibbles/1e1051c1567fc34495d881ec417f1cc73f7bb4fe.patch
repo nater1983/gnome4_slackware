@@ -13,3 +13,17 @@ index 7eae626..f128646 100644
  libadwaita_dep = dependency('libadwaita-1', version: '>= 1.5.0') # requires GTK 4.13.4
  pango_dep = dependency('pango', version: '>= 1.8') # needed for Layout.get_font_description()
  gtk5_dep = dependency('gtk5', required : false)
+
+diff --git a/src/nibbles-window.vala b/src/nibbles-window.vala
+index dbc31b2..54ac707 100644
+--- a/src/nibbles-window.vala
++++ b/src/nibbles-window.vala
+@@ -1023,7 +1023,7 @@ private class NibblesWindow : ApplicationWindow
+         /* Translators: Difficulty level with fake bonuses, displayed on the scores dialog */
+         scorecats.add (new Games.Scores.Category ("fast-fakes", _("Fast with Fakes")));
+
+-        scores_context = new Games.Scores.Context (
++        scores_context = new Games.Scores.Context.with_icon_name (
+             "gnome-nibbles",
+             /* Translators: label displayed on the scores dialog, preceding a difficulty. */
+             _("Difficulty Level:"),
