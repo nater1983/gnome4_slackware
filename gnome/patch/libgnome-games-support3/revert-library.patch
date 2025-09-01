@@ -108,12 +108,10 @@ diff --git a/games/meson.build b/games/meson.build
 index dd07492..b597a47 100644
 --- a/games/meson.build
 +++ b/games/meson.build
-@@ -15,6 +15,11 @@ lggs = library('gnome-games-support-3',
+@@ -15,6 +15,9 @@ lggs = library('gnome-games-support-3',
          'scores/category.vala',
          'scores/context.vala',
          'scores/dialog.vala',
-+        'scores/context1.vala',
-+        'scores/dialog1.vala',
 +        'scores/directory-importer.vala',
 +        'scores/history-file-importer.vala',
 +        'scores/importer.vala',
