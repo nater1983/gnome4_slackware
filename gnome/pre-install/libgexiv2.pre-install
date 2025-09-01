@@ -1,1 +1,0 @@
-sed -i "s/gexiv2 = library('gexiv2-' \+ project_api_version,/gexiv2 = library('gexiv2',/" gexiv2/meson.build

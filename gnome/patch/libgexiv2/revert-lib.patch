@@ -1,0 +1,13 @@
+diff --git a/meson.build b/meson.build
+index ad95c67..9924bf1 100644
+--- a/meson.build
++++ b/meson.build
+@@ -44,7 +44,7 @@ enum_sources = gnome.mkenums('gexiv2-enums',
+ 
+ install_headers(gexiv2_headers, subdir : header_folder)
+ 
+-gexiv2 = library('gexiv2-' + project_api_version,
++gexiv2 = library('gexiv2',
+                  ['gexiv2-metadata.cpp',
+                   'gexiv2-metadata-exif.cpp',
+                   'gexiv2-metadata-gps.cpp',
