@@ -1,2 +1,3 @@
 rm -fr $PKG/usr/{include,lib64}/
+rm -fr $PKG/usr/share/vala/
 find "$PKG" -type f -name "gnome-nibbles_libgnome-games-support.mo" -delete
