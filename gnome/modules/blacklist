@@ -45,7 +45,6 @@ cairomm1
 gtkmm4
 libgtop
 dconf-editor
-geoclue2
 gsettings-desktop-schemas
 pygobject3
 xdg-desktop-portal
