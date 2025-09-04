@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/geoclue2/geoclue-2.7.2-git41-backports.patch
