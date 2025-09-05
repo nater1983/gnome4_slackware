@@ -14,7 +14,7 @@ Fixes #455
  1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/src/disks/meson.build b/src/disks/meson.build
-index c69cc514..44ce7258 100644
+index c69cc514..11654643 100644
 --- a/src/disks/meson.build
 +++ b/src/disks/meson.build
 @@ -30,7 +30,20 @@ else
@@ -48,16 +48,7 @@ index c69cc514..44ce7258 100644
  # meson expects the .so file to be in the disks build directory
  libgnome_disks = custom_target(
    'libgnome_disks',
-@@ -53,6 +68,8 @@ libgnome_disks = custom_target(
-   build_always_stale: true,
-   build_by_default: true,
-   output: 'libgnome_disks.so',
-+  install_dir: private_libdir,
-+  install: true,
-   command: [
-     'cp',
-     '-a', build_root / 'src' / rust_target / 'libgnome_disks.so',
-@@ -62,7 +79,6 @@ libgnome_disks = custom_target(
+@@ -62,7 +77,6 @@ libgnome_disks = custom_target(
  
  libgnome_disks_dep = declare_dependency(
    sources: libgnome_disks,
@@ -65,7 +56,7 @@ index c69cc514..44ce7258 100644
  )
  
  # Build C version
-@@ -179,6 +195,8 @@ executable(
+@@ -179,6 +193,8 @@ executable(
    sources,
    include_directories: top_inc,
    dependencies: deps,
@@ -74,5 +65,3 @@ index c69cc514..44ce7258 100644
    c_args: cflags,
    install: true,
  )
--- 
-GitLab
