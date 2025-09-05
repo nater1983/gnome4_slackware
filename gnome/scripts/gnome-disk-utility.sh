@@ -30,7 +30,7 @@ GNOMEGITURI="https://github.com/GNOME/"
 DEFMODS="gnome-disk-utility"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="master"
+DEFBRANCH="main"
 #DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
