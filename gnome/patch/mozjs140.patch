@@ -1,2 +1,2 @@
 #patch -Np1 -i $CWD/patch/mozjs140/f585996d79745c11dd2e7f88f8d5c9c7b5020b68.patch
-#patch -Np1 -i $CWD/patch/mozjs140/9aa8b4b051dd539e0fbd5e08040870b3c712a846.patch
+patch -Np1 -i $CWD/patch/mozjs140/9aa8b4b051dd539e0fbd5e08040870b3c712a846.patch
