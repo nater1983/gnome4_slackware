@@ -64,7 +64,7 @@ make
 make install DESTDIR=$PKG
 
 #mv $PKG/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/locale \
-$PKG/usr/share
+#$PKG/usr/share
 mkdir -p $PKG/usr/share/glib-2.0/
 mv $PKG/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/schemas/ $PKG/usr/share/glib-2.0/
 
