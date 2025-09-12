@@ -63,16 +63,9 @@ find -L . \
 make
 make install DESTDIR=$PKG
 
-#mv $PKG/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/locale \
-#$PKG/usr/share
-#mkdir -p $PKG/usr/share/glib-2.0/
-#mv $PKG/usr/share/gnome-shell/extensions/dash-to-panel@jderose9.github.com/schemas/ $PKG/usr/share/glib-2.0/
-
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a README.md COPYING \
     $PKG/usr/doc/$PRGNAM-$VERSION
-
-rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
