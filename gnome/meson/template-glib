@@ -7,7 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Dintrospection=auto \
     -Dvapi=true \
-    -Dgtk_doc=false
+    -Ddocs=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
