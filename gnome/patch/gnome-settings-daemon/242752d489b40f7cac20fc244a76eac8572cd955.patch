@@ -10,7 +10,7 @@ index 5fcf2d892..a13692702 100644
 +
  gsd_3_0_api_name = '@0@-@1@'.format(meson.project_name(), '3.0')
  gsd_gtk_modules_directory = join_paths(gsd_libdir, gsd_3_0_api_name, 'gtk-modules')
- 
+
 diff --git a/plugins/meson.build b/plugins/meson.build
 index 6f963013b..d83d4c3fd 100644
 --- a/plugins/meson.build
