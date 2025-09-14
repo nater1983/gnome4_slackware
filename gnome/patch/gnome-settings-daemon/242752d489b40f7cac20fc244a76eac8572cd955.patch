@@ -55,8 +55,8 @@ index 6f963013b..d83d4c3fd 100644
          unit_conf = configuration_data()
          unit_conf.set('plugin_name', plugin_name)
 diff --git a/plugins/org.gnome.SettingsDaemon.Dummy.desktop.in b/plugins/org.gnome.SettingsDaemon.Dummy.desktop.in
-deleted file mode 100644
-index f4cc7a278..000000000
+new file mode 100644
+index 000000000..f4cc7a278
 --- /dev/null
 +++ b/plugins/org.gnome.SettingsDaemon.Dummy.desktop.in
 @@ -0,0 +1,7 @@
@@ -68,8 +68,8 @@ index f4cc7a278..000000000
 +NoDisplay=true
 +Hidden=true
 diff --git a/plugins/org.gnome.SettingsDaemon.Real.desktop.in b/plugins/org.gnome.SettingsDaemon.Real.desktop.in
-deleted file mode 100644
-index 3034e7125..000000000
+new file mode 100644
+index 000000000..3034e7125
 --- /dev/null
 +++ b/plugins/org.gnome.SettingsDaemon.Real.desktop.in
 @@ -0,0 +1,10 @@
