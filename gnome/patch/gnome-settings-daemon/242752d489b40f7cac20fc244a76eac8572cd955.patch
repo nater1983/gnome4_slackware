@@ -2,7 +2,7 @@ diff --git a/meson.build b/meson.build
 index 5fcf2d892..a13692702 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -37,6 +37,7 @@ gsd_pkglibdir = join_paths(gsd_libdir, gsd_api_name)
+@@ -37,6 +37,8 @@ gsd_pkglibdir = join_paths(gsd_libdir, gsd_api_name)
  
  gsd_schemadir = join_paths(gsd_datadir, 'glib-2.0', 'schemas')
  
@@ -10,7 +10,6 @@ index 5fcf2d892..a13692702 100644
 +
  gsd_3_0_api_name = '@0@-@1@'.format(meson.project_name(), '3.0')
  gsd_gtk_modules_directory = join_paths(gsd_libdir, gsd_3_0_api_name, 'gtk-modules')
-
 diff --git a/plugins/meson.build b/plugins/meson.build
 index 6f963013b..d83d4c3fd 100644
 --- a/plugins/meson.build
