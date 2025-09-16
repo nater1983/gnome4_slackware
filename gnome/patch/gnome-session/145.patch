@@ -9816,7 +9816,7 @@ deleted file mode 100644
 index 511166d6..00000000
 --- a/gnome-session/leader-main.c
 +++ /dev/null
-@@ -1,251 +0,0 @@
+@@ -1,256 +0,0 @@
 -/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 - *
 - * Copyright (C) 2006 Novell, Inc.
@@ -9972,6 +9972,11 @@ index 511166d6..00000000
 -
 -        ibus_path = g_find_program_in_path ("ibus-daemon");
 -        if (ibus_path) {
+-                /* For Qt 6.8 and newer */
+-                if (IS_STRING_EMPTY (g_getenv ("QT_IM_MODULES")))
+-                        g_setenv ("QT_IM_MODULES", "wayland;ibus", TRUE);
+-
+-                /* For Qt 6.7 and older */
 -                if (IS_STRING_EMPTY (g_getenv ("QT_IM_MODULE")))
 -                        g_setenv ("QT_IM_MODULE", "ibus", TRUE);
 -
