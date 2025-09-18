@@ -48,7 +48,6 @@ tecla
 webp-pixbuf-loader
 xdg-desktop-portal-gnome
 blueprint-compiler
-malcontent
 fwupd
 libjcat
 protobuf-c
@@ -57,6 +56,7 @@ gcab
 xdg-desktop-portal-gtk
 libostree
 flatpak
+malcontent
 gnome-control-center
 libei
 python3-argcomplete
