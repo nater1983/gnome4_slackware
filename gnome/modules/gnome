@@ -9,6 +9,7 @@ colord-gtk
 gsound
 libxmlb
 libfyaml
+libstemmer
 AppStream
 libadwaita
 gnome-bluetooth
