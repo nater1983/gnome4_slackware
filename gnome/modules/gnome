@@ -47,6 +47,8 @@ gnome-color-manager
 tecla
 webp-pixbuf-loader
 xdg-desktop-portal-gnome
+blueprint-compiler
+malcontent
 gnome-control-center
 libei
 python3-argcomplete
