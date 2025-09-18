@@ -48,6 +48,7 @@ tecla
 webp-pixbuf-loader
 xdg-desktop-portal-gnome
 blueprint-compiler
+flatpak
 malcontent
 gnome-control-center
 libei
