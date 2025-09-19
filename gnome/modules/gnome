@@ -61,6 +61,8 @@ gnome-control-center
 libei
 python3-argcomplete
 glycin
+libdex
+sysprof
 mutter
 libgdata
 evolution-data-server
