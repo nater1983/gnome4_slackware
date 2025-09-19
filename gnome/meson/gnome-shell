@@ -6,6 +6,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+    -Dportal_helper=true \
     -Dgtk_doc=false \
     -Dman=true \
     -Dtests=false \
