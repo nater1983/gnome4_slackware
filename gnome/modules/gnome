@@ -62,6 +62,7 @@ libei
 python3-argcomplete
 glycin
 libdex
+libpanel
 sysprof
 mutter
 libgdata
