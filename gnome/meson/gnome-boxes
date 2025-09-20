@@ -6,7 +6,7 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Ddistributor_name="Gnome From Scratch" \
-    -Ddistributor_version="48" \
+    -Ddistributor_version="49" \
     -Dinstalled_tests=false \
     -Dflatpak=true \
     -Duefi=true \
