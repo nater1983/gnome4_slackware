@@ -1,0 +1,15 @@
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+make
+make install DESTDIR=$PKG
