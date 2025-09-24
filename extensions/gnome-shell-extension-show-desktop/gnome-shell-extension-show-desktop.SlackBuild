@@ -51,7 +51,6 @@ rm -rf $SRCNAM
 git clone https://github.com/amivaleo/Show-Desktop-Button.git
 cd $SRCNAM
 git checkout $_commit
-patch -Np1 -i $CWD/1.patch
 
 mkdir -p $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo
 cp -r * $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/
