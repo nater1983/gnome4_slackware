@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-coverflow-alt-tab
 SRCNAM=CoverflowAltTab
-VERSION=${VERSION:-77}
+VERSION=${VERSION:-78}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=71cbda93413a79d0d3b63a420d5f8bb2e8f30a45
+_commit=a0212f812f838b6e7c0451f3fd20cc8b56ac5b5f
 
 ARCH=noarch
 
