@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/libgexiv2/revert-lib.patch

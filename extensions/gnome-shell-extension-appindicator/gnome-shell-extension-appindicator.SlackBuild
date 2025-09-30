@@ -29,7 +29,7 @@ VERSION=${VERSION:-60}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=739786b6c2700a830d0d01f5e719af13de55a796
+_commit=acc9e790f6f35992fc8b3570e6b15f8877c4815d
 
 ARCH=noarch
 
@@ -77,7 +77,7 @@ cd ..
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a AUTHORS.md LICENSE README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 

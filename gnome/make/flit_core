@@ -1,0 +1,2 @@
+python3 -m flit_core.wheel
+python3 bootstrap_install.py --install-root "$PKG" dist/*.whl

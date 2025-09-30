@@ -11,9 +11,9 @@ cd build
     -Dcogl_tests=false \
     -Dclutter_tests=false \
     -Dtests=disabled \
-    -Dx11=true \
     -Dbash_completion=false \
     -Dxwayland_initfd=auto \
+    -Dx11=true \
     -Dinstalled_tests=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install

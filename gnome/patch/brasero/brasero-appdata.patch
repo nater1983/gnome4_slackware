@@ -59,7 +59,7 @@ index e7caf98fe..ecc37df01 100644
 +          <li>Transcode plugin gstreamer plugin improvement (Robert McQueen)</li>
 +          <li>Fix crash with malformed URI (Geyslan)</li>
 +          <li>Fix default project label (Pimm "de Chinchilla" Hogeling)</li>
-+          <li>Man page fixes (Ville Skyttä)</li>
++          <li>Man page fixes (Ville SkyttÃ¤)</li>
 +          <li>Header guard fix (Ting-Wei Lan)</li>
 +          <li>Help improvements (scootergrisen, Andre Klapper)</li>
 +          <li>Translation updates</li>

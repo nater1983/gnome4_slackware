@@ -9,12 +9,14 @@ cd build
     -Ddefault-pam-config=none \
     -Dpam-mod-dir="/lib${LIBDIRSUFFIX}/security" \
     -Dgdm-xsession=true \
+    -Dx11-support=true \
     -Drun-dir=/run/gdm \
     -Dlogind-provider=elogind \
     -Dsystemd-journal=false \
     -Dsystemdsystemunitdir=no \
     -Dsystemduserunitdir=no \
     -Dsysconfsubdir=/etc/gdm \
+    -Dplymouth=disabled \
     -Dinitial-vt=7
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install

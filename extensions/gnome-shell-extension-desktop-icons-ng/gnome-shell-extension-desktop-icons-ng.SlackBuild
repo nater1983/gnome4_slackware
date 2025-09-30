@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-desktop-icons-ng
 SRCNAM=desktop-icons-ng
-VERSION=${VERSION:-100}
+VERSION=${VERSION:-100.4}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=f5b888c2efc0d349727ff809ddbe9f0ea74fe977
+_commit=9ad2f7b27c4ad4f3a30706ad82d7fa0053d83e9d
 
 ARCH=noarch
 
@@ -52,6 +52,7 @@ rm -rf $SRCNAM
 git clone https://gitlab.com/smedius/desktop-icons-ng.git
 cd $SRCNAM
 git checkout $_commit
+sed -i -- 's/"45", "46", "47", "48"/"45", "46", "47", "48", "49"/g' metadata.json
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -79,7 +80,7 @@ cd ..
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a HISTORY.md COPYING README.md \
       $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc

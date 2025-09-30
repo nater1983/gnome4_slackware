@@ -1,0 +1,316 @@
+diff --git a/meson.build b/meson.build
+index 770d162d0..134707e64 100644
+--- a/meson.build
++++ b/meson.build
+@@ -85,17 +85,6 @@ else
+   summary += {'speech output': 'no (missing speechd, spiel)'}
+ endif
+ 
+-# Integration with session startup
+-systemd = dependency('systemd', required: false)
+-systemd_user_unit_dir = systemd.get_variable(
+-    'systemd_user_unit_dir',
+-    pkgconfig_define: ['prefix', get_option('prefix')],
+-    default_value: get_option('prefix') / 'lib' / 'systemd' / 'user'
+-)
+-install_data(
+-    'orca.service',
+-    install_dir: systemd_user_unit_dir
+-)
+ i18n.merge_file(
+   input: 'orca-autostart.desktop.in',
+   output: '@BASENAME@',
+diff --git a/orca-autostart.desktop.in b/orca-autostart.desktop.in
+index 95512359f..73c66c16c 100644
+--- a/orca-autostart.desktop.in
++++ b/orca-autostart.desktop.in
+@@ -7,4 +7,3 @@ AutostartCondition=GSettings org.gnome.desktop.a11y.applications screen-reader-e
+ X-GNOME-AutoRestart=true
+ #X-GNOME-Autostart-Phase=Initialization
+ OnlyShowIn=MATE;Unity;Cinnamon;
+-X-systemd-skip=true
+diff --git a/orca.service b/orca.service
+deleted file mode 100644
+index b2c787c19..000000000
+--- a/orca.service
++++ /dev/null
+@@ -1,21 +0,0 @@
+-[Unit]
+-Description=Orca Screen Reader
+-Documentation=man:orca(1)
+-Documentation=https://orca.gnome.org/
+-
+-PartOf=graphical-session.target
+-After=graphical-session.target
+-
+-# We're going to need this, so instead of waiting for it to
+-# dbus activate later, let's start it in parallel with Orca
+-Wants=at-spi-dbus-bus.service
+-
+-[Service]
+-Type=notify-reload
+-ExecStart=orca --replace
+-Restart=always
+-WatchdogSec=3
+-Slice=session.slice
+-
+-[Install]
+-WantedBy=graphical-session.target
+diff --git a/src/orca/meson.build b/src/orca/meson.build
+index 62227aacc..37c2b40a5 100644
+--- a/src/orca/meson.build
++++ b/src/orca/meson.build
+@@ -131,7 +131,6 @@ lib_sources = [
+   'spiel.py',
+   'ssml.py',
+   'structural_navigator.py',
+-  'systemd.py',
+   'system_information_presenter.py',
+   'table_navigator.py',
+   'text_attribute_names.py',
+diff --git a/src/orca/orca.py b/src/orca/orca.py
+index 2e3f2cb9f..c950e3b97 100644
+--- a/src/orca/orca.py
++++ b/src/orca/orca.py
+@@ -60,7 +60,6 @@
+ from . import settings_manager
+ from . import speech_and_verbosity_manager
+ from . import sound
+-from . import systemd
+ from .ax_utilities import AXUtilities
+ 
+ def load_user_settings(script=None, skip_reload_message=False, is_reload=True):
+@@ -115,8 +114,6 @@ def shutdown(script=None, _event=None, _signum=None):
+         debug.print_message(debug.LEVEL_INFO, msg, True)
+         return False
+ 
+-    systemd.get_manager().notify_stopping()
+-
+     shutdown.in_progress = True
+ 
+     def _timeout(_signum=None, _frame=None):
+@@ -168,13 +165,18 @@ def _timeout(_signum=None, _frame=None):
+ def main():
+     """The main entry point for Orca."""
+ 
++    def _on_enabled_changed(gsetting, key):
++        enabled = gsetting.get_boolean(key)
++        msg = f"ORCA: {key} changed to {enabled}."
++        debug.print_message(debug.LEVEL_INFO, msg, True)
++        if key == "screen-reader-enabled" and not enabled:
++            shutdown()
++
+     def _reload_on_signal(signum, frame):
+         signal_string = f'({signal.strsignal(signum)})'
+         tokens = [f"ORCA: Reloading due to signal={signum} {signal_string}", frame]
+         debug.print_tokens(debug.LEVEL_INFO, tokens, True)
+-        systemd.get_manager().notify_reloading()
+         load_user_settings()
+-        systemd.get_manager().notify_ready()
+ 
+     def _shutdown_on_signal(signum, frame):
+         signal_string = f'({signal.strsignal(signum)})'
+@@ -197,7 +199,6 @@ def _show_preferences_on_signal(signum, frame):
+     signal.signal(signal.SIGQUIT, _shutdown_on_signal)
+     signal.signal(signal.SIGUSR1, _show_preferences_on_signal)
+ 
+-    systemd.get_manager().start_watchdog()
+ 
+     debug.print_message(debug.LEVEL_INFO, "ORCA: Enabling accessibility (if needed).", True)
+     if not settings_manager.get_manager().is_accessibility_enabled():
+@@ -205,6 +206,18 @@ def _show_preferences_on_signal(signum, frame):
+ 
+     load_user_settings(is_reload=False)
+ 
++    try:
++        _a11y_applications_gsetting = Gio.Settings(schema_id="org.gnome.desktop.a11y.applications")
++        connection = _a11y_applications_gsetting.connect("changed", _on_enabled_changed)
++        msg = f"ORCA: Connected to a11y applications gsetting: {bool(connection)}"
++        debug.print_message(debug.LEVEL_INFO, msg, True)
++    except GLib.Error as error:
++        msg = f"ORCA: EXCEPTION connecting to a11y applications (schema may be missing): {error}"
++        debug.print_message(debug.LEVEL_SEVERE, msg, True)
++    except (AttributeError, TypeError) as error:
++        msg = f"ORCA: EXCEPTION connecting to a11y applications (version incompatibility): {error}"
++        debug.print_message(debug.LEVEL_SEVERE, msg, True)
++
+     if not systemd.get_manager().is_systemd_managed():
+         # Legacy behavior, here for backwards-compatibility. You really should
+         # never rely on this. Run git blame and read the commit message!
+@@ -249,7 +262,6 @@ def _on_enabled_changed(gsetting, key):
+ 
+     clipboard.get_presenter().activate()
+     Gdk.notify_startup_complete()
+-    systemd.get_manager().notify_ready()
+ 
+     try:
+         debug.print_message(debug.LEVEL_INFO, "ORCA: Starting Atspi main event loop", True)
+diff --git a/src/orca/orca.py b/src/orca/orca.py
+index c950e3b97..2a48ba19f 100644
+--- a/src/orca/orca.py
++++ b/src/orca/orca.py
+@@ -218,7 +218,6 @@ def _show_preferences_on_signal(signum, frame):
+         msg = f"ORCA: EXCEPTION connecting to a11y applications (version incompatibility): {error}"
+         debug.print_message(debug.LEVEL_SEVERE, msg, True)
+ 
+-    if not systemd.get_manager().is_systemd_managed():
+         # Legacy behavior, here for backwards-compatibility. You really should
+         # never rely on this. Run git blame and read the commit message!
+
+diff --git a/src/orca/orca.py b/src/orca/orca.py
+index 2a48ba19f..a494a5fa3 100644
+--- a/src/orca/orca.py
++++ b/src/orca/orca.py
+@@ -206,40 +206,6 @@ def _show_preferences_on_signal(signum, frame):
+ 
+     load_user_settings(is_reload=False)
+ 
+-    try:
+-        _a11y_applications_gsetting = Gio.Settings(schema_id="org.gnome.desktop.a11y.applications")
+-        connection = _a11y_applications_gsetting.connect("changed", _on_enabled_changed)
+-        msg = f"ORCA: Connected to a11y applications gsetting: {bool(connection)}"
+-        debug.print_message(debug.LEVEL_INFO, msg, True)
+-    except GLib.Error as error:
+-        msg = f"ORCA: EXCEPTION connecting to a11y applications (schema may be missing): {error}"
+-        debug.print_message(debug.LEVEL_SEVERE, msg, True)
+-    except (AttributeError, TypeError) as error:
+-        msg = f"ORCA: EXCEPTION connecting to a11y applications (version incompatibility): {error}"
+-        debug.print_message(debug.LEVEL_SEVERE, msg, True)
+-
+-        # Legacy behavior, here for backwards-compatibility. You really should
+-        # never rely on this. Run git blame and read the commit message!
+-
+-        def _on_enabled_changed(gsetting, key):
+-            enabled = gsetting.get_boolean(key)
+-            msg = f"ORCA: {key} changed to {enabled}."
+-            debug.print_message(debug.LEVEL_INFO, msg, True)
+-            if key == "screen-reader-enabled" and not enabled:
+-                shutdown()
+-
+-        try:
+-            _a11y_applications_gsetting = Gio.Settings(schema_id="org.gnome.desktop.a11y.applications")
+-            connection = _a11y_applications_gsetting.connect("changed", _on_enabled_changed)
+-            msg = f"ORCA: Connected to a11y applications gsetting: {bool(connection)}"
+-            debug.print_message(debug.LEVEL_INFO, msg, True)
+-        except GLib.Error as error:
+-            msg = f"ORCA: EXCEPTION connecting to a11y applications (schema may be missing): {error}"
+-            debug.print_message(debug.LEVEL_SEVERE, msg, True)
+-        except (AttributeError, TypeError) as error:
+-            msg = f"ORCA: EXCEPTION connecting to a11y applications (version incompatibility): {error}"
+-            debug.print_message(debug.LEVEL_SEVERE, msg, True)
+-
+     dbus_service.get_remote_controller().start()
+     script = script_manager.get_manager().get_default_script()
+     script.present_message(messages.START_ORCA)
+diff --git a/src/orca/systemd.py b/src/orca/systemd.py
+deleted file mode 100644
+index 3094ced05..000000000
+--- a/src/orca/systemd.py
++++ /dev/null
+@@ -1,106 +0,0 @@
+-# Orca
+-#
+-# Copyright 2025 Red Hat
+-# Author: Adrian Vovk <avovk@redhat.com>
+-#
+-# This library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Lesser General Public
+-# License as published by the Free Software Foundation; either
+-# version 2.1 of the License, or (at your option) any later version.
+-#
+-# This library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Lesser General Public License for more details.
+-#
+-# You should have received a copy of the GNU Lesser General Public
+-# License along with this library; if not, write to the
+-# Free Software Foundation, Inc., Franklin Street, Fifth Floor,
+-# Boston MA  02110-1301 USA.
+-
+-"""Orca's integration with the systemd service manager"""
+-
+-__id__        = "$Id$"
+-__version__   = "$Revision$"
+-__date__      = "$Date$"
+-__copyright__ = "Copyright (c) 2025 Red Hat"
+-__license__   = "LGPL"
+-
+-import errno
+-import os
+-import socket
+-import time
+-from gi.repository import GLib
+-
+-class Systemd:
+-    """Orca's integration with the systemd service manager"""
+-
+-    def __init__(self) -> None:
+-        self._notify_socket: socket.socket | None = None
+-        self._watchdog_interval: int | None = None
+-
+-        socket_path = os.environ.get("NOTIFY_SOCKET")
+-        if socket_path:
+-            if socket_path[0] == "@": # Abstract socket
+-                socket_path = "\0" + socket_path[1:]
+-            elif socket_path[0] == "/": # Normal filesystem socket
+-                pass
+-            else: # VSOCK, etc
+-                raise OSError(errno.EAFNOSUPPORT, "Unsupported NOTIFY_SOCKET type")
+-
+-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM | socket.SOCK_CLOEXEC)
+-            sock.connect(socket_path)
+-            self._notify_socket = sock
+-
+-        watchdog_usec = os.environ.get("WATCHDOG_USEC")
+-        if watchdog_usec:
+-            self._watchdog_interval = int(watchdog_usec) // 1000 # µs -> ms
+-
+-    def _notify(self, message: bytes) -> None:
+-        """Send systemd a raw sd_notify notification"""
+-        # Reference:
+-        # https://freedesktop.org/software/systemd/man/sd_notify.html#Standalone%20Implementations
+-        if self._notify_socket:
+-            self._notify_socket.sendall(message)
+-
+-    def notify_ready(self) -> None:
+-        """Tell systemd that Orca has finished starting up / reloading"""
+-        self._notify(b"READY=1")
+-
+-    def notify_reloading(self) -> None:
+-        """Tell systemd that Orca has started reloading"""
+-        reload_timestamp = time.clock_gettime_ns(time.CLOCK_MONOTONIC) // 1000
+-        message = f"RELOADING=1\nMONOTONIC_USEC={reload_timestamp}"
+-        self._notify(message.encode())
+-
+-    def notify_stopping(self) -> None:
+-        """Tell systemd that Orca is shutting down"""
+-        self._notify(b"STOPPING=1")
+-
+-    def start_watchdog(self) -> None:
+-        """Start regularly sending keepalive pings to the systemd watchdog"""
+-        if not self._watchdog_interval:
+-            return
+-
+-        def _on_watchdog_tick() -> bool:
+-            """Send a keepalive ping to the watchdog"""
+-            self._notify(b"WATCHDOG=1")
+-            return GLib.SOURCE_CONTINUE
+-
+-        # The interval systemd reports to us is the deadline: if we miss it,
+-        # systemd will restart Orca. So, we want to ping more quickly than
+-        # requested, to avoid a situation where timer inaccuracies will
+-        # cause us to miss the deadline. systemd's code for this pings
+-        # anywhere from 133% - 200% faster than necessary. For us it's
+-        # easier to just ping 2x as fast
+-        GLib.timeout_add(self._watchdog_interval // 2, _on_watchdog_tick)
+-
+-    def is_systemd_managed(self) -> bool:
+-        """Returns whether or not Orca is being managed by systemd"""
+-        return self._notify_socket is not None
+-
+-_manager: Systemd = Systemd()
+-
+-def get_manager() -> Systemd:
+-    """Returns the Systemd singleton."""
+-    return _manager

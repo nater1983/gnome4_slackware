@@ -1,0 +1,53 @@
+From bd7ec817c6fa14ee2382602c4aea3e3930b37f75 Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Fri, 8 Aug 2025 07:38:05 -0400
+Subject: [PATCH] serializers: Change order back
+
+Commit 3f1ec653de766b37 changed the order in which text
+deserializers are registered, which had the unintended
+side-effect of preferring text/plain over text/plain;charset=utf8
+when receiving a string from the clipboard. I overlooked that
+the order of registered serializers is not just used in
+lookup_deserializer, but also in union_deserialize_mime_types.
+Change the order back, so the clipboard works again for
+non-ASCII text.
+
+Fixes: #7694
+Part-of: <https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/8832>
+---
+ gdk/gdkcontentdeserializer.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/gdk/gdkcontentdeserializer.c b/gdk/gdkcontentdeserializer.c
+index 5739e4e5fee..2bbd6fbe7dd 100644
+--- a/gdk/gdkcontentdeserializer.c
++++ b/gdk/gdkcontentdeserializer.c
+@@ -988,6 +988,12 @@ gdk_content_init_deserializers (void)
+ 
+   /* Strings */
+ 
++  gdk_content_register_deserializer ("text/plain;charset=utf-8",
++                                     G_TYPE_STRING,
++                                     string_deserializer,
++                                     (gpointer) "utf-8",
++                                     NULL);
++
+   if (!g_get_charset (&charset))
+     {
+       char *mime = g_strdup_printf ("text/plain;charset=%s", charset);
+@@ -1005,12 +1011,6 @@ gdk_content_init_deserializers (void)
+                                      (gpointer) "ASCII",
+                                      NULL);
+ 
+-  gdk_content_register_deserializer ("text/plain;charset=utf-8",
+-                                     G_TYPE_STRING,
+-                                     string_deserializer,
+-                                     (gpointer) "utf-8",
+-                                     NULL);
+-
+   /* Colors */
+ 
+   gdk_content_register_deserializer ("application/x-color",
+-- 
+GitLab
+

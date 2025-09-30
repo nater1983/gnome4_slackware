@@ -1,0 +1,58 @@
+From ef1cebf8cb872d7c68664da1dc6e23e95263d13b Mon Sep 17 00:00:00 2001
+From: kramo <git@kramo.page>
+Date: Sat, 28 Jun 2025 13:13:21 +0200
+Subject: [PATCH] options: Shuffle menu around
+
+---
+ showtime/gtk/options.blp | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/showtime/gtk/options.blp b/showtime/gtk/options.blp
+index a69ae49..b77b78d 100644
+--- a/showtime/gtk/options.blp
++++ b/showtime/gtk/options.blp
+@@ -13,11 +13,19 @@ template $Options: Adw.Bin {
+ 
+       menu-model: menu {
+         section {
+-          item {
+-            custom: "speed";
++          submenu language_menu {
++            label: _("_Language");
++          }
++
++          submenu subtitles_menu {
++            label: _("_Subtitles");
+           }
+         }
+ 
++        section {
++          item (_("_Repeat"), "win.toggle-loop")
++        }
++
+         section {
+           label: _("Rotate");
+           display-hint: "inline-buttons";
+@@ -32,18 +40,10 @@ template $Options: Adw.Bin {
+         }
+ 
+         section {
+-          submenu language_menu {
+-            label: _("_Language");
+-          }
+-
+-          submenu subtitles_menu {
+-            label: _("_Subtitles");
++          item {
++            custom: "speed";
+           }
+         }
+-
+-        section {
+-          item (_("_Repeat"), "win.toggle-loop")
+-        }
+       };
+ 
+       [speed]
+-- 
+GitLab

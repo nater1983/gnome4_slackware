@@ -1,3 +1,6 @@
+export CARGO_PROFILE_RELEASE_LTO=true 
+export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
+
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
@@ -5,7 +8,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Ddocs=false
+    -Ddocs=disabled
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..

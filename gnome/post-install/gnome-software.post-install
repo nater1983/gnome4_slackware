@@ -1,2 +1,6 @@
 mkdir -p $PKG/etc/ld.so.conf.d
 echo "/usr/lib${LIBDIRSUFFIX}/gnome-software/" > $PKG/etc/ld.so.conf.d/gnome-software.conf
+
+# Add autostart file for Gnome Software
+install  -vDm 0644 $CWD/post-install/gnome-software/org.gnome.Software.desktop -t $PKG/etc/xdg/autostart
+sed -i "s|@bindir@|/usr/bin|g" "$PKG/etc/xdg/autostart/org.gnome.Software.desktop"

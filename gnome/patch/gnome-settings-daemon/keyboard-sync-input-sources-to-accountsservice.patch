@@ -21,19 +21,19 @@ index ee12198..799acb6 100644
  geocode_glib_dep = dependency('geocode-glib-2.0', version: '>= 3.26.3', required: false)
  if not geocode_glib_dep.found()
 diff --git a/plugins/xsettings/gsd-xsettings-manager.c b/plugins/xsettings/gsd-xsettings-manager.c
-index 99a8f210..5b1e352f 100644
+index 2a90e09a..7d04d0ad 100644
 --- a/plugins/xsettings/gsd-xsettings-manager.c
 +++ b/plugins/xsettings/gsd-xsettings-manager.c
-@@ -38,6 +38,8 @@
- #include <gdk/gdkx.h>
- #include <gtk/gtk.h>
+@@ -35,6 +35,8 @@
+ #include <glib/gi18n.h>
+ #include <gdesktop-enums.h>
  
 +#include <act/act.h>
 +
  #include "gnome-settings-profile.h"
  #include "gnome-settings-daemon/gsd-enums.h"
  #include "gsd-xsettings-manager.h"
-@@ -57,6 +59,7 @@
+@@ -54,6 +56,7 @@
  #define WM_SETTINGS_SCHEMA        "org.gnome.desktop.wm.preferences"
  #define A11Y_SCHEMA               "org.gnome.desktop.a11y"
  #define A11Y_INTERFACE_SCHEMA     "org.gnome.desktop.a11y.interface"
@@ -41,7 +41,7 @@ index 99a8f210..5b1e352f 100644
  #define CLASSIC_WM_SETTINGS_SCHEMA "org.gnome.shell.extensions.classic-overrides"
  
  #define XSETTINGS_PLUGIN_SCHEMA "org.gnome.settings-daemon.plugins.xsettings"
-@@ -75,6 +78,7 @@
+@@ -72,6 +75,7 @@
  
  #define HIGH_CONTRAST_KEY "high-contrast"
  
@@ -49,15 +49,16 @@ index 99a8f210..5b1e352f 100644
  #define GTK_IM_MODULE_KEY      "gtk-im-module"
  
  #define GTK_SETTINGS_DBUS_PATH "/org/gtk/Settings"
-@@ -285,6 +289,7 @@ struct _GsdXSettingsManager
+@@ -284,7 +288,7 @@ struct _GsdXSettingsManager
          gint64             fontconfig_timestamp;
  
          GSettings         *interface_settings;
+-
 +        GSettings         *input_sources_settings;
-         GdkSeat           *user_seat;
- 
          GsdXSettingsGtk   *gtk;
-@@ -1283,12 +1288,80 @@ migrate_settings (void)
+ 
+         guint              introspect_properties_changed_id;
+@@ -1268,12 +1272,80 @@ migrate_settings (void)
                                      mouse_entries, G_N_ELEMENTS (mouse_entries));
  }
  
@@ -138,7 +139,7 @@ index 99a8f210..5b1e352f 100644
          setting = g_settings_get_string (manager->interface_settings,
                                           GTK_IM_MODULE_KEY);
          if (setting && *setting)
-@@ -1296,6 +1369,22 @@ update_gtk_im_module (GsdXSettingsManager *manager)
+@@ -1281,6 +1353,22 @@ update_gtk_im_module (GsdXSettingsManager *manager)
          else
                  module = GTK_IM_MODULE_IBUS;
  
@@ -161,7 +162,7 @@ index 99a8f210..5b1e352f 100644
          xsettings_manager_set_string (manager->manager, "Gtk/IMModule", module);
          g_free (setting);
  }
-@@ -1368,6 +1457,10 @@ gsd_xsettings_manager_startup (GApplication *app)
+@@ -1321,6 +1409,10 @@ gsd_xsettings_manager_startup (GApplication *app)
          g_signal_connect_swapped (manager->interface_settings,
                                    "changed::" GTK_IM_MODULE_KEY,
                                    G_CALLBACK (update_gtk_im_module), manager);
@@ -172,8 +173,8 @@ index 99a8f210..5b1e352f 100644
          update_gtk_im_module (manager);
  
          manager->monitors_changed_id =
-@@ -1574,6 +1667,7 @@ gsd_xsettings_manager_shutdown (GApplication *app)
-                 manager->user_seat = NULL;
+@@ -1521,6 +1613,7 @@ gsd_xsettings_manager_shutdown (GApplication *app)
+                 manager->gtk = NULL;
          }
  
 +        g_clear_object (&manager->input_sources_settings);

@@ -10,3 +10,6 @@ cat $CWD/post-install/gdm/wayland-session > $PKG/etc/gdm/wayland-session
 
 # Handle /etc/gdm/custom.conf a little nicer:
 mv $PKG/etc/gdm/{custom.conf,custom.conf.new}
+
+install -Dm755 "$CWD/post-install/gdm/run-pipewire" $PKG/etc/pipewire/run-pipewire
+install -Dm644 "$CWD/post-install/gdm/pipewire.desktop" $PKG/etc/xdg/autostart/pipewire.desktop

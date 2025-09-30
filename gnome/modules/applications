@@ -62,8 +62,10 @@ python3-dasbus
 orca
 gtksourceview4
 evince
+evince4
 sushi
 epiphany
+Fragments
 libgedit-gtksourceview
 libgedit-amtk
 libgedit-gfls
@@ -72,6 +74,8 @@ gedit
 gedit-plugins
 meld
 ghex
+gst-plugins-rs
+showtime
 papers
 gnote
 dart-sass

@@ -1,0 +1,1 @@
+#patch -Np1 -i $CWD/patch/gnome-nibbles/1e1051c1567fc34495d881ec417f1cc73f7bb4fe.patch

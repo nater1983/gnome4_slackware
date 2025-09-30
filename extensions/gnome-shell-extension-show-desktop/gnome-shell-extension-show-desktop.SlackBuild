@@ -51,7 +51,7 @@ rm -rf $SRCNAM
 git clone https://github.com/amivaleo/Show-Desktop-Button.git
 cd $SRCNAM
 git checkout $_commit
-#patch -Np1 -i $CWD/53.patch
+patch -Np1 -i $CWD/1.patch
 
 mkdir -p $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo
 cp -r * $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/
@@ -60,7 +60,7 @@ mv $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/schemas $P
 mv $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/locale $PKG/usr/share/
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a README.md $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 

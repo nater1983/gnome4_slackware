@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-coverflow-alt-tab
 SRCNAM=CoverflowAltTab
-VERSION=${VERSION:-77}
+VERSION=${VERSION:-78}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=71cbda93413a79d0d3b63a420d5f8bb2e8f30a45
+_commit=a0212f812f838b6e7c0451f3fd20cc8b56ac5b5f
 
 ARCH=noarch
 
@@ -48,7 +48,7 @@ git clone https://github.com/dmo60/CoverflowAltTab.git
 cd $SRCNAM
 git checkout $_commit
 patch -Np1 -i $CWD/1.patch
-#sed -i -- 's/"46"/"46", "47"/g' metadata.json
+#sed -i -- 's/"48"/"48", "49"/g' metadata.json
 make all
 
 mkdir -p "${PKG}"/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com
@@ -60,10 +60,14 @@ mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/lo
 mkdir -p $PKG/usr/share/glib-2.0/
 mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/schemas $PKG/usr/share/glib-2.0/
 
+mkdir -p $PKG/usr/share/dbus-1/interfaces
+mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/dbus-interfaces/org.gnome.Shell.Extensions.Coverflowalttab.xml \
+$PKG/usr/share/dbus-1/interfaces
+rm -fr $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/dbus-interfaces/
+
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CONTRIBUTORS.md COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION || exit 1
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 

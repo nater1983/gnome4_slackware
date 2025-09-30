@@ -1,0 +1,14 @@
+diff --git a/metadata.json b/metadata.json
+index 8516a1a..08fd5c3 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -10,7 +10,8 @@
+     "45",
+     "46",
+     "47",
+-    "48"
++    "48",
++    "49"
+   ],
+   "url": "https://github.com/amivaleo/Show-Desktop-Button",
+   "uuid": "show-desktop-button@amivaleo",

@@ -47,8 +47,7 @@ rm -rf $SRCNAM
 git clone https://github.com/MartinPL/Tray-Icons-Reloaded.git
 cd $SRCNAM
 git checkout $_commit
-#sed -i 's/"shell-version": \["47"\]/"shell-version": ["46", "47"]/g' metadata.json
-
+sed -i -- 's/"47", "48"/"47", "48", "49"/g' metadata.json
 mkdir -p $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl
 cp -r * $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/
 rm -rf $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/makefile
@@ -58,7 +57,7 @@ mv $PKG/usr/share/gnome-shell/extensions/trayIconsReloaded@selfmade.pl/schemas/ 
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a LICENSE README.md $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 

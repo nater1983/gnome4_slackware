@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-dash-to-dock
 SRCNAM=dash-to-dock
-VERSION=${VERSION:-100}
+VERSION=${VERSION:-102}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=4622872838caf0aaff323cf48f48eb29996cc003
+_commit=69d8bce2f75889fe73037a11abf03de5d77cb137
 
 ARCH=noarch
 
@@ -52,6 +52,7 @@ rm -rf $SRCNAM
 git clone https://github.com/micheleg/dash-to-dock.git
 cd $SRCNAM
 git checkout $_commit
+#patch -Np1 -i $CWD/1.patch
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
@@ -65,7 +66,6 @@ make DESTDIR=${PKG} VERSION=$VERSION install
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a COPYING README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
-cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc

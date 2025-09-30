@@ -46,17 +46,17 @@ gnome-dictionary
 # secrets
 python3-argon2-cffi-bindings
 python3-argon2-cffi
-python3-construct
-python3-dateutil
+construct
+dateutil
 python3-decorator
-python3-pep517
+pep517
 python3-pycryptodomex
-python3-pykcs11
 python3-pykeepass
 python3-pyotp
 python3-validators
 python3-zxcvbn
-python3-zxcvbn-python
+python3-zxcvbn_rs_py
+python3-pykcs11
 secrets
 # boatswain
 hidapi
@@ -93,7 +93,6 @@ python3-pyopenssl
 python3-rsa
 python3-typing_extensions
 python3-uritemplate
-pika-backup
 # pure_protobuf
 python3-poetry-dynamic-versioning
 python3-toml
@@ -135,6 +134,9 @@ video-trimmer
 # Plots
 python3-lark
 python3-opengl
+python3-pyproject-metadata
+python3-mesonpy
+python3-numpy
 python3-freetype
 python3-glm
 Plots
@@ -191,11 +193,12 @@ snapshot
 # nautilus-python
 nautilus-python
 # gnome-firmware
-# gcab -- found in a previous application
-# libsmbios-- found in a previous application
-# protobuf-c -- found in a previous application
+libxmlb
+gcab
+libsmbios
+protobuf-c
 python3-pefile
-# libjcat -- found in a previous application
+libjcat
 fwupd
 gnome-firmware
 # gnome-recipes
@@ -236,13 +239,6 @@ kooha
 gdm-settings
 # Endeavour
 Endeavour
-# tags
-tags
-# transmission
-transmission
-# gnumeric
-goffice
-psiconv
-gnumeric
-# health
-health
+# manuals
+foundry
+manuals

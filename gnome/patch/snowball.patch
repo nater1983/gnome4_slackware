@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/snowball/libstemmer_c-shared-library.patch

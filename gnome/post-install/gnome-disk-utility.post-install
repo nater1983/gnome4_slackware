@@ -1,0 +1,6 @@
+mkdir -p $PKG/etc/ld.so.conf.d
+cat <<EOF > $PKG/etc/ld.so.conf.d/gdu.conf
+/usr/lib${LIBDIRSUFFIX}/gnome_disks
+EOF
+
+install -vDm 0644 build/src/disks/libgnome_disks.so -t $PKG/usr/lib${LIBDIRSUFFIX}/gnome_disks

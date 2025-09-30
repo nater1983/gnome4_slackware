@@ -1,2 +1,12 @@
-mkdir -p $PKG/etc/ld.so.conf.d
-echo "/usr/lib${LIBDIRSUFFIX}/mutter-16/" > $PKG/etc/ld.so.conf.d/mutter.conf
+# one‑liner: create the conf dir, extract the newest API version from the
+# .pc files inside $PKG, and write the ld.so.conf snippet
+mkdir -p "$PKG/etc/ld.so.conf.d"
+version=$(basename -s .pc "$PKG"/usr/lib${LIBDIRSUFFIX}/pkgconfig/libmutter-*.pc \
+  | sed 's/^libmutter-//' | sort -n | tail -1)
+
+cat > "$PKG/etc/ld.so.conf.d/mutter.conf" <<EOF
+/usr/lib${LIBDIRSUFFIX}/mutter-$version/
+/usr/lib${LIBDIRSUFFIX}/mutter-$version/plugins/
+EOF
+install -vDm 0644 data/dbus-interfaces/org.gnome.Mutter.* -t $PKG/usr/share/dbus-1/interfaces
+install -vDm 0644 data/dbus-interfaces/org.gnome.SettingsDaemon.* -t $PKG/usr/share/dbus-1/interfaces

@@ -1,0 +1,29 @@
+diff --git a/meson.build b/meson.build
+index 7eae626..f128646 100644
+--- a/meson.build
++++ b/meson.build
+@@ -40,9 +40,7 @@ gio_dep = dependency('gio-2.0', version: '>= @0@'.format(glib_minimum_version))
+ glib_dep = dependency('glib-2.0', version: '>= @0@'.format(glib_minimum_version))
+ gsound_dep = dependency('gsound', version: '>= 1.0.2')
+ gtk_dep = dependency('gtk4', version: '>= 4.14') # needed for Gsk.PathBuilder()
+-libgnome_games_support = subproject ('libgnome-games-support', version: ['>= 3', '< 4'], 
+-    default_options: ['superproject_name='+gettext_package])
+-libgnome_games_support_dep = libgnome_games_support.get_variable ('lggs_dependency')
++libgnome_games_support_dep = dependency ('libgnome-games-support-3', version: '>= 3.0.0')
+ libadwaita_dep = dependency('libadwaita-1', version: '>= 1.5.0') # requires GTK 4.13.4
+ pango_dep = dependency('pango', version: '>= 1.8') # needed for Layout.get_font_description()
+ gtk5_dep = dependency('gtk5', required : false)
+
+diff --git a/src/nibbles-window.vala b/src/nibbles-window.vala
+index dbc31b2..54ac707 100644
+--- a/src/nibbles-window.vala
++++ b/src/nibbles-window.vala
+@@ -1023,7 +1023,7 @@ private class NibblesWindow : ApplicationWindow
+         /* Translators: Difficulty level with fake bonuses, displayed on the scores dialog */
+         scorecats.add (new Games.Scores.Category ("fast-fakes", _("Fast with Fakes")));
+
+-        scores_context = new Games.Scores.Context (
++        scores_context = new Games.Scores.Context.with_icon_name (
+             "gnome-nibbles",
+             /* Translators: label displayed on the scores dialog, preceding a difficulty. */
+             _("Difficulty Level:"),

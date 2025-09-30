@@ -1,0 +1,1 @@
+#patch -Np1 -i $CWD/patch/gtk4/8832.patch

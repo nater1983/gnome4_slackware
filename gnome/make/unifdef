@@ -1,4 +1,4 @@
-make CFLAGS="$SLKCFLAGS -std=gnu17" DESTDIR=$PKG
+make CFLAGS="$SLKCFLAGS" DESTDIR=$PKG
 
 mkdir -p $PKG/usr/bin $PKG/usr/man/man1
 

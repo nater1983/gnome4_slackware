@@ -1,10 +1,6 @@
-# LFS Patches:
-sed "/  policy,/d" -i plugins/{power,wacom}/meson.build
-
 # Need it if want to run tests
 sed -e 's/libsystemd/libelogind/' \
     -i plugins/power/test.py
 
-# Fixing backlight functionality in gnome-control-center:
-sed -e 's/(backlight->logind_proxy)/(0)/' \
-    -i plugins/power/gsd-backlight.c
+rm -fr subprojects/*
+cp -av $CWD/pre-install/gnome-settings-daemon/*.wrap subprojects/

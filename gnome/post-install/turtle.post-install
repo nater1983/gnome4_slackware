@@ -1,0 +1,10 @@
+install -vDm 0755 turtle_cli -t $PKG/usr/bin
+install -vDm 0755 turtle_service -t $PKG/usr/bin
+install -vDm 0644 data/de.philippun1.turtle.service -t $PKG/usr/share/dbus-1/services
+install -vDm 0644 data/de.philippun1.turtle.desktop -t $PKG/usr/share/applications/
+install -vDm 0644 data/icons/hicolor/scalable/apps/*.svg  -t $PKG/usr/share/icons/hicolor/scalable/apps/
+install -vDm 0644 data/icons/hicolor/symbolic/apps/de.philippun1.turtle-symbolic.svg -t $PKG/usr/share/icons/hicolor/symbolic/apps/
+install -vDm 0644 data/de.philippun1.turtle.gschema.xml -t $PKG/usr/share/glib-2.0/schemas/
+install -vDm 0644 data/de.philippun1.turtle.metainfo.xml -t $PKG/usr/share/metainfo/
+install -vDm 0644 plugins/turtle_nautilus.py -t $PKG/usr/share/nautilus-python/extensions
+install -vDm 0644 plugins/turtle_nautilus_compare.py -t $PKG/usr/share/nautilus-python/extensions

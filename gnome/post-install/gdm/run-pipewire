@@ -1,0 +1,17 @@
+#!/bin/bash
+
+pkill -u "${USER}" -x pipewire > /dev/null 2>&1
+pipewire &
+
+# Wait for pipewire to load
+sleepTimes=50
+while [ $sleepTimes -gt 0 ] && ! pgrep -x "pipewire" > /dev/null; do
+	sleep 0.2
+	sleepTimes=$((sleepTimes - 1))
+done
+
+pkill -u "${USER}" -x wireplumber > /dev/null 2>&1
+wireplumber &
+
+pkill -u "${USER}" -x pipewire-pulse > /dev/null 2>&1
+pipewire-pulse &

@@ -1,0 +1,102 @@
+From ecd9a0354e6fc92e33e16959006bfc4089e07487 Mon Sep 17 00:00:00 2001
+From: Jamie Gravendeel <me@jamie.garden>
+Date: Sat, 21 Jun 2025 15:50:32 +0200
+Subject: [PATCH] options: Inline menu
+
+---
+ showtime/gtk/options.blp | 71 ++++++++++++++++++++--------------------
+ 1 file changed, 35 insertions(+), 36 deletions(-)
+
+diff --git a/showtime/gtk/options.blp b/showtime/gtk/options.blp
+index 855d021..a69ae49 100644
+--- a/showtime/gtk/options.blp
++++ b/showtime/gtk/options.blp
+@@ -1,41 +1,6 @@
+ using Gtk 4.0;
+ using Adw 1;
+ 
+-menu options {
+-  section {
+-    item {
+-      custom: "speed";
+-    }
+-  }
+-
+-  section {
+-    label: _("Rotate");
+-    display-hint: "inline-buttons";
+-
+-    item {
+-      custom: "rotate-left";
+-    }
+-
+-    item {
+-      custom: "rotate-right";
+-    }
+-  }
+-
+-  section {
+-    submenu language_menu {
+-      label: _("_Language");
+-    }
+-
+-    submenu subtitles_menu {
+-      label: _("_Subtitles");
+-    }
+-  }
+-
+-  section {
+-    item (_("_Repeat"), "win.toggle-loop")
+-  }
+-}
+-
+ template $Options: Adw.Bin {
+   child: MenuButton menu_button {
+     halign: end;
+@@ -44,9 +9,43 @@ template $Options: Adw.Bin {
+     direction: up;
+ 
+     popover: PopoverMenu popover {
+-      menu-model: options;
+       flags: nested;
+ 
++      menu-model: menu {
++        section {
++          item {
++            custom: "speed";
++          }
++        }
++
++        section {
++          label: _("Rotate");
++          display-hint: "inline-buttons";
++
++          item {
++            custom: "rotate-left";
++          }
++
++          item {
++            custom: "rotate-right";
++          }
++        }
++
++        section {
++          submenu language_menu {
++            label: _("_Language");
++          }
++
++          submenu subtitles_menu {
++            label: _("_Subtitles");
++          }
++        }
++
++        section {
++          item (_("_Repeat"), "win.toggle-loop")
++        }
++      };
++
+       [speed]
+       Box {
+         margin-top: 9;
+-- 
+GitLab

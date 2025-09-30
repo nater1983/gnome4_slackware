@@ -1,2 +1,2 @@
-mkdir -p "$PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION"
-cp -a src/LICENSE $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+mkdir -p "$CWD/build/applications/package-dart-sass/usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
+cp -a src/LICENSE $CWD/build/applications/package-dart-sass/usr/doc/${DOCNAME}-${PACKAGE_VERSION}

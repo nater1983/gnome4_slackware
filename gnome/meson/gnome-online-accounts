@@ -8,7 +8,6 @@ cd build
     -Dman=true \
     -Dkerberos=true \
     -Dexchange=true \
-    -Dwindows_live=true \
     -Dintrospection=true \
     -Downcloud=true \
     -Dimap_smtp=true \
