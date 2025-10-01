@@ -53,7 +53,7 @@ libbacktrace
 blueprint-compiler
 http-parser
 pytest
-GPaste
+gpaste
 flite
 validators
 zxcvbn
