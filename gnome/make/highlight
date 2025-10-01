@@ -1,5 +1,2 @@
-# Remove this otherwise we are getting the gui which we don't need.
-rm -fr CMakeLists.txt meson.build
-
 make cli
 make -j1 install DESTDIR=$PKG
