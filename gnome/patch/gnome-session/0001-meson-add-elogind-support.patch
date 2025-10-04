@@ -2,7 +2,7 @@ diff --git a/data/meson.build b/data/meson.build
 index e4256fcd..8d72db56 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -108,95 +108,97 @@ i18n.merge_file(
+@@ -108,99 +108,101 @@ i18n.merge_file(
    install_dir: join_paths(session_pkgdatadir, 'sessions')
  )
  
@@ -161,14 +161,18 @@ index e4256fcd..8d72db56 100644
 +    rename: 'override.conf',
 +    install_dir : join_paths(systemd_userunitdir, 'app-flatpak-.scope.d')
 +  )
-+endif
-+
+ 
  # Install some other misc. configuration files
  
-install_data(
-  'org.gnome.SessionManager.gschema.xml',
-  install_dir: join_paths(session_datadir, 'glib-2.0', 'schemas'),
-)
+-install_data(
+-  'org.gnome.SessionManager.gschema.xml',
+-  install_dir: join_paths(session_datadir, 'glib-2.0', 'schemas'),
+-)
++  install_data(
++    'org.gnome.SessionManager.gschema.xml',
++    install_dir: join_paths(session_datadir, 'glib-2.0', 'schemas'),
++  )
++endif
  
  install_data(
    'gnome-portals.conf',
