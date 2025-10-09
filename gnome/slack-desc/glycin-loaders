@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+              |-----handy-ruler------------------------------------------------------|
+glycin-loaders: glycin-loaders (Sandboxed and extendable image decoding)
+glycin-loaders:
+glycin-loaders: Glycin allows to decode images into gdk::Textures and to extract
+glycin-loaders: image metadata. The decoding happens in sandboxed modular image
+glycin-loaders: loaders.
+glycin-loaders: * glycin – The image library
+glycin-loaders: * glycin-utils – Utilities to write loaders for glycin
+glycin-loaders: * loaders – Glycin loaders for several formats
+glycin-loaders:
+glycin-loaders: Homepage: https://gitlab.gnome.org/sophie-h/glycin
+glycin-loaders:
