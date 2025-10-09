@@ -71,6 +71,7 @@ python3-cachetools
 python3-setuptools-rust
 python3-semantic_version
 python3-maturin
+python3-cffi
 python3-cryptography
 python3-google-api-core
 python3-google-api-python-client
