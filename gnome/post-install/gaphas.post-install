@@ -1,1 +1,0 @@
-install -vDm 0644 "$CWD/post-install/gaphas/decorators.py" -t "$PKG/$(python3 -c 'import site; print(site.getsitepackages()[0])')/gaphas"
