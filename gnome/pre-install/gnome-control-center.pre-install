@@ -1,1 +1,0 @@
-sed -i 's|#include <nma-mobile-providers.h>|#include <libnma/nma-mobile-providers.h>|' panels/wwan/cc-wwan-data.c
