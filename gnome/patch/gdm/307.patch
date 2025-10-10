@@ -193,7 +193,7 @@ index 848f00525..000000000
 -
 -G_END_DECLS
 diff --git a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
-index 67f6c291e..31f172b14 100644
+index 67f6c291e..bfba6b3b1 100644
 --- a/daemon/gdm-launch-environment.c
 +++ b/daemon/gdm-launch-environment.c
 @@ -31,6 +31,8 @@
@@ -372,7 +372,7 @@ index 67f6c291e..31f172b14 100644
          return TRUE;
  }
  
-@@ -536,14 +525,38 @@ gboolean
+@@ -536,14 +525,37 @@ gboolean
  gdm_launch_environment_start (GdmLaunchEnvironment *launch_environment)
  {
          g_autoptr(GError) error = NULL;
@@ -381,7 +381,7 @@ index 67f6c291e..31f172b14 100644
 +        gid_t             gid;
  
          g_return_val_if_fail (GDM_IS_LAUNCH_ENVIRONMENT (launch_environment), FALSE);
-         g_return_val_if_fail (launch_environment->dyn_uid != 0, FALSE);
+-        g_return_val_if_fail (launch_environment->dyn_uid != 0, FALSE);
  
          g_debug ("GdmLaunchEnvironment: Starting...");
  
@@ -412,7 +412,7 @@ index 67f6c291e..31f172b14 100644
                                                         launch_environment->x11_display_name,
                                                         launch_environment->x11_display_hostname,
                                                         launch_environment->x11_display_device,
-@@ -621,12 +634,6 @@ gdm_launch_environment_stop (GdmLaunchEnvironment *launch_environment)
+@@ -621,12 +633,6 @@ gdm_launch_environment_stop (GdmLaunchEnvironment *launch_environment)
                  g_clear_object (&launch_environment->session);
          }
  
@@ -425,7 +425,7 @@ index 67f6c291e..31f172b14 100644
          g_signal_emit (G_OBJECT (launch_environment), signals [STOPPED], 0);
  
          return TRUE;
-@@ -719,35 +726,19 @@ _gdm_launch_environment_set_x11_authority_file (GdmLaunchEnvironment *launch_env
+@@ -719,35 +725,19 @@ _gdm_launch_environment_set_x11_authority_file (GdmLaunchEnvironment *launch_env
  }
  
  static void
@@ -469,7 +469,7 @@ index 67f6c291e..31f172b14 100644
  }
  
  static void
-@@ -796,17 +787,11 @@ gdm_launch_environment_set_property (GObject      *object,
+@@ -796,17 +786,11 @@ gdm_launch_environment_set_property (GObject      *object,
          case PROP_X11_AUTHORITY_FILE:
                  _gdm_launch_environment_set_x11_authority_file (self, g_value_get_string (value));
                  break;
@@ -491,7 +491,7 @@ index 67f6c291e..31f172b14 100644
                  break;
          case PROP_COMMAND:
                  _gdm_launch_environment_set_command (self, g_value_get_string (value));
-@@ -855,17 +840,11 @@ gdm_launch_environment_get_property (GObject    *object,
+@@ -855,17 +839,11 @@ gdm_launch_environment_get_property (GObject    *object,
          case PROP_X11_AUTHORITY_FILE:
                  g_value_set_string (value, self->x11_authority_file);
                  break;
@@ -513,7 +513,7 @@ index 67f6c291e..31f172b14 100644
                  break;
          case PROP_COMMAND:
                  g_value_set_string (value, self->command);
-@@ -950,31 +929,17 @@ gdm_launch_environment_class_init (GdmLaunchEnvironmentClass *klass)
+@@ -950,31 +928,17 @@ gdm_launch_environment_class_init (GdmLaunchEnvironmentClass *klass)
                                                                NULL,
                                                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
          g_object_class_install_property (object_class,
@@ -553,7 +553,7 @@ index 67f6c291e..31f172b14 100644
                                                                NULL,
                                                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
          g_object_class_install_property (object_class,
-@@ -1074,12 +1039,8 @@ gdm_launch_environment_finalize (GObject *object)
+@@ -1074,12 +1038,8 @@ gdm_launch_environment_finalize (GObject *object)
          }
  
          g_free (launch_environment->command);
@@ -568,7 +568,7 @@ index 67f6c291e..31f172b14 100644
          g_free (launch_environment->x11_display_name);
          g_free (launch_environment->x11_display_seat_id);
          g_free (launch_environment->x11_display_device);
-@@ -1088,17 +1049,12 @@ gdm_launch_environment_finalize (GObject *object)
+@@ -1088,17 +1048,12 @@ gdm_launch_environment_finalize (GObject *object)
          g_free (launch_environment->session_id);
          g_free (launch_environment->session_type);
  
@@ -587,7 +587,7 @@ index 67f6c291e..31f172b14 100644
                                    const char *display_name,
                                    const char *seat_id,
                                    const char *session_type,
-@@ -1117,6 +1073,9 @@ create_gnome_session_environment (const char *session_id,
+@@ -1117,6 +1072,9 @@ create_gnome_session_environment (const char *session_id,
          args = g_ptr_array_new ();
          g_ptr_array_add (args, "gnome-session");
  
@@ -597,7 +597,7 @@ index 67f6c291e..31f172b14 100644
          if (debug) {
                  g_ptr_array_add (args, "--debug");
          }
-@@ -1133,16 +1092,14 @@ create_gnome_session_environment (const char *session_id,
+@@ -1133,16 +1091,14 @@ create_gnome_session_environment (const char *session_id,
  
          launch_environment = g_object_new (GDM_TYPE_LAUNCH_ENVIRONMENT,
                                             "command", command,
@@ -616,7 +616,7 @@ index 67f6c291e..31f172b14 100644
                                             NULL);
  
          return launch_environment;
-@@ -1155,11 +1112,10 @@ gdm_create_greeter_launch_environment (const char *display_name,
+@@ -1155,11 +1111,10 @@ gdm_create_greeter_launch_environment (const char *display_name,
                                         const char *display_hostname,
                                         gboolean    display_is_local)
  {
@@ -632,7 +632,7 @@ index 67f6c291e..31f172b14 100644
                                                   display_name,
                                                   seat_id,
                                                   session_type,
-@@ -1175,11 +1131,8 @@ gdm_create_initial_setup_launch_environment (const char *display_name,
+@@ -1175,11 +1130,8 @@ gdm_create_initial_setup_launch_environment (const char *display_name,
                                               const char *display_hostname,
                                               gboolean    display_is_local)
  {
@@ -645,7 +645,7 @@ index 67f6c291e..31f172b14 100644
                                                   display_name,
                                                   seat_id,
                                                   session_type,
-@@ -1199,14 +1152,12 @@ gdm_create_chooser_launch_environment (const char *display_name,
+@@ -1199,14 +1151,12 @@ gdm_create_chooser_launch_environment (const char *display_name,
          launch_environment = g_object_new (GDM_TYPE_LAUNCH_ENVIRONMENT,
                                             "command", LIBEXECDIR "/gdm-simple-chooser",
                                             "verification-mode", GDM_SESSION_VERIFICATION_MODE_CHOOSER,
