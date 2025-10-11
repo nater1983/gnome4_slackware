@@ -1,4 +1,4 @@
-  mod_dir=/usr/lib${LIBDIRSUFFIX}/node_modules/$PRGNAM
+  mod_dir=/usr/lib${LIBDIRSUFFIX}/node_modules/$PKGNAME
   install -d $PKG/{usr/bin,$mod_dir}
   ln -s $mod_dir/bin/{tsc,tsserver} $PKG/usr/bin
 
