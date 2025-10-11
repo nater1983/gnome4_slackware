@@ -1214,12 +1214,18 @@ index f4a439d1..298728b1 100644
 +                return FALSE;
          }
 +}
- 
++
 +gboolean
 +gsm_app_peek_autorestart (GsmApp *app)
 +{
 +        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
-         return FALSE;
+ 
+-        return FALSE;
++        if (GSM_APP_GET_CLASS (app)->impl_get_autorestart) {
++                return GSM_APP_GET_CLASS (app)->impl_get_autorestart (app);
++        } else {
++                return FALSE;
++        }
  }
  
 -static void
