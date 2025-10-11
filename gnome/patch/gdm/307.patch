@@ -670,10 +670,10 @@ index 67f6c29..29cbc14 100644
                                             NULL);
  
          return launch_environment;
-diff --git a/gdm-launch-environment.h b/gdm-launch-environment.h
+diff --git a/daemon/gdm-launch-environment.h b/daemon/gdm-launch-environment.h
 index f0102ef..354cf49 100644
---- a/gdm-launch-environment.h
-+++ b/gdm-launch-environment.h
+--- a/daemon/gdm-launch-environment.h
++++ b/daemon/gdm-launch-environment.h
 @@ -25,17 +25,12 @@
  #include <glib-object.h>
  
