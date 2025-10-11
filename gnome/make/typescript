@@ -1,5 +1,8 @@
+npm ci
+npx hereby LKG
+
   mod_dir=/usr/lib${LIBDIRSUFFIX}/node_modules/$PKGNAME
   install -d $PKG/{usr/bin,$mod_dir}
   ln -s $mod_dir/bin/{tsc,tsserver} $PKG/usr/bin
 
-  rsync -r --exclude=.gitattributes bin src/lib package.json $PKG/$mod_dir
+  rsync -r --exclude=.gitattributes bin lib package.json $PKG/$mod_dir
