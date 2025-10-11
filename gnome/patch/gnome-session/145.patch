@@ -1208,9 +1208,6 @@ index f4a439d1..298728b1 100644
 +        if (GSM_APP_GET_CLASS (app)->impl_is_running) {
 +                return GSM_APP_GET_CLASS (app)->impl_is_running (app);
 +        } else {
-+        if (GSM_APP_GET_CLASS (app)->impl_get_autorestart) {
-+                return GSM_APP_GET_CLASS (app)->impl_get_autorestart (app);
-+        } else {
 +                return FALSE;
          }
 +}
@@ -1288,14 +1285,14 @@ index f4a439d1..298728b1 100644
 -        const char * const *child_environment;
 -        guint handler;
 -        gboolean success;
-+        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
- 
+-
 -        g_debug ("GsmApp: starting %s (command=%s)",
 -                 gsm_app_peek_app_id (app),
 -                 g_app_info_get_commandline (G_APP_INFO (app->inner)));
 -
 -        ctx = g_app_launch_context_new ();
--
++        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
+ 
 -        variable_denylist = gsm_util_get_variable_blacklist ();
 -        for (size_t i = 0; variable_denylist[i] != NULL; i++)
 -                g_app_launch_context_unsetenv (ctx, variable_denylist[i]);
@@ -1333,30 +1330,32 @@ index f4a439d1..298728b1 100644
 -        success = g_desktop_app_info_launch_uris_as_manager (app->inner,
 -                                                             NULL,
 -                                                             ctx,
--                                                             G_SPAWN_SEARCH_PATH,
+-                                                             G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
 -                                                             NULL, NULL, NULL, NULL,
 -                                                             &local_error);
 -        if (!success)
 -                g_propagate_prefixed_error (error, local_error,
 -                                            "Unable to start app (%s): ",
 -                                            gsm_app_peek_app_id (app));
--
--        g_signal_handler_disconnect (ctx, handler);
 +        return GSM_APP_GET_CLASS (app)->impl_restart (app, error);
 +}
+ 
+-        g_signal_handler_disconnect (ctx, handler);
 +gboolean
 +gsm_app_stop (GsmApp  *app,
 +              GError **error)
 +{
 +        return GSM_APP_GET_CLASS (app)->impl_stop (app, error);
 +}
- 
--        return success;
++
 +void
 +gsm_app_exited (GsmApp *app,
 +                guchar  exit_code)
 +{
 +        g_return_if_fail (GSM_IS_APP (app));
+ 
+-        return success;
++        g_signal_emit (app, signals[EXITED], 0, exit_code);
  }
  
 -GsmApp *
@@ -1384,10 +1383,10 @@ index f4a439d1..298728b1 100644
 +gsm_app_get_registered (GsmApp *app)
 +{
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
++
++        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
  
 -        return g_object_new (GSM_TYPE_APP, "inner", info, NULL);
-+        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
-+
 +        return priv->registered;
  }
  
@@ -1399,9 +1398,10 @@ index f4a439d1..298728b1 100644
 +                        gboolean  registered)
  {
 -        g_autoptr (GDesktopAppInfo) info = NULL;
--
--        g_return_val_if_fail (path != NULL, NULL);
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
+ 
+-        g_return_val_if_fail (path != NULL, NULL);
++        g_return_if_fail (GSM_IS_APP (app));
  
 -        info = g_desktop_app_info_new_from_filename (path);
 -        if (info == NULL) {
@@ -1409,15 +1409,11 @@ index f4a439d1..298728b1 100644
 -                             "Desktop file %s couldn't be parsed, or references a missing TryExec binary",
 -                             path);
 -                return NULL;
-+        g_return_if_fail (GSM_IS_APP (app));
-+        
 +        if (priv->registered != registered) {
 +                priv->registered = registered;
 +                g_object_notify (G_OBJECT (app), "registered");
          }
--
--        return gsm_app_new (info, error);
- }
++}
 +
 +gboolean
 +gsm_app_save_to_keyfile (GsmApp    *app,
@@ -1425,9 +1421,11 @@ index f4a439d1..298728b1 100644
 +                         GError   **error)
 +{
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
+ 
+-        return gsm_app_new (info, error);
 +        g_debug ("Saving app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_save_to_keyfile (app, keyfile, error);
-+ }
+ }
 diff --git a/gnome-session/gsm-app.h b/gnome-session/gsm-app.h
 index a3099709..765a70da 100644
 --- a/gnome-session/gsm-app.h
