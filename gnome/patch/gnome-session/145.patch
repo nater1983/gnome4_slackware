@@ -1389,6 +1389,7 @@ index b852cb26..69c1facc 100644
 +        g_debug ("Saving app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_save_to_keyfile (app, keyfile, error);
 + }
+
 diff --git a/gnome-session/gsm-app.h b/gnome-session/gsm-app.h
 index a3099709..765a70da 100644
 --- a/gnome-session/gsm-app.h
