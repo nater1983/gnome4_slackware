@@ -192,10 +192,10 @@ index 848f00525..000000000
 -                                                         uid_t                uid);
 -
 -G_END_DECLS
-diff --git a/gdm-launch-environment.c b/gdm-launch-environment.c
+diff --git a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
 index 67f6c29..29cbc14 100644
---- a/gdm-launch-environment.c
-+++ b/gdm-launch-environment.c
+--- a/daemon/gdm-launch-environment.c
++++ b/daemon/gdm-launch-environment.c
 @@ -31,6 +31,8 @@
  #include <sys/wait.h>
  #include <errno.h>
