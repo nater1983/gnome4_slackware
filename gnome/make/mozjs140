@@ -1,4 +1,3 @@
-cd firefox*
 # We're going to try using the provided mach build system.
 # First we need to provide a MOZCONFIG.
 MOZOBJ="$(pwd)/obj"
@@ -32,5 +31,4 @@ export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=none
 
 cd $MOZOBJ
 make install DESTDIR=$PKG
-cd $MOZOBJ
 cd ..

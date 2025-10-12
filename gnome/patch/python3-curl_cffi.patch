@@ -1,0 +1,1 @@
+#patch -Np1 -i $CWD/patch/python3-curl_cffi/curl-cffi-0.13.0-use-system-curl-impersonate.patch

@@ -1,0 +1,2 @@
+# Add Gnome Shell 49 to the extension.
+sed -i 's/\("shell-version": \[.*\)\]/\1, "49"]/g' src/gnome-shell/metadata.json.in

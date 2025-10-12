@@ -8,7 +8,7 @@ python3-poetry-core
 python3-generic
 python3-exceptiongroup
 python3-flit_scm
-gaphas
+python3-gaphas
 python3-tinycss2
 python3-pydot
 python3-jedi
@@ -26,7 +26,7 @@ gnome-commander
 khronos
 lorem
 python3-mutagen
-mat2
+python3-mat2
 metadata-cleaner
 mousai
 news_flash_gtk
@@ -49,7 +49,7 @@ python3-argon2-cffi
 construct
 dateutil
 python3-decorator
-pep517
+python3-pep517
 python3-pycryptodomex
 python3-pykeepass
 python3-pyotp
@@ -71,6 +71,7 @@ python3-cachetools
 python3-setuptools-rust
 python3-semantic_version
 python3-maturin
+python3-cffi
 python3-cryptography
 python3-google-api-core
 python3-google-api-python-client
@@ -242,3 +243,7 @@ Endeavour
 # manuals
 foundry
 manuals
+# loupe
+loupe
+# gnome-terminal
+gnome-terminal

@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-arc-menu
 SRCNAM=ArcMenu
-VERSION=${VERSION:-66}
+VERSION=${VERSION:-67.1}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=53b0c6df3bd7948b1d2c5afe7fea37c8f1b54396
+_commit=4974e79782a0ec5f3b06723b9297f8c4a5ff3447
 
 ARCH=noarch
 
@@ -63,7 +63,7 @@ find -L . \
 make ; make install DESTDIR=$PKG
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-cp -a COPYING README.md \
+cp -a LICENSE README.md \
       $PKG/usr/doc/$PRGNAM-$VERSION
 #cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 

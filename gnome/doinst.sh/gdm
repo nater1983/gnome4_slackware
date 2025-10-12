@@ -19,12 +19,12 @@ if [ -e usr/share/glib-2.0/schemas ]; then
   fi
 fi
 
-if ! grep -q 'pipewire-enabled\.sh' etc/rc.d/rc.local; then
+if ! grep -q 'pipewire-enable\.sh' etc/rc.d/rc.local; then
   cat << EOF >> etc/rc.d/rc.local
 # Start Updating Pipewire:
-if [ -x /usr/sbin/pipewire-enabled.sh ]; then
-  echo "Updating Pipewire: /usr/sbin/pipewire-enabled.sh &"
-  /usr/sbin/pipewire-enabled.sh
+if [ -x /usr/sbin/pipewire-enable.sh ]; then
+  echo "Updating Pipewire: /usr/sbin/pipewire-enable.sh &"
+  /usr/sbin/pipewire-enable.sh
 fi
 EOF
 fi

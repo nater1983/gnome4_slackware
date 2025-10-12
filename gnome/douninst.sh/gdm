@@ -1,0 +1,9 @@
+# Remove pipewire-enable.sh block from rc.local if present
+if [ -f etc/rc.d/rc.local ]; then
+  sed -i '/# Start Updating Pipewire:/,/^fi$/d' etc/rc.d/rc.local
+
+  # If rc.local becomes empty, delete it
+  if ! grep -q '[^[:space:]]' etc/rc.d/rc.local; then
+    rm -f etc/rc.d/rc.local
+  fi
+fi

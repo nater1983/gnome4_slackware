@@ -22,6 +22,7 @@ if [ "$SLIRP" = "no" ]; then
 fi
 
 ./configure >/dev/null 2>&1
+rm -f configure Makefile >/dev/null 2>&1
 cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -38,6 +39,7 @@ cd build
     -Dsdl=enabled \
     -Dmalloc=jemalloc \
     -Dnettle=enabled \
+    -Ddocs=disabled \
     -Daudio_drv_list=alsa,oss,pa,pipewire,sdl
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
