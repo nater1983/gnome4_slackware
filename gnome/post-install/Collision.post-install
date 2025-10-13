@@ -1,1 +1,4 @@
 install -vDm 0644 nautilus-extension/collision-extension.py -t $PKG/usr/share/nautilus-python/extensions
+# These file's shouldn't be there.
+rm -f $PKG/usr/share/icons/hicolor/icon-theme.cache
+rm -f $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
