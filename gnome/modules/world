@@ -197,7 +197,7 @@ libsmbios
 protobuf-c
 python3-pefile
 libjcat
-fwupd
+# fwupd -in gnome-software module
 gnome-firmware
 # gnome-recipes
 gnome-recipes
