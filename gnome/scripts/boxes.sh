@@ -117,7 +117,7 @@ for LOC in $MODS; do
   cd ..
 
   # Rename the directory with commit info
-  NEW_DIR="${LOC}-50.alpha"
+  NEW_DIR="gnome-boxes-50.alpha"
   mv ${LOC}-temp ${NEW_DIR}
 
   echo ">>   Checked out ${LOC} as ${NEW_DIR}"
