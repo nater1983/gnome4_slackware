@@ -14,3 +14,6 @@ install -Dm644 build/*.json -t $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contri
 install -Dm644 build/extension-{firefox,chrome}.zip -t $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contrib/browser-extensions/
 cp $CWD/post-install/gnome-browser-connector/README.extensions $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/contrib/browser-extensions/
 rm -fr "$CWD/post-install/gnome-browser-connector/gnome-browser-extension-c5e13791ce0f08f0b6cc3edeb701e14bf00ece6a.tar.gz"
+
+mv $PKG/etc/chromium/ $PKG/usr/lib${LIBDIRSUFFIX}
+mv $PKG/etc/opt/chrome/ $PKG/usr/lib${LIBDIRSUFFIX}
