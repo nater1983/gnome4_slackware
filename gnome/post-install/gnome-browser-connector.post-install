@@ -17,3 +17,4 @@ rm -fr "$CWD/post-install/gnome-browser-connector/gnome-browser-extension-c5e137
 
 mv $PKG/etc/chromium/ $PKG/usr/lib${LIBDIRSUFFIX}
 mv $PKG/etc/opt/chrome/ $PKG/usr/lib${LIBDIRSUFFIX}
+rm -fr $PKG/etc
