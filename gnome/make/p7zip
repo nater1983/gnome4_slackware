@@ -1,0 +1,13 @@
+make all3 \
+  OPTFLAGS="$SLKCFLAGS -std=gnu++14" \
+  DEST_HOME=/usr \
+  DEST_SHARE_DOC=/usr/doc/$PRGNAM-$VERSION \
+  DEST_SHARE=/usr/lib$LIBDIRSUFFIX/p7zip \
+  DEST_DIR=$PKG
+
+make install \
+  OPTFLAGS="$SLKCFLAGS" \
+  DEST_HOME=/usr \
+  DEST_SHARE_DOC=/usr/doc/$PRGNAM-$VERSION \
+  DEST_SHARE=/usr/lib$LIBDIRSUFFIX/p7zip \
+  DEST_DIR=$PKG
