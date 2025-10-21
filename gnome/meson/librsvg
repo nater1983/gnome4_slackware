@@ -8,7 +8,8 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Ddocs=disabled
+    -Ddocs=disabled \
+    -Dpixbuf-loader=enabled
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
