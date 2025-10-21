@@ -1,2 +1,2 @@
-cp -a TODO $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}
-cp -a contrib/gzip-like_CLI_wrapper_for_7z/README $PKG/usr/doc/${DOCNAME}-${PACKAGE_VERSION}/README.p7zip
+cp -a TODO $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION
+cp -a contrib/gzip-like_CLI_wrapper_for_7z/README $PKG/usr/doc/${PKGNAME}-$MODULAR_PACKAGE_VERSION/README.p7zip
