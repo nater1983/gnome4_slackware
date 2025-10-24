@@ -4,4 +4,4 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}" \
      -G Ninja \
      -W no-dev
-DESTDIR="$PKG" cmake --install cmake-build
+DESTDIR="$PKG" cmake --install
