@@ -136,7 +136,7 @@ python3-pyproject-metadata
 python3-mesonpy
 python3-numpy
 python3-freetype
-python3-glm
+glm
 python3-pyglm
 Plots
 # Collision
