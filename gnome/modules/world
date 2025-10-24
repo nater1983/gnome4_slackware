@@ -137,6 +137,7 @@ python3-mesonpy
 python3-numpy
 python3-freetype
 python3-glm
+python3-pyglm
 Plots
 # Collision
 crystal-lang
