@@ -4,9 +4,12 @@ cd cmake-build
     "${GNOME_CMAKE_ARGS[@]}" \
      -G Ninja \
      -W no-dev
+  "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..
 
 mkdir -p "$PKG/usr/include"
 cp -r ../glm "$PKG/usr/include/"
 
-install -vDm 0644 cmake/glm/glmConfig-version.cmake -t $PKG/usr/share/cmake/glm/
-install -vDm 0644 cmake/glm/glmConfig.cmake -t $PKG/usr/share/cmake/glm/
+#install -vDm 0644 cmake/glm/glmConfig-version.cmake -t $PKG/usr/share/cmake/glm/
+#install -vDm 0644 cmake/glm/glmConfig.cmake -t $PKG/usr/share/cmake/glm/
