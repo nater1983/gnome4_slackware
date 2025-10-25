@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-coverflow-alt-tab
 SRCNAM=CoverflowAltTab
-VERSION=${VERSION:-78}
+VERSION=${VERSION:-83}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=a0212f812f838b6e7c0451f3fd20cc8b56ac5b5f
+_commit=4d872f7dce9471abf437b9d04a7ee3adfb6525a7
 
 ARCH=noarch
 
@@ -59,11 +59,6 @@ mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/lo
 
 mkdir -p $PKG/usr/share/glib-2.0/
 mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/schemas $PKG/usr/share/glib-2.0/
-
-mkdir -p $PKG/usr/share/dbus-1/interfaces
-mv $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/dbus-interfaces/org.gnome.Shell.Extensions.Coverflowalttab.xml \
-$PKG/usr/share/dbus-1/interfaces
-rm -fr $PKG/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com/dbus-interfaces/
 
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a CONTRIBUTORS.md COPYING README.md \
