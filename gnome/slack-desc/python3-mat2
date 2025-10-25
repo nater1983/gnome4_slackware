@@ -13,7 +13,7 @@ python3-mat2: commonly used file formats, written in python3: at its core, it's 
 python3-mat2: library, used by an eponymous command-line interface, as well as
 python3-mat2: several file manager extensions.
 python3-mat2:
-python3-mat2:
+python3-mat2: Homepage: https://github.com/jvoisin/mat2/
 python3-mat2:
 python3-mat2:
 python3-mat2:

@@ -1,0 +1,8 @@
+# install gzip like wrapper
+install -m 0755 contrib/gzip-like_CLI_wrapper_for_7z/p7zip $PKG/usr/bin/
+install -m 0644 contrib/gzip-like_CLI_wrapper_for_7z/man1/p7zip.1 $PKG/usr/man/man1/
+
+# install midnight commander vfs add on
+mkdir -p $PKG/usr/share/mc/extfs/
+install -m 755 contrib/VirtualFileSystemForMidnightCommander/u7z \
+  $PKG/usr/share/mc/extfs/

@@ -1,0 +1,2 @@
+CFLAGS="$SLKCFLAGS -Wno-all" python3 -m build --wheel --no-isolation
+python3 -m installer --destdir "$PKG" --compile-bytecode=1 dist/*.whl

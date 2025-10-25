@@ -1,7 +1,8 @@
-mkdir -p $PKG/usr/bin
-mkdir -p $PKG/usr/lib64/node_modules/typescript
-cp -pr package.json bin/ lib/ $PKG/usr/lib64/node_modules/typescript
+npm ci
+npx hereby LKG
 
-cd $PKG/usr/bin
-ln -s ../lib64/node_modules/typescript/bin/tsc
-ln -s ../lib64/node_modules/typescript/bin/tsserver
+  mod_dir=/usr/lib${LIBDIRSUFFIX}/node_modules/$PKGNAME
+  install -d $PKG/{usr/bin,$mod_dir}
+  ln -s $mod_dir/bin/{tsc,tsserver} $PKG/usr/bin
+
+  rsync -r --exclude=.gitattributes bin lib package.json $PKG/$mod_dir

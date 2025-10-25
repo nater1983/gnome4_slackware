@@ -124,9 +124,6 @@ python3-tzlocal
 python3-unidecode
 python3-modern.colorthief
 komikku
-#Gnome Firmware
-# fwupd - in gnome-software module
-gnome-firmware
 # Commit
 blueprint-compiler
 Commit
@@ -139,7 +136,8 @@ python3-pyproject-metadata
 python3-mesonpy
 python3-numpy
 python3-freetype
-python3-glm
+glm
+python3-pyglm
 Plots
 # Collision
 crystal-lang
@@ -200,7 +198,7 @@ libsmbios
 protobuf-c
 python3-pefile
 libjcat
-fwupd
+# fwupd -in gnome-software module
 gnome-firmware
 # gnome-recipes
 gnome-recipes
@@ -235,6 +233,7 @@ showtime
 libmusicbrainz5
 sound-juicer
 # kooha
+x264
 kooha
 # gdm-settings
 gdm-settings
@@ -247,3 +246,5 @@ manuals
 loupe
 # gnome-terminal
 gnome-terminal
+# gnome-console
+gnome-console

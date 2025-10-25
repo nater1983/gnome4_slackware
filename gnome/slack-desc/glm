@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+   |-----handy-ruler------------------------------------------------------|
+glm: glm (C++ mathematics library for graphics programming)
+glm:
+glm: GLM is a C++ library for doing mathematics operations required in 
+glm: many OpenGL based applications. Its interface has been designed
+glm: to resemble the built-in matrix and vector types of the OpenGL
+glm: shading language.
+glm:
+glm: Homepage: https://github.com/g-truc/glm
+glm:
+glm:
+glm:

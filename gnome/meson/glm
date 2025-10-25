@@ -1,0 +1,11 @@
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -fno-strict-aliasing" \
+    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -fno-strict-aliasing" \
+    "${GNOME_CMAKE_ARGS[@]}" \
+     -G Ninja \
+     -DGLM_BUILD_LIBRARY=OFF
+    "${NINJA:=ninja}"
+  DESTDIR=$PKG $NINJA install
+cd ..

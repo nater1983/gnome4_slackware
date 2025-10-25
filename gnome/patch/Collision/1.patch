@@ -1,0 +1,17 @@
+diff --git a/nautilus-extension/collision-extension.py b/nautilus-extension/collision-extension.py
+index ef0767dc..d638f6c2 100644
+--- a/nautilus-extension/collision-extension.py
++++ b/nautilus-extension/collision-extension.py
+@@ -12,7 +12,11 @@
+ _ = gettext
+ 
+ require_version('Gtk', '4.0')
+-require_version('Nautilus', '4.0')
++try:
++    require_version('Nautilus', '4.1')
++except ValueError:
++    # Fallback if only Nautilus 4.0 exists
++    require_version('Nautilus', '4.0')
+ 
+ from gi.repository import Nautilus, GObject, Gtk, Gdk
+ 

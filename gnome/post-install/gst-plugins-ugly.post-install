@@ -1,0 +1,37 @@
+mkdir -p $PKG/usr/share/appdata
+cat > $PKG/usr/share/appdata/gst-plugins-ugly.appdata.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2013 Richard Hughes <richard@hughsie.com> -->
+<component type="codec">
+  <id>gstreamer-ugly-free</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <name>GStreamer Multimedia Codecs - Extra</name>
+  <summary>Multimedia playback for CD, DVD, and MP3</summary>
+  <description>
+    <p>
+      This addon includes several additional codecs that have good quality and
+      correct functionality, but whose license is not fully compatible with LGPL.
+    </p>
+    <p>
+      These codecs can be used to encode and decode media files where the
+      format is not patent encumbered.
+    </p>
+    <p>
+      A codec decodes audio and video for for playback or editing and is also
+      used for transmission or storage.
+      Different codecs are used in video-conferencing, streaming media and
+      video editing applications.
+    </p>
+  </description>
+  <keywords>
+    <keyword>CD</keyword>
+    <keyword>DVD</keyword>
+    <keyword>MP3</keyword>
+  </keywords>
+  <url type="homepage">http://gstreamer.freedesktop.org/</url>
+  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer</url>
+  <url type="help">http://gstreamer.freedesktop.org/documentation/</url>
+  <url type="donation">http://www.gnome.org/friends/</url>
+  <update_contact><!-- upstream-contact_at_email.com --></update_contact>
+</component>
+EOF

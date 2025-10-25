@@ -1,5 +1,0 @@
-Here as stored all script in the right build order for building-install BLACKLIST46/packages.SlackBuilds
-When we are not building anymore some package from BLACKLIST46/ folder, just remove its sh extension from here.
-
-EXAMPLE: 01-build_gtk4.sh --> 01-build_gtk4
-This way gtk4 will not be in build list, and if some day we need it back just add .sh extension again...

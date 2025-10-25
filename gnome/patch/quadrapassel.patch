@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/quadrapassel/a70ac16fd2c4ef8b2a032bd81273468ff21f1d8a.patch
