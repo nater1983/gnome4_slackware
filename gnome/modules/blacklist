@@ -18,6 +18,7 @@ gjs
 glib-networking
 glib2
 glibmm2
+gobject-introspection
 gnome-keyring
 graphviz
 gsettings-desktop-schemas
@@ -41,7 +42,7 @@ pangomm2
 pygobject3
 python-build
 python-docutils
-python-flit-core
+python-flit_core
 python-hatch-vcs
 python-hatchling
 python-installer
