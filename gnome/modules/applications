@@ -59,7 +59,6 @@ python3-liblouis
 pyatspi
 python3-dasbus
 orca
-gtksourceview4
 evince
 evince4
 sushi
