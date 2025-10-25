@@ -59,9 +59,7 @@ python3-liblouis
 pyatspi
 python3-dasbus
 orca
-evince
 evince4
-sushi
 epiphany
 Fragments
 libgedit-gtksourceview
