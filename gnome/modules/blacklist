@@ -42,7 +42,7 @@ pangomm2
 pygobject3
 python-build
 python-docutils
-python-flit_core
+python-flit-core
 python-hatch-vcs
 python-hatchling
 python-installer
