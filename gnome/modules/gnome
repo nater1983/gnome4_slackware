@@ -21,7 +21,6 @@ webkit2gtk6.0
 gtest
 gflags
 gperftools
-graphviz 
 highway
 libjxl
 libyuv
@@ -29,7 +28,7 @@ x265
 rav1e
 libde265
 svt-av1
-pillow_heif
+python3-pillow_heif
 libheif
 libavif
 unifdef
