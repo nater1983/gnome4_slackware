@@ -10,7 +10,6 @@ gsound
 libxmlb
 libfyaml
 libstemmer
-AppStream
 libadwaita
 gnome-bluetooth
 xdg-dbus-proxy
