@@ -248,3 +248,6 @@ loupe
 gnome-terminal
 # gnome-console
 gnome-console
+# sushi
+evince
+sushi
