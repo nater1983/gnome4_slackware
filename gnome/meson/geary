@@ -6,6 +6,7 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Dprofile=release \
+    -Dlibstemmer=false \
     -Dvaladoc=disabled
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
