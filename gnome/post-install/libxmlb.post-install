@@ -4,5 +4,5 @@ rm -fr $PKG/usr/{include,bin,man}
 rm -fr $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2.0.0
 rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.0
-rm $PKG/usr/lib${LIBDIRSUFFIX}/libnma.so.2
-rm -fr $PKG/install/doinst.sh
+rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2
+rm $PKG/install/doinst.sh
