@@ -1,6 +1,6 @@
 # Remove all extra bits included in the base libxmlb package
 # This package is _ONLY_ for the introspection data
-rm -fr $PKG/usr/include
+rm -fr $PKG/usr/{include,bin,man}
 rm -fr $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
 rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2.0.0
 rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.0
