@@ -10,4 +10,3 @@ cd build
     -Dgtkdoc=false \
     -Dstemmer=false \
     -Dcli=true
-cd ..
