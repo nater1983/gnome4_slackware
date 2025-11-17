@@ -10,3 +10,5 @@ cd build
     -Dgtkdoc=false \
     -Dstemmer=false \
     -Dcli=true
+  "${NINJA:=ninja}"
+cd ..
