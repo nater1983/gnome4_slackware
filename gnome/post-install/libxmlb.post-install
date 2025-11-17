@@ -2,7 +2,7 @@
 # This package is _ONLY_ for the introspection data
 rm -fr $PKG/usr/{include,bin,man}
 rm -fr $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
-rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2.0.0
-rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.0
-rm $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2
-rm $PKG/install/doinst.sh
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2.0.0
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.0
+rm -f $PKG/usr/lib${LIBDIRSUFFIX}/libxmlb.so.2
+rm -f $PKG/install/doinst.sh
