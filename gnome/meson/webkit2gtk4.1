@@ -3,8 +3,8 @@ export CC=clang CXX=clang++
 mkdir cmake-build
 cd cmake-build
   cmake .. \
-    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none"
-    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none"
+    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
+    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DPORT=GTK \
     -DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkit2gtk-4.1 \
