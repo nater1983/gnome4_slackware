@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/libmusicbrainz5/16.patch
+patch -Np1 -i $CWD/patch/libmusicbrainz5/16.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }

@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/webkit2gtk4.1/unhide-deprecated-api.patch
+patch -Np1 -i $CWD/patch/webkit2gtk4.1/unhide-deprecated-api.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
