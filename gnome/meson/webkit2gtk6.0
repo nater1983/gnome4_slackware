@@ -1,8 +1,6 @@
 mkdir cmake-build
 cd cmake-build
   cmake .. \
-    CC=clang \
-    CXX=clang++ \
     -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
     -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
     "${GNOME_CMAKE_ARGS[@]}" \
