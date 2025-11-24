@@ -1,4 +1,4 @@
-patch -Np1 -i $CWD/patch/gnome-shell/3939-rediffed.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gnome-shell/3939-rediffed.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-shell/0001-status-keyboard-Add-a-catch-around-reload-call.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-shell/0002-status-keyboard-Load-keyboard-from-system-settings-i.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-shell/0003-status-keyboard-Use-gnome-desktop-API-for-getting-de.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
