@@ -67,7 +67,6 @@ cp -a chatgpt-gnome-desktop@chatgpt-gnome-desktop $PKG/usr/share/gnome-shell/ext
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a LICENSE README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
-#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
