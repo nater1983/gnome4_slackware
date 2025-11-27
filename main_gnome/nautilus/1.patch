@@ -1,0 +1,179 @@
+From da17857123a3db329e4c980858320630e6660064 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 26 May 2024 23:55:58 +0000
+Subject: [PATCH] Revert git commits to stop the crashing well opening image metainfo.
+---
+ .../nautilus-image-properties-model.c         | 107 ++++++++----------
+ 1 file changed, 46 insertions(+), 61 deletions(-)
+
+diff --git a/extensions/image-properties/nautilus-image-properties-model.c b/extensions/image-properties/nautilus-image-properties-model.c
+index 9cddab8495..0d348a80d2 100644
+--- a/extensions/image-properties/nautilus-image-properties-model.c
++++ b/extensions/image-properties/nautilus-image-properties-model.c
+@@ -45,25 +45,6 @@ typedef struct
+     gboolean md_ready;
+ } NautilusImagesPropertiesModel;
+ 
+-/* tags and their alternatives */
+-const char *title[] = { "Xmp.dc.title", NULL };
+-const char *camera_brand[] = { "Exif.Image.Make", NULL };
+-const char *camera_model[] = { "Exif.Image.Model", "Exif.Image.UniqueCameraModel", NULL };
+-const char *created_on[] = { "Exif.Photo.DateTimeOriginal", "Xmp.xmp.CreateDate", "Exif.Image.DateTime", NULL };
+-const char *exposure_time[] = { "Exif.Photo.ExposureTime", NULL };
+-const char *aperture_value[] = { "Exif.Photo.ApertureValue", NULL };
+-const char *iso_speed_ratings[] = { "Exif.Photo.ISOSpeedRatings", "Xmp.exifEX.ISOSpeed", NULL };
+-const char *flash[] = { "Exif.Photo.Flash", NULL };
+-const char *metering_mode[] = { "Exif.Photo.MeteringMode", NULL };
+-const char *exposure_mode[] = { "Exif.Photo.ExposureMode", NULL };
+-const char *focal_length[] = { "Exif.Photo.FocalLength", NULL };
+-const char *software[] = { "Exif.Image.Software", NULL };
+-const char *description[] = { "Xmp.dc.description", "Exif.Photo.UserComment", NULL };
+-const char *subject[] = { "Xmp.dc.subject", NULL };
+-const char *creator[] = { "Xmp.dc.creator", "Exif.Image.Artist", NULL };
+-const char *rights[] = { "Xmp.dc.rights", NULL };
+-const char *rating[] = { "Xmp.xmp.Rating", NULL };
+-
+ static void
+ nautilus_images_properties_model_free (NautilusImagesPropertiesModel *self)
+ {
+@@ -72,16 +53,6 @@ nautilus_images_properties_model_free (NautilusImagesPropertiesModel *self)
+         g_cancellable_cancel (self->cancellable);
+         g_clear_object (&self->cancellable);
+     }
+-
+-    if (self->loader != NULL)
+-    {
+-        gdk_pixbuf_loader_close (self->loader, NULL);
+-        g_clear_object (&self->loader);
+-    }
+-
+-    g_clear_object (&self->md);
+-    g_clear_object (&self->group_model);
+-
+     g_free (self);
+ }
+ 
+@@ -156,32 +127,10 @@ append_basic_info (NautilusImagesPropertiesModel *self)
+     append_item (self, _("Height"), value);
+ }
+ 
+-static void
+-format_exif_datetime (gchar **tag_value)
+-{
+-    gint year, month, day, hour, minute, seconds, count;
+-
+-    count = sscanf (*tag_value, "%d:%d:%d %d:%d:%d",
+-                    &year, &month, &day, &hour, &minute, &seconds);
+-
+-    if (count == 6)
+-    {
+-        g_autoptr (GDateTime) datetime = g_date_time_new_utc (year, month, day,
+-                                                              hour, minute, seconds);
+-
+-        if (datetime != NULL)
+-        {
+-            g_free (*tag_value);
+-            /* TODO: Use the date format from Nautilus */
+-            *tag_value = g_date_time_format (datetime, "%F %T");
+-        }
+-    }
+-}
+-
+ static void
+ append_gexiv2_tag (NautilusImagesPropertiesModel  *self,
+                    const char                    **tag_names,
+-                   const char                     *tag_description)
++                   const char                     *description)
+ {
+     g_assert (tag_names != NULL);
+ 
+@@ -193,20 +142,15 @@ append_gexiv2_tag (NautilusImagesPropertiesModel  *self,
+ 
+             tag_value = gexiv2_metadata_try_get_tag_interpreted_string (self->md, *i, NULL);
+ 
+-            if (tag_description == NULL)
++            if (description == NULL)
+             {
+-                tag_description = gexiv2_metadata_try_get_tag_description (*i, NULL);
++                description = gexiv2_metadata_try_get_tag_description (*i, NULL);
+             }
+ 
+             /* don't add empty tags - try next one */
+             if (tag_value != NULL && strlen (tag_value) > 0)
+             {
+-                if (tag_names == created_on)
+-                {
+-                    format_exif_datetime (&tag_value);
+-                }
+-
+-                append_item (self, tag_description, tag_value);
++                append_item (self, description, tag_value);
+                 break;
+             }
+         }
+@@ -220,6 +164,25 @@ append_gexiv2_info (NautilusImagesPropertiesModel *self)
+     double latitude;
+     double altitude;
+ 
++    /* define tags and its alternatives */
++    const char *title[] = { "Xmp.dc.title", NULL };
++    const char *camera_brand[] = { "Exif.Image.Make", NULL };
++    const char *camera_model[] = { "Exif.Image.Model", "Exif.Image.UniqueCameraModel", NULL };
++    const char *created_on[] = { "Exif.Photo.DateTimeOriginal", "Xmp.xmp.CreateDate", "Exif.Image.DateTime", NULL };
++    const char *exposure_time[] = { "Exif.Photo.ExposureTime", NULL };
++    const char *aperture_value[] = { "Exif.Photo.ApertureValue", NULL };
++    const char *iso_speed_ratings[] = { "Exif.Photo.ISOSpeedRatings", "Xmp.exifEX.ISOSpeed", NULL };
++    const char *flash[] = { "Exif.Photo.Flash", NULL };
++    const char *metering_mode[] = { "Exif.Photo.MeteringMode", NULL };
++    const char *exposure_mode[] = { "Exif.Photo.ExposureMode", NULL };
++    const char *focal_length[] = { "Exif.Photo.FocalLength", NULL };
++    const char *software[] = { "Exif.Image.Software", NULL };
++    const char *description[] = { "Xmp.dc.description", "Exif.Photo.UserComment", NULL };
++    const char *subject[] = { "Xmp.dc.subject", NULL };
++    const char *creator[] = { "Xmp.dc.creator", "Exif.Image.Artist", NULL };
++    const char *rights[] = { "Xmp.dc.rights", NULL };
++    const char *rating[] = { "Xmp.xmp.Rating", NULL };
++
+     if (!self->md_ready)
+     {
+         return;
+@@ -286,6 +249,23 @@ load_finished (NautilusImagesPropertiesModel *self)
+         self->loader = NULL;
+     }
+     self->md_ready = FALSE;
++    g_clear_object (&self->md);
++}
++
++static void
++file_close_callback (GObject      *object,
++                     GAsyncResult *res,
++                     gpointer      data)
++{
++    NautilusImagesPropertiesModel *self;
++    GInputStream *stream;
++
++    self = data;
++    stream = G_INPUT_STREAM (object);
++
++    g_input_stream_close_finish (stream, res, NULL);
++
++    g_clear_object (&self->cancellable);
+ }
+ 
+ static void
+@@ -358,6 +338,11 @@ file_read_callback (GObject      *object,
+     if (done_reading)
+     {
+         load_finished (self);
++        g_input_stream_close_async (stream,
++                                    G_PRIORITY_DEFAULT,
++                                    self->cancellable,
++                                    file_close_callback,
++                                    self);
+     }
+ }
+ 
+-- 
+GitLab
+
+

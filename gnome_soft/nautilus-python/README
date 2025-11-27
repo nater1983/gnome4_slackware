@@ -1,0 +1,7 @@
+Scripts are loaded in the following order:
+
+    $XDG_DATA_HOME/nautilus-python/extensions (i.e. ~/.local/share/…)
+    nautilus_prefix/share/nautilus-python/extensions (i.e. ~/Development/…)
+    $XDG_DATA_DIRS/nautilus-python/extensions (i.e. /usr/share/…)
+
+Simply copy your Python scripts into one of those directories and restart Nautilus.

@@ -1,0 +1,3 @@
+RUN finddobledeps.py outof gnome-46 folder like this
+
+python3 finddobledeps.py > alldeps.txt

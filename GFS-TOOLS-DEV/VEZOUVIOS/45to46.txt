@@ -1,0 +1,533 @@
+1/10/2023
+###############45############################################======================46=======================================
+http://0pointer.de/lennart/projects/libdaemon/libdaemon-0.14.	http://0pointer.de/lennart/projects/libdaemon/libdaemon-0.14.
+http://0pointer.de/lennart/projects/mod_dnssd/mod_dnssd-0.6.t	http://0pointer.de/lennart/projects/mod_dnssd/mod_dnssd-0.6.t
+http://avahi.org/download/avahi-0.8.tar.gz			http://avahi.org/download/avahi-0.8.tar.gz
+http://downloads.sourceforge.net/project/vde/vde2/2.3.2/vde2-	http://downloads.sourceforge.net/project/vde/vde2/2.3.2/vde2-
+http://downloads.videolan.org/pub/videolan/dav1d/1.2.1/dav1d-	http://downloads.videolan.org/pub/videolan/dav1d/1.2.1/dav1d-
+http://ftp.us.debian.org/debian/pool/main/x/xorg-server/xvfb_	http://ftp.us.debian.org/debian/pool/main/x/xorg-server/xvfb_
+http://slackware.uk/sbosrcarch/by-md5/8/d/8df8a92a2799bc94957 <
+http://sourceforge.net/projects/liboauth/files/liboauth-1.0.3 <
+http://telepathy.freedesktop.org/releases/telepathy-idle/tele	http://telepathy.freedesktop.org/releases/telepathy-idle/tele
+http://telepathy.freedesktop.org/releases/telepathy-logger/te	http://telepathy.freedesktop.org/releases/telepathy-logger/te
+http://telepathy.freedesktop.org/releases/telepathy-mission-c	http://telepathy.freedesktop.org/releases/telepathy-mission-c
+http://www.andre-simon.de/zip/highlight-4.7.tar.bz2		http://www.andre-simon.de/zip/highlight-4.7.tar.bz2
+http://www.freedesktop.org/software/colord/releases/colord-gt	http://www.freedesktop.org/software/colord/releases/colord-gt
+http://www.lua.org/ftp/lua-5.3.6.tar.gz			      <
+http://www.lua.org/ftp/lua-5.4.4.tar.gz				http://www.lua.org/ftp/lua-5.4.4.tar.gz
+http://www.wtfpl.net/txt/copying/ for details.		      <
+https://0xacab.org/jvoisin/mat2/-/archive/0.13.3/mat2-0.13.3.	https://0xacab.org/jvoisin/mat2/-/archive/0.13.3/mat2-0.13.3.
+https://archive.mozilla.org/pub/firefox/releases/115.3.1esr/s |	https://archive.mozilla.org/pub/firefox/releases/115.1.0esr/s
+https://dev.gentoo.org/~graaff/libstemmer_c-20140325.tgz	https://dev.gentoo.org/~graaff/libstemmer_c-20140325.tgz
+https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz		https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+https://download.gnome.org/sources/NetworkManager-openvpn/1.1	https://download.gnome.org/sources/NetworkManager-openvpn/1.1
+https://download.gnome.org/sources/adwaita-icon-theme/45/adwa	https://download.gnome.org/sources/adwaita-icon-theme/45/adwa
+https://download.gnome.org/sources/alacarte/3.50/alacarte-3.5 |	https://download.gnome.org/sources/alacarte/3.44/alacarte-3.4
+https://download.gnome.org/sources/amtk/5.6/amtk-5.6.1.tar.xz	https://download.gnome.org/sources/amtk/5.6/amtk-5.6.1.tar.xz
+https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-	https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-
+https://download.gnome.org/sources/atomix/44/atomix-44.0.tar.	https://download.gnome.org/sources/atomix/44/atomix-44.0.tar.
+https://download.gnome.org/sources/baobab/45/baobab-45.0.tar. |	https://download.gnome.org/sources/baobab/45/baobab-45.alpha.
+https://download.gnome.org/sources/brasero/3.12/brasero-3.12.	https://download.gnome.org/sources/brasero/3.12/brasero-3.12.
+https://download.gnome.org/sources/calls/45/calls-45.0.tar.xz |	https://download.gnome.org/sources/calls/45/calls-45.rc.0.tar
+https://download.gnome.org/sources/cantarell-fonts/0.303/cant	https://download.gnome.org/sources/cantarell-fonts/0.303/cant
+https://download.gnome.org/sources/cheese/43/cheese-43.0.tar.	https://download.gnome.org/sources/cheese/43/cheese-43.0.tar.
+https://download.gnome.org/sources/clutter-gst/3.0/clutter-gs	https://download.gnome.org/sources/clutter-gst/3.0/clutter-gs
+https://download.gnome.org/sources/clutter-gtk/1.8/clutter-gt	https://download.gnome.org/sources/clutter-gtk/1.8/clutter-gt
+https://download.gnome.org/sources/clutter/1.26/clutter-1.26.	https://download.gnome.org/sources/clutter/1.26/clutter-1.26.
+https://download.gnome.org/sources/cogl/1.22/cogl-1.22.8.tar.	https://download.gnome.org/sources/cogl/1.22/cogl-1.22.8.tar.
+https://download.gnome.org/sources/d-spy/1.8/d-spy-1.8.0.tar. |	https://download.gnome.org/sources/d-spy/1.6/d-spy-1.6.0.tar.
+https://download.gnome.org/sources/dconf-editor/45/dconf-edit	https://download.gnome.org/sources/dconf-editor/45/dconf-edit
+https://download.gnome.org/sources/devhelp/43/devhelp-43.0.ta	https://download.gnome.org/sources/devhelp/43/devhelp-43.0.ta
+https://download.gnome.org/sources/eog-plugins/44/eog-plugins	https://download.gnome.org/sources/eog-plugins/44/eog-plugins
+https://download.gnome.org/sources/eog/45/eog-45.0.tar.xz     |	https://download.gnome.org/sources/eog/45/eog-45.rc.tar.xz
+https://download.gnome.org/sources/epiphany/45/epiphany-45.0. |	https://download.gnome.org/sources/epiphany/45/epiphany-45.be
+https://download.gnome.org/sources/evince/45/evince-45.0.tar. |	https://download.gnome.org/sources/evince/45/evince-45.rc.tar
+https://download.gnome.org/sources/evolution-data-server/3.50 |	https://download.gnome.org/sources/evolution-data-server/3.49
+https://download.gnome.org/sources/evolution/3.50/evolution-3 |	https://download.gnome.org/sources/evolution/3.49/evolution-3
+https://download.gnome.org/sources/file-roller/43/file-roller	https://download.gnome.org/sources/file-roller/43/file-roller
+https://download.gnome.org/sources/five-or-more/3.32/five-or-	https://download.gnome.org/sources/five-or-more/3.32/five-or-
+https://download.gnome.org/sources/folks/0.15/folks-0.15.6.ta	https://download.gnome.org/sources/folks/0.15/folks-0.15.6.ta
+https://download.gnome.org/sources/four-in-a-row/3.38/four-in	https://download.gnome.org/sources/four-in-a-row/3.38/four-in
+https://download.gnome.org/sources/gcab/1.4/gcab-1.4.tar.xz   <
+https://download.gnome.org/sources/gcab/1.6/gcab-1.6.tar.xz	https://download.gnome.org/sources/gcab/1.6/gcab-1.6.tar.xz
+https://download.gnome.org/sources/gcr/4.1/gcr-4.1.0.tar.xz	https://download.gnome.org/sources/gcr/4.1/gcr-4.1.0.tar.xz
+https://download.gnome.org/sources/gdm/45/gdm-45.0.1.tar.xz   |	https://download.gnome.org/sources/gdm/45/gdm-45.beta.tar.xz
+https://download.gnome.org/sources/geary/44/geary-44.0.tar.xz	https://download.gnome.org/sources/geary/44/geary-44.0.tar.xz
+https://download.gnome.org/sources/gedit-plugins/46/gedit-plu	https://download.gnome.org/sources/gedit-plugins/46/gedit-plu
+https://download.gnome.org/sources/gedit/46/gedit-46.1.tar.xz	https://download.gnome.org/sources/gedit/46/gedit-46.1.tar.xz
+https://download.gnome.org/sources/geocode-glib/3.26/geocode-	https://download.gnome.org/sources/geocode-glib/3.26/geocode-
+https://download.gnome.org/sources/ghex/45/ghex-45.beta.tar.x	https://download.gnome.org/sources/ghex/45/ghex-45.beta.tar.x
+https://download.gnome.org/sources/gi-docgen/2023/gi-docgen-2	https://download.gnome.org/sources/gi-docgen/2023/gi-docgen-2
+https://download.gnome.org/sources/gitg/44/gitg-44.tar.xz	https://download.gnome.org/sources/gitg/44/gitg-44.tar.xz
+https://download.gnome.org/sources/gjs/1.78/gjs-1.78.0.tar.xz	https://download.gnome.org/sources/gjs/1.78/gjs-1.78.0.tar.xz
+https://download.gnome.org/sources/glib-networking/2.78/glib-	https://download.gnome.org/sources/glib-networking/2.78/glib-
+https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.	https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.
+https://download.gnome.org/sources/glibmm/2.78/glibmm-2.78.0. |	https://download.gnome.org/sources/glibmm/2.68/glibmm-2.68.2.
+https://download.gnome.org/sources/glycin-loaders/0.1/glycin- |	https://download.gnome.org/sources/glycin-loaders/0.1/glycin-
+https://download.gnome.org/sources/gnome-2048/3.38/gnome-2048	https://download.gnome.org/sources/gnome-2048/3.38/gnome-2048
+https://download.gnome.org/sources/gnome-applets/3.50/gnome-a |	https://download.gnome.org/sources/gnome-applets/3.49/gnome-a
+https://download.gnome.org/sources/gnome-autoar/0.4/gnome-aut	https://download.gnome.org/sources/gnome-autoar/0.4/gnome-aut
+https://download.gnome.org/sources/gnome-backgrounds/45/gnome |	https://download.gnome.org/sources/gnome-backgrounds/45/gnome
+https://download.gnome.org/sources/gnome-bluetooth/42/gnome-b	https://download.gnome.org/sources/gnome-bluetooth/42/gnome-b
+https://download.gnome.org/sources/gnome-boxes/45/gnome-boxes |	https://download.gnome.org/sources/gnome-boxes/45/gnome-boxes
+https://download.gnome.org/sources/gnome-browser-connector/42	https://download.gnome.org/sources/gnome-browser-connector/42
+https://download.gnome.org/sources/gnome-builder/45/gnome-bui |	https://download.gnome.org/sources/gnome-builder/45/gnome-bui
+https://download.gnome.org/sources/gnome-calculator/45/gnome- |	https://download.gnome.org/sources/gnome-calculator/45/gnome-
+https://download.gnome.org/sources/gnome-calendar/45/gnome-ca |	https://download.gnome.org/sources/gnome-calendar/45/gnome-ca
+https://download.gnome.org/sources/gnome-characters/45/gnome- |	https://download.gnome.org/sources/gnome-characters/45/gnome-
+https://download.gnome.org/sources/gnome-chess/43/gnome-chess	https://download.gnome.org/sources/gnome-chess/43/gnome-chess
+https://download.gnome.org/sources/gnome-clocks/45/gnome-cloc |	https://download.gnome.org/sources/gnome-clocks/44/gnome-cloc
+https://download.gnome.org/sources/gnome-color-manager/3.36/g	https://download.gnome.org/sources/gnome-color-manager/3.36/g
+https://download.gnome.org/sources/gnome-commander/1.16/gnome	https://download.gnome.org/sources/gnome-commander/1.16/gnome
+https://download.gnome.org/sources/gnome-connections/45/gnome |	https://download.gnome.org/sources/gnome-connections/45/gnome
+https://download.gnome.org/sources/gnome-console/45/gnome-con |	https://download.gnome.org/sources/gnome-console/45/gnome-con
+https://download.gnome.org/sources/gnome-contacts/45/gnome-co |	https://download.gnome.org/sources/gnome-contacts/45/gnome-co
+https://download.gnome.org/sources/gnome-control-center/45/gn |	https://download.gnome.org/sources/gnome-control-center/45/gn
+https://download.gnome.org/sources/gnome-control-center/45/gn |	https://download.gnome.org/sources/gnome-control-center/45/gn
+https://download.gnome.org/sources/gnome-desktop/44/gnome-des	https://download.gnome.org/sources/gnome-desktop/44/gnome-des
+https://download.gnome.org/sources/gnome-disk-utility/45/gnom |	https://download.gnome.org/sources/gnome-disk-utility/44/gnom
+https://download.gnome.org/sources/gnome-flashback/3.50/gnome |	https://download.gnome.org/sources/gnome-flashback/3.46/gnome
+https://download.gnome.org/sources/gnome-font-viewer/45/gnome |	https://download.gnome.org/sources/gnome-font-viewer/45/gnome
+https://download.gnome.org/sources/gnome-initial-setup/45/gno |	https://download.gnome.org/sources/gnome-initial-setup/45/gno
+https://download.gnome.org/sources/gnome-keyring/42/gnome-key	https://download.gnome.org/sources/gnome-keyring/42/gnome-key
+https://download.gnome.org/sources/gnome-klotski/3.38/gnome-k	https://download.gnome.org/sources/gnome-klotski/3.38/gnome-k
+https://download.gnome.org/sources/gnome-latex/3.46/gnome-lat	https://download.gnome.org/sources/gnome-latex/3.46/gnome-lat
+https://download.gnome.org/sources/gnome-mahjongg/3.40/gnome-	https://download.gnome.org/sources/gnome-mahjongg/3.40/gnome-
+https://download.gnome.org/sources/gnome-maps/45/gnome-maps-4 |	https://download.gnome.org/sources/gnome-maps/45/gnome-maps-4
+https://download.gnome.org/sources/gnome-menus/3.36/gnome-men	https://download.gnome.org/sources/gnome-menus/3.36/gnome-men
+https://download.gnome.org/sources/gnome-mines/40/gnome-mines	https://download.gnome.org/sources/gnome-mines/40/gnome-mines
+https://download.gnome.org/sources/gnome-music/45/gnome-music |	https://download.gnome.org/sources/gnome-music/44/gnome-music
+https://download.gnome.org/sources/gnome-nettool/42/gnome-net	https://download.gnome.org/sources/gnome-nettool/42/gnome-net
+https://download.gnome.org/sources/gnome-nibbles/3.38/gnome-n	https://download.gnome.org/sources/gnome-nibbles/3.38/gnome-n
+https://download.gnome.org/sources/gnome-online-accounts/3.48	https://download.gnome.org/sources/gnome-online-accounts/3.48
+https://download.gnome.org/sources/gnome-panel/3.50/gnome-pan |	https://download.gnome.org/sources/gnome-panel/3.49/gnome-pan
+https://download.gnome.org/sources/gnome-photos/44/gnome-phot	https://download.gnome.org/sources/gnome-photos/44/gnome-phot
+https://download.gnome.org/sources/gnome-power-manager/43/gno	https://download.gnome.org/sources/gnome-power-manager/43/gno
+https://download.gnome.org/sources/gnome-remote-desktop/45/gn |	https://download.gnome.org/sources/gnome-remote-desktop/45/gn
+https://download.gnome.org/sources/gnome-robots/40/gnome-robo	https://download.gnome.org/sources/gnome-robots/40/gnome-robo
+https://download.gnome.org/sources/gnome-session/45/gnome-ses |	https://download.gnome.org/sources/gnome-session/44/gnome-ses
+https://download.gnome.org/sources/gnome-settings-daemon/45/g |	https://download.gnome.org/sources/gnome-settings-daemon/45/g
+https://download.gnome.org/sources/gnome-shell-extensions/45/ |	https://download.gnome.org/sources/gnome-shell-extensions/45/
+https://download.gnome.org/sources/gnome-shell/45/gnome-shell |	https://download.gnome.org/sources/gnome-shell/45/gnome-shell
+https://download.gnome.org/sources/gnome-software/45/gnome-so |	https://download.gnome.org/sources/gnome-software/45/gnome-so
+https://download.gnome.org/sources/gnome-sudoku/45/gnome-sudo |	https://download.gnome.org/sources/gnome-sudoku/45/gnome-sudo
+https://download.gnome.org/sources/gnome-system-monitor/45/gn |	https://download.gnome.org/sources/gnome-system-monitor/45/gn
+https://download.gnome.org/sources/gnome-tetravex/3.38/gnome-	https://download.gnome.org/sources/gnome-tetravex/3.38/gnome-
+https://download.gnome.org/sources/gnome-text-editor/45/gnome |	https://download.gnome.org/sources/gnome-text-editor/45/gnome
+https://download.gnome.org/sources/gnome-tour/45/gnome-tour-4 |	https://download.gnome.org/sources/gnome-tour/44/gnome-tour-4
+https://download.gnome.org/sources/gnome-tweaks/45/gnome-twea |	https://download.gnome.org/sources/gnome-tweaks/42/gnome-twea
+https://download.gnome.org/sources/gnome-usage/45/gnome-usage |	https://download.gnome.org/sources/gnome-user-docs/44/gnome-u
+https://download.gnome.org/sources/gnome-user-docs/45/gnome-u <
+https://download.gnome.org/sources/gnome-user-share/43/gnome-	https://download.gnome.org/sources/gnome-user-share/43/gnome-
+https://download.gnome.org/sources/gnome-video-effects/0.6/gn	https://download.gnome.org/sources/gnome-video-effects/0.6/gn
+https://download.gnome.org/sources/gnome-weather/45/gnome-wea |	https://download.gnome.org/sources/gnome-weather/45/gnome-wea
+https://download.gnome.org/sources/gnote/45/gnote-45.0.tar.xz |	https://download.gnome.org/sources/gnote/45/gnote-45.alpha.ta
+https://download.gnome.org/sources/gnumeric/1.12/gnumeric-1.1	https://download.gnome.org/sources/gnumeric/1.12/gnumeric-1.1
+https://download.gnome.org/sources/gobject-introspection/1.78	https://download.gnome.org/sources/gobject-introspection/1.78
+https://download.gnome.org/sources/goffice/0.10/goffice-0.10.	https://download.gnome.org/sources/goffice/0.10/goffice-0.10.
+https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz	https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz
+							      >	https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz
+https://download.gnome.org/sources/grilo-plugins/0.3/grilo-pl	https://download.gnome.org/sources/grilo-plugins/0.3/grilo-pl
+https://download.gnome.org/sources/grilo/0.3/grilo-0.3.16.tar	https://download.gnome.org/sources/grilo/0.3/grilo-0.3.16.tar
+https://download.gnome.org/sources/gsettings-desktop-schemas/ |	https://download.gnome.org/sources/gsettings-desktop-schemas/
+https://download.gnome.org/sources/gsound/1.0/gsound-1.0.3.ta	https://download.gnome.org/sources/gsound/1.0/gsound-1.0.3.ta
+https://download.gnome.org/sources/gspell/1.12/gspell-1.12.2.	https://download.gnome.org/sources/gspell/1.12/gspell-1.12.2.
+https://download.gnome.org/sources/gssdp/1.6/gssdp-1.6.2.tar.	https://download.gnome.org/sources/gssdp/1.6/gssdp-1.6.2.tar.
+https://download.gnome.org/sources/gtk-doc/1.33/gtk-doc-1.33.	https://download.gnome.org/sources/gtk-doc/1.33/gtk-doc-1.33.
+https://download.gnome.org/sources/gtk-internet-radio-locator |	https://download.gnome.org/sources/gtk-internet-radio-locator
+https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1. <
+https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.	https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.
+https://download.gnome.org/sources/gtk/4.12/gtk-4.12.2.tar.xz |	https://download.gnome.org/sources/gtk/4.13/gtk-4.13.1.tar.xz
+https://download.gnome.org/sources/gtkmm/4.12/gtkmm-4.12.0.ta |	https://download.gnome.org/sources/gtkmm/4.11/gtkmm-4.11.3.ta
+https://download.gnome.org/sources/gtksourceview/4.8/gtksourc	https://download.gnome.org/sources/gtksourceview/4.8/gtksourc
+https://download.gnome.org/sources/gtksourceview/5.10/gtksour |	https://download.gnome.org/sources/gtksourceview/5.9/gtksourc
+https://download.gnome.org/sources/gtranslator/45/gtranslator <
+https://download.gnome.org/sources/gupnp-av/0.14/gupnp-av-0.1	https://download.gnome.org/sources/gupnp-av/0.14/gupnp-av-0.1
+https://download.gnome.org/sources/gupnp-dlna/0.12/gupnp-dlna	https://download.gnome.org/sources/gupnp-dlna/0.12/gupnp-dlna
+https://download.gnome.org/sources/gupnp/1.6/gupnp-1.6.5.tar.	https://download.gnome.org/sources/gupnp/1.6/gupnp-1.6.5.tar.
+https://download.gnome.org/sources/gvfs/1.51/gvfs-1.51.91.tar	https://download.gnome.org/sources/gvfs/1.51/gvfs-1.51.91.tar
+https://download.gnome.org/sources/hitori/44/hitori-44.0.tar.	https://download.gnome.org/sources/hitori/44/hitori-44.0.tar.
+https://download.gnome.org/sources/iagno/3.38/iagno-3.38.1.ta	https://download.gnome.org/sources/iagno/3.38/iagno-3.38.1.ta
+https://download.gnome.org/sources/jsonrpc-glib/3.44/jsonrpc-	https://download.gnome.org/sources/jsonrpc-glib/3.44/jsonrpc-
+https://download.gnome.org/sources/libadwaita/1.4/libadwaita-	https://download.gnome.org/sources/libadwaita/1.4/libadwaita-
+https://download.gnome.org/sources/libcloudproviders/0.3/libc	https://download.gnome.org/sources/libcloudproviders/0.3/libc
+https://download.gnome.org/sources/libdazzle/3.44/libdazzle-3	https://download.gnome.org/sources/libdazzle/3.44/libdazzle-3
+https://download.gnome.org/sources/libdex/0.4/libdex-0.4.0.ta |	https://download.gnome.org/sources/libdex/0.3/libdex-0.3.1.ta
+https://download.gnome.org/sources/libgda/6.0/libgda-6.0.0.ta	https://download.gnome.org/sources/libgda/6.0/libgda-6.0.0.ta
+https://download.gnome.org/sources/libgdata/0.18/libgdata-0.1	https://download.gnome.org/sources/libgdata/0.18/libgdata-0.1
+https://download.gnome.org/sources/libgit2-glib/1.2/libgit2-g |	https://download.gnome.org/sources/libgit2-glib/1.1/libgit2-g
+							      >	https://download.gnome.org/sources/libgnome-games-support/1.8
+https://download.gnome.org/sources/libgnome-games-support/1.8	https://download.gnome.org/sources/libgnome-games-support/1.8
+https://download.gnome.org/sources/libgnomekbd/3.28/libgnomek	https://download.gnome.org/sources/libgnomekbd/3.28/libgnomek
+https://download.gnome.org/sources/libgrss/0.7/libgrss-0.7.0.	https://download.gnome.org/sources/libgrss/0.7/libgrss-0.7.0.
+https://download.gnome.org/sources/libgweather/4.4/libgweathe |	https://download.gnome.org/sources/libgweather/4.3/libgweathe
+https://download.gnome.org/sources/libgxps/0.3/libgxps-0.3.2.	https://download.gnome.org/sources/libgxps/0.3/libgxps-0.3.2.
+https://download.gnome.org/sources/libhandy/1.8/libhandy-1.8.	https://download.gnome.org/sources/libhandy/1.8/libhandy-1.8.
+https://download.gnome.org/sources/libmanette/0.2/libmanette-	https://download.gnome.org/sources/libmanette/0.2/libmanette-
+https://download.gnome.org/sources/libmediaart/1.9/libmediaar	https://download.gnome.org/sources/libmediaart/1.9/libmediaar
+https://download.gnome.org/sources/libnma/1.10/libnma-1.10.6.	https://download.gnome.org/sources/libnma/1.10/libnma-1.10.6.
+https://download.gnome.org/sources/libpanel/1.4/libpanel-1.4. |	https://download.gnome.org/sources/libpanel/1.3/libpanel-1.3.
+https://download.gnome.org/sources/libpeas/1.36/libpeas-1.36.	https://download.gnome.org/sources/libpeas/1.36/libpeas-1.36.
+https://download.gnome.org/sources/libpeas/2.0/libpeas-2.0.0. |	https://download.gnome.org/sources/libpeas/1.99/libpeas-1.99.
+https://download.gnome.org/sources/librsvg/2.57/librsvg-2.57.	https://download.gnome.org/sources/librsvg/2.57/librsvg-2.57.
+https://download.gnome.org/sources/libshumate/1.1/libshumate- |	https://download.gnome.org/sources/libshumate/1.1/libshumate-
+https://download.gnome.org/sources/libsoup/3.4/libsoup-3.4.3.	https://download.gnome.org/sources/libsoup/3.4/libsoup-3.4.3.
+https://download.gnome.org/sources/libspelling/0.2/libspellin <
+https://download.gnome.org/sources/libwnck/43/libwnck-43.0.ta	https://download.gnome.org/sources/libwnck/43/libwnck-43.0.ta
+https://download.gnome.org/sources/loupe/45/loupe-45.0.tar.xz |	https://download.gnome.org/sources/loupe/45/loupe-45.beta.1.t
+https://download.gnome.org/sources/meld/3.22/meld-3.22.0.tar.	https://download.gnome.org/sources/meld/3.22/meld-3.22.0.tar.
+https://download.gnome.org/sources/metacity/3.50/metacity-3.5 <
+https://download.gnome.org/sources/mm-common/1.0/mm-common-1.	https://download.gnome.org/sources/mm-common/1.0/mm-common-1.
+https://download.gnome.org/sources/mutter/45/mutter-45.0.tar. |	https://download.gnome.org/sources/mutter/45/mutter-45.rc.tar
+https://download.gnome.org/sources/mutter/45/mutter-45.0.tar. |	https://download.gnome.org/sources/mutter/45/mutter-45.rc.tar
+https://download.gnome.org/sources/nautilus-python/4.0/nautil	https://download.gnome.org/sources/nautilus-python/4.0/nautil
+https://download.gnome.org/sources/nautilus-sendto/3.8/nautil	https://download.gnome.org/sources/nautilus-sendto/3.8/nautil
+https://download.gnome.org/sources/nautilus/45/nautilus-45.0. |	https://download.gnome.org/sources/nautilus/45/nautilus-45.rc
+https://download.gnome.org/sources/network-manager-applet/1.3 |	https://download.gnome.org/sources/network-manager-applet/1.3
+https://download.gnome.org/sources/orca/45/orca-45.0.tar.xz   |	https://download.gnome.org/sources/orca/45/orca-45.rc.tar.xz
+https://download.gnome.org/sources/pango/1.51/pango-1.51.0.ta	https://download.gnome.org/sources/pango/1.51/pango-1.51.0.ta
+https://download.gnome.org/sources/pangomm/2.50/pangomm-2.50.	https://download.gnome.org/sources/pangomm/2.50/pangomm-2.50.
+https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.	https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.
+https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar. <
+https://download.gnome.org/sources/pyatspi/2.46/pyatspi-2.46.	https://download.gnome.org/sources/pyatspi/2.46/pyatspi-2.46.
+https://download.gnome.org/sources/rest/0.9/rest-0.9.1.tar.xz	https://download.gnome.org/sources/rest/0.9/rest-0.9.1.tar.xz
+https://download.gnome.org/sources/rhythmbox/3.4/rhythmbox-3.	https://download.gnome.org/sources/rhythmbox/3.4/rhythmbox-3.
+https://download.gnome.org/sources/rygel/0.42/rygel-0.42.4.ta	https://download.gnome.org/sources/rygel/0.42/rygel-0.42.4.ta
+https://download.gnome.org/sources/seahorse/43/seahorse-43.0.	https://download.gnome.org/sources/seahorse/43/seahorse-43.0.
+https://download.gnome.org/sources/shotwell/0.32/shotwell-0.3	https://download.gnome.org/sources/shotwell/0.32/shotwell-0.3
+https://download.gnome.org/sources/simple-scan/44/simple-scan	https://download.gnome.org/sources/simple-scan/44/simple-scan
+https://download.gnome.org/sources/snapshot/45/snapshot-45.0. |	https://download.gnome.org/sources/snapshot/45/snapshot-45.be
+https://download.gnome.org/sources/sound-juicer/3.40/sound-ju	https://download.gnome.org/sources/sound-juicer/3.40/sound-ju
+https://download.gnome.org/sources/sushi/45/sushi-45.0.tar.xz |	https://download.gnome.org/sources/sushi/45/sushi-45.alpha.2.
+https://download.gnome.org/sources/sysprof/45/sysprof-45.0.ta |	https://download.gnome.org/sources/sysprof/45/sysprof-45.rc.t
+https://download.gnome.org/sources/tecla/45/tecla-45.0.tar.xz |	https://download.gnome.org/sources/tecla/45/tecla-45.rc.tar.x
+https://download.gnome.org/sources/template-glib/3.36/templat	https://download.gnome.org/sources/template-glib/3.36/templat
+https://download.gnome.org/sources/tepl/6.8/tepl-6.8.0.tar.xz	https://download.gnome.org/sources/tepl/6.8/tepl-6.8.0.tar.xz
+https://download.gnome.org/sources/totem-pl-parser/3.26/totem	https://download.gnome.org/sources/totem-pl-parser/3.26/totem
+https://download.gnome.org/sources/totem/43/totem-43.0.tar.xz	https://download.gnome.org/sources/totem/43/totem-43.0.tar.xz
+https://download.gnome.org/sources/tracker-miners/3.6/tracker |	https://download.gnome.org/sources/tracker-miners/3.6/tracker
+https://download.gnome.org/sources/tracker/3.6/tracker-3.6.0. |	https://download.gnome.org/sources/tracker/3.6/tracker-3.6.rc
+https://download.gnome.org/sources/vala/0.56/vala-0.56.4.tar.	https://download.gnome.org/sources/vala/0.56/vala-0.56.4.tar.
+https://download.gnome.org/sources/vinagre/3.22/vinagre-3.22.	https://download.gnome.org/sources/vinagre/3.22/vinagre-3.22.
+https://download.gnome.org/sources/vte/0.74/vte-0.74.0.tar.xz |	https://download.gnome.org/sources/vte/0.73/vte-0.73.99.tar.x
+https://download.gnome.org/sources/xdg-desktop-portal-gnome/4 |	https://download.gnome.org/sources/xdg-desktop-portal-gnome/4
+https://download.gnome.org/sources/xdg-user-dirs-gtk/0.11/xdg	https://download.gnome.org/sources/xdg-user-dirs-gtk/0.11/xdg
+https://download.gnome.org/sources/yelp-tools/42/yelp-tools-4	https://download.gnome.org/sources/yelp-tools/42/yelp-tools-4
+https://download.gnome.org/sources/yelp-xsl/42/yelp-xsl-42.1.	https://download.gnome.org/sources/yelp-xsl/42/yelp-xsl-42.1.
+https://download.gnome.org/sources/yelp/42/yelp-42.2.tar.xz	https://download.gnome.org/sources/yelp/42/yelp-42.2.tar.xz
+https://download.gnome.org/sources/zenity/3.99/zenity-3.99.2.	https://download.gnome.org/sources/zenity/3.99/zenity-3.99.2.
+https://download.qemu.org/qemu-8.1.0.tar.xz		      |	https://download.qemu.org/qemu-7.2.0.tar.xz
+							      >	https://files.pythonhosted.org/packages/05/e8/4d227db64308b3c
+https://files.pythonhosted.org/packages/05/e8/4d227db64308b3c	https://files.pythonhosted.org/packages/05/e8/4d227db64308b3c
+https://files.pythonhosted.org/packages/0a/65/6e656d49c679136	https://files.pythonhosted.org/packages/0a/65/6e656d49c679136
+https://files.pythonhosted.org/packages/13/6e/916cdf94f9b38ae	https://files.pythonhosted.org/packages/13/6e/916cdf94f9b38ae
+https://files.pythonhosted.org/packages/22/44/0829b19ac243211	https://files.pythonhosted.org/packages/22/44/0829b19ac243211
+							      >	https://files.pythonhosted.org/packages/22/44/0829b19ac243211
+							      >	https://files.pythonhosted.org/packages/2b/15/7bafa5379a228ed
+https://files.pythonhosted.org/packages/2b/15/7bafa5379a228ed	https://files.pythonhosted.org/packages/2b/15/7bafa5379a228ed
+https://files.pythonhosted.org/packages/35/b4/40faec6790d4b08	https://files.pythonhosted.org/packages/35/b4/40faec6790d4b08
+https://files.pythonhosted.org/packages/3f/18/20bb5b6bf55e55d	https://files.pythonhosted.org/packages/3f/18/20bb5b6bf55e55d
+https://files.pythonhosted.org/packages/40/4b/f4cebb92fe965f0	https://files.pythonhosted.org/packages/40/4b/f4cebb92fe965f0
+							      >	https://files.pythonhosted.org/packages/40/4b/f4cebb92fe965f0
+https://files.pythonhosted.org/packages/40/92/efd675dba957315	https://files.pythonhosted.org/packages/40/92/efd675dba957315
+https://files.pythonhosted.org/packages/47/0c/afa77d73b8366a8	https://files.pythonhosted.org/packages/47/0c/afa77d73b8366a8
+https://files.pythonhosted.org/packages/4e/4c/ca1a71217c4ac5b	https://files.pythonhosted.org/packages/4e/4c/ca1a71217c4ac5b
+https://files.pythonhosted.org/packages/52/a6/72c80f4a0b37c2c	https://files.pythonhosted.org/packages/52/a6/72c80f4a0b37c2c
+							      >	https://files.pythonhosted.org/packages/52/a6/72c80f4a0b37c2c
+https://files.pythonhosted.org/packages/54/67/c6712608c99e772	https://files.pythonhosted.org/packages/54/67/c6712608c99e772
+https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f	https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f
+https://files.pythonhosted.org/packages/66/0c/8d907af351aa16b	https://files.pythonhosted.org/packages/66/0c/8d907af351aa16b
+https://files.pythonhosted.org/packages/71/d2/d681d0c192d2948	https://files.pythonhosted.org/packages/71/d2/d681d0c192d2948
+							      >	https://files.pythonhosted.org/packages/71/d2/d681d0c192d2948
+							      >	https://files.pythonhosted.org/packages/7d/31/f2289ce78b9b473
+https://files.pythonhosted.org/packages/7d/31/f2289ce78b9b473	https://files.pythonhosted.org/packages/7d/31/f2289ce78b9b473
+https://files.pythonhosted.org/packages/7e/f9/4c2ec78572a2d25	https://files.pythonhosted.org/packages/7e/f9/4c2ec78572a2d25
+https://files.pythonhosted.org/packages/85/60/2e0334015789761	https://files.pythonhosted.org/packages/85/60/2e0334015789761
+https://files.pythonhosted.org/packages/88/0b/107dde3f330d046	https://files.pythonhosted.org/packages/88/0b/107dde3f330d046
+https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021	https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021
+							      >	https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021
+https://files.pythonhosted.org/packages/8a/bf/64959d6187d4247	https://files.pythonhosted.org/packages/8a/bf/64959d6187d4247
+https://files.pythonhosted.org/packages/8b/63/fd0d51530696af7	https://files.pythonhosted.org/packages/8b/63/fd0d51530696af7
+https://files.pythonhosted.org/packages/95/14/ed0af6865d378cf	https://files.pythonhosted.org/packages/95/14/ed0af6865d378cf
+https://files.pythonhosted.org/packages/99/db/e4ecb483ffa194d	https://files.pythonhosted.org/packages/99/db/e4ecb483ffa194d
+							      >	https://files.pythonhosted.org/packages/99/db/e4ecb483ffa194d
+							      >	https://files.pythonhosted.org/packages/9f/9c/8cd4da7df572848
+https://files.pythonhosted.org/packages/9f/9c/8cd4da7df572848	https://files.pythonhosted.org/packages/9f/9c/8cd4da7df572848
+https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7b	https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7b
+							      >	https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7b
+							      >	https://files.pythonhosted.org/packages/a6/7b/17244b1083e8e60
+https://files.pythonhosted.org/packages/a6/7b/17244b1083e8e60	https://files.pythonhosted.org/packages/a6/7b/17244b1083e8e60
+https://files.pythonhosted.org/packages/a8/fe/71091bf1a9f2fa5	https://files.pythonhosted.org/packages/a8/fe/71091bf1a9f2fa5
+							      >	https://files.pythonhosted.org/packages/a8/fe/71091bf1a9f2fa5
+https://files.pythonhosted.org/packages/a9/50/1dd5ea74c559df4	https://files.pythonhosted.org/packages/a9/50/1dd5ea74c559df4
+https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351	https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351
+							      >	https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351
+https://files.pythonhosted.org/packages/b1/54/d1760a363d0fe34	https://files.pythonhosted.org/packages/b1/54/d1760a363d0fe34
+https://files.pythonhosted.org/packages/b9/e9/184b8ccce6683b0	https://files.pythonhosted.org/packages/b9/e9/184b8ccce6683b0
+https://files.pythonhosted.org/packages/ba/dd/f8a01b146bf45ac	https://files.pythonhosted.org/packages/ba/dd/f8a01b146bf45ac
+							      >	https://files.pythonhosted.org/packages/ba/dd/f8a01b146bf45ac
+https://files.pythonhosted.org/packages/be/ba/1f744cdc819428f	https://files.pythonhosted.org/packages/be/ba/1f744cdc819428f
+https://files.pythonhosted.org/packages/c2/37/a093aaa902f6b23	https://files.pythonhosted.org/packages/c2/37/a093aaa902f6b23
+							      >	https://files.pythonhosted.org/packages/c2/37/a093aaa902f6b23
+							      >	https://files.pythonhosted.org/packages/c2/6f/278225c5a070a18
+https://files.pythonhosted.org/packages/c2/6f/278225c5a070a18	https://files.pythonhosted.org/packages/c2/6f/278225c5a070a18
+https://files.pythonhosted.org/packages/c3/14/33725e5e7b9c366	https://files.pythonhosted.org/packages/c3/14/33725e5e7b9c366
+https://files.pythonhosted.org/packages/c5/db/9b98c3a9e148b5d	https://files.pythonhosted.org/packages/c5/db/9b98c3a9e148b5d
+							      >	https://files.pythonhosted.org/packages/c5/db/9b98c3a9e148b5d
+							      >	https://files.pythonhosted.org/packages/c6/b5/a9e956fd904ecb3
+https://files.pythonhosted.org/packages/c6/b5/a9e956fd904ecb3	https://files.pythonhosted.org/packages/c6/b5/a9e956fd904ecb3
+https://files.pythonhosted.org/packages/ce/d3/ece7a98d5826bd1	https://files.pythonhosted.org/packages/ce/d3/ece7a98d5826bd1
+https://files.pythonhosted.org/packages/d2/5a/4742fdba39cd02a	https://files.pythonhosted.org/packages/d2/5a/4742fdba39cd02a
+							      >	https://files.pythonhosted.org/packages/d2/5a/4742fdba39cd02a
+							      >	https://files.pythonhosted.org/packages/d3/a5/4bb58448fffd36e
+https://files.pythonhosted.org/packages/d3/a5/4bb58448fffd36e	https://files.pythonhosted.org/packages/d3/a5/4bb58448fffd36e
+https://files.pythonhosted.org/packages/e0/b7/a4a032e94bcfdff	https://files.pythonhosted.org/packages/e0/b7/a4a032e94bcfdff
+https://files.pythonhosted.org/packages/e3/3f/41186b1f2fd86a5	https://files.pythonhosted.org/packages/e3/3f/41186b1f2fd86a5
+							      >	https://files.pythonhosted.org/packages/e3/3f/41186b1f2fd86a5
+							      >	https://files.pythonhosted.org/packages/e7/2f/c6d89edac75482f
+https://files.pythonhosted.org/packages/e7/2f/c6d89edac75482f	https://files.pythonhosted.org/packages/e7/2f/c6d89edac75482f
+https://files.pythonhosted.org/packages/ed/85/13e76be737f3159	https://files.pythonhosted.org/packages/ed/85/13e76be737f3159
+https://files.pythonhosted.org/packages/ee/46/77fdb7cd2b0f1f6	https://files.pythonhosted.org/packages/ee/46/77fdb7cd2b0f1f6
+https://files.pythonhosted.org/packages/f4/7d/aed8cd5e4ca52bb	https://files.pythonhosted.org/packages/f4/7d/aed8cd5e4ca52bb
+							      >	https://files.pythonhosted.org/packages/f4/7d/aed8cd5e4ca52bb
+https://files.pythonhosted.org/packages/f7/37/207acdf07c2229a	https://files.pythonhosted.org/packages/f7/37/207acdf07c2229a
+https://files.pythonhosted.org/packages/fa/84/a3f25cec7d0922b	https://files.pythonhosted.org/packages/fa/84/a3f25cec7d0922b
+https://files.pythonhosted.org/packages/fc/ef/0335f7217dd1e80	https://files.pythonhosted.org/packages/fc/ef/0335f7217dd1e80
+https://files.pythonhosted.org/packages/source/a/attrs/attrs-	https://files.pythonhosted.org/packages/source/a/attrs/attrs-
+https://files.pythonhosted.org/packages/source/b/build/build-	https://files.pythonhosted.org/packages/source/b/build/build-
+https://files.pythonhosted.org/packages/source/e/exceptiongro	https://files.pythonhosted.org/packages/source/e/exceptiongro
+https://files.pythonhosted.org/packages/source/f/flit_core/fl	https://files.pythonhosted.org/packages/source/f/flit_core/fl
+https://files.pythonhosted.org/packages/source/f/flit_scm/fli	https://files.pythonhosted.org/packages/source/f/flit_scm/fli
+https://files.pythonhosted.org/packages/source/i/installer/in	https://files.pythonhosted.org/packages/source/i/installer/in
+https://files.pythonhosted.org/packages/source/j/jedi/jedi-0.	https://files.pythonhosted.org/packages/source/j/jedi/jedi-0.
+https://files.pythonhosted.org/packages/source/m/mistune/mist	https://files.pythonhosted.org/packages/source/m/mistune/mist
+https://files.pythonhosted.org/packages/source/p/poetry_core/	https://files.pythonhosted.org/packages/source/p/poetry_core/
+https://files.pythonhosted.org/packages/source/p/pyproject_ho	https://files.pythonhosted.org/packages/source/p/pyproject_ho
+https://files.pythonhosted.org/packages/source/p/python-dateu	https://files.pythonhosted.org/packages/source/p/python-dateu
+https://files.pythonhosted.org/packages/source/r/regex/regex-	https://files.pythonhosted.org/packages/source/r/regex/regex-
+https://files.pythonhosted.org/packages/source/t/typing_exten |	https://files.pythonhosted.org/packages/source/t/typing_exten
+https://files.pythonhosted.org/packages/source/u/unidecode/Un	https://files.pythonhosted.org/packages/source/u/unidecode/Un
+https://freedesktop.org/software/appstream/releases/AppStream	https://freedesktop.org/software/appstream/releases/AppStream
+https://gedit-technology.net/tarballs/libgedit-amtk/libgedit-	https://gedit-technology.net/tarballs/libgedit-amtk/libgedit-
+https://gedit-technology.net/tarballs/libgedit-gtksourceview/	https://gedit-technology.net/tarballs/libgedit-gtksourceview/
+							      >	https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc
+https://github.com/ADBeveridge/raider/archive/refs/tags/v1.3.	https://github.com/ADBeveridge/raider/archive/refs/tags/v1.3.
+https://github.com/AOMediaCodec/libavif/archive/v1.0.1/libavi |	https://github.com/AOMediaCodec/libavif/archive/v0.11.1/libav
+https://github.com/FFmpeg/nv-codec-headers/releases/download/	https://github.com/FFmpeg/nv-codec-headers/releases/download/
+https://github.com/FineFindus/eyedropper/releases/download/v0 |	https://github.com/FineFindus/eyedropper/archive/refs/tags/v0
+https://github.com/G-dH/overview-feature-pack.git || exit 1   <
+https://github.com/GeopJr/Collision/archive/v3.5.0/Collision-	https://github.com/GeopJr/Collision/archive/v3.5.0/Collision-
+https://github.com/GustavoPeredo/Font-Downloader/archive/refs	https://github.com/GustavoPeredo/Font-Downloader/archive/refs
+https://github.com/Huluti/Curtail/archive/1.7.0/Curtail-1.7.0	https://github.com/Huluti/Curtail/archive/1.7.0/Curtail-1.7.0
+https://github.com/MartinPL/Tray-Icons-Reloaded.git	      <
+https://github.com/Qix-/better-exceptions/archive/0.2.1/bette	https://github.com/Qix-/better-exceptions/archive/0.2.1/bette
+https://github.com/SeaDve/Kooha/releases/download/v2.2.4/kooh |	https://github.com/SeaDve/Kooha/releases/download/v2.2.3/kooh
+https://github.com/SeaDve/Mousai/archive/v0.7.5/Mousai-0.7.5.	https://github.com/SeaDve/Mousai/archive/v0.7.5/Mousai-0.7.5.
+https://github.com/TelepathyIM/telepathy-glib/archive/refs/ta	https://github.com/TelepathyIM/telepathy-glib/archive/refs/ta
+https://github.com/Yeraze/ytnef/archive/v2.0/ytnef-2.0.tar.gz	https://github.com/Yeraze/ytnef/archive/v2.0/ytnef-2.0.tar.gz
+https://github.com/adobe-fonts/source-code-pro/releases/downl	https://github.com/adobe-fonts/source-code-pro/releases/downl
+https://github.com/ai/autohide-battery.git		      <
+https://github.com/alexhuntley/Plots/archive/refs/tags/v0.8.5 <
+https://github.com/amivaleo/Show-Desktop-Button.git	      <
+https://github.com/aruiz/webp-pixbuf-loader/archive/0.2.4/web	https://github.com/aruiz/webp-pixbuf-loader/archive/0.2.4/web
+https://github.com/borgbackup/borg/releases/download/1.2.3/bo	https://github.com/borgbackup/borg/releases/download/1.2.3/bo
+https://github.com/carpedm20/emoji/archive/v.1.2.1/emoji-v.1.	https://github.com/carpedm20/emoji/archive/v.1.2.1/emoji-v.1.
+https://github.com/cassidyjames/clairvoyant/archive/3.0.6/cla	https://github.com/cassidyjames/clairvoyant/archive/3.0.6/cla
+https://github.com/commonmark/cmark/archive/0.30.2/cmark-0.30	https://github.com/commonmark/cmark/archive/0.30.2/cmark-0.30
+https://github.com/containers/bubblewrap/releases/download/v0	https://github.com/containers/bubblewrap/releases/download/v0
+https://github.com/crystal-lang/crystal/releases/download/1.7	https://github.com/crystal-lang/crystal/releases/download/1.7
+https://github.com/davidhalter/parso/archive/v0.8.3/parso-0.8	https://github.com/davidhalter/parso/archive/v0.8.3/parso-0.8
+https://github.com/dell/libsmbios/archive/v2.4.3/libsmbios-2.	https://github.com/dell/libsmbios/archive/v2.4.3/libsmbios-2.
+https://github.com/dialect-app/dialect/archive/refs/tags/2.1. <
+https://github.com/dialect-app/po/archive/refs/tags/2.1.1.tar <
+https://github.com/dmo60/CoverflowAltTab.git		      <
+https://github.com/esoma/pyglm-typing.git		      <
+https://github.com/facelessuser/soupsieve/archive/2.3.1/soups	https://github.com/facelessuser/soupsieve/archive/2.3.1/soups
+https://github.com/fedoradesign/backgrounds/releases/download <
+https://github.com/fedoradesign/backgrounds/releases/download <
+https://github.com/fedoradesign/backgrounds/releases/download <
+https://github.com/fkinoshita/Telegraph/releases/download/v0.	https://github.com/fkinoshita/Telegraph/releases/download/v0.
+https://github.com/flatpak/flatpak-builder/releases/download/	https://github.com/flatpak/flatpak-builder/releases/download/
+https://github.com/flatpak/flatpak/releases/download/1.15.4/f	https://github.com/flatpak/flatpak/releases/download/1.15.4/f
+https://github.com/flatpak/libportal/releases/download/0.7.1/ |	https://github.com/flatpak/libportal/releases/download/0.7/li
+https://github.com/flatpak/xdg-dbus-proxy/releases/download/0	https://github.com/flatpak/xdg-dbus-proxy/releases/download/0
+https://github.com/flatpak/xdg-desktop-portal-gtk/releases/do	https://github.com/flatpak/xdg-desktop-portal-gtk/releases/do
+							      >	https://github.com/flatpak/xdg-desktop-portal/releases/downlo
+https://github.com/flatpak/xdg-desktop-portal/releases/downlo	https://github.com/flatpak/xdg-desktop-portal/releases/downlo
+https://github.com/freeswitch/sofia-sip/archive/v1.13.16/sofi |	https://github.com/freeswitch/sofia-sip/archive/v1.13.14/sofi
+https://github.com/fwupd/fwupd/releases/download/1.8.14/fwupd |	https://github.com/fwupd/fwupd/releases/download/1.7.10/fwupd
+https://github.com/gaphor/gaphas/archive/3.11.3/gaphas-3.11.3	https://github.com/gaphor/gaphas/archive/3.11.3/gaphas-3.11.3
+https://github.com/gaphor/gaphor/archive/2.19.3/gaphor-2.19.3	https://github.com/gaphor/gaphor/archive/2.19.3/gaphor-2.19.3
+https://github.com/gaphor/generic/archive/1.1.2/generic-1.1.2	https://github.com/gaphor/generic/archive/1.1.2/generic-1.1.2
+https://github.com/geigi/cozy/archive/1.2.1/cozy-1.2.1.tar.gz	https://github.com/geigi/cozy/archive/1.2.1/cozy-1.2.1.tar.gz
+https://github.com/google/protobuf/archive/v3.20.1/protobuf-3	https://github.com/google/protobuf/archive/v3.20.1/protobuf-3
+https://github.com/google/snappy/archive/1.1.10/snappy-1.1.10 |	https://github.com/google/snappy/archive/1.1.8/snappy-1.1.8.t
+https://github.com/googlei18n/noto-emoji/archive/v2.038/noto-	https://github.com/googlei18n/noto-emoji/archive/v2.038/noto-
+https://github.com/gsnedders/python-webencodings/archive/v0.5	https://github.com/gsnedders/python-webencodings/archive/v0.5
+https://github.com/home-sweet-gnome/dash-to-panel.git	      <
+https://github.com/hughsie/appstream-glib/archive/appstream_g	https://github.com/hughsie/appstream-glib/archive/appstream_g
+https://github.com/hughsie/libgusb/releases/download/0.4.6/li	https://github.com/hughsie/libgusb/releases/download/0.4.6/li
+							      >	https://github.com/hughsie/libjcat/archive/0.1.14/libjcat-0.1
+https://github.com/hughsie/libxmlb/archive/0.3.14/libxmlb-0.3	https://github.com/hughsie/libxmlb/archive/0.3.14/libxmlb-0.3
+https://github.com/hugolabe/Wike/archive/refs/tags/2.0.1.tar. <
+https://github.com/ianw/libiptcdata/releases/download/release	https://github.com/ianw/libiptcdata/releases/download/release
+https://github.com/ibus/ibus/releases/download/1.5.29-rc1/ibu	https://github.com/ibus/ibus/releases/download/1.5.29-rc1/ibu
+https://github.com/jbeich/aom/archive/v3.7.0/aom-3.7.0.tar.gz |	https://github.com/jbeich/aom/archive/v3.6.1/aom-3.6.1.tar.gz
+https://github.com/konkor/cpufreq.git			      <
+https://github.com/lainsce/khronos/archive/3.7.0/khronos-3.7.	https://github.com/lainsce/khronos/archive/3.7.0/khronos-3.7.
+https://github.com/lark-parser/lark/archive/refs/tags/1.1.5.t <
+https://github.com/leohemsted/smartypants.py/archive/v2.0.1/s	https://github.com/leohemsted/smartypants.py/archive/v2.0.1/s
+https://github.com/lfs-book/blocaled/releases/download/v0.5/b	https://github.com/lfs-book/blocaled/releases/download/v0.5/b
+https://github.com/libgit2/libgit2/archive/v1.7.0/libgit2-1.7	https://github.com/libgit2/libgit2/archive/v1.7.0/libgit2-1.7
+https://github.com/liblouis/liblouis/releases/download/v3.24.	https://github.com/liblouis/liblouis/releases/download/v3.24.
+https://github.com/libusb/hidapi/archive/refs/tags/hidapi-0.1	https://github.com/libusb/hidapi/archive/refs/tags/hidapi-0.1
+https://github.com/liferooter/textpieces/archive/v3.1.1/textp	https://github.com/liferooter/textpieces/archive/v3.1.1/textp
+https://github.com/liris/websocket-client/archive/v1.4.2/webs	https://github.com/liris/websocket-client/archive/v1.4.2/webs
+https://github.com/lxml/lxml/releases/download/lxml-4.9.3/lxm	https://github.com/lxml/lxml/releases/download/lxml-4.9.3/lxm
+https://github.com/maoschanz/drawing/archive/1.0.2/drawing-1. |	https://github.com/maoschanz/drawing/archive/refs/tags/1.0.2.
+https://github.com/metabrainz/libmusicbrainz/releases/downloa	https://github.com/metabrainz/libmusicbrainz/releases/downloa
+https://github.com/micheleg/dash-to-dock.git		      <
+https://github.com/mjakeman/extension-manager/archive/v0.4.2/	https://github.com/mjakeman/extension-manager/archive/v0.4.2/
+https://github.com/mjakeman/text-engine/archive/v0.1.1/text-e	https://github.com/mjakeman/text-engine/archive/v0.1.1/text-e
+https://github.com/mstorsjo/fdk-aac/archive/v2.0.2/fdk-aac-2.	https://github.com/mstorsjo/fdk-aac/archive/v2.0.2/fdk-aac-2.
+https://github.com/nodejs/http-parser/archive/v2.9.4/http-par	https://github.com/nodejs/http-parser/archive/v2.9.4/http-par
+https://github.com/nu774/fdkaac/archive/v1.0.5/fdkaac-1.0.5.t	https://github.com/nu774/fdkaac/archive/v1.0.5/fdkaac-1.0.5.t
+https://github.com/numactl/numactl/releases/download/v2.0.16/	https://github.com/numactl/numactl/releases/download/v2.0.16/
+https://github.com/numpy/numpy/releases/download/v1.22.3/nump	https://github.com/numpy/numpy/releases/download/v1.22.3/nump
+https://github.com/ostreedev/ostree/releases/download/v2023.4	https://github.com/ostreedev/ostree/releases/download/v2023.4
+							      >	https://github.com/p7zip-project/p7zip/archive/v17.04/p7zip-1
+https://github.com/praw-dev/praw/archive/v7.6.1/praw-7.6.1.ta	https://github.com/praw-dev/praw/archive/v7.6.1/praw-7.6.1.ta
+https://github.com/protobuf-c/protobuf-c/releases/download/v1	https://github.com/protobuf-c/protobuf-c/releases/download/v1
+https://github.com/rafaelmardojai/blanket/archive/0.6.0/blank	https://github.com/rafaelmardojai/blanket/archive/0.6.0/blank
+https://github.com/rafaelmardojai/share-preview/archive/0.3.0	https://github.com/rafaelmardojai/share-preview/archive/0.3.0
+https://github.com/rafaelmardojai/webfont-kit-generator/archi	https://github.com/rafaelmardojai/webfont-kit-generator/archi
+https://github.com/realmazharhussain/gdm-settings.git	      <
+https://github.com/realmazharhussain/nautilus-code.git	      <
+https://github.com/regebro/tzlocal/archive/refs/tags/5.0b2.ta <
+https://github.com/rome/tools/archive/refs/tags/cli/v12.1.3.t <
+https://github.com/rougier/freetype-py/archive/v2.4.0/freetyp	https://github.com/rougier/freetype-py/archive/v2.4.0/freetyp
+https://github.com/sahlberg/libnfs/archive/libnfs-5.0.2/libnf	https://github.com/sahlberg/libnfs/archive/libnfs-5.0.2/libnf
+https://github.com/scour-project/scour/archive/v0.35/scour-0.	https://github.com/scour-project/scour/archive/v0.35/scour-0.
+https://github.com/scrapinghub/dateparser/archive/refs/tags/v <
+https://github.com/shssoichiro/oxipng/archive/refs/tags/v8.0. <
+https://github.com/sonnyp/Commit/archive/296e3fcc2990e3197c30	https://github.com/sonnyp/Commit/archive/296e3fcc2990e3197c30
+https://github.com/sonnyp/Junction/archive/refs/tags/v1.6.tar	https://github.com/sonnyp/Junction/archive/refs/tags/v1.6.tar
+https://github.com/sonnyp/Tangram/archive/v3.0/Tangram-3.0.ta	https://github.com/sonnyp/Tangram/archive/v3.0/Tangram-3.0.ta
+https://github.com/sonnyp/Workbench/archive/refs/tags/v44.1.t <
+https://github.com/sonnyp/troll.git			      <
+https://github.com/sonnyp/troll.git			      <
+https://github.com/sonnyp/troll.git			      <
+https://github.com/sonnyp/troll/archive/63392a57392fb8ed944e8	https://github.com/sonnyp/troll/archive/63392a57392fb8ed944e8
+https://github.com/stedolan/jq/releases/download/jq-1.7/jq-1. |	https://github.com/stedolan/jq/releases/download/jq-1.6/jq-1.
+https://github.com/strukturag/libheif/releases/download/v1.16	https://github.com/strukturag/libheif/releases/download/v1.16
+https://github.com/takluyver/entrypoints/blob/master/{README. <
+https://github.com/tchx84/Flatseal/archive/v2.0.2/Flatseal-2.	https://github.com/tchx84/Flatseal/archive/v2.0.2/Flatseal-2.
+https://github.com/tjko/jpegoptim/archive/v1.5.1/jpegoptim-1.	https://github.com/tjko/jpegoptim/archive/v1.5.1/jpegoptim-1.
+https://github.com/tpm2-software/tpm2-tss/releases/download/4	https://github.com/tpm2-software/tpm2-tss/releases/download/4
+https://github.com/transmission/transmission-releases/raw/mas	https://github.com/transmission/transmission-releases/raw/mas
+https://github.com/transmission/transmission/pull/468	      <
+https://github.com/transmission/transmission/releases/downloa <
+https://github.com/ubuntu/gnome-shell-extension-appindicator. <
+https://github.com/vala-lang/vala-language-server/archive/ref <
+https://github.com/vantu5z/rhythmbox-tray-icon.git	      <
+https://github.com/xynium/webfeed.git			      <
+https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.6.0/SVT-	https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.6.0/SVT-
+https://gitlab.com/accounts-sso/libaccounts-glib/-/archive/1.	https://gitlab.com/accounts-sso/libaccounts-glib/-/archive/1.
+https://gitlab.com/arcmenu/ArcMenu.git			      |	https://gitlab.com/graphviz/graphviz/-/archive/8.1.0/graphviz
+https://gitlab.com/graphviz/graphviz/-/archive/8.1.0/graphviz |	https://gitlab.com/mobian1/callaudiod/-/archive/0.1.7/callaud
+https://gitlab.com/kalilinux/packages/kali-community-wallpape <
+https://gitlab.com/mobian1/callaudiod/-/archive/0.1.9/callaud <
+https://gitlab.com/news-flash/news_flash_gtk/-/archive/v.2.3.	https://gitlab.com/news-flash/news_flash_gtk/-/archive/v.2.3.
+https://gitlab.com/rizitis/eortologio-gnome-shell-extension.g <
+https://gitlab.com/rmnvgr/metadata-cleaner/-/archive/v2.5.2/m	https://gitlab.com/rmnvgr/metadata-cleaner/-/archive/v2.5.2/m
+https://gitlab.com/rmnvgr/zap/-/archive/1.2.3/zap-1.2.3.tar.g	https://gitlab.com/rmnvgr/zap/-/archive/1.2.3/zap-1.2.3.tar.g
+https://gitlab.com/smedius/desktop-icons-ng.git		      <
+https://gitlab.com/valos/Komikku/-/archive/v1.19.0/Komikku-v1 <
+https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.0/c	https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.0/c
+https://gitlab.freedesktop.org/cairo/cairomm/-/archive/1.16.2	https://gitlab.freedesktop.org/cairo/cairomm/-/archive/1.16.2
+https://gitlab.freedesktop.org/geoclue/geoclue/-/archive/2.7.	https://gitlab.freedesktop.org/geoclue/geoclue/-/archive/2.7.
+https://gitlab.freedesktop.org/hadess/power-profiles-daemon/-	https://gitlab.freedesktop.org/hadess/power-profiles-daemon/-
+https://gitlab.freedesktop.org/libinput/libei/-/archive/1.0.9	https://gitlab.freedesktop.org/libinput/libei/-/archive/1.0.9
+https://gitlab.freedesktop.org/pwithnall/malcontent/-/archive	https://gitlab.freedesktop.org/pwithnall/malcontent/-/archive
+https://gitlab.freedesktop.org/upower/upower/-/archive/v0.99.	https://gitlab.freedesktop.org/upower/upower/-/archive/v0.99.
+https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/ |	https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/
+https://gitlab.gnome.org/Archive/gnome-dictionary.git	      <
+https://gitlab.gnome.org/GNOME/aisleriot/-/archive/3.22.29/ai	https://gitlab.gnome.org/GNOME/aisleriot/-/archive/3.22.29/ai
+https://gitlab.gnome.org/GNOME/gnome-browser-extension/-/arch	https://gitlab.gnome.org/GNOME/gnome-browser-extension/-/arch
+https://gitlab.gnome.org/GNOME/gnome-terminal/-/archive/3.50. |	https://gitlab.gnome.org/GNOME/gnome-terminal/-/archive/3.49.
+https://gitlab.gnome.org/GNOME/gthumb/-/archive/3.12.3/gthumb	https://gitlab.gnome.org/GNOME/gthumb/-/archive/3.12.3/gthumb
+							      >	https://gitlab.gnome.org/GNOME/gtranslator/-/archive/45.alpha
+https://gitlab.gnome.org/GNOME/libdmapsharing/-/archive/LIBDM	https://gitlab.gnome.org/GNOME/libdmapsharing/-/archive/LIBDM
+https://gitlab.gnome.org/GNOME/libgnome-volume-control.git    <
+https://gitlab.gnome.org/GNOME/lightsoff/-/archive/40.0.1/lig	https://gitlab.gnome.org/GNOME/lightsoff/-/archive/40.0.1/lig
+https://gitlab.gnome.org/GNOME/polari/-/archive/43.0/polari-4	https://gitlab.gnome.org/GNOME/polari/-/archive/43.0/polari-4
+https://gitlab.gnome.org/GNOME/retro-gtk.git		      |	https://gitlab.gnome.org/GNOME/sysprof/-/archive/3.44.0/syspr
+https://gitlab.gnome.org/World/Authenticator/-/archive/4.3.1/	https://gitlab.gnome.org/World/Authenticator/-/archive/4.3.1/
+https://gitlab.gnome.org/World/Endeavour.git		      <
+https://gitlab.gnome.org/World/Endeavour/-/archive/43.0/Endea	https://gitlab.gnome.org/World/Endeavour/-/archive/43.0/Endea
+https://gitlab.gnome.org/World/Fragments/-/archive/2.1.1/Frag	https://gitlab.gnome.org/World/Fragments/-/archive/2.1.1/Frag
+https://gitlab.gnome.org/World/Health/-/archive/0.95.0/Health |	https://gitlab.gnome.org/World/Health/-/archive/0.94.0/Health
+https://gitlab.gnome.org/World/Shortwave/-/archive/3.2.0/Shor	https://gitlab.gnome.org/World/Shortwave/-/archive/3.2.0/Shor
+https://gitlab.gnome.org/World/Solanum/-/archive/4.0.0/Solanu	https://gitlab.gnome.org/World/Solanum/-/archive/4.0.0/Solanu
+https://gitlab.gnome.org/World/amberol/-/archive/0.10.3/amber	https://gitlab.gnome.org/World/amberol/-/archive/0.10.3/amber
+https://gitlab.gnome.org/World/apostrophe/-/archive/v2.6.3/ap	https://gitlab.gnome.org/World/apostrophe/-/archive/v2.6.3/ap
+https://gitlab.gnome.org/World/boatswain/-/archive/0.3.0/boat	https://gitlab.gnome.org/World/boatswain/-/archive/0.3.0/boat
+https://gitlab.gnome.org/World/chess-clock/-/archive/v0.5.0/c	https://gitlab.gnome.org/World/chess-clock/-/archive/v0.5.0/c
+https://gitlab.gnome.org/World/citations/-/archive/0.5.1/cita <
+https://gitlab.gnome.org/World/decoder/-/archive/0.3.3/decode	https://gitlab.gnome.org/World/decoder/-/archive/0.3.3/decode
+https://gitlab.gnome.org/World/deja-dup/-/archive/44.2/deja-d	https://gitlab.gnome.org/World/deja-dup/-/archive/44.2/deja-d
+https://gitlab.gnome.org/World/design/emblem/-/archive/1.2.0/	https://gitlab.gnome.org/World/design/emblem/-/archive/1.2.0/
+https://gitlab.gnome.org/World/design/lorem/-/archive/1.2/lor	https://gitlab.gnome.org/World/design/lorem/-/archive/1.2/lor
+https://gitlab.gnome.org/World/elastic/-/archive/0.1.3/elasti	https://gitlab.gnome.org/World/elastic/-/archive/0.1.3/elasti
+https://gitlab.gnome.org/World/gfeeds/-/archive/2.2.0/gfeeds-	https://gitlab.gnome.org/World/gfeeds/-/archive/2.2.0/gfeeds-
+https://gitlab.gnome.org/World/giara/-/archive/1.1.0/giara-1.	https://gitlab.gnome.org/World/giara/-/archive/1.1.0/giara-1.
+https://gitlab.gnome.org/World/gnome-firmware/-/archive/43.2/	https://gitlab.gnome.org/World/gnome-firmware/-/archive/43.2/
+https://gitlab.gnome.org/World/highscore.git		      <
+https://gitlab.gnome.org/World/metronome/-/archive/1.3.0/metr	https://gitlab.gnome.org/World/metronome/-/archive/1.3.0/metr
+https://gitlab.gnome.org/World/obfuscate/-/archive/0.0.9/obfu	https://gitlab.gnome.org/World/obfuscate/-/archive/0.0.9/obfu
+https://gitlab.gnome.org/World/pika-backup/-/archive/v0.6.1/p |	https://gitlab.gnome.org/World/pika-backup/-/archive/v0.4.2/p
+https://gitlab.gnome.org/World/podcasts/-/archive/0.5.1/podca	https://gitlab.gnome.org/World/podcasts/-/archive/0.5.1/podca
+https://gitlab.gnome.org/World/secrets/-/archive/7.0/secrets-	https://gitlab.gnome.org/World/secrets/-/archive/7.0/secrets-
+https://gitlab.gnome.org/World/secrets/-/archive/7.3/secrets- <
+https://gitlab.gnome.org/World/warp/-/archive/v0.5.4/warp-0.5	https://gitlab.gnome.org/World/warp/-/archive/v0.5.4/warp-0.5
+https://gitlab.gnome.org/YaLTeR/identity/-/archive/v0.5.0/ide	https://gitlab.gnome.org/YaLTeR/identity/-/archive/v0.5.0/ide
+https://gitlab.gnome.org/YaLTeR/video-trimmer/-/archive/v0.8.	https://gitlab.gnome.org/YaLTeR/video-trimmer/-/archive/v0.8.
+https://gitlab.gnome.org/guidog/gmobile/-/archive/v0.0.1/gmob	https://gitlab.gnome.org/guidog/gmobile/-/archive/v0.0.1/gmob
+https://gitlab.gnome.org/jwestman/blueprint-compiler/-/archiv	https://gitlab.gnome.org/jwestman/blueprint-compiler/-/archiv
+https://gstreamer.freedesktop.org/src/gst-editing-services/gs |	https://gstreamer.freedesktop.org/src/gst-editing-services/gs
+https://harrier.slackbuilds.org/misc/osinfo-db-slackware-2022	https://harrier.slackbuilds.org/misc/osinfo-db-slackware-2022
+https://libopenraw.freedesktop.org/download/exempi-2.6.4.tar.	https://libopenraw.freedesktop.org/download/exempi-2.6.4.tar.
+https://libvirt.org/sources/glib/libvirt-glib-4.0.0.tar.xz	https://libvirt.org/sources/glib/libvirt-glib-4.0.0.tar.xz
+https://libvirt.org/sources/libvirt-9.7.0.tar.xz	      |	https://libvirt.org/sources/libvirt-9.6.0.tar.xz
+https://libvirt.org/sources/python/libvirt-python-9.7.0.tar.g |	https://libvirt.org/sources/python/libvirt-python-9.1.0.tar.g
+https://linuxtv.org/downloads/zbar/zbar-0.23.90.tar.gz		https://linuxtv.org/downloads/zbar/zbar-0.23.90.tar.gz
+https://pngquant.org/pngquant-2.9.0-src.tar.gz			https://pngquant.org/pngquant-2.9.0-src.tar.gz
+https://ponce.cc/slackware/sources/repo/dtc-20220420_ed31080. <
+https://pypi.io/packages/source/p/python-magic/python-magic-0	https://pypi.io/packages/source/p/python-magic/python-magic-0
+https://qemu.weilnetz.de/doc/qemu-doc.html		      <
+https://qqwing.com/qqwing-1.3.4.tar.gz				https://qqwing.com/qqwing-1.3.4.tar.gz
+https://reddoglinux.ddns.net/distfile/AI-rizitis-wallpapers.t	https://reddoglinux.ddns.net/distfile/AI-rizitis-wallpapers.t
+https://reddoglinux.ddns.net/distfile/gnome-backgrounds-extra	https://reddoglinux.ddns.net/distfile/gnome-backgrounds-extra
+https://reddoglinux.ddns.net/distfile/libbacktrace-1.0.tar.xz	https://reddoglinux.ddns.net/distfile/libbacktrace-1.0.tar.xz
+https://reddoglinux.ddns.net/distfile/libovf-glib-0.1.0.tar.g	https://reddoglinux.ddns.net/distfile/libovf-glib-0.1.0.tar.g
+https://reddoglinux.ddns.net/distfile/rizits.tar.xz		https://reddoglinux.ddns.net/distfile/rizits.tar.xz
+https://releases.pagure.org/libosinfo/libosinfo-1.10.0.tar.xz	https://releases.pagure.org/libosinfo/libosinfo-1.10.0.tar.xz
+https://releases.pagure.org/libosinfo/osinfo-db-20230719.tar.	https://releases.pagure.org/libosinfo/osinfo-db-20230719.tar.
+https://releases.pagure.org/libosinfo/osinfo-db-tools-1.10.0.	https://releases.pagure.org/libosinfo/osinfo-db-tools-1.10.0.
+https://releases.pagure.org/virt-manager/virt-manager-4.1.0.t	https://releases.pagure.org/virt-manager/virt-manager-4.1.0.t
+https://salsa.debian.org/debian/libyuv/-/archive/c0031cfd95e1 <
+https://source.puri.sm/Librem5/feedbackd/-/archive/v0.2.1/fee <
+https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz		https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
+https://webkitgtk.org/releases/webkitgtk-2.42.1.tar.xz	      |	https://webkitgtk.org/releases/webkitgtk-2.41.91.tar.xz
+https://wpewebkit.org/releases/libwpe-1.15.1.tar.xz		https://wpewebkit.org/releases/libwpe-1.15.1.tar.xz
+https://wpewebkit.org/releases/wpebackend-fdo-1.14.2.tar.xz	https://wpewebkit.org/releases/wpebackend-fdo-1.14.2.tar.xz
+https://www.crummy.com/software/BeautifulSoup/bs4/download/4.	https://www.crummy.com/software/BeautifulSoup/bs4/download/4.
+https://www.five-ten-sg.com/libpst/packages/libpst-0.6.76.tar	https://www.five-ten-sg.com/libpst/packages/libpst-0.6.76.tar
+https://www.freedesktop.org/software/colord/releases/colord-1	https://www.freedesktop.org/software/colord/releases/colord-1
+https://www.freedesktop.org/software/cups-pk-helper/releases/	https://www.freedesktop.org/software/cups-pk-helper/releases/
+							      >	https://www.lua.org/ftp/lua-5.3.6.tar.gz
+https://www.spice-space.org/download/gtk/spice-gtk-0.42.tar.x	https://www.spice-space.org/download/gtk/spice-gtk-0.42.tar.x
+https://www.spice-space.org/download/libcacard/libcacard-2.8.	https://www.spice-space.org/download/libcacard/libcacard-2.8.
+https://www.spice-space.org/download/releases/spice-protocol-	https://www.spice-space.org/download/releases/spice-protocol-
+https://www.spice-space.org/download/releases/spice-server/sp |	https://www.spice-space.org/download/releases/spice-server/sp
+https://www.spice-space.org/download/usbredir/usbredir-0.13.0	https://www.spice-space.org/download/usbredir/usbredir-0.13.0

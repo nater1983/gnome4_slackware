@@ -1,0 +1,4921 @@
+From 7a27281a12aa7d2355e23a618f1015bcc8160d56 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Wed, 13 Dec 2023 21:00:19 -0600
+Subject: [PATCH] Update
+
+---
+ README.md                                     |    5 +-
+ data/org.gnome.gitg.appdata.xml.in.in         |    6 +-
+ data/org.gnome.gitg.gschema.xml.in            |    7 +
+ gitg.doap                                     |    6 +-
+ gitg/commit/gitg-commit-dialog.vala           |    7 +-
+ gitg/gitg-add-remote-action.vala              |    4 +-
+ gitg/gitg-commit-action-create-branch.vala    |    2 +-
+ gitg/gitg-commit-action-create-patch.vala     |    2 +-
+ gitg/gitg-commit-action-create-tag.vala       |    2 +-
+ gitg/gitg-edit-remote-action.vala             |    4 +-
+ gitg/gitg-ref-action-delete.vala              |   20 +-
+ gitg/gitg-ref-action-rename.vala              |    2 +-
+ gitg/gitg-remove-remote-action.vala           |    4 +-
+ gitg/history/gitg-history-refs-list.vala      |   23 +
+ .../preferences/gitg-preferences-history.vala |    8 +
+ gitg/resources/ui/gitg-preferences-history.ui |   20 +-
+ gitg/resources/ui/gitg-shortcuts.ui           |    6 +-
+ meson.build                                   |    4 +-
+ po/eu.po                                      |    6 +-
+ po/fi.po                                      |  706 ++++++----
+ po/tr.po                                      |   12 +-
+ po/uk.po                                      |  268 ++--
+ po/zh_CN.po                                   |   27 +-
+ po/zh_TW.po                                   | 1161 +++++++++++------
+ 24 files changed, 1482 insertions(+), 830 deletions(-)
+
+diff --git a/README.md b/README.md
+index 895abb4..490790e 100644
+--- a/README.md
++++ b/README.md
+@@ -8,8 +8,9 @@ The latest version of gitg is 44.
+ 
+ - Website:      https://wiki.gnome.org/Apps/Gitg
+ - Issues:       https://gitlab.gnome.org/GNOME/gitg/issues
+-- Download:     http://download.gnome.org/sources/gitg/
+-- Mailing list: http://mail.gnome.org/mailman/listinfo/gitg-list
++- Download:     https://download.gnome.org/sources/gitg/
++- Contact:      https://discourse.gnome.org/tag/gitg
++- Translate:    https://l10n.gnome.org/module/gitg/
+ 
+ ## Installing gitg
+ 
+diff --git a/data/org.gnome.gitg.appdata.xml.in.in b/data/org.gnome.gitg.appdata.xml.in.in
+index 01ecc77..dbd7c2f 100644
+--- a/data/org.gnome.gitg.appdata.xml.in.in
++++ b/data/org.gnome.gitg.appdata.xml.in.in
+@@ -216,7 +216,9 @@
+   <developer_name>The Gitg Team</developer_name>
+   <url type="homepage">https://wiki.gnome.org/Apps/Gitg</url>
+   <url type="bugtracker">https://gitlab.gnome.org/GNOME/gitg/issues</url>
+-  <url type="donation">https://www.gnome.org/friends/</url>
+-  <url type="translate">https://wiki.gnome.org/TranslationProject</url>
++  <url type="contact">https://discourse.gnome.org/tag/gitg</url>
++  <url type="donation">https://www.gnome.org/donate/</url>
++  <url type="vcs-browser">https://gitlab.gnome.org/GNOME/gitg</url>
++  <url type="translate">https://l10n.gnome.org/module/gitg/</url>
+ </component>
+ 
+diff --git a/data/org.gnome.gitg.gschema.xml.in b/data/org.gnome.gitg.gschema.xml.in
+index 502c3cb..259e0f1 100644
+--- a/data/org.gnome.gitg.gschema.xml.in
++++ b/data/org.gnome.gitg.gschema.xml.in
+@@ -165,6 +165,13 @@
+          selecting a local branch in the history view.
+       </description>
+     </key>
++    <key name="filter-unknown-refs" type="b">
++      <default>false</default>
++      <summary>Filter unknown refs</summary>
++      <description>
++         Hide any ref different from refs/heads and refs/remotes.
++      </description>
++    </key>
+   </schema>
+   <schema gettext-domain="@GETTEXT_PACKAGE@" id="@APPLICATION_ID@.preferences.branch" path="@SCHEMA_PATH@/preferences/branch/">
+     <key name="checkout-created-branch" type="b">
+diff --git a/gitg.doap b/gitg.doap
+index 8c6fed8..490e786 100644
+--- a/gitg.doap
++++ b/gitg.doap
+@@ -12,8 +12,8 @@
+   repository and commit your work.</description>
+ 
+   <homepage rdf:resource="https://wiki.gnome.org/Apps/Gitg" />
+-  <mailing-list rdf:resource="http://mail.gnome.org/mailman/listinfo/gitg-list" />
+-  <download-page rdf:resource="http://download.gnome.org/sources/gitg/" />
++  <support-forum rdf:resource="https://discourse.gnome.org/tag/gitg" />
++  <download-page rdf:resource="https://download.gnome.org/sources/gitg/" />
+   <bug-database rdf:resource="https://gitlab.gnome.org/GNOME/gitg/issues" />
+   <programming-language>Vala</programming-language>
+ 
+@@ -25,6 +25,7 @@
+     </foaf:Person>
+   </maintainer>
+ 
++<!--
+   <maintainer>
+     <foaf:Person>
+       <foaf:name>Jesse van den Kieboom</foaf:name>
+@@ -32,6 +33,7 @@
+       <gnome:userid>jessevdk</gnome:userid>
+     </foaf:Person>
+   </maintainer>
++-->
+ 
+   <maintainer>
+     <foaf:Person>
+diff --git a/gitg/commit/gitg-commit-dialog.vala b/gitg/commit/gitg-commit-dialog.vala
+index cf57020..f5f12f4 100644
+--- a/gitg/commit/gitg-commit-dialog.vala
++++ b/gitg/commit/gitg-commit-dialog.vala
+@@ -764,11 +764,14 @@ class Dialog : Gtk.Dialog
+ 				d_button_ok.activate();
+ 				return true;
+ 			}
+-			else if ((event.keyval == Gdk.Key.Left || event.keyval == Gdk.Key.KP_Left))
++		}
++		else if ((mmask & event.state) == Gdk.ModifierType.MOD1_MASK)
++		{
++			if (event.keyval == Gdk.Key.Page_Up)
+ 			{
+ 				on_prev_commit_message_button_clicked ();
+ 			}
+-			else if ((event.keyval == Gdk.Key.Right || event.keyval == Gdk.Key.KP_Right))
++			else if (event.keyval == Gdk.Key.Page_Down)
+ 			{
+ 				on_next_commit_message_button_clicked ();
+ 			}
+diff --git a/gitg/gitg-add-remote-action.vala b/gitg/gitg-add-remote-action.vala
+index fb95faf..d5f44ce 100644
+--- a/gitg/gitg-add-remote-action.vala
++++ b/gitg/gitg-add-remote-action.vala
+@@ -43,12 +43,12 @@ class AddRemoteAction : GitgExt.UIElement, GitgExt.Action, Object
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Add Remote"); }
++		owned get { return _("Add a new remote…"); }
+ 	}
+ 
+ 	public string description
+ 	{
+-		owned get { return _("Adds remote to the remotes list"); }
++		owned get { return _("Configure a new remote to add to the remotes list"); }
+ 	}
+ 
+ 	public async bool fetch()
+diff --git a/gitg/gitg-commit-action-create-branch.vala b/gitg/gitg-commit-action-create-branch.vala
+index 8a6a93d..727f890 100644
+--- a/gitg/gitg-commit-action-create-branch.vala
++++ b/gitg/gitg-commit-action-create-branch.vala
+@@ -45,7 +45,7 @@ class CommitActionCreateBranch : GitgExt.UIElement, GitgExt.Action, GitgExt.Comm
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Create branch"); }
++		owned get { return _("Create branch…"); }
+ 	}
+ 
+ 	public virtual string description
+diff --git a/gitg/gitg-commit-action-create-patch.vala b/gitg/gitg-commit-action-create-patch.vala
+index d656413..463dca9 100644
+--- a/gitg/gitg-commit-action-create-patch.vala
++++ b/gitg/gitg-commit-action-create-patch.vala
+@@ -60,7 +60,7 @@ class CommitActionCreatePatch : GitgExt.UIElement, GitgExt.Action, GitgExt.Commi
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Create patch"); }
++		owned get { return _("Create patch…"); }
+ 	}
+ 
+ 	public virtual string description
+diff --git a/gitg/gitg-commit-action-create-tag.vala b/gitg/gitg-commit-action-create-tag.vala
+index 4aa8269..f68d0d0 100644
+--- a/gitg/gitg-commit-action-create-tag.vala
++++ b/gitg/gitg-commit-action-create-tag.vala
+@@ -45,7 +45,7 @@ class CommitActionCreateTag : GitgExt.UIElement, GitgExt.Action, GitgExt.CommitA
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Create tag"); }
++		owned get { return _("Create tag…"); }
+ 	}
+ 
+ 	public virtual string description
+diff --git a/gitg/gitg-edit-remote-action.vala b/gitg/gitg-edit-remote-action.vala
+index d00feb0..083ffe1 100644
+--- a/gitg/gitg-edit-remote-action.vala
++++ b/gitg/gitg-edit-remote-action.vala
+@@ -48,12 +48,12 @@ class EditRemoteAction : GitgExt.UIElement, GitgExt.Action, Object
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Edit remote"); }
++		owned get { return _("Edit remote…"); }
+ 	}
+ 
+ 	public string description
+ 	{
+-		owned get { return _("Edits the remote from the remotes list"); }
++		owned get { return _("Reconfigure this remote's name or URL"); }
+ 	}
+ 
+ 	public void activate()
+diff --git a/gitg/gitg-ref-action-delete.vala b/gitg/gitg-ref-action-delete.vala
+index a896c07..40d393a 100644
+--- a/gitg/gitg-ref-action-delete.vala
++++ b/gitg/gitg-ref-action-delete.vala
+@@ -45,7 +45,7 @@ class RefActionDelete : GitgExt.UIElement, GitgExt.Action, GitgExt.RefAction, Ob
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Delete"); }
++		owned get { return _("Delete…"); }
+ 	}
+ 
+ 	public string description
+@@ -70,18 +70,24 @@ class RefActionDelete : GitgExt.UIElement, GitgExt.Action, GitgExt.RefAction, Ob
+ 
+ 		if (reference.is_branch())
+ 		{
+-			query.title = (_("Delete branch %s")).printf(name);
+-			query.message = (_("Are you sure that you want to permanently delete the branch %s?")).printf(name);
++			query.title = _("Confirm branch deletion");
++			query.message = (_("Are you sure that you want to permanently delete the branch <b><i>“%s”</i></b>?")).printf(name);
++			query.default_is_destructive = true;
++			query.message_use_markup = true;
+ 		}
+ 		else if (reference.is_tag())
+ 		{
+-			query.title = (_("Delete tag %s")).printf(name);
+-			query.message = (_("Are you sure that you want to permanently delete the tag %s?")).printf(name);
++			query.title = _("Confirm tag deletion");
++			query.message = (_("Are you sure that you want to permanently delete the tag <b><i>“%s”</i></b>?")).printf(name);
++			query.default_is_destructive = true;
++			query.message_use_markup = true;
+ 		}
+ 		else
+ 		{
+-			query.title = (_("Delete remote branch %s")).printf(name);
+-			query.message = (_("Are you sure that you want to permanently delete the remote branch %s?")).printf(name);
++			query.title = _("Confirm remote branch deletion");
++			query.message = (_("Are you sure that you want to permanently delete the remote branch <b><i>“%s”</i></b>?")).printf(name);
++			query.default_is_destructive = true;
++			query.message_use_markup = true;
+ 		}
+ 
+ 		query.set_responses(new GitgExt.UserQueryResponse[] {
+diff --git a/gitg/gitg-ref-action-rename.vala b/gitg/gitg-ref-action-rename.vala
+index 4f5c4fe..b7e8b35 100644
+--- a/gitg/gitg-ref-action-rename.vala
++++ b/gitg/gitg-ref-action-rename.vala
+@@ -45,7 +45,7 @@ class RefActionRename : GitgExt.UIElement, GitgExt.Action, GitgExt.RefAction, Ob
+ 
+ 	public string display_name
+ 	{
+-		owned get { return _("Rename"); }
++		owned get { return _("Rename…"); }
+ 	}
+ 
+ 	public string description
+diff --git a/gitg/gitg-remove-remote-action.vala b/gitg/gitg-remove-remote-action.vala
+index 6fe7ccb..f5dd37f 100644
+--- a/gitg/gitg-remove-remote-action.vala
++++ b/gitg/gitg-remove-remote-action.vala
+@@ -59,8 +59,8 @@ class RemoveRemoteAction : GitgExt.UIElement, GitgExt.Action, Object
+ 	{
+         var query = new GitgExt.UserQuery();
+ 
+-		query.title = (_("Delete remote %s")).printf(remote_name);
+-		query.message = (_("Are you sure that you want to remove the remote %s?")).printf(remote_name);
++		query.title = _("Confirm remote deletion");
++		query.message = (_("Are you sure that you want to remove the remote <b><i>“%s”</i></b>?")).printf(remote_name);
+ 
+ 		query.set_responses(new GitgExt.UserQueryResponse[] {
+ 			new GitgExt.UserQueryResponse(_("Cancel"), Gtk.ResponseType.CANCEL),
+diff --git a/gitg/history/gitg-history-refs-list.vala b/gitg/history/gitg-history-refs-list.vala
+index d58cd2a..58eeedb 100644
+--- a/gitg/history/gitg-history-refs-list.vala
++++ b/gitg/history/gitg-history-refs-list.vala
+@@ -123,6 +123,7 @@ private class RefRow : RefTyped, Gtk.ListBoxRow
+ 		}
+ 
+ 		d_label.label = label_text();
++		this.set_tooltip_text(d_label.label);
+ 
+ 		if (is_head)
+ 		{
+@@ -537,6 +538,7 @@ public class RefsList : Gtk.ListBox
+ 	private RefHeader? d_all_tags;
+ 	private RefRow.SortOrder d_ref_sort_order;
+ 	private HeaderState[] d_expanded;
++	private bool d_filter_unknown_refs = false;
+ 	public RefHeader? branches_header { get { return d_all_branches; } }
+ 	public RefHeader? remotes_header { get { return d_all_remotes; } }
+ 	public RefHeader? tags_header { get { return d_all_tags; } }
+@@ -546,6 +548,7 @@ public class RefsList : Gtk.ListBox
+ 	public Gee.LinkedList<GitgExt.Action> branches_actions { get {return d_branches_actions;} set { d_branches_actions = value; refresh();} }
+ 	public Gee.LinkedList<GitgExt.Action> remotes_actions { get {return d_remotes_actions;} set { d_remotes_actions = value; refresh();} }
+ 	public Gee.LinkedList<GitgExt.Action> tags_actions { get {return d_tags_actions;} set { d_tags_actions = value; refresh();} }
++	public bool filter_unknown_refs { get {return d_filter_unknown_refs;} set { d_filter_unknown_refs = value; refresh();} }
+ 
+ 	public signal void changed();
+ 
+@@ -605,6 +608,12 @@ public class RefsList : Gtk.ListBox
+ 		              this,
+ 		              "reference-sort-order",
+ 		              SettingsBindFlags.GET | SettingsBindFlags.SET);
++
++		settings.bind("filter-unknown-refs",
++		              this,
++		              "filter-unknown-refs",
++		              SettingsBindFlags.GET | SettingsBindFlags.SET);
++
+ 	}
+ 
+ 	public Gee.List<Gitg.Ref> references
+@@ -1035,6 +1044,17 @@ public class RefsList : Gtk.ListBox
+ 		}
+ 	}
+ 
++	// Checks if the provided reference should be filtered.
++	private bool ref_is_filtered(Gitg.Ref reference)
++	{
++		if (reference.parsed_name.rtype != Gitg.RefType.REMOTE)
++		{
++			string name = reference.parsed_name.shortname;
++			return !(name.has_prefix("refs/heads") || name.has_prefix("refs/remotes"));
++		}
++		return false;
++	}
++
+ 	// Checks if the provided reference is a symbolic ref with the name HEAD.
+ 	private bool ref_is_a_symbolic_head(Gitg.Ref reference)
+ 	{
+@@ -1225,6 +1245,9 @@ public class RefsList : Gtk.ListBox
+ 				{
+ 					return 0;
+ 				}
++				if (filter_unknown_refs && ref_is_filtered(r)) {
++					return 0;
++				}
+ 
+ 				var row = add_ref_internal(r);
+ 
+diff --git a/gitg/preferences/gitg-preferences-history.vala b/gitg/preferences/gitg-preferences-history.vala
+index c37e58d..e523132 100644
+--- a/gitg/preferences/gitg-preferences-history.vala
++++ b/gitg/preferences/gitg-preferences-history.vala
+@@ -56,6 +56,9 @@ public class PreferencesHistory : Gtk.Grid, GitgExt.Preferences
+ 	[GtkChild (name = "show_upstream_with_branch")]
+ 	private unowned Gtk.CheckButton d_show_upstream_with_branch;
+ 
++	[GtkChild (name = "filter_unknown_refs")]
++	private unowned Gtk.CheckButton d_filter_unknown_refs;
++
+ 	private Gtk.RadioButton[] d_select_buttons;
+ 	private string[] d_select_names;
+ 
+@@ -159,6 +162,11 @@ public class PreferencesHistory : Gtk.Grid, GitgExt.Preferences
+ 		              d_show_upstream_with_branch,
+ 		              "active",
+ 		              SettingsBindFlags.GET | SettingsBindFlags.SET);
++
++		settings.bind("filter-unknown-refs",
++		              d_filter_unknown_refs,
++		              "active",
++		              SettingsBindFlags.GET | SettingsBindFlags.SET);
+ 	}
+ 
+ 	public string default_selection
+diff --git a/gitg/resources/ui/gitg-preferences-history.ui b/gitg/resources/ui/gitg-preferences-history.ui
+index 03a8c65..b5f692c 100644
+--- a/gitg/resources/ui/gitg-preferences-history.ui
++++ b/gitg/resources/ui/gitg-preferences-history.ui
+@@ -146,6 +146,22 @@
+             <property name="top_attach">4</property>
+           </packing>
+         </child>
++        <child>
++          <object class="GtkCheckButton" id="filter_unknown_refs">
++            <property name="label" translatable="yes">Filter unknown refs</property>
++            <property name="use_action_appearance">False</property>
++            <property name="visible">True</property>
++            <property name="can_focus">True</property>
++            <property name="receives_default">False</property>
++            <property name="halign">start</property>
++            <property name="draw_indicator">True</property>
++            <property name="margin_start">12</property>
++          </object>
++          <packing>
++            <property name="left_attach">0</property>
++            <property name="top_attach">5</property>
++          </packing>
++        </child>
+         <child>
+           <object class="GtkLabel" id="label1">
+             <property name="visible">True</property>
+@@ -159,7 +175,7 @@
+           </object>
+           <packing>
+             <property name="left_attach">0</property>
+-            <property name="top_attach">5</property>
++            <property name="top_attach">6</property>
+           </packing>
+         </child>
+         <child>
+@@ -270,7 +286,7 @@
+           </object>
+           <packing>
+             <property name="left_attach">0</property>
+-            <property name="top_attach">6</property>
++            <property name="top_attach">7</property>
+           </packing>
+         </child>
+       </object>
+diff --git a/gitg/resources/ui/gitg-shortcuts.ui b/gitg/resources/ui/gitg-shortcuts.ui
+index 8c19885..a8f299c 100644
+--- a/gitg/resources/ui/gitg-shortcuts.ui
++++ b/gitg/resources/ui/gitg-shortcuts.ui
+@@ -160,7 +160,7 @@
+             <child>
+               <object class="GtkShortcutsShortcut">
+                 <property name="visible">true</property>
+-                <property name="accelerator">Return</property>
++                <property name="accelerator">&lt;Ctrl&gt;Return</property>
+                 <property name="title" translatable="yes" context="shortcut window">Commit</property>
+               </object>
+             </child>
+@@ -174,14 +174,14 @@
+             <child>
+               <object class="GtkShortcutsShortcut">
+                 <property name="visible">true</property>
+-                <property name="accelerator">&lt;primary&gt;Left</property>
++                <property name="accelerator">&lt;Alt&gt;Page_Up</property>
+                 <property name="title" translatable="yes" context="shortcut window">Previous commit message</property>
+               </object>
+             </child>
+             <child>
+               <object class="GtkShortcutsShortcut">
+                 <property name="visible">true</property>
+-                <property name="accelerator">&lt;primary&gt;Right</property>
++                <property name="accelerator">&lt;Alt&gt;Page_Down</property>
+                 <property name="title" translatable="yes" context="shortcut window">Next commit message</property>
+               </object>
+             </child>
+diff --git a/meson.build b/meson.build
+index 03d3ccc..65ba117 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,6 +1,6 @@
+ project(
+   'gitg', ['c', 'vala'],
+-  version: '44',
++  version: '45.alpha',
+   license: 'GPL2+',
+   default_options: 'buildtype=debugoptimized',
+   meson_version: '>= 0.50.0',
+@@ -131,7 +131,7 @@ gsettings_desktop_schemas_dep = dependency('gsettings-desktop-schemas')
+ gtk_dep = dependency('gtk+-3.0', version: '>= 3.20.0')
+ gspell_dep = dependency('gspell-1', version: '>= 1.8.1')
+ gtksourceview_dep = dependency('gtksourceview-4', version: '>= 4.0.3')
+-libgit2_glib_dep = dependency('libgit2-glib-1.0', version: ['>= 1.1.0'])
++libgit2_glib_dep = dependency('libgit2-glib-1.0', version: ['>= 1.2.0'])
+ libpeas_dep = dependency('libpeas-1.0')
+ libsecret_dep = dependency('libsecret-1')
+ libxml_dep = dependency('libxml-2.0', version: '>= 2.9.0')
+diff --git a/po/eu.po b/po/eu.po
+index 8c6168d..b6e0464 100644
+--- a/po/eu.po
++++ b/po/eu.po
+@@ -10,8 +10,8 @@
+ msgid ""
+ msgstr "Project-Id-Version: gitg master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2023-03-07 21:41+0000\n"
+-"PO-Revision-Date: 2023-03-12 08:00+0100\n"
++"POT-Creation-Date: 2023-07-23 10:13+0000\n"
++"PO-Revision-Date: 2023-09-07 08:00+0100\n"
+ "Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
+ "Language-Team: Basque <librezale@librezale.eus>\n"
+ "Language: eu\n"
+@@ -1569,7 +1569,7 @@ msgstr "Gehitu _sinadura"
+ 
+ #: gitg/resources/ui/gitg-commit-paned.ui:33
+ msgid "Filter Files"
+-msgstr "Iragazi fitxateiak"
++msgstr "Iragazi fitxategiak"
+ 
+ #: gitg/resources/ui/gitg-commit-paned.ui:101
+ msgid "Skip commit _hooks"
+diff --git a/po/fi.po b/po/fi.po
+index 43b50c7..657fc31 100644
+--- a/po/fi.po
++++ b/po/fi.po
+@@ -8,8 +8,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gitg master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2021-04-25 15:53+0000\n"
+-"PO-Revision-Date: 2021-09-13 13:57+0300\n"
++"POT-Creation-Date: 2023-03-07 21:41+0000\n"
++"PO-Revision-Date: 2023-09-03 21:26+0300\n"
+ "Last-Translator: Jiri Grönroos <jiri.gronroos+l10n@iki.fi>\n"
+ "Language-Team: suomi <lokalisointi-lista@googlegroups.com>\n"
+ "Language: fi\n"
+@@ -17,7 +17,7 @@ msgstr ""
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+-"X-Generator: Poedit 3.0\n"
++"X-Generator: Poedit 3.3.2\n"
+ 
+ #: contrib/xml/xml-reader.c:327
+ #, c-format
+@@ -81,9 +81,9 @@ msgstr "Kommitoi valmistellut muutokset"
+ msgid "Overview of recently used repositories"
+ msgstr "Katsaus viimeksi käytettyihin tietovarastoihin"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:105
+-msgid "The GNOME Project"
+-msgstr "Gnome-projekti"
++#: data/org.gnome.gitg.appdata.xml.in.in:157
++msgid "The Gitg Team"
++msgstr "Gitg-tiimi"
+ 
+ #: data/org.gnome.gitg.desktop.in.in:3
+ msgid "@binary@"
+@@ -93,6 +93,10 @@ msgstr ""
+ msgid "Git repository browser"
+ msgstr "Git-tietovarastojen selain"
+ 
++#: data/org.gnome.gitg.desktop.in.in:17
++msgid "New Window"
++msgstr "Uusi ikkuna"
++
+ #: data/org.gnome.gitg.gschema.xml.in:28
+ msgid "Default Clone Directory"
+ msgstr "Oletuskloonaushakemisto"
+@@ -346,7 +350,7 @@ msgstr ""
+ 
+ #: data/org.gnome.gitg.gschema.xml.in:237
+ msgid "Maximum number of previous commit messages"
+-msgstr ""
++msgstr "Aiempien kommittiviestien enimmäismäärä"
+ 
+ #: data/org.gnome.gitg.gschema.xml.in:238
+ msgid ""
+@@ -364,75 +368,93 @@ msgid ""
+ "history."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:249
++#: data/org.gnome.gitg.gschema.xml.in:247
++#: data/org.gnome.gitg.gschema.xml.in:248
++msgid "Type of datetime format selected."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:254
++msgid "Preferred datetime format of the user."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:255
++msgid "The datetime format to be used in commit-diff."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:261
++#: data/org.gnome.gitg.gschema.xml.in:262
++msgid "Custom datetime format."
++msgstr "Mukautettu päiväyksen muoto."
++
++#: data/org.gnome.gitg.gschema.xml.in:270
+ msgid "Use patience algorithm to show diffs"
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:250
++#: data/org.gnome.gitg.gschema.xml.in:271
+ msgid "Setting to use patience algorithm to show diffs of a commit."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:256
++#: data/org.gnome.gitg.gschema.xml.in:277
+ msgid "Ignore Whitespace Changes"
+ msgstr "Älä huomioi tyhjän tilan muutoksia"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:257
++#: data/org.gnome.gitg.gschema.xml.in:278
+ msgid ""
+ "Setting that indicates whether to ignore whitespace changes when showing the "
+ "diff of a commit."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:264
++#: data/org.gnome.gitg.gschema.xml.in:285
+ msgid "Show Changes Inline"
+ msgstr "Näytä muutokset sisennettynä"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:265
++#: data/org.gnome.gitg.gschema.xml.in:286
+ msgid ""
+ "Setting that indicates whether changes within lines should be shown inline."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:272
++#: data/org.gnome.gitg.gschema.xml.in:293
+ msgid "Wrap"
+ msgstr "Rivitys"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:273
++#: data/org.gnome.gitg.gschema.xml.in:294
+ msgid "Wrap lines."
+ msgstr "Käytä rivitystä."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:279
+-#: data/org.gnome.gitg.gschema.xml.in:297
++#: data/org.gnome.gitg.gschema.xml.in:300
++#: data/org.gnome.gitg.gschema.xml.in:318
+ msgid "Number of Before/After Context Lines"
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:280
++#: data/org.gnome.gitg.gschema.xml.in:301
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff of a commit."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:287
+-#: data/org.gnome.gitg.gschema.xml.in:306
++#: data/org.gnome.gitg.gschema.xml.in:308
++#: data/org.gnome.gitg.gschema.xml.in:327
+ msgid "Rendered Width of a Tab Character"
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:288
+-#: data/org.gnome.gitg.gschema.xml.in:307
++#: data/org.gnome.gitg.gschema.xml.in:309
++#: data/org.gnome.gitg.gschema.xml.in:328
+ msgid ""
+ "Setting that determines how much space a tab character should occupy when "
+ "showing the diff of a commit."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:298
++#: data/org.gnome.gitg.gschema.xml.in:319
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff to be staged/unstaged in the commit area."
+ msgstr ""
+ 
+-#: gitg/commit/gitg-commit-dialog.vala:556 gitg/commit/gitg-commit.vala:1091
++#: gitg/commit/gitg-commit-dialog.vala:567 gitg/commit/gitg-commit.vala:1096
+ msgid "There are no changes to be committed"
+ msgstr "Ei muutoksia kommitoitavaksi"
+ 
+-#: gitg/commit/gitg-commit-dialog.vala:557 gitg/commit/gitg-commit.vala:1092
++#: gitg/commit/gitg-commit-dialog.vala:568 gitg/commit/gitg-commit.vala:1097
+ msgid "Use amend to change the commit message of the previous commit"
+ msgstr "Käytä amend-oikaisua muuttaaksesi aiemman kommitin kommittiviestiä"
+ 
+@@ -483,93 +505,95 @@ msgstr "Tiedoston “%s” poistamisen valmistelu epäonnistui"
+ msgid "Failed to stage the file “%s”"
+ msgstr "Tiedoston “%s” valmistelu epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:598
++#: gitg/commit/gitg-commit.vala:599
+ msgid "_Unstage selection"
+ msgstr "_Poista valmistelu valinnalta"
+ 
+-#: gitg/commit/gitg-commit.vala:664
++#: gitg/commit/gitg-commit.vala:665
+ #, fuzzy, c-format
+ #| msgid "Failed to unstage the removal of file `%s'"
+ msgid "Failed to unstage the removal of file “%s”"
+ msgstr "Tiedoston \"%s\" poistamisen valmistelun kumoaminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:665
++#: gitg/commit/gitg-commit.vala:666
+ #, c-format
+ msgid "Failed to unstage the file “%s”"
+ msgstr "Valmistelun poistaminen tiedostolta “%s” epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:672
++#: gitg/commit/gitg-commit.vala:673
+ #, fuzzy, c-format
+ #| msgid "Failed to unstage the removal of file `%s'"
+ msgid "Failed to unstage the removal of submodule “%s”"
+ msgstr "Tiedoston \"%s\" poistamisen valmistelun kumoaminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:673
++#: gitg/commit/gitg-commit.vala:674
+ #, c-format
+ msgid "Failed to unstage the submodule “%s”"
+ msgstr "Valmistelun poistaminen alimoduulilta “%s” epäonnistui"
+ 
+ #. Populate staged items
+-#: gitg/commit/gitg-commit.vala:877
++#: gitg/commit/gitg-commit.vala:882
+ msgid "Staged"
+ msgstr "Valmistellut"
+ 
+-#: gitg/commit/gitg-commit.vala:885
++#: gitg/commit/gitg-commit.vala:890
+ msgid "No staged files"
+ msgstr "Ei valmisteltuja tiedostoja"
+ 
+ #. Populate unstaged items
+-#: gitg/commit/gitg-commit.vala:908
++#: gitg/commit/gitg-commit.vala:913
+ msgid "Unstaged"
+ msgstr "Valmistelemattomat"
+ 
+-#: gitg/commit/gitg-commit.vala:916
++#: gitg/commit/gitg-commit.vala:921
+ msgid "No unstaged files"
+ msgstr "Ei valmistelemattomia tiedostoja"
+ 
+ #. Populate untracked items
+-#: gitg/commit/gitg-commit.vala:939
++#: gitg/commit/gitg-commit.vala:944
+ msgid "Untracked"
+ msgstr "Seuraamattomat"
+ 
+-#: gitg/commit/gitg-commit.vala:943
++#: gitg/commit/gitg-commit.vala:948
+ msgid "No untracked files"
+ msgstr "Ei seuraamattomia tiedostoja"
+ 
+-#: gitg/commit/gitg-commit.vala:968
++#: gitg/commit/gitg-commit.vala:973
+ msgid "Submodule"
+ msgstr "Alimoduuli"
+ 
+-#: gitg/commit/gitg-commit.vala:972
++#: gitg/commit/gitg-commit.vala:977
+ msgid "No dirty submodules"
+ msgstr "Ei likaisia alimoduuleja"
+ 
+-#: gitg/commit/gitg-commit.vala:1121
++#: gitg/commit/gitg-commit.vala:1131
+ msgid "Failed to commit"
+ msgstr "Kommitointi epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1137
++#: gitg/commit/gitg-commit.vala:1147
+ msgid "Failed to pass pre-commit"
+ msgstr "Pre-kommitin välittäminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1302 gitg/commit/gitg-commit.vala:1452
++#: gitg/commit/gitg-commit.vala:1315 gitg/commit/gitg-commit.vala:1465
+ msgid "Discard changes"
+ msgstr "Hylkää muutokset"
+ 
+-#: gitg/commit/gitg-commit.vala:1303
++#: gitg/commit/gitg-commit.vala:1316
+ msgid "Are you sure you want to permanently discard the selected changes?"
+ msgstr "Haluatko varmasti hylätä valitut muutokset pysyvästi?"
+ 
+-#: gitg/commit/gitg-commit.vala:1312 gitg/commit/gitg-commit.vala:1478
+-#: gitg/commit/gitg-commit.vala:1593
+-#: gitg/gitg-commit-action-create-patch.vala:154 gitg/gitg-dash-view.vala:453
+-#: gitg/gitg-window.vala:205 gitg/gitg-window.vala:703
++#: gitg/commit/gitg-commit.vala:1325 gitg/commit/gitg-commit.vala:1491
++#: gitg/commit/gitg-commit.vala:1606
++#: gitg/gitg-commit-action-create-patch.vala:154 gitg/gitg-dash-view.vala:469
++#: gitg/gitg-window.vala:205 gitg/gitg-window.vala:705
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:18
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:20
+ #: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:18
+ #: gitg/resources/ui/gitg-clone-dialog.ui:18
+ #: gitg/resources/ui/gitg-commit-dialog.ui:20
+ #: gitg/resources/ui/gitg-create-branch-dialog.ui:18
+ #: gitg/resources/ui/gitg-create-tag-dialog.ui:20
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:18
+ #: gitg/resources/ui/gitg-remote-notification.ui:30
+ #: gitg/resources/ui/gitg-simple-notification.ui:61
+ #: gitg/resources/ui/gitg-window.ui:154
+@@ -577,27 +601,27 @@ msgstr "Haluatko varmasti hylätä valitut muutokset pysyvästi?"
+ msgid "_Cancel"
+ msgstr "_Peru"
+ 
+-#: gitg/commit/gitg-commit.vala:1313 gitg/commit/gitg-commit.vala:1479
++#: gitg/commit/gitg-commit.vala:1326 gitg/commit/gitg-commit.vala:1492
+ msgid "Discard"
+ msgstr "Hylkää"
+ 
+-#: gitg/commit/gitg-commit.vala:1342
++#: gitg/commit/gitg-commit.vala:1355
+ msgid "Failed to discard selection"
+ msgstr "Valinnan hylkääminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1372
++#: gitg/commit/gitg-commit.vala:1385
+ msgid "Failed to stage selection"
+ msgstr "Valinnan valmistelu epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1376
++#: gitg/commit/gitg-commit.vala:1389
+ msgid "Failed to unstage selection"
+ msgstr "Valmistelun poistaminen valinnalta epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1436
++#: gitg/commit/gitg-commit.vala:1449
+ msgid "Failed to discard changes"
+ msgstr "Muutosten hylkääminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1457
++#: gitg/commit/gitg-commit.vala:1470
+ #, c-format
+ msgid ""
+ "Are you sure you want to permanently discard all changes made to the file "
+@@ -605,7 +629,7 @@ msgid ""
+ msgstr ""
+ "Haluatko varmasti hylätä pysyvästi kaikki tehdyt muutokset tiedostoon “%s”?"
+ 
+-#: gitg/commit/gitg-commit.vala:1468
++#: gitg/commit/gitg-commit.vala:1481
+ #, c-format
+ msgid ""
+ "Are you sure you want to permanently discard all changes made to the files "
+@@ -614,45 +638,45 @@ msgstr ""
+ "Haluatko varmasti hylätä pysyvästi kaikki tehdyt muutokset tiedostoihin %s "
+ "ja “%s”?"
+ 
+-#: gitg/commit/gitg-commit.vala:1551
++#: gitg/commit/gitg-commit.vala:1564
+ msgid "Failed to delete files"
+ msgstr "Tiedostojen poistaminen epäonnistui"
+ 
+-#: gitg/commit/gitg-commit.vala:1567
++#: gitg/commit/gitg-commit.vala:1580
+ msgid "Delete file"
+ msgid_plural "Delete files"
+ msgstr[0] "Poista tiedosto"
+ msgstr[1] "Poista tiedostot"
+ 
+-#: gitg/commit/gitg-commit.vala:1572
++#: gitg/commit/gitg-commit.vala:1585
+ #, c-format
+ msgid "Are you sure you want to permanently delete the file “%s”?"
+ msgstr "Haluatko varmasti poistaa tiedoston “%s” pysyvästi?"
+ 
+-#: gitg/commit/gitg-commit.vala:1583
++#: gitg/commit/gitg-commit.vala:1596
+ #, c-format
+ msgid "Are you sure you want to permanently delete the files %s and “%s”?"
+ msgstr "Haluatko varmasti poistaa tiedostot %s ja “%s” pysyvästi?"
+ 
+-#: gitg/commit/gitg-commit.vala:1629
++#: gitg/commit/gitg-commit.vala:1642
+ msgid "_Stage changes"
+ msgstr "_Valmistele muutokset"
+ 
+-#: gitg/commit/gitg-commit.vala:1641
++#: gitg/commit/gitg-commit.vala:1654
+ msgid "_Unstage changes"
+ msgstr "_Poista valmistelu muutoksilta"
+ 
+-#: gitg/commit/gitg-commit.vala:1653
++#: gitg/commit/gitg-commit.vala:1666
+ msgid "_Discard changes"
+ msgstr "_Hylkää muutokset"
+ 
+-#: gitg/commit/gitg-commit.vala:1665
++#: gitg/commit/gitg-commit.vala:1678
+ msgid "D_elete file"
+ msgid_plural "D_elete files"
+ msgstr[0] "_Poista tiedosto"
+ msgstr[1] "_Poista tiedostot"
+ 
+-#: gitg/commit/gitg-commit.vala:1695
++#: gitg/commit/gitg-commit.vala:1708
+ msgid "_Edit file"
+ msgstr "_Muokkaa tiedostoa"
+ 
+@@ -673,8 +697,9 @@ msgstr ""
+ 
+ #: gitg/gitg-action-support.vala:133
+ #: gitg/gitg-commit-action-cherry-pick.vala:163
+-#: gitg/gitg-ref-action-delete.vala:88 gitg/gitg-ref-action-push.vala:138
+-#: gitg/gitg-ref-action-merge.vala:194
++#: gitg/gitg-ref-action-delete.vala:88 gitg/gitg-ref-action-merge.vala:194
++#: gitg/gitg-ref-action-push.vala:138 gitg/gitg-remove-remote-action.vala:66
++#: libgitg/gitg-repository-list-box.vala:567
+ msgid "Cancel"
+ msgstr "Peru"
+ 
+@@ -709,47 +734,88 @@ msgstr "Kommitin luominen epäonnistui: %s"
+ 
+ #: gitg/gitg-action-support.vala:277
+ #, c-format
+-#| msgid "Failed to stage the file `%s'"
+ msgid "Failed to checkout index: %s"
+ msgstr "Indeksin uloskuittaaminen epäonnistui: %s"
+ 
+-#: gitg/gitg-application.vala:38
++#: gitg/gitg-add-remote-action.vala:46
++msgid "Add Remote"
++msgstr "Lisää etävarasto"
++
++#: gitg/gitg-add-remote-action.vala:51
++msgid "Adds remote to the remotes list"
++msgstr ""
++
++#: gitg/gitg-add-remote-action.vala:59 gitg/gitg-ref-action-fetch.vala:107
++#, c-format
++msgid "Fetching from %s"
++msgstr "Nouda kohteesta %s"
++
++#. Translators: new refers to a new remote reference having been fetched,
++#: gitg/gitg-add-remote-action.vala:65 gitg/gitg-ref-action-fetch.vala:115
++msgid "new"
++msgstr "uusi"
++
++#: gitg/gitg-add-remote-action.vala:75 gitg/gitg-ref-action-fetch.vala:130
++#, c-format
++msgid "Failed to fetch from %s: %s"
++msgstr "Noutaminen kohteesta %s epäonnistui: %s"
++
++#: gitg/gitg-add-remote-action.vala:78
++msgid "Failed to fetch added remote"
++msgstr "Lisättyä etävarastoa ei voitu noutaa"
++
++#. Translators: the first %s is the remote url to fetch from,
++#. * the second is a list of references that got updated.
++#: gitg/gitg-add-remote-action.vala:90 gitg/gitg-ref-action-fetch.vala:149
++#, c-format
++msgid "Fetched from %s: %s"
++msgstr "Noudettu kohteesta %s: %s"
++
++#: gitg/gitg-add-remote-action.vala:129
++msgid "Failed to add remote"
++msgstr "Etävaraston lisääminen epäonnistui"
++
++#: gitg/gitg-application.vala:39
+ msgid "Show the application’s version"
+ msgstr "Näytä sovelluksen versio"
+ 
+-#: gitg/gitg-application.vala:40
++#: gitg/gitg-application.vala:41
+ msgid "Start gitg with a particular activity"
+ msgstr "Käynnistä gitg tietyllä toiminnolla"
+ 
+-#: gitg/gitg-application.vala:42
++#: gitg/gitg-application.vala:43
+ msgid "Start gitg with the commit activity (shorthand for --activity commit)"
+ msgstr ""
+ 
+-#: gitg/gitg-application.vala:44
++#: gitg/gitg-application.vala:45
+ msgid "Do not try to load a repository from the current working directory"
+ msgstr "Älä yritä ladata tietovarastoa nykyisestä työskentelyhakemistosta"
+ 
+-#: gitg/gitg-application.vala:46
++#: gitg/gitg-application.vala:47
+ msgid "Run gitg in standalone mode"
+ msgstr ""
+ 
+-#: gitg/gitg-application.vala:92
++#: gitg/gitg-application.vala:49
++msgid "Put paths under git if needed"
++msgstr ""
++
++#: gitg/gitg-application.vala:95
+ msgid "— Git repository viewer"
+ msgstr "— Git-tietovarastojen selain"
+ 
+-#: gitg/gitg-application.vala:226
++#: gitg/gitg-application.vala:229
+ msgid "gitg is a Git repository viewer for GTK+/GNOME"
+ msgstr "gitg on Git-tietovarastojen selain GTK+:lle/Gnomelle"
+ 
+-#: gitg/gitg-application.vala:235
++#: gitg/gitg-application.vala:238
+ msgid "translator-credits"
+ msgstr "Jiri Grönroos"
+ 
+-#: gitg/gitg-application.vala:238
++#: gitg/gitg-application.vala:241
+ msgid "gitg homepage"
+ msgstr "gitg-verkkosivusto"
+ 
+-#: gitg/gitg-application.vala:393
++#: gitg/gitg-application.vala:399
+ msgid ""
+ "We are terribly sorry, but gitg requires libgit2 (a library on which gitg "
+ "depends) to be compiled with threading support.\n"
+@@ -804,13 +870,13 @@ msgstr "Tee tälle kommitille cherry pick haaraan"
+ #: gitg/gitg-commit-action-cherry-pick.vala:117
+ #, fuzzy, c-format
+ #| msgid "Failed to delete branch %s"
+-msgid "Failed to lookup the commit for branch %s: %s"
++msgid "Failed to lookup the commit for branch “%s”: %s"
+ msgstr "Haaran %s poistaminen epäonnistui"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:132
+ #, c-format
+ msgid "Failed to cherry-pick the commit: %s"
+-msgstr "Cherry-pickin teko kommitille epäonnistui: %s"
++msgstr "Cherry-pick kommitista epäonnistui: %s"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:144
+ #: gitg/gitg-commit-action-cherry-pick.vala:160
+@@ -820,15 +886,15 @@ msgstr "Cherry pick sisältää ristiriitoja"
+ #: gitg/gitg-commit-action-cherry-pick.vala:153
+ #, c-format
+ msgid ""
+-"The cherry pick of %s onto %s has caused conflicts, would you like to "
+-"checkout branch %s with the cherry pick to your working directory to resolve "
+-"the conflicts?"
++"The cherry pick of “%s” onto “%s” has caused conflicts, would you like to "
++"checkout branch “%s” with the cherry pick to your working directory to "
++"resolve the conflicts?"
+ msgstr ""
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:157
+ #, c-format
+ msgid ""
+-"The cherry-pick of %s onto %s has caused conflicts, would you like to "
++"The cherry-pick of “%s” onto “%s” has caused conflicts, would you like to "
+ "checkout the cherry pick to your working directory to resolve the conflicts?"
+ msgstr ""
+ 
+@@ -847,8 +913,8 @@ msgstr "Cherry pick valmistui ristiriitojen kera työskentelyhakemistossa"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:199
+ #, c-format
+-msgid "Cherry pick %s onto %s"
+-msgstr "Tee cherry pick lähteestä %s kohteeseen %s"
++msgid "Cherry pick “%s” onto “%s”"
++msgstr "Tee cherry pick lähteestä “%s” kohteeseen “%s”"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:224
+ msgid "Successfully cherry picked"
+@@ -856,8 +922,8 @@ msgstr "Cherry pick onnistui"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:261
+ #, c-format
+-msgid "Cherry pick onto %s"
+-msgstr "Tee cherry pick haaraan %s"
++msgid "Cherry pick onto “%s”"
++msgstr "Tee cherry pick haaraan “%s”"
+ 
+ #: gitg/gitg-commit-action-create-branch.vala:48
+ msgid "Create branch"
+@@ -920,32 +986,36 @@ msgstr "Valitse ja hallitse projekteja"
+ msgid "_Remove"
+ msgstr "_Poista"
+ 
++#: gitg/gitg-dash-view.vala:190
++msgid "_Delete sources"
++msgstr "_Poista lähteet"
++
+ #. Translators: the two %s will be replaced to create a link to perform the scanning action.
+-#: gitg/gitg-dash-view.vala:230
++#: gitg/gitg-dash-view.vala:246
+ #, c-format
+ msgid "We can also %sscan your home directory%s for git repositories."
+ msgstr "Voit %setsiä kotikansiostasi%s git-tietovarastoja."
+ 
+ #. Translators: the two %s will be used to create a link to the author dialog.
+-#: gitg/gitg-dash-view.vala:233
++#: gitg/gitg-dash-view.vala:249
+ #, c-format
+ msgid "In the mean time, you may want to %sset up your git profile%s."
+ msgstr "Voit sen aikana %smäärittää git-profiilisi tiedot%s."
+ 
+-#: gitg/gitg-dash-view.vala:398
++#: gitg/gitg-dash-view.vala:414
+ msgid "Failed to clone repository"
+ msgstr "Tietovaraston kloonaaminen epäonnistui"
+ 
+-#: gitg/gitg-dash-view.vala:429
++#: gitg/gitg-dash-view.vala:445
+ msgid "Failed to add repository"
+ msgstr "Tietovaraston lisääminen epäonnistui"
+ 
+-#: gitg/gitg-dash-view.vala:445
++#: gitg/gitg-dash-view.vala:461
+ msgid "Create new repository"
+ msgstr "Luo uusi tietovarasto"
+ 
+ #. Translators: %s is a file name
+-#: gitg/gitg-dash-view.vala:448
++#: gitg/gitg-dash-view.vala:464
+ #, c-format
+ msgid ""
+ "The location <i>%s</i> does not appear to be a valid git repository. Would "
+@@ -954,27 +1024,40 @@ msgstr ""
+ "Sijainti <i>%s</i> ei vaikuta kelvolliselta git-tietovarastolta. Haluatko "
+ "alustaa uuden git-tietovaraston tähän sijaintiin?"
+ 
+-#: gitg/gitg-dash-view.vala:454
++#: gitg/gitg-dash-view.vala:470
+ msgid "Create repository"
+ msgstr "Luo tietovarasto"
+ 
+-#: gitg/gitg-dash-view.vala:470
++#: gitg/gitg-dash-view.vala:486
+ msgid "Failed to create repository"
+ msgstr "Tietovaraston luominen epäonnistui"
+ 
+-#: gitg/gitg-dash-view.vala:540
++#: gitg/gitg-dash-view.vala:556
+ #, c-format
+ msgid "Scanning for repositories in %s"
+ msgstr "Etsitään tietovarastoja kohteesta %s"
+ 
++#: gitg/gitg-edit-remote-action.vala:51
++msgid "Edit remote"
++msgstr "Muokkaa etävarastoa"
++
++#: gitg/gitg-edit-remote-action.vala:56
++msgid "Edits the remote from the remotes list"
++msgstr ""
++
++#: gitg/gitg-edit-remote-action.vala:82
++msgid "Failed to edit remote"
++msgstr "Etävaraston muokkaaminen epäonnistui"
++
+ #: gitg/gitg-ref-action-checkout.vala:53
+ msgid "Checkout the selected reference"
+ msgstr "Uloskuittaa valittu referenssi"
+ 
+ #: gitg/gitg-ref-action-checkout.vala:72
+ #, c-format
+-msgid "Checkout %s"
+-msgstr "Siirry haaraan %s"
++#| msgid "Checkout %s"
++msgid "Checkout “%s”"
++msgstr "Uloskuittaa “%s”"
+ 
+ #: gitg/gitg-ref-action-checkout.vala:101
+ #, c-format
+@@ -1004,13 +1087,33 @@ msgstr "Kopioi nimi"
+ msgid "Copy the name of the reference to the clipboard"
+ msgstr "Kopioi viitteen nimi leikepöydälle"
+ 
++#: gitg/gitg-ref-action-create-branch.vala:46
++msgid "Create a new branch at the selected reference"
++msgstr "Luo uusi haara valitussa referenssistä"
++
++#: gitg/gitg-ref-action-create-branch.vala:58
++#: gitg/gitg-ref-action-create-patch.vala:58
++#: gitg/gitg-ref-action-create-tag.vala:58
++#, fuzzy
++#| msgid "Failed to lookup tag"
++msgid "Failed to lookup reference"
++msgstr "Tagin hakeminen epäonnistui"
++
++#: gitg/gitg-ref-action-create-patch.vala:46
++msgid "Create a patch from the selected reference"
++msgstr "Luo paikka valitusta referenssistä"
++
++#: gitg/gitg-ref-action-create-tag.vala:46
++msgid "Create a new tag at the selected reference"
++msgstr "Luo uusi tagi valitusta referenssistä"
++
+ #: gitg/gitg-ref-action-delete.vala:48 gitg/gitg-ref-action-delete.vala:89
+ msgid "Delete"
+ msgstr "Poista"
+ 
+ #: gitg/gitg-ref-action-delete.vala:53
+ msgid "Delete the selected reference"
+-msgstr "Poista valittu viite"
++msgstr "Poista valittu referenssi"
+ 
+ #: gitg/gitg-ref-action-delete.vala:73
+ #, c-format
+@@ -1066,93 +1169,27 @@ msgstr "Haaran %s poistaminen epäonnistui"
+ msgid "The branch %s could not be deleted: %s"
+ msgstr "Haaraa %s ei voitu poistaa: %s"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:74
++#: gitg/gitg-ref-action-fetch.vala:83
+ #, c-format
+ msgid "Fetch from %s"
+ msgstr "Nouda kohteesta %s"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:85
++#: gitg/gitg-ref-action-fetch.vala:94
+ #, c-format
+ msgid "Fetch remote objects from %s"
+ msgstr "Nouda etäobjektit kohteesta %s"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:98
+-#, c-format
+-msgid "Fetching from %s"
+-msgstr "Nouda kohteesta %s"
+-
+-#. Translators: new refers to a new remote reference having been fetched,
+-#: gitg/gitg-ref-action-fetch.vala:106
+-msgid "new"
+-msgstr "uusi"
+-
+ #. Translators: updated refers to a remote reference having been updated,
+-#: gitg/gitg-ref-action-fetch.vala:111
++#: gitg/gitg-ref-action-fetch.vala:120
+ msgid "updated"
+ msgstr "päivitetty"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:121
+-#, c-format
+-msgid "Failed to fetch from %s: %s"
+-msgstr "Noutaminen kohteesta %s epäonnistui: %s"
+-
+ #. Translators: the %s will get replaced with the remote url,
+-#: gitg/gitg-ref-action-fetch.vala:134
++#: gitg/gitg-ref-action-fetch.vala:143
+ #, c-format
+ msgid "Fetched from %s: everything is up to date"
+ msgstr "Noudettu kohteesta %s: kaikki on ajan tasalla"
+ 
+-#. Translators: the first %s is the remote url to fetch from,
+-#. * the second is a list of references that got updated.
+-#: gitg/gitg-ref-action-fetch.vala:140
+-#, c-format
+-msgid "Fetched from %s: %s"
+-msgstr "Noudettu kohteesta %s: %s"
+-
+-#: gitg/gitg-ref-action-push.vala:80
+-#, c-format
+-msgid "Push to %s"
+-msgstr "Työnnä kohteeseen %s"
+-
+-#: gitg/gitg-ref-action-push.vala:91
+-#, c-format
+-#| msgid "Delete branch %s"
+-msgid "Push branch to %s"
+-msgstr "Työnnä haara kohteeseen %s"
+-
+-#: gitg/gitg-ref-action-push.vala:107
+-#, c-format
+-#| msgid "Fetching from %s"
+-msgid "Pushing to %s"
+-msgstr "Pushataan kohteeseen %s"
+-
+-#: gitg/gitg-ref-action-push.vala:116
+-#, c-format
+-#| msgid "Failed to fetch from %s: %s"
+-msgid "Failed to push to %s: %s"
+-msgstr "Ei voitu pushata kohteeseen %s: %s"
+-
+-#. Translators: the %s will get replaced with the remote url,
+-#: gitg/gitg-ref-action-push.vala:123
+-#, c-format
+-msgid "Pushed to %s"
+-msgstr "Pushattu kohteeseen %s"
+-
+-#: gitg/gitg-ref-action-push.vala:134
+-#, c-format
+-#| msgid "Delete branch %s"
+-msgid "Push branch %s"
+-msgstr "Työnnä haara %s"
+-
+-#: gitg/gitg-ref-action-push.vala:135
+-#, c-format
+-msgid "Are you sure that you want to push the branch %s?"
+-msgstr "Haluatko varmasti pushata haaran %s?"
+-
+-#: gitg/gitg-ref-action-push.vala:139
+-msgid "Push"
+-msgstr "Työnnä"
+-
+ #: gitg/gitg-ref-action-merge.vala:63
+ #, c-format
+ msgid "Merge into %s"
+@@ -1176,15 +1213,16 @@ msgstr "Liittämisessä on ristiriitoja"
+ #: gitg/gitg-ref-action-merge.vala:184
+ #, c-format
+ msgid ""
+-"The merge of %s into %s has caused conflicts, would you like to checkout "
+-"branch %s with the merge to your working directory to resolve the conflicts?"
++"The merge of “%s” into “%s” has caused conflicts, would you like to checkout "
++"branch “%s” with the merge to your working directory to resolve the "
++"conflicts?"
+ msgstr ""
+ 
+ #: gitg/gitg-ref-action-merge.vala:188
+ #, c-format
+ msgid ""
+-"The merge of %s into %s has caused conflicts, would you like to checkout the "
+-"merge to your working directory to resolve the conflicts?"
++"The merge of “%s” into “%s” has caused conflicts, would you like to checkout "
++"the merge to your working directory to resolve the conflicts?"
+ msgstr ""
+ 
+ #: gitg/gitg-ref-action-merge.vala:199
+@@ -1197,8 +1235,8 @@ msgstr "Yhdistäminen työskentelyhakemistossa valmistui ristiriitojen kera"
+ 
+ #: gitg/gitg-ref-action-merge.vala:222
+ #, c-format
+-msgid "Merge %s into %s"
+-msgstr "Yhdistä %s kohteeseen %s"
++msgid "Merge “%s” into “%s”"
++msgstr "Yhdistä “%s” kohteeseen “%s”"
+ 
+ #: gitg/gitg-ref-action-merge.vala:231
+ #, fuzzy, c-format
+@@ -1214,37 +1252,83 @@ msgstr "Tagin hakeminen epäonnistui"
+ 
+ #: gitg/gitg-ref-action-merge.vala:278
+ #, c-format
+-msgid "Successfully merged %s into %s"
+-msgstr "Yhdistetty %s kohteeseen %s onnistuneesti"
++msgid "Successfully merged “%s” into “%s”"
++msgstr "Yhdistetty “%s” kohteeseen “%s” onnistuneesti"
+ 
+ #: gitg/gitg-ref-action-merge.vala:320
+ #, c-format
+-msgid "Merge %s into branch %s"
+-msgstr "Liitä %s haaraan %s"
++msgid "Merge “%s” into branch “%s”"
++msgstr "Liitä “%s” haaraan “%s”"
+ 
+ #: gitg/gitg-ref-action-merge.vala:482
+-#: gitg/history/gitg-history-refs-list.vala:1181
++#: gitg/history/gitg-history-refs-list.vala:1199
+ msgid "Tags"
+ msgstr "Tagit"
+ 
++#: gitg/gitg-ref-action-push.vala:80
++#, c-format
++msgid "Push to %s"
++msgstr "Työnnä kohteeseen %s"
++
++#: gitg/gitg-ref-action-push.vala:91
++#, c-format
++msgid "Push branch to %s"
++msgstr "Työnnä haara kohteeseen %s"
++
++#: gitg/gitg-ref-action-push.vala:107
++#, c-format
++msgid "Pushing to %s"
++msgstr "Työnnetään kohteeseen %s"
++
++#: gitg/gitg-ref-action-push.vala:116
++#, c-format
++msgid "Failed to push to %s: %s"
++msgstr "Ei voitu työntää kohteeseen %s: %s"
++
++#. Translators: the %s will get replaced with the remote url,
++#: gitg/gitg-ref-action-push.vala:123
++#, c-format
++msgid "Pushed to %s"
++msgstr "Työnnetty kohteeseen %s"
++
++#: gitg/gitg-ref-action-push.vala:134
++#, c-format
++msgid "Push branch %s"
++msgstr "Työnnä haara %s"
++
++#: gitg/gitg-ref-action-push.vala:135
++#, c-format
++msgid "Are you sure that you want to push the branch %s?"
++msgstr "Haluatko varmasti työntää haaran %s?"
++
++#: gitg/gitg-ref-action-push.vala:139
++msgid "Push"
++msgstr "Työnnä"
++
+ #: gitg/gitg-ref-action-rename.vala:48
+ msgid "Rename"
+ msgstr "Nimeä uudelleen"
+ 
+ #: gitg/gitg-ref-action-rename.vala:53
+ msgid "Rename the selected reference"
+-msgstr "Nimeä uudelleen valittu viite"
++msgstr "Nimeä uudelleen valittu referenssi"
+ 
+-#: gitg/gitg-ref-action-rename.vala:100
+-#, c-format
+-msgid "The specified name “%s” contains invalid characters"
++#: gitg/gitg-ref-action-rename.vala:104
++#, fuzzy, c-format
++#| msgid "The specified name “%s” contains invalid characters"
++msgid "The specified name “%s” match with existing branch “%s”"
+ msgstr "Määritetty nimi “%s” sisältää virheellisiä merkkejä"
+ 
+-#: gitg/gitg-ref-action-rename.vala:102
++#: gitg/gitg-ref-action-rename.vala:106 gitg/gitg-ref-action-rename.vala:118
+ msgid "Invalid name"
+ msgstr "Virheellinen nimi"
+ 
+-#: gitg/gitg-ref-action-rename.vala:131
++#: gitg/gitg-ref-action-rename.vala:116
++#, c-format
++msgid "The specified name “%s” contains invalid characters"
++msgstr "Määritetty nimi “%s” sisältää virheellisiä merkkejä"
++
++#: gitg/gitg-ref-action-rename.vala:147
+ msgid "Failed to rename"
+ msgstr "Nimen muuttaminen epäonnistui"
+ 
+@@ -1252,11 +1336,39 @@ msgstr "Nimen muuttaminen epäonnistui"
+ msgid "Close"
+ msgstr "Sulje"
+ 
++#: gitg/gitg-remove-remote-action.vala:50
++msgid "Remove remote"
++msgstr "Poista etävarasto"
++
++#: gitg/gitg-remove-remote-action.vala:55
++msgid "Removes remote from the remotes list"
++msgstr ""
++
++#: gitg/gitg-remove-remote-action.vala:62
++#, c-format
++msgid "Delete remote %s"
++msgstr "Poista etävarasto %s"
++
++#: gitg/gitg-remove-remote-action.vala:63
++#, c-format
++msgid "Are you sure that you want to remove the remote %s?"
++msgstr "Haluatko varmasti poistaa etävaraston %s?"
++
++#: gitg/gitg-remove-remote-action.vala:67
++msgid "Remove"
++msgstr "Poista"
++
++#: gitg/gitg-remove-remote-action.vala:91
++msgid "Failed to remove remote"
++msgstr "Etävaraston poistaminen epäonnistui"
++
+ #: gitg/gitg-window.vala:202
+ msgid "Add Repository"
+ msgstr "Lisää tietovarasto"
+ 
+-#: gitg/gitg-window.vala:206 gitg/resources/ui/gitg-window.ui:64
++#: gitg/gitg-window.vala:206
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:34
++#: gitg/resources/ui/gitg-window.ui:64
+ msgid "_Add"
+ msgstr "_Lisää"
+ 
+@@ -1268,24 +1380,24 @@ msgstr "_Etsi kaikkia git-tietovarastoja tästä hakemistosta"
+ msgid "Projects"
+ msgstr "Projektit"
+ 
+-#: gitg/gitg-window.vala:701
++#: gitg/gitg-window.vala:703
+ msgid "Open Repository"
+ msgstr "Avaa tietovarasto"
+ 
+-#: gitg/gitg-window.vala:704 gitg/resources/ui/gitg-commit-submodule-info.ui:70
++#: gitg/gitg-window.vala:706 gitg/resources/ui/gitg-commit-submodule-info.ui:70
+ msgid "_Open"
+ msgstr "_Avaa"
+ 
+-#: gitg/gitg-window.vala:844
++#: gitg/gitg-window.vala:846
+ msgid "Select items"
+ msgstr "Valitse kohteet"
+ 
+-#: gitg/gitg-window.vala:1062
++#: gitg/gitg-window.vala:1064
+ #, c-format
+ msgid "“%s” is not a Git repository."
+ msgstr "“%s” ei ole Git-tietovarasto."
+ 
+-#: gitg/gitg-window.vala:1211
++#: gitg/gitg-window.vala:1213
+ msgid ""
+ "Your user name and email are not configured yet. Please go to the user "
+ "configuration and provide your name and email."
+@@ -1293,7 +1405,7 @@ msgstr ""
+ "Käyttäjänimeäsi ja sähköpostiosoitettasi ei ole vielä määritelty. Määritä "
+ "kyseiset tiedot käyttäjäasetuksissa."
+ 
+-#: gitg/gitg-window.vala:1215
++#: gitg/gitg-window.vala:1217
+ msgid ""
+ "Your user name is not configured yet. Please go to the user configuration "
+ "and provide your name."
+@@ -1301,7 +1413,7 @@ msgstr ""
+ "Käyttäjänimeäsi ei ole vielä määritelty. Määritä kyseinen tieto "
+ "käyttäjäasetuksissa."
+ 
+-#: gitg/gitg-window.vala:1219
++#: gitg/gitg-window.vala:1221
+ msgid ""
+ "Your email is not configured yet. Please go to the user configuration and "
+ "provide your email."
+@@ -1309,7 +1421,7 @@ msgstr ""
+ "Sähköpostiosoitettasi ei ole vielä määritelty. Määritä kyseinen tieto "
+ "käyttäjäasetuksissa."
+ 
+-#: gitg/gitg-window.vala:1222
++#: gitg/gitg-window.vala:1224
+ msgid "Missing author details"
+ msgstr "Tekijän tiedot puuttuvat"
+ 
+@@ -1357,29 +1469,29 @@ msgstr "%zu jäljessä"
+ msgid "All commits"
+ msgstr "Kaikki kommitit"
+ 
+-#: gitg/history/gitg-history-refs-list.vala:1179
++#: gitg/history/gitg-history-refs-list.vala:1197
+ msgid "Branches"
+ msgstr "Haarat"
+ 
+-#: gitg/history/gitg-history-refs-list.vala:1180
++#: gitg/history/gitg-history-refs-list.vala:1198
+ msgid "Remotes"
+ msgstr "Etätietovarastot"
+ 
+-#: gitg/history/gitg-history.vala:347
++#: gitg/history/gitg-history.vala:348
+ #: gitg/preferences/gitg-preferences-history.vala:218
+ #: gitg/resources/ui/gitg-preferences-interface.ui:60
+ msgid "History"
+ msgstr "Historia"
+ 
+-#: gitg/history/gitg-history.vala:352
++#: gitg/history/gitg-history.vala:353
+ msgid "Examine the history of the repository"
+ msgstr "Tutki tietovaraston historiaa"
+ 
+-#: gitg/history/gitg-history.vala:942
++#: gitg/history/gitg-history.vala:959
+ msgid "Mainline"
+ msgstr ""
+ 
+-#: gitg/preferences/gitg-preferences-commit.vala:142
++#: gitg/preferences/gitg-preferences-commit.vala:180
+ msgctxt "Preferences"
+ msgid "Commit"
+ msgstr "Kommitti"
+@@ -1393,7 +1505,23 @@ msgstr "_Käytä järjestelmän kiinteälevyistä fonttia (%s)"
+ msgid "Interface"
+ msgstr "Käyttöliittymä"
+ 
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:7
++msgid "Create Remote"
++msgstr "Luo etävarasto"
++
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:69
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:69
++msgid "Remote _name:"
++msgstr "Etävaraston _nimi:"
++
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:99
++#: gitg/resources/ui/gitg-clone-dialog.ui:68
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:99
++msgid "Remote _URL:"
++msgstr "Etä_osoite:"
++
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:35
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:34
+ msgid "_Save"
+ msgstr "_Tallenna"
+ 
+@@ -1438,10 +1566,6 @@ msgstr "Kloonaa tietovarasto"
+ msgid "Cl_one"
+ msgstr "_Kloonaa"
+ 
+-#: gitg/resources/ui/gitg-clone-dialog.ui:68
+-msgid "Remote _URL:"
+-msgstr "Etä_osoite:"
+-
+ #: gitg/resources/ui/gitg-clone-dialog.ui:99
+ msgid "_Local Folder:"
+ msgstr "_Paikallinen kansio:"
+@@ -1460,7 +1584,7 @@ msgid "Commit"
+ msgstr "Kommitti"
+ 
+ #: gitg/resources/ui/gitg-commit-dialog.ui:36
+-#: gitg/resources/ui/gitg-commit-paned.ui:86
++#: gitg/resources/ui/gitg-commit-paned.ui:111
+ msgid "C_ommit"
+ msgstr "K_ommitoi"
+ 
+@@ -1472,15 +1596,23 @@ msgstr "_Oikaise edellinen kommitti"
+ msgid "Add _signed-off-by signature"
+ msgstr "Lisää _signed-off-by-allekirjoitus"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:76
++#: gitg/resources/ui/gitg-commit-dialog.ui:251
++msgid "Add si_gnature"
++msgstr "Lisää _allekirjoitus"
++
++#: gitg/resources/ui/gitg-commit-paned.ui:33
++msgid "Filter Files"
++msgstr "Suodata tiedostoja"
++
++#: gitg/resources/ui/gitg-commit-paned.ui:101
+ msgid "Skip commit _hooks"
+ msgstr "Ohita kommitin _liipasimet"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:96
++#: gitg/resources/ui/gitg-commit-paned.ui:121
+ msgid "S_tage selection"
+ msgstr "V_almistele valinta"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:107
++#: gitg/resources/ui/gitg-commit-paned.ui:132
+ msgid "D_iscard selection"
+ msgstr "H_ylkää valinta"
+ 
+@@ -1513,6 +1645,16 @@ msgstr "Tekijä"
+ 
+ #: gitg/resources/ui/gitg-commit-submodule-history-view.ui:58
+ #: gitg/resources/ui/gitg-history-paned.ui:127
++msgid "Committer"
++msgstr "Kommitoija"
++
++#: gitg/resources/ui/gitg-commit-submodule-history-view.ui:74
++#: gitg/resources/ui/gitg-history-paned.ui:143
++msgid "SHA1"
++msgstr "SHA1"
++
++#: gitg/resources/ui/gitg-commit-submodule-history-view.ui:90
++#: gitg/resources/ui/gitg-history-paned.ui:159
+ msgid "Date"
+ msgstr "Päiväys"
+ 
+@@ -1549,30 +1691,34 @@ msgstr ""
+ "Tietovarastoja ei ole vielä lisätty. Aloita lisäämällä olemassa oleva "
+ "tietovarasto tai kloonaa uusi tietovarasto."
+ 
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:7
++msgid "Edit Remote"
++msgstr "Muokkaa etävarastoa"
++
+ #: gitg/resources/ui/gitg-menus.ui:7
+ msgid "_Reload"
+ msgstr "L_ataa uudelleen"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:14 gitg/resources/ui/gitg-menus.ui:48
++#: gitg/resources/ui/gitg-menus.ui:13 gitg/resources/ui/gitg-menus.ui:49
+ msgid "_Preferences"
+ msgstr "_Asetukset"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:21 gitg/resources/ui/gitg-menus.ui:42
++#: gitg/resources/ui/gitg-menus.ui:19 gitg/resources/ui/gitg-menus.ui:43
+ msgid "_Author Details"
+ msgstr "_Tekijän tiedot"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:27 gitg/resources/ui/gitg-menus.ui:55
++#: gitg/resources/ui/gitg-menus.ui:25 gitg/resources/ui/gitg-menus.ui:55
+ msgid "_Keyboard Shortcuts"
+ msgstr "_Pikanäppäimet"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:36
++#: gitg/resources/ui/gitg-menus.ui:29 gitg/resources/ui/gitg-menus.ui:59
++msgid "_About gitg"
++msgstr "_Tietoja - gitg"
++
++#: gitg/resources/ui/gitg-menus.ui:37
+ msgid "_New Window"
+ msgstr "_Uusi ikkuna"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:60
+-msgid "_About"
+-msgstr "_Tietoja"
+-
+ #: gitg/resources/ui/gitg-preferences-commit.ui:58
+ msgid "Show markup"
+ msgstr "Näytä merkkaus"
+@@ -1613,6 +1759,22 @@ msgstr "Käytä oikolukua"
+ msgid "Commit Message"
+ msgstr "Kommitin viesti"
+ 
++#: gitg/resources/ui/gitg-preferences-commit.ui:372
++msgid "Datetime format"
++msgstr "Päiväyksen muoto"
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:410
++msgid "Predefined:"
++msgstr "Valmiiksi määritetty:"
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:435
++msgid "Custom:"
++msgstr "Mukautettu:"
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:453
++msgid "Check in vala documentation for datetime to write your own format."
++msgstr "Katso valan datetime-dokumentaatiosta, miten kirjoittaa oma muoto."
++
+ #: gitg/resources/ui/gitg-preferences-history.ui:31
+ msgid "Default selection"
+ msgstr "Oletusvalinta"
+@@ -1627,7 +1789,7 @@ msgstr "Kaikki haarat"
+ 
+ #: gitg/resources/ui/gitg-preferences-history.ui:106
+ msgid "References"
+-msgstr "Viittaukset"
++msgstr "Referenssit"
+ 
+ #: gitg/resources/ui/gitg-preferences-history.ui:119
+ msgid "Sort references in the sidebar by latest activity"
+@@ -1739,18 +1901,18 @@ msgstr "Avaa uusi ikkuna"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:33
+ msgctxt "shortcut window"
+-msgid "Open the window menu"
+-msgstr "Avaa ikkunavalikko"
++msgid "Reload the window"
++msgstr "Lataa ikkuna uudelleen"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:40
+ msgctxt "shortcut window"
+-msgid "Open a repository"
+-msgstr "Avaa tietovarasto"
++msgid "Open the window menu"
++msgstr "Avaa ikkunavalikko"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:47
+ msgctxt "shortcut window"
+-msgid "Open the help"
+-msgstr "Avaa ohje"
++msgid "Open a repository"
++msgstr "Avaa tietovarasto"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:54
+ msgctxt "shortcut window"
+@@ -1775,7 +1937,7 @@ msgstr "Lopeta sovellus"
+ #: gitg/resources/ui/gitg-shortcuts.ui:82
+ msgctxt "shortcut window"
+ msgid "Change to Dash"
+-msgstr ""
++msgstr "Siirry päänäkymään"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:89
+ msgctxt "shortcut window"
+@@ -1788,18 +1950,14 @@ msgid "Change to Commit View"
+ msgstr "Vaihda kommittinäkymään"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:103
+-#, fuzzy
+-#| msgid "Start with activity:"
+ msgctxt "shortcut window"
+ msgid "Change to activity"
+-msgstr "Käynnistä toiminnolla:"
++msgstr "Vaihda toimintoon"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:111
+-#, fuzzy
+-#| msgid "Default Activity"
+ msgctxt "shortcut window"
+ msgid "Commit Activity"
+-msgstr "Oletustoiminto"
++msgstr "Kommittitoiminta"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:116
+ msgctxt "shortcut window"
+@@ -1857,11 +2015,9 @@ msgid "Next commit message"
+ msgstr "Seuraava kommittiviesti"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:193
+-#, fuzzy
+-#| msgid "Default Activity"
+ msgctxt "shortcut window"
+ msgid "History Activity"
+-msgstr "Oletustoiminto"
++msgstr "Historiatoiminta"
+ 
+ #: gitg/resources/ui/gitg-window.ui:24
+ msgid "Show the list of recently used repositories"
+@@ -1883,7 +2039,7 @@ msgstr "Etsi sana tai lauseke"
+ msgid "General settings and options"
+ msgstr "Yleiset asetukset"
+ 
+-#: gitg/resources/ui/gitg-window.ui:229
++#: gitg/resources/ui/gitg-window.ui:230
+ msgid "_Close"
+ msgstr "_Sulje"
+ 
+@@ -1927,10 +2083,8 @@ msgstr[1] "%d päivää sitten"
+ #. used when the date is in the current year and uses a 24 hour
+ #. clock.
+ #: libgitg/gitg-date.vala:374
+-#, fuzzy
+-#| msgid "%b %e, %H:%M"
+ msgid "%b %e, %H∶%M"
+-msgstr "%e. %b, %H:%M"
++msgstr "%e. %bkuuta, %H.%M"
+ 
+ #. Translators: this is a strftime type date format which is
+ #. used when the date is in the current year and uses a 12 hour
+@@ -1945,10 +2099,8 @@ msgstr "%e. %b, %I:%M %p"
+ #. used when the date is not in the current year and uses a 24
+ #. hour clock.
+ #: libgitg/gitg-date.vala:391
+-#, fuzzy
+-#| msgid "%b %e %Y, %H:%M"
+ msgid "%b %e %Y, %H∶%M"
+-msgstr "%e. %b %Y, %H:%M"
++msgstr "%e. %bkuuta %Y, %H.%M"
+ 
+ #. Translators: this is a strftime type date format which is
+ #. used when the date is not in the current year and uses a 12
+@@ -1987,55 +2139,104 @@ msgstr "jälkeen (%s)"
+ msgid "added (%s)"
+ msgstr "lisätty (%s)"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:143
++#: libgitg/gitg-diff-view-commit-details.vala:172
+ msgid "Collapse all"
+ msgstr "Supista kaikki"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:147
++#: libgitg/gitg-diff-view-commit-details.vala:176
+ #: libgitg/resources/ui/gitg-diff-view-commit-details.ui:211
+ msgid "Expand all"
+ msgstr "Laajenna kaikki"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:202
++#: libgitg/gitg-diff-view-commit-details.vala:237
+ #, c-format
+ msgid "Committed by %s"
+ msgstr "Kommitoinut %s"
+ 
+-#: libgitg/gitg-diff-view-file.vala:177
++#. Translators: Unif stands for unified diff format
++#: libgitg/gitg-diff-view-file.vala:160
++msgid "Unif"
++msgstr "Yhdistetty"
++
++#. Translators: Split stands for the noun
++#: libgitg/gitg-diff-view-file.vala:165
++msgid "Split"
++msgstr "Jaettu"
++
++#: libgitg/gitg-diff-view-file.vala:172
++msgid "Binary"
++msgstr "Binääri"
++
++#: libgitg/gitg-diff-view-file.vala:179
++msgid "Image"
++msgstr ""
++
++#: libgitg/gitg-diff-view-file.vala:224
+ msgid "_Open file"
+ msgstr "_Avaa tiedosto"
+ 
+-#: libgitg/gitg-diff-view-file.vala:209
++#: libgitg/gitg-diff-view-file.vala:257
+ msgid "Open containing _folder"
+ msgstr "Avaa sisältävä _kansio"
+ 
+-#: libgitg/gitg-diff-view-file.vala:229
++#: libgitg/gitg-diff-view-file.vala:277
+ msgid "_Copy file path"
+ msgstr "_Kopioi tiedoston polku"
+ 
+ #. Translators: this is used to construct: "at <directory>", to indicate where the repository is at.
+-#: libgitg/gitg-repository-list-box.vala:153
++#: libgitg/gitg-repository-list-box.vala:161
+ #, c-format
+ msgid "at %s"
+ msgstr "sijainnissa %s"
+ 
+ #. Translators: this is used to construct: "<branch-name> at <directory>"
+-#: libgitg/gitg-repository-list-box.vala:162
++#: libgitg/gitg-repository-list-box.vala:170
+ #, c-format
+ msgid "%s at %s"
+ msgstr "%s sijainnissa %s"
+ 
+-#: libgitg/gitg-repository-list-box.vala:545
++#: libgitg/gitg-repository-list-box.vala:553
+ msgid "Cloning…"
+ msgstr "Kloonataan…"
+ 
+-#: libgitg/gitg-stage.vala:337
++#: libgitg/gitg-repository-list-box.vala:566
++#, c-format
++msgid ""
++"Deleting repository source files “%s” will delete them from disk and cannot "
++"be undone. Are you sure?"
++msgstr ""
++
++#: libgitg/gitg-repository-list-box.vala:568
++msgid "Move to trash"
++msgstr "Siirrä roskakoriin"
++
++#: libgitg/gitg-repository-list-box.vala:569
++msgid "Delete permanently"
++msgstr "Poista pysyvästi"
++
++#: libgitg/gitg-stage.vala:343
+ #, c-format
+ msgid "Could not read commit message after running commit-msg hook: %s"
+ msgstr ""
+ "Kommittiviestin lukeminen ei onnistunut commit-msg-koukun suorittamisen "
+ "jälkeen: %s"
+ 
++#: libgitg/gitg-stage.vala:464
++#, c-format
++msgid "setup “%s” to do a signed commit"
++msgstr ""
++
++#: libgitg/gitg-stage.vala:484
++#, fuzzy, c-format
++#| msgid "Failed to stage the file “%s”"
++msgid "error signing the commit “%s”"
++msgstr "Tiedoston “%s” valmistelu epäonnistui"
++
++#: libgitg/gitg-stage.vala:496
++#, c-format
++msgid "error updating current ref “%s”"
++msgstr ""
++
+ #: libgitg/resources/ui/gitg-authentication-dialog.ui:18
+ msgid "_Authenticate"
+ msgstr "_Tunnistaudu"
+@@ -2130,6 +2331,13 @@ msgstr "Tiedostot"
+ msgid "Show the files in the tree of the selected commit"
+ msgstr "Näytä tiedostot valitun kommitin puussa"
+ 
++#~ msgid "The GNOME Project"
++#~ msgstr "Gnome-projekti"
++
++#~ msgctxt "shortcut window"
++#~ msgid "Open the help"
++#~ msgstr "Avaa ohje"
++
+ #~ msgid "Clone"
+ #~ msgstr "Kloonaa"
+ 
+diff --git a/po/tr.po b/po/tr.po
+index a50adbf..8da3354 100644
+--- a/po/tr.po
++++ b/po/tr.po
+@@ -12,8 +12,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gitg master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2023-03-07 21:41+0000\n"
+-"PO-Revision-Date: 2023-03-08 01:49+0300\n"
++"POT-Creation-Date: 2023-10-07 07:25+0000\n"
++"PO-Revision-Date: 2023-10-16 00:10+0300\n"
+ "Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
+ "Language-Team: Türkçe <gnome-turk@gnome.org>\n"
+ "Language: tr\n"
+@@ -21,7 +21,7 @@ msgstr ""
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=1; plural=0;\n"
+-"X-Generator: Poedit 3.1.1\n"
++"X-Generator: Poedit 3.4\n"
+ 
+ #: contrib/xml/xml-reader.c:327
+ #, c-format
+@@ -85,7 +85,7 @@ msgstr "Hazır değişiklikleri işle"
+ msgid "Overview of recently used repositories"
+ msgstr "Son kullanılan depolara genel bakış"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:157
++#: data/org.gnome.gitg.appdata.xml.in.in:216
+ msgid "The Gitg Team"
+ msgstr "Gitg Takımı"
+ 
+@@ -656,7 +656,7 @@ msgstr ""
+ #: gitg/resources/ui/gitg-window.ui:154
+ #: libgitg/resources/ui/gitg-authentication-dialog.ui:11
+ msgid "_Cancel"
+-msgstr "_İptal"
++msgstr "İ_ptal"
+ 
+ #: gitg/commit/gitg-commit.vala:1326 gitg/commit/gitg-commit.vala:1492
+ msgid "Discard"
+@@ -2212,7 +2212,7 @@ msgstr "İşleyen: %s"
+ #. Translators: Unif stands for unified diff format
+ #: libgitg/gitg-diff-view-file.vala:160
+ msgid "Unif"
+-msgstr "Unif"
++msgstr "Birleşik"
+ 
+ #. Translators: Split stands for the noun
+ #: libgitg/gitg-diff-view-file.vala:165
+diff --git a/po/uk.po b/po/uk.po
+index 97c0c6d..af3069d 100644
+--- a/po/uk.po
++++ b/po/uk.po
+@@ -8,8 +8,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gitg\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2023-03-07 21:41+0000\n"
+-"PO-Revision-Date: 2023-03-08 08:13+0200\n"
++"POT-Creation-Date: 2023-12-12 01:35+0000\n"
++"PO-Revision-Date: 2023-12-12 23:26+0200\n"
+ "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+ "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+ "Language: uk\n"
+@@ -87,7 +87,7 @@ msgstr "Внесення сформованих змін"
+ msgid "Overview of recently used repositories"
+ msgstr "Огляд списку нещодавно використаних сховищ"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:157
++#: data/org.gnome.gitg.appdata.xml.in.in:216
+ msgid "The Gitg Team"
+ msgstr "Команда Gitg"
+ 
+@@ -324,11 +324,21 @@ msgstr ""
+ "Визначає, чи слід показувати основну (віддалену) гілку при виборі локальної "
+ "гілки на панелі журналу."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:172
++#: data/org.gnome.gitg.gschema.xml.in:170
++#: gitg/resources/ui/gitg-preferences-history.ui:151
++msgid "Filter unknown refs"
++msgstr "Фільтрувати невідомі посилання"
++
++#: data/org.gnome.gitg.gschema.xml.in:171
++msgid "Hide any ref different from refs/heads and refs/remotes."
++msgstr ""
++"Приховати усі посилання, які є відмінними від refs/heads та refs/remotes."
++
++#: data/org.gnome.gitg.gschema.xml.in:179
+ msgid "Switch to the new branch on creation"
+ msgstr "Перемикатися на нову гілку при створенні"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:173
++#: data/org.gnome.gitg.gschema.xml.in:180
+ msgid ""
+ "Setting that controls whether the newly created branch is checked out "
+ "automatically."
+@@ -337,12 +347,12 @@ msgstr ""
+ "новостворених гілок."
+ 
+ # Показати правому краю у фіксації повідомлення Переглянути
+-#: data/org.gnome.gitg.gschema.xml.in:188
++#: data/org.gnome.gitg.gschema.xml.in:195
+ msgid "Show Right Margin in Commit Message View"
+ msgstr "Показати праве поле в перегляді повідомлення щодо внесків"
+ 
+ # Показати право показник маржі у фіксації зору. Це може бути використано, щоб легко побачити, де розбити фіксації у певному стовпці.
+-#: data/org.gnome.gitg.gschema.xml.in:189
++#: data/org.gnome.gitg.gschema.xml.in:196
+ msgid ""
+ "Show a right margin indicator in the commit message view. This can be used "
+ "to easily see where to break the commit message at a particular column."
+@@ -352,12 +362,12 @@ msgstr ""
+ "у повідомленні щодо внесків."
+ 
+ # Колонка на якому правому краю показано
+-#: data/org.gnome.gitg.gschema.xml.in:197
++#: data/org.gnome.gitg.gschema.xml.in:204
+ msgid "Column at Which Right Margin is Shown"
+ msgstr "Позиція у рядку, на якій показується праве поле"
+ 
+ # Стовпця, на якому праве поле з’являється, якщо право-маржа перевагу встановлений у значення TRUE.
+-#: data/org.gnome.gitg.gschema.xml.in:198
++#: data/org.gnome.gitg.gschema.xml.in:205
+ msgid ""
+ "The column at which the right margin is shown if the show-right-margin "
+ "preference is set to TRUE."
+@@ -366,11 +376,11 @@ msgstr ""
+ "margin» вказано як TRUE."
+ 
+ # Показати правому краю у фіксації повідомлення Переглянути
+-#: data/org.gnome.gitg.gschema.xml.in:205
++#: data/org.gnome.gitg.gschema.xml.in:212
+ msgid "Show Subject Margin in Commit Message View"
+ msgstr "Показати поле теми в перегляді повідомлення щодо внесків"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:206
++#: data/org.gnome.gitg.gschema.xml.in:213
+ msgid ""
+ "Highlight the subject text of the commit message when it passes the margin "
+ "specified by subject-margin-position."
+@@ -379,12 +389,12 @@ msgstr ""
+ "яке вказано через «subject-margin-position»."
+ 
+ # Колонка на якому правому краю показано
+-#: data/org.gnome.gitg.gschema.xml.in:213
++#: data/org.gnome.gitg.gschema.xml.in:220
+ msgid "Column at Which Subject Margin is Shown"
+ msgstr "Позиція у рядку, на якій показується поле теми"
+ 
+ # Стовпця, на якому праве поле з’являється, якщо право-маржа перевагу встановлений у значення TRUE.
+-#: data/org.gnome.gitg.gschema.xml.in:214
++#: data/org.gnome.gitg.gschema.xml.in:221
+ msgid ""
+ "The column at which the subject margin is shown if the show-subject-margin "
+ "preference is set to TRUE."
+@@ -392,11 +402,11 @@ msgstr ""
+ "Стовпчик рядка, поле теми якого показується, якщо параметр «show-subject-"
+ "margin» вказано як TRUE."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:221
++#: data/org.gnome.gitg.gschema.xml.in:228
+ msgid "Enable Spell Checking"
+ msgstr "Увімкнути перевіряння орфографії"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:222
++#: data/org.gnome.gitg.gschema.xml.in:229
+ msgid ""
+ "Setting which determines whether or not spell checking is enabled when "
+ "writing a commit message."
+@@ -404,11 +414,11 @@ msgstr ""
+ "Параметр, який визначає, чи буде увімкнено перевірку правопису при написанні "
+ "повідомлення про внесок."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:229
++#: data/org.gnome.gitg.gschema.xml.in:236
+ msgid "Spell Checking Language"
+ msgstr "Мова для перевірки правопису"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:230
++#: data/org.gnome.gitg.gschema.xml.in:237
+ msgid ""
+ "The language to use when spell checking is enabled for writing a commit "
+ "message."
+@@ -416,11 +426,11 @@ msgstr ""
+ "Мова, яку слід використовувати, якщо увімкнено перевірку правопису, для "
+ "перевірки правопису у повідомлення внеску."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:237
++#: data/org.gnome.gitg.gschema.xml.in:244
+ msgid "Maximum number of previous commit messages"
+ msgstr "Максимальна кількість попередніх повідомлень щодо внесків"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:238
++#: data/org.gnome.gitg.gschema.xml.in:245
+ msgid ""
+ "Maximum number of previous commit messages to store for commit message "
+ "history."
+@@ -428,12 +438,12 @@ msgstr ""
+ "Максимальна кількість попередніх повідомлень про внесок для зберігання у "
+ "журналі повідомлень щодо внесків."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:242
++#: data/org.gnome.gitg.gschema.xml.in:249
+ msgid "Maximum number of days to store previous commit messages"
+ msgstr ""
+ "Максимальна тривалість зберігання попередніх повідомлень щодо внесків у днях"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:243
++#: data/org.gnome.gitg.gschema.xml.in:250
+ msgid ""
+ "Maximum number of days to store previous commit messages for commit message "
+ "history."
+@@ -441,39 +451,39 @@ msgstr ""
+ "Максимальна тривалість зберігання попередніх повідомлень щодо внесків у днях "
+ "для журналу повідомлень щодо внесків."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:247
+-#: data/org.gnome.gitg.gschema.xml.in:248
++#: data/org.gnome.gitg.gschema.xml.in:254
++#: data/org.gnome.gitg.gschema.xml.in:255
+ msgid "Type of datetime format selected."
+ msgstr "Тип вибраного формату дати і часу."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:254
++#: data/org.gnome.gitg.gschema.xml.in:261
+ msgid "Preferred datetime format of the user."
+ msgstr "Бажаний для користувача формат запису дати і часу."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:255
++#: data/org.gnome.gitg.gschema.xml.in:262
+ msgid "The datetime format to be used in commit-diff."
+ msgstr "Формат запису дати і часу, який буде використано у різниці внесків."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:261
+-#: data/org.gnome.gitg.gschema.xml.in:262
++#: data/org.gnome.gitg.gschema.xml.in:268
++#: data/org.gnome.gitg.gschema.xml.in:269
+ msgid "Custom datetime format."
+ msgstr "Нетиповий формат запису дати і часу."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:270
++#: data/org.gnome.gitg.gschema.xml.in:277
+ msgid "Use patience algorithm to show diffs"
+ msgstr "Використовувати терплячий алгоритм для показу різниць"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:271
++#: data/org.gnome.gitg.gschema.xml.in:278
+ msgid "Setting to use patience algorithm to show diffs of a commit."
+ msgstr ""
+ "Параметр для використання терплячого алгоритму для показу різниць у внесках."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:277
++#: data/org.gnome.gitg.gschema.xml.in:284
+ msgid "Ignore Whitespace Changes"
+ msgstr "Ігнорувати зміни у пробілах"
+ 
+ # Параметр, який вказує, чи потрібно показувати історію у топологічному порядку.
+-#: data/org.gnome.gitg.gschema.xml.in:278
++#: data/org.gnome.gitg.gschema.xml.in:285
+ msgid ""
+ "Setting that indicates whether to ignore whitespace changes when showing the "
+ "diff of a commit."
+@@ -481,31 +491,31 @@ msgstr ""
+ "Параметр, який визначає, чи слід ігнорувати зміни у пробілах при показі "
+ "різниці для внеску."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:285
++#: data/org.gnome.gitg.gschema.xml.in:292
+ msgid "Show Changes Inline"
+ msgstr "Показувати вбудовані зміни"
+ 
+ # Параметр, який вказує, чи потрібно показувати історію у топологічному порядку.
+-#: data/org.gnome.gitg.gschema.xml.in:286
++#: data/org.gnome.gitg.gschema.xml.in:293
+ msgid ""
+ "Setting that indicates whether changes within lines should be shown inline."
+ msgstr ""
+ "Параметр, який визначає, чи буде позначено самі зміни у змінених рядках."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:293
++#: data/org.gnome.gitg.gschema.xml.in:300
+ msgid "Wrap"
+ msgstr "Перенесення"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:294
++#: data/org.gnome.gitg.gschema.xml.in:301
+ msgid "Wrap lines."
+ msgstr "Перенесення рядків."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:300
+-#: data/org.gnome.gitg.gschema.xml.in:318
++#: data/org.gnome.gitg.gschema.xml.in:307
++#: data/org.gnome.gitg.gschema.xml.in:325
+ msgid "Number of Before/After Context Lines"
+ msgstr "Кількість рядків контексту до/після"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:301
++#: data/org.gnome.gitg.gschema.xml.in:308
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff of a commit."
+@@ -513,13 +523,13 @@ msgstr ""
+ "Параметр, який визначає скільки рядків контексту (рядків до і після "
+ "зміненого рядка) має бути показано у різниці внеску."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:308
+-#: data/org.gnome.gitg.gschema.xml.in:327
++#: data/org.gnome.gitg.gschema.xml.in:315
++#: data/org.gnome.gitg.gschema.xml.in:334
+ msgid "Rendered Width of a Tab Character"
+ msgstr "Показана ширина символу табуляції"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:309
+-#: data/org.gnome.gitg.gschema.xml.in:328
++#: data/org.gnome.gitg.gschema.xml.in:316
++#: data/org.gnome.gitg.gschema.xml.in:335
+ msgid ""
+ "Setting that determines how much space a tab character should occupy when "
+ "showing the diff of a commit."
+@@ -527,7 +537,7 @@ msgstr ""
+ "Параметр, який визначає, скількома пробілами буде замінено символ табуляції "
+ "при показі різниці внеску."
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:319
++#: data/org.gnome.gitg.gschema.xml.in:326
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff to be staged/unstaged in the commit area."
+@@ -816,7 +826,7 @@ msgstr ""
+ # Скасувати
+ #: gitg/gitg-action-support.vala:133
+ #: gitg/gitg-commit-action-cherry-pick.vala:163
+-#: gitg/gitg-ref-action-delete.vala:88 gitg/gitg-ref-action-merge.vala:194
++#: gitg/gitg-ref-action-delete.vala:94 gitg/gitg-ref-action-merge.vala:194
+ #: gitg/gitg-ref-action-push.vala:138 gitg/gitg-remove-remote-action.vala:66
+ #: libgitg/gitg-repository-list-box.vala:567
+ msgid "Cancel"
+@@ -863,12 +873,15 @@ msgstr "Не вдалося отримати покажчик: %s"
+ 
+ # Дистанційне керування
+ #: gitg/gitg-add-remote-action.vala:46
+-msgid "Add Remote"
+-msgstr "Додати віддалений об'єкт"
++#| msgid "Add Remote"
++msgid "Add a new remote…"
++msgstr "Додати нове віддалене сховище…"
+ 
+ #: gitg/gitg-add-remote-action.vala:51
+-msgid "Adds remote to the remotes list"
+-msgstr "Додає віддалене сховище до списку віддалених сховищ"
++#| msgid "Adds remote to the remotes list"
++msgid "Configure a new remote to add to the remotes list"
++msgstr ""
++"Налаштувати нове віддалене сховище для додавання до списку віддалених сховищ"
+ 
+ #: gitg/gitg-add-remote-action.vala:59 gitg/gitg-ref-action-fetch.vala:107
+ #, c-format
+@@ -1069,8 +1082,9 @@ msgstr "Підхопити до «%s»"
+ 
+ # Створення філії
+ #: gitg/gitg-commit-action-create-branch.vala:48
+-msgid "Create branch"
+-msgstr "Створити гілку"
++#| msgid "Create branch"
++msgid "Create branch…"
++msgstr "Створити гілку…"
+ 
+ #: gitg/gitg-commit-action-create-branch.vala:53
+ msgid "Create a new branch at the selected commit"
+@@ -1084,8 +1098,9 @@ msgstr "Не вдалося створити гілку"
+ 
+ # Створення філії
+ #: gitg/gitg-commit-action-create-patch.vala:63
+-msgid "Create patch"
+-msgstr "Створити латку"
++#| msgid "Create patch"
++msgid "Create patch…"
++msgstr "Створити латку…"
+ 
+ #: gitg/gitg-commit-action-create-patch.vala:68
+ msgid "Create a patch from the selected commit"
+@@ -1106,8 +1121,9 @@ msgstr "Не вдалося створити латку"
+ 
+ # Створіть тег
+ #: gitg/gitg-commit-action-create-tag.vala:48
+-msgid "Create tag"
+-msgstr "Створити мітку"
++#| msgid "Create tag"
++msgid "Create tag…"
++msgstr "Створити мітку…"
+ 
+ #: gitg/gitg-commit-action-create-tag.vala:53
+ msgid "Create a new tag at the selected commit"
+@@ -1195,12 +1211,13 @@ msgid "Scanning for repositories in %s"
+ msgstr "Сканування сховищ у %s"
+ 
+ #: gitg/gitg-edit-remote-action.vala:51
+-msgid "Edit remote"
+-msgstr "Редагувати віддалене сховище"
++#| msgid "Edit remote"
++msgid "Edit remote…"
++msgstr "Редагувати віддалене сховище…"
+ 
+ #: gitg/gitg-edit-remote-action.vala:56
+-msgid "Edits the remote from the remotes list"
+-msgstr "Редагування запису віддаленого сховища зі списку віддалених сховищ"
++msgid "Reconfigure this remote's name or URL"
++msgstr "Переналаштувати назву або адресу цього віддаленого сховища"
+ 
+ # Не вдалося вилучити притон
+ #: gitg/gitg-edit-remote-action.vala:82
+@@ -1266,74 +1283,90 @@ msgstr "Створити латку з вибраної контрольної 
+ msgid "Create a new tag at the selected reference"
+ msgstr "Створити мітку на вибраній контрольній точці"
+ 
+-#: gitg/gitg-ref-action-delete.vala:48 gitg/gitg-ref-action-delete.vala:89
+-msgid "Delete"
+-msgstr "Вилучити"
++#: gitg/gitg-ref-action-delete.vala:48
++#| msgid "Delete"
++msgid "Delete…"
++msgstr "Вилучити…"
+ 
+ #: gitg/gitg-ref-action-delete.vala:53
+ msgid "Delete the selected reference"
+ msgstr "Вилучити вибране посилання"
+ 
+-# Виберіть філія
+ #: gitg/gitg-ref-action-delete.vala:73
+-#, c-format
+-msgid "Delete branch %s"
+-msgstr "Вилучити гілку %s"
++msgid "Confirm branch deletion"
++msgstr "Підтвердження вилучення гілки"
+ 
+ # Ви впевнені, що хочете вилучити віддаленого філії<%s>?
+ #: gitg/gitg-ref-action-delete.vala:74
+ #, c-format
+-msgid "Are you sure that you want to permanently delete the branch %s?"
+-msgstr "Ви справді хочете остаточно вилучити гілку %s?"
++#| msgid "Are you sure that you want to permanently delete the branch %s?"
++msgid ""
++"Are you sure that you want to permanently delete the branch <b><i>“%s”</i></"
++"b>?"
++msgstr ""
++"Ви справді хочете остаточно вилучити гілку <b><i>«%s»</i></"
++"b>?"
+ 
+-# Створіть тег
+-#: gitg/gitg-ref-action-delete.vala:78
+-#, c-format
+-msgid "Delete tag %s"
+-msgstr "Вилучити мітку %s"
++#: gitg/gitg-ref-action-delete.vala:80
++#| msgctxt "shortcut window"
++#| msgid "Unstage selection"
++msgid "Confirm tag deletion"
++msgstr "Підтвердження вилучення мітки"
+ 
+ # Ви впевнені, що хочете вилучити тег<%s>?
+-#: gitg/gitg-ref-action-delete.vala:79
++#: gitg/gitg-ref-action-delete.vala:81
+ #, c-format
+-msgid "Are you sure that you want to permanently delete the tag %s?"
+-msgstr "Ви справді хочете остаточно вилучити мітку %s?"
++#| msgid "Are you sure that you want to permanently delete the tag %s?"
++msgid ""
++"Are you sure that you want to permanently delete the tag <b><i>“%s”</i></b>?"
++msgstr "Ви справді хочете остаточно вилучити мітку <b><i>«%s»</i></b>?"
+ 
+-# Вилучити віддаленого філії
+-#: gitg/gitg-ref-action-delete.vala:83
+-#, c-format
+-msgid "Delete remote branch %s"
+-msgstr "Вилучити віддалену гілку %s"
++# Створення філії
++#: gitg/gitg-ref-action-delete.vala:87
++#| msgid "_Track remote branch"
++msgid "Confirm remote branch deletion"
++msgstr "Підтвердження вилучення віддаленої гілки"
+ 
+ # Ви впевнені, що хочете вилучити віддаленого філії<%s>?
+-#: gitg/gitg-ref-action-delete.vala:84
++#: gitg/gitg-ref-action-delete.vala:88
+ #, c-format
+-msgid "Are you sure that you want to permanently delete the remote branch %s?"
+-msgstr "Ви справді хочете остаточно вилучити віддалену гілку %s?"
++#| msgid ""
++#| "Are you sure that you want to permanently delete the remote branch %s?"
++msgid ""
++"Are you sure that you want to permanently delete the remote branch "
++"<b><i>“%s”</i></b>?"
++msgstr ""
++"Ви справді хочете остаточно вилучити віддалену гілку "
++"<b><i>«%s»</i></b>?"
++
++#: gitg/gitg-ref-action-delete.vala:95
++msgid "Delete"
++msgstr "Вилучити"
+ 
+ # Не вдалося вилучити притон
+ #. Translators: %s is the name of the tag
+-#: gitg/gitg-ref-action-delete.vala:119
++#: gitg/gitg-ref-action-delete.vala:125
+ #, c-format
+ msgid "Failed to delete tag %s"
+ msgstr "Не вдалося вилучити мітку %s"
+ 
+ # Теги<%s>не може бути успішно вилучений
+ #. Translators: the first %s is the name of the tag, the second is an error message
+-#: gitg/gitg-ref-action-delete.vala:122
++#: gitg/gitg-ref-action-delete.vala:128
+ #, c-format
+ msgid "The tag %s could not be deleted: %s"
+ msgstr "Не вдалося вилучити мітку %s: %s"
+ 
+ # Не вдалося створити філію
+ #. Translators: %s is the name of the branch
+-#: gitg/gitg-ref-action-delete.vala:127
++#: gitg/gitg-ref-action-delete.vala:133
+ #, c-format
+ msgid "Failed to delete branch %s"
+ msgstr "Не вдалося вилучити гілку %s"
+ 
+ # Відділення не може бути успішно створена
+ #. Translators: the first %s is the name of the branch, the second is an error message
+-#: gitg/gitg-ref-action-delete.vala:130
++#: gitg/gitg-ref-action-delete.vala:136
+ #, c-format
+ msgid "The branch %s could not be deleted: %s"
+ msgstr "не вдалося вилучити гілку %s: %s"
+@@ -1437,7 +1470,7 @@ msgid "Merge “%s” into branch “%s”"
+ msgstr "Злити «%s» до гілки «%s»"
+ 
+ #: gitg/gitg-ref-action-merge.vala:482
+-#: gitg/history/gitg-history-refs-list.vala:1199
++#: gitg/history/gitg-history-refs-list.vala:1218
+ msgid "Tags"
+ msgstr "Мітки"
+ 
+@@ -1488,8 +1521,9 @@ msgstr "Надіслати"
+ 
+ # Перейменувати філія
+ #: gitg/gitg-ref-action-rename.vala:48
+-msgid "Rename"
+-msgstr "Перейменувати"
++#| msgid "Rename"
++msgid "Rename…"
++msgstr "Перейменувати…"
+ 
+ #: gitg/gitg-ref-action-rename.vala:53
+ msgid "Rename the selected reference"
+@@ -1527,17 +1561,17 @@ msgstr "Вилучити віддалене сховище"
+ msgid "Removes remote from the remotes list"
+ msgstr "Вилучення запису віддаленого сховища зі списку віддалених сховищ"
+ 
+-# Вилучити віддаленого філії
+ #: gitg/gitg-remove-remote-action.vala:62
+-#, c-format
+-msgid "Delete remote %s"
+-msgstr "Вилучити віддалене сховище %s"
++msgid "Confirm remote deletion"
++msgstr "Підтвердження вилучення віддаленого сховища"
+ 
+ # Ви впевнені, що хочете вилучити віддаленого філії<%s>?
+ #: gitg/gitg-remove-remote-action.vala:63
+ #, c-format
+-msgid "Are you sure that you want to remove the remote %s?"
+-msgstr "Ви справді хочете вилучити запис віддаленого сховища %s?"
++#| msgid "Are you sure that you want to remove the remote %s?"
++msgid "Are you sure that you want to remove the remote <b><i>“%s”</i></b>?"
++msgstr ""
++"Ви справді хочете вилучити запис віддаленого сховища <b><i>«%s»</i></b>?"
+ 
+ # Дистанційне керування
+ #: gitg/gitg-remove-remote-action.vala:67
+@@ -1662,18 +1696,18 @@ msgid "All commits"
+ msgstr "Всі внески"
+ 
+ # Відділення:
+-#: gitg/history/gitg-history-refs-list.vala:1197
++#: gitg/history/gitg-history-refs-list.vala:1216
+ msgid "Branches"
+ msgstr "Гілки"
+ 
+ # Дистанційне керування
+-#: gitg/history/gitg-history-refs-list.vala:1198
++#: gitg/history/gitg-history-refs-list.vala:1217
+ msgid "Remotes"
+ msgstr "Віддалені"
+ 
+ # Історія
+ #: gitg/history/gitg-history.vala:348
+-#: gitg/preferences/gitg-preferences-history.vala:218
++#: gitg/preferences/gitg-preferences-history.vala:226
+ #: gitg/resources/ui/gitg-preferences-interface.ui:60
+ msgid "History"
+ msgstr "Журнал"
+@@ -1861,7 +1895,6 @@ msgstr "Автор"
+ # Здійснювати
+ #: gitg/resources/ui/gitg-commit-submodule-history-view.ui:58
+ #: gitg/resources/ui/gitg-history-paned.ui:127
+-#| msgid "Commit"
+ msgid "Committer"
+ msgstr "Зафіксовувач"
+ 
+@@ -2038,32 +2071,32 @@ msgid "Show upstream (remote) branch when selecting a local branch"
+ msgstr "Показувати основну (віддалену) гілку при виборі локальної гілки"
+ 
+ # Здійснювати
+-#: gitg/resources/ui/gitg-preferences-history.ui:154
++#: gitg/resources/ui/gitg-preferences-history.ui:170
+ msgid "Commits"
+ msgstr "Внески"
+ 
+ # Згорнути неактивних смуги
+-#: gitg/resources/ui/gitg-preferences-history.ui:174
++#: gitg/resources/ui/gitg-preferences-history.ui:190
+ msgid "Collapse inactive lanes"
+ msgstr "Згортати неактивні смуги"
+ 
+ # Рання
+-#: gitg/resources/ui/gitg-preferences-history.ui:215
++#: gitg/resources/ui/gitg-preferences-history.ui:231
+ msgid "Early"
+ msgstr "Раніше"
+ 
+ # Пізно
+-#: gitg/resources/ui/gitg-preferences-history.ui:227
++#: gitg/resources/ui/gitg-preferences-history.ui:243
+ msgid "Late"
+ msgstr "Пізніше"
+ 
+ # Показати історію у топологічному порядку
+-#: gitg/resources/ui/gitg-preferences-history.ui:242
++#: gitg/resources/ui/gitg-preferences-history.ui:258
+ msgid "Show history in topological order"
+ msgstr "Показувати історію в топологічному порядку"
+ 
+ # Помилка перевірки раніше перевірили філія
+-#: gitg/resources/ui/gitg-preferences-history.ui:257
++#: gitg/resources/ui/gitg-preferences-history.ui:273
+ msgid "Preserve mainline for currently checked out branch"
+ msgstr "Зберегти основу для поточної отриманої гілки"
+ 
+@@ -2603,6 +2636,29 @@ msgstr "Файли"
+ msgid "Show the files in the tree of the selected commit"
+ msgstr "Показати файли у ієрархії вибраного внеску"
+ 
++#~ msgid "Edits the remote from the remotes list"
++#~ msgstr "Редагування запису віддаленого сховища зі списку віддалених сховищ"
++
++# Виберіть філія
++#, c-format
++#~ msgid "Delete branch %s"
++#~ msgstr "Вилучити гілку %s"
++
++# Створіть тег
++#, c-format
++#~ msgid "Delete tag %s"
++#~ msgstr "Вилучити мітку %s"
++
++# Вилучити віддаленого філії
++#, c-format
++#~ msgid "Delete remote branch %s"
++#~ msgstr "Вилучити віддалену гілку %s"
++
++# Вилучити віддаленого філії
++#, c-format
++#~ msgid "Delete remote %s"
++#~ msgstr "Вилучити віддалене сховище %s"
++
+ #~ msgctxt "shortcut window"
+ #~ msgid "Open the help"
+ #~ msgstr "Відкрити довідку"
+diff --git a/po/zh_CN.po b/po/zh_CN.po
+index 5fbca6e..10bafef 100644
+--- a/po/zh_CN.po
++++ b/po/zh_CN.po
+@@ -6,23 +6,23 @@
+ # Boyuan Yang <073plan@gmail.com>, 2016.
+ # Mingcong Bai <jeffbai@aosc.xyz>, 2017.
+ # Dingzhong Chen <wsxy162@gmail.com>, 2019.
+-# lumingzh <lumingzh@qq.com>, 2022.
+ # Nanling <neithern@outlook.com>, 2023.
++# lumingzh <lumingzh@qq.com>, 2022-2023.
+ #
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: gitg master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2023-03-20 22:27+0000\n"
+-"PO-Revision-Date: 2023-03-27 12:24-0400\n"
+-"Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
++"POT-Creation-Date: 2023-08-03 11:54+0000\n"
++"PO-Revision-Date: 2023-08-10 21:01-0400\n"
++"Last-Translator: lumingzh <lumingzh@qq.com>\n"
+ "Language-Team: Chinese - China <i18n-zh@googlegroups.com>\n"
+ "Language: zh_CN\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=1; plural=0;\n"
+-"X-Generator: Poedit 3.2.2\n"
++"X-Generator: Poedit 2.4.3\n"
+ "X-DamnedLies-Scope: partial\n"
+ 
+ #: contrib/xml/xml-reader.c:327
+@@ -86,7 +86,7 @@ msgstr "提交暂存的变更"
+ msgid "Overview of recently used repositories"
+ msgstr "当前所用仓库的概览"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:157
++#: data/org.gnome.gitg.appdata.xml.in.in:216
+ msgid "The Gitg Team"
+ msgstr "Gitg 团队"
+ 
+@@ -384,7 +384,15 @@ msgstr "存储最久的提交信息历史条目对应的天数。"
+ #: data/org.gnome.gitg.gschema.xml.in:247
+ #: data/org.gnome.gitg.gschema.xml.in:248
+ msgid "Type of datetime format selected."
+-msgstr "选择的日期时间格式。"
++msgstr "选择的日期格式类型。"
++
++#: data/org.gnome.gitg.gschema.xml.in:254
++msgid "Preferred datetime format of the user."
++msgstr "用户首选的日期格式。"
++
++#: data/org.gnome.gitg.gschema.xml.in:255
++msgid "The datetime format to be used in commit-diff."
++msgstr "提交差异中使用的日期格式。"
+ 
+ #: data/org.gnome.gitg.gschema.xml.in:261
+ #: data/org.gnome.gitg.gschema.xml.in:262
+@@ -811,7 +819,8 @@ msgstr ""
+ "Mandy Wang <wangmychn@gmail.com>\n"
+ "Dingzhong Chen <wsxy162@gmail.com>\n"
+ "Weiyi Xu <xuweiyi0923@gmail.com>\n"
+-"Nanling <neithern@outlook.com>"
++"Nanling <neithern@outlook.com>\n"
++"lumingzh <lumingzh@qq.com>"
+ 
+ #: gitg/gitg-application.vala:241
+ msgid "gitg homepage"
+@@ -2185,7 +2194,7 @@ msgstr "克隆中…"
+ msgid ""
+ "Deleting repository source files “%s” will delete them from disk and cannot "
+ "be undone. Are you sure?"
+-msgstr "删除版本库源文件“%s”将从磁盘中删除，并且不能撤销。您确定吗？"
++msgstr "删除版本库源文件“%s”将从磁盘中删除，并且不能撤消。您确定吗？"
+ 
+ #: libgitg/gitg-repository-list-box.vala:568
+ msgid "Move to trash"
+diff --git a/po/zh_TW.po b/po/zh_TW.po
+index 7aa7f09..cfccd08 100644
+--- a/po/zh_TW.po
++++ b/po/zh_TW.po
+@@ -8,24 +8,24 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gitg master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gitg/issues\n"
+-"POT-Creation-Date: 2019-11-27 14:27+0000\n"
+-"PO-Revision-Date: 2020-01-21 22:39+0800\n"
+-"Last-Translator: Yi-Jyun Pan <pan93412@gmail.com>\n"
++"POT-Creation-Date: 2023-03-07 21:41+0000\n"
++"PO-Revision-Date: 2023-10-05 13:02+0800\n"
++"Last-Translator: Cheng-Chia Tseng <zerngjia@gmail.com>\n"
+ "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
+ "Language: zh_TW\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=1; plural=0;\n"
+-"X-Generator: Poedit 2.2.4\n"
++"X-Generator: Poedit 3.3.2\n"
+ 
+ #: contrib/xml/xml-reader.c:327
+ #, c-format
+ msgid "Could not parse XML from stream"
+ msgstr "無法分析來自串流的 XML"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:5 data/org.gnome.gitg.desktop.in.in:3
+-#: gitg/gitg.vala:39 gitg/resources/ui/gitg-window.ui:8
++#: data/org.gnome.gitg.appdata.xml.in.in:5 gitg/gitg.vala:39
++#: gitg/resources/ui/gitg-window.ui:8
+ msgid "gitg"
+ msgstr "gitg"
+ 
+@@ -48,75 +48,83 @@ msgstr "目標："
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:19
+ msgid "Browse local git repositories"
+-msgstr "瀏覽本機 git 版本庫"
++msgstr "瀏覽本機 git 儲存庫"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:20
+ msgid "Clone local and remote git repositories"
+-msgstr "複製本機及遠端 git 版本庫"
++msgstr "複製本機及遠端 git 儲存庫"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:21
+ msgid "Commit files"
+-msgstr "提交檔案"
++msgstr "送交檔案"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:22
+ msgid "Retrieve patch from a commit"
+-msgstr "自提交抓取修補檔 (patch)"
++msgstr "自送交抓取修補檔 (patch)"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:32
+ msgid "Browse repository history"
+-msgstr "瀏覽版本庫歷史記錄"
++msgstr "瀏覽儲存庫歷史記錄"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:36
+ msgid "Staging area to compose your commit"
+-msgstr "要產生提交的暫存區域"
++msgstr "要產生送交的暫存區域"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:40
+ msgid "Commit staged changes"
+-msgstr "提交暫存變更"
++msgstr "送交暫存變更"
+ 
+ #: data/org.gnome.gitg.appdata.xml.in.in:44
+ msgid "Overview of recently used repositories"
+-msgstr "顯示最近使用版本庫的概覽"
++msgstr "顯示最近使用儲存庫的概覽"
+ 
+-#: data/org.gnome.gitg.appdata.xml.in.in:105
+-msgid "The GNOME Project"
+-msgstr "GNOME 專案"
++#: data/org.gnome.gitg.appdata.xml.in.in:157
++msgid "The Gitg Team"
++msgstr "Gitg 團隊"
++
++#: data/org.gnome.gitg.desktop.in.in:3
++msgid "@binary@"
++msgstr "@binary@"
+ 
+ #: data/org.gnome.gitg.desktop.in.in:4
+ msgid "Git repository browser"
+-msgstr "Git 版本庫瀏覽器"
++msgstr "Git 儲存庫瀏覽器"
++
++#: data/org.gnome.gitg.desktop.in.in:17
++msgid "New Window"
++msgstr "新開視窗"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:27
++#: data/org.gnome.gitg.gschema.xml.in:28
+ msgid "Default Clone Directory"
+ msgstr "預設重製目錄"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:28
++#: data/org.gnome.gitg.gschema.xml.in:29
+ msgid ""
+ "The default directory in which new repositories should be suggested to be "
+ "cloned."
+-msgstr "新版本庫重製時應放置的預設目錄。"
++msgstr "新儲存庫重製時應放置的預設目錄。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:37
++#: data/org.gnome.gitg.gschema.xml.in:38
+ msgid "Orientation of the main interface (vertical or horizontal)"
+ msgstr "主介面的方向 (垂直或水平)"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:38
++#: data/org.gnome.gitg.gschema.xml.in:39
+ msgid "Setting that sets the orientation of the main interface."
+ msgstr "調整主介面方向的設定。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:44
++#: data/org.gnome.gitg.gschema.xml.in:45
+ msgid "Default Activity"
+ msgstr "預設活動"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:45
++#: data/org.gnome.gitg.gschema.xml.in:46
+ msgid "The activity which gitg activates by default when first launched."
+ msgstr "當第一次執行時 gitg 預設使用的活動。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:51
++#: data/org.gnome.gitg.gschema.xml.in:52
+ msgid "Use Default Font"
+ msgstr "使用預設字型"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:52
++#: data/org.gnome.gitg.gschema.xml.in:53
+ msgid ""
+ "Whether to use the system’s default fixed width font for widget's text "
+ "instead of a font specific. If this option is turned off, then the font "
+@@ -126,59 +134,59 @@ msgstr ""
+ "輯器字型」選項中的字型名稱，而非系統字型。"
+ 
+ #. Translators: This is a GSettings default value. Do NOT change or localize the quotation marks!
+-#: data/org.gnome.gitg.gschema.xml.in:56
++#: data/org.gnome.gitg.gschema.xml.in:57
+ msgid "'Monospace 12'"
+ msgstr "'Monospace 12'"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:57
++#: data/org.gnome.gitg.gschema.xml.in:58
+ msgid "Editor Font"
+ msgstr "編輯器字型"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:58
++#: data/org.gnome.gitg.gschema.xml.in:59
+ msgid ""
+ "A custom font that will be used for the text widgets. This will only take "
+ "effect if the “Use Default Font” option is turned off."
+ msgstr "會用於文字元件的自訂字型。這只會在「使用預設字型」選項關閉時有效。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:62
++#: data/org.gnome.gitg.gschema.xml.in:63
+ msgid "Use Gravatar"
+ msgstr "使用 Gravatar"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:63
++#: data/org.gnome.gitg.gschema.xml.in:64
+ msgid "Enable the use of gravatar to display user avatars."
+ msgstr "啟用 gravatar 來顯示使用者大頭貼。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:69
++#: data/org.gnome.gitg.gschema.xml.in:70
+ msgid "Enable Monitoring"
+ msgstr "啟用監控"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:70
++#: data/org.gnome.gitg.gschema.xml.in:71
+ #: gitg/resources/ui/gitg-preferences-interface.ui:188
+ msgid "Automatically update when external changes to .git are detected"
+ msgstr "當檢測到.git 外部變更時自動更新"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:76
++#: data/org.gnome.gitg.gschema.xml.in:77
+ msgid "Enable Diff Highlighting"
+ msgstr "啟用 Diff 色彩標示"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:77
++#: data/org.gnome.gitg.gschema.xml.in:78
+ msgid ""
+ "Setting that determines whether to enable syntax highlighting in diff views."
+ msgstr "決定在 diff 檢視中啟用語法色彩標示的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:84
++#: data/org.gnome.gitg.gschema.xml.in:85
+ msgid "Color scheme to use for syntax highlighting"
+ msgstr "用於語法標示的色彩機制"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:85
++#: data/org.gnome.gitg.gschema.xml.in:86
+ msgid "Used by GtkSourceView to determine colors for syntax highlighting"
+ msgstr "會被 GtkSourceView 用來決定語法標示顏色"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:91
++#: data/org.gnome.gitg.gschema.xml.in:92
+ msgid "When to Collapse Inactive Lanes"
+ msgstr "收疊未使用窗格的時間"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:92
++#: data/org.gnome.gitg.gschema.xml.in:93
+ msgid ""
+ "Setting that indicates when an inactive lane should be collapsed. Valid "
+ "values are 0 — 4, where 0 indicates “early” and 4 indicates “late”."
+@@ -186,7 +194,7 @@ msgstr ""
+ "指示何時該收疊未使用窗格的設定值。有效的值有 0 — 4，0 代表「快」，而 4 代表"
+ "「慢」。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:99
++#: data/org.gnome.gitg.gschema.xml.in:100
+ msgid ""
+ "Setting that indicates whether to collapse history lanes which do not show "
+ "activity. Enabling this can provide a cleaner history view when there is a "
+@@ -197,247 +205,275 @@ msgstr ""
+ "境下提供較清靜的歷史檢視。請查看 collapse-inactive-lanes 以控制何時應該收疊窗"
+ "格。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:108
++#: data/org.gnome.gitg.gschema.xml.in:109
+ msgid "Show History in Topological Order"
+ msgstr "以拓樸順序顯示歷史"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:109
++#: data/org.gnome.gitg.gschema.xml.in:110
+ msgid ""
+ "Setting that indicates whether to show the history in topological order."
+ msgstr "指示是否要以拓樸順序顯示歷史的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:115
++#: data/org.gnome.gitg.gschema.xml.in:116
+ msgid "Show Stashed Changes"
+ msgstr "顯示已 stash 的變更"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:116
++#: data/org.gnome.gitg.gschema.xml.in:117
+ msgid ""
+ "Setting that indicates whether to show items for the stash in the history."
+ msgstr "指示是否要在歷史中為 stash 顯示條目。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:123
++#: data/org.gnome.gitg.gschema.xml.in:124
+ msgid "Show Staged Changes"
+ msgstr "顯示已暫存的變更"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:124
++#: data/org.gnome.gitg.gschema.xml.in:125
+ msgid ""
+ "Setting that indicates whether to show a virtual item for the currently "
+ "staged changes in the history."
+ msgstr "指示是否要在歷史中為目前暫存的變動顯示虛擬條目的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:131
++#: data/org.gnome.gitg.gschema.xml.in:132
+ msgid "Show Unstaged Changes"
+ msgstr "顯示已取消暫存的變更"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:132
++#: data/org.gnome.gitg.gschema.xml.in:133
+ msgid ""
+ "Setting that indicates whether to show a virtual item for the currently "
+ "unstaged changes in the history."
+ msgstr "指示是否要在歷史中為目前取消暫存的變動顯示虛擬條目的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:139
++#: data/org.gnome.gitg.gschema.xml.in:140
+ msgid "Mainline Head"
+ msgstr "主線 Head"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:140
++#: data/org.gnome.gitg.gschema.xml.in:141
+ msgid ""
+ "Setting that indicates whether to always preserve a mainline in the history "
+ "for the current HEAD."
+ msgstr "指示是否要在歷史中為目前的 HEAD 保留主線的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:147
++#: data/org.gnome.gitg.gschema.xml.in:148
+ msgid "Default selection of the history activity"
+ msgstr "歷史活動的預設選項"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:148
++#: data/org.gnome.gitg.gschema.xml.in:149
+ msgid ""
+ "Setting that determines the default selection on startup of the history "
+ "activity."
+ msgstr "設定歷史活動啟動時的預設選擇區域。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:154
++#: data/org.gnome.gitg.gschema.xml.in:155
+ msgid "Reference Sort Order"
+ msgstr "參照排列次序"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:155
++#: data/org.gnome.gitg.gschema.xml.in:156
+ msgid "The order by which references in the history sidebar should be sorted."
+ msgstr "歷史側邊欄中的應依哪參照排序。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:161
++#: data/org.gnome.gitg.gschema.xml.in:162
+ msgid "Show Upstream With Branch"
+ msgstr "在分支顯示上游"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:162
++#: data/org.gnome.gitg.gschema.xml.in:163
+ msgid ""
+ "Determines whether to also show the upstream (remote) tracking branch when "
+ "selecting a local branch in the history view."
+ msgstr "決定在歷史檢視中選擇本地端分支時是否同時顯示上游 (遠端) 追蹤分支。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:178
++#: data/org.gnome.gitg.gschema.xml.in:172
++msgid "Switch to the new branch on creation"
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:173
++msgid ""
++"Setting that controls whether the newly created branch is checked out "
++"automatically."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:188
+ msgid "Show Right Margin in Commit Message View"
+-msgstr "在提交訊息檢視顯示右邊界"
++msgstr "在送交訊息檢視顯示右邊界"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:179
++#: data/org.gnome.gitg.gschema.xml.in:189
+ msgid ""
+ "Show a right margin indicator in the commit message view. This can be used "
+ "to easily see where to break the commit message at a particular column."
+ msgstr ""
+-"在提交訊息檢視中顯示右邊界。這可以用來輕鬆的看出在特定欄中的何處中斷提交訊"
++"在送交訊息檢視中顯示右邊界。這可以用來輕鬆的看出在特定欄中的何處中斷送交訊"
+ "息。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:187
++#: data/org.gnome.gitg.gschema.xml.in:197
+ msgid "Column at Which Right Margin is Shown"
+ msgstr "顯示右邊邊界於哪一欄"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:188
++#: data/org.gnome.gitg.gschema.xml.in:198
+ msgid ""
+ "The column at which the right margin is shown if the show-right-margin "
+ "preference is set to TRUE."
+ msgstr "如果 show-right-margin 偏好設定設為「TRUE」時右邊界要顯示在哪一欄。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:195
++#: data/org.gnome.gitg.gschema.xml.in:205
+ msgid "Show Subject Margin in Commit Message View"
+-msgstr "在提交訊息檢視顯示主旨邊界"
++msgstr "在送交訊息檢視顯示主旨邊界"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:196
++#: data/org.gnome.gitg.gschema.xml.in:206
+ msgid ""
+ "Highlight the subject text of the commit message when it passes the margin "
+ "specified by subject-margin-position."
+ msgstr ""
+-"當被送至 subject-margin-position 指定的邊界時強調顯示提交訊息的主旨文字。"
++"當被送至 subject-margin-position 指定的邊界時強調顯示送交訊息的主旨文字。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:203
++#: data/org.gnome.gitg.gschema.xml.in:213
+ msgid "Column at Which Subject Margin is Shown"
+ msgstr "顯示主旨邊界於哪一欄"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:204
++#: data/org.gnome.gitg.gschema.xml.in:214
+ msgid ""
+ "The column at which the subject margin is shown if the show-subject-margin "
+ "preference is set to TRUE."
+ msgstr "如果 show-subject-margin 偏好設定設為「TRUE」時顯示主旨邊界於哪一欄。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:211
++#: data/org.gnome.gitg.gschema.xml.in:221
+ msgid "Enable Spell Checking"
+ msgstr "啟用拼字檢查"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:212
++#: data/org.gnome.gitg.gschema.xml.in:222
+ msgid ""
+ "Setting which determines whether or not spell checking is enabled when "
+ "writing a commit message."
+-msgstr "設定編寫提交訊息時是否啟用拼字檢查。"
++msgstr "設定編寫送交訊息時是否啟用拼字檢查。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:219
++#: data/org.gnome.gitg.gschema.xml.in:229
+ msgid "Spell Checking Language"
+ msgstr "拼字檢查語言"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:220
++#: data/org.gnome.gitg.gschema.xml.in:230
+ msgid ""
+ "The language to use when spell checking is enabled for writing a commit "
+ "message."
+-msgstr "當編寫提交訊息時啟用拼字檢查要使用哪種語言。"
++msgstr "當編寫送交訊息時啟用拼字檢查要使用哪種語言。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:227
++#: data/org.gnome.gitg.gschema.xml.in:237
+ msgid "Maximum number of previous commit messages"
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:228
++#: data/org.gnome.gitg.gschema.xml.in:238
+ msgid ""
+ "Maximum number of previous commit messages to store for commit message "
+ "history."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:232
++#: data/org.gnome.gitg.gschema.xml.in:242
+ msgid "Maximum number of days to store previous commit messages"
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:233
++#: data/org.gnome.gitg.gschema.xml.in:243
+ msgid ""
+ "Maximum number of days to store previous commit messages for commit message "
+ "history."
+ msgstr ""
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:239
++#: data/org.gnome.gitg.gschema.xml.in:247
++#: data/org.gnome.gitg.gschema.xml.in:248
++msgid "Type of datetime format selected."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:254
++msgid "Preferred datetime format of the user."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:255
++msgid "The datetime format to be used in commit-diff."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:261
++#: data/org.gnome.gitg.gschema.xml.in:262
++msgid "Custom datetime format."
++msgstr ""
++
++#: data/org.gnome.gitg.gschema.xml.in:270
+ msgid "Use patience algorithm to show diffs"
+ msgstr "使用耐心算法 (patience algorithm) 顯示差異"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:240
++#: data/org.gnome.gitg.gschema.xml.in:271
+ msgid "Setting to use patience algorithm to show diffs of a commit."
+-msgstr "設定此選項以使用耐心算法 (patience algorithm) 來顯示提交差異。"
++msgstr "設定此選項以使用耐心算法 (patience algorithm) 來顯示送交差異。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:246
++#: data/org.gnome.gitg.gschema.xml.in:277
+ msgid "Ignore Whitespace Changes"
+ msgstr "忽略空白字元的變更"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:247
++#: data/org.gnome.gitg.gschema.xml.in:278
+ msgid ""
+ "Setting that indicates whether to ignore whitespace changes when showing the "
+ "diff of a commit."
+-msgstr "指示在顯示提交的 diff 時，是否要忽略空白字元變更的設定值。"
++msgstr "指示在顯示送交的 diff 時，是否要忽略空白字元變更的設定值。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:254
++#: data/org.gnome.gitg.gschema.xml.in:285
+ msgid "Show Changes Inline"
+ msgstr "顯示行內變更"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:255
++#: data/org.gnome.gitg.gschema.xml.in:286
+ msgid ""
+ "Setting that indicates whether changes within lines should be shown inline."
+ msgstr "設定在行內的變更是否以行內顯示。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:262
++#: data/org.gnome.gitg.gschema.xml.in:293
+ msgid "Wrap"
+ msgstr "換列"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:263
++#: data/org.gnome.gitg.gschema.xml.in:294
+ msgid "Wrap lines."
+ msgstr "換列。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:269
+-#: data/org.gnome.gitg.gschema.xml.in:287
++#: data/org.gnome.gitg.gschema.xml.in:300
++#: data/org.gnome.gitg.gschema.xml.in:318
+ msgid "Number of Before/After Context Lines"
+ msgstr "之前/之後前後文列數"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:270
++#: data/org.gnome.gitg.gschema.xml.in:301
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff of a commit."
+-msgstr "設定顯示提交的 diff 時要顯示多少列前後文 (之前與之後)。"
++msgstr "設定顯示送交的 diff 時要顯示多少列前後文 (之前與之後)。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:277
+-#: data/org.gnome.gitg.gschema.xml.in:296
++#: data/org.gnome.gitg.gschema.xml.in:308
++#: data/org.gnome.gitg.gschema.xml.in:327
+ msgid "Rendered Width of a Tab Character"
+ msgstr "Tab 字元轉換寬度"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:278
+-#: data/org.gnome.gitg.gschema.xml.in:297
++#: data/org.gnome.gitg.gschema.xml.in:309
++#: data/org.gnome.gitg.gschema.xml.in:328
+ msgid ""
+ "Setting that determines how much space a tab character should occupy when "
+ "showing the diff of a commit."
+-msgstr "設定顯示提交的 diff 時 tab 字元要占多少空間。"
++msgstr "設定顯示送交的 diff 時 tab 字元要占多少空間。"
+ 
+-#: data/org.gnome.gitg.gschema.xml.in:288
++#: data/org.gnome.gitg.gschema.xml.in:319
+ msgid ""
+ "Setting that determines how many lines of context (before and after) should "
+ "be shown when showing the diff to be staged/unstaged in the commit area."
+ msgstr ""
+-"設定提交區域中要顯示 diff 以暫存或 unstage 時，應該要顯示多少列前後文的設定"
++"設定送交區域中要顯示 diff 以暫存或 unstage 時，應該要顯示多少列前後文的設定"
+ "值。"
+ 
+-#: gitg/commit/gitg-commit-dialog.vala:555 gitg/commit/gitg-commit.vala:1091
++#: gitg/commit/gitg-commit-dialog.vala:567 gitg/commit/gitg-commit.vala:1096
+ msgid "There are no changes to be committed"
+-msgstr "沒有要提交的改變"
++msgstr "沒有要送交的改變"
+ 
+-#: gitg/commit/gitg-commit-dialog.vala:556 gitg/commit/gitg-commit.vala:1092
++#: gitg/commit/gitg-commit-dialog.vala:568 gitg/commit/gitg-commit.vala:1097
+ msgid "Use amend to change the commit message of the previous commit"
+-msgstr "使用修訂以變更前次提交的提交訊息"
++msgstr "使用修訂以變更前次送交的送交訊息"
+ 
+ #: gitg/commit/gitg-commit.vala:113
+ msgctxt "Activity"
+ msgid "Commit"
+-msgstr "提交"
++msgstr "送交"
+ 
+ #: gitg/commit/gitg-commit.vala:118
+ msgid "Create new commits and manage the staging area"
+-msgstr "建立新的提交並管理暫存區域"
++msgstr "建立新的送交並管理暫存區域"
+ 
+ #: gitg/commit/gitg-commit.vala:207
+ msgid "_Stage selection"
+@@ -451,14 +487,14 @@ msgstr "無法暫存子模組「%s」的移除"
+ #: gitg/commit/gitg-commit.vala:262
+ #, c-format
+ msgid "Failed to open the repository of submodule “%s” while trying to stage"
+-msgstr "試圖暫存時無法開啟子模組「%s」的版本庫"
++msgstr "試圖暫存時無法開啟子模組「%s」的儲存庫"
+ 
+ #: gitg/commit/gitg-commit.vala:277
+ #, c-format
+ msgid ""
+ "Failed to lookup the working directory commit of submodule “%s” while trying "
+ "to stage"
+-msgstr "試圖暫存時無法查詢子模組「%s」的工作目錄提交"
++msgstr "試圖暫存時無法查詢子模組「%s」的工作目錄送交"
+ 
+ #: gitg/commit/gitg-commit.vala:290
+ #, c-format
+@@ -475,165 +511,171 @@ msgstr "無法暫存檔案「%s」的移除"
+ msgid "Failed to stage the file “%s”"
+ msgstr "無法暫存檔案「%s」"
+ 
+-#: gitg/commit/gitg-commit.vala:598
++#: gitg/commit/gitg-commit.vala:599
+ msgid "_Unstage selection"
+ msgstr "取消暫存選擇(_U)"
+ 
+-#: gitg/commit/gitg-commit.vala:664
++#: gitg/commit/gitg-commit.vala:665
+ #, c-format
+ msgid "Failed to unstage the removal of file “%s”"
+ msgstr "無法取消暫存檔案「%s」的移除"
+ 
+-#: gitg/commit/gitg-commit.vala:665
++#: gitg/commit/gitg-commit.vala:666
+ #, c-format
+ msgid "Failed to unstage the file “%s”"
+ msgstr "無法取消暫存檔案「%s」"
+ 
+-#: gitg/commit/gitg-commit.vala:672
++#: gitg/commit/gitg-commit.vala:673
+ #, c-format
+ msgid "Failed to unstage the removal of submodule “%s”"
+ msgstr "無法取消暫存子模組「%s」的移除"
+ 
+-#: gitg/commit/gitg-commit.vala:673
++#: gitg/commit/gitg-commit.vala:674
+ #, c-format
+ msgid "Failed to unstage the submodule “%s”"
+ msgstr "無法取消暫存子模組「%s」"
+ 
+ #. Populate staged items
+-#: gitg/commit/gitg-commit.vala:877
++#: gitg/commit/gitg-commit.vala:882
+ msgid "Staged"
+ msgstr "已 stage"
+ 
+-#: gitg/commit/gitg-commit.vala:885
++#: gitg/commit/gitg-commit.vala:890
+ msgid "No staged files"
+ msgstr "未暫存的檔案"
+ 
+ #. Populate unstaged items
+-#: gitg/commit/gitg-commit.vala:908
++#: gitg/commit/gitg-commit.vala:913
+ msgid "Unstaged"
+ msgstr "未 stage"
+ 
+-#: gitg/commit/gitg-commit.vala:916
++#: gitg/commit/gitg-commit.vala:921
+ msgid "No unstaged files"
+ msgstr "未暫存檔案"
+ 
+ #. Populate untracked items
+-#: gitg/commit/gitg-commit.vala:939
++#: gitg/commit/gitg-commit.vala:944
+ msgid "Untracked"
+ msgstr "未追蹤"
+ 
+-#: gitg/commit/gitg-commit.vala:943
++#: gitg/commit/gitg-commit.vala:948
+ msgid "No untracked files"
+ msgstr "無未追蹤的檔案"
+ 
+-#: gitg/commit/gitg-commit.vala:968
++#: gitg/commit/gitg-commit.vala:973
+ msgid "Submodule"
+ msgstr "子模組"
+ 
+-#: gitg/commit/gitg-commit.vala:972
++#: gitg/commit/gitg-commit.vala:977
+ msgid "No dirty submodules"
+ msgstr "不允許粗糙子模組"
+ 
+-#: gitg/commit/gitg-commit.vala:1121
++#: gitg/commit/gitg-commit.vala:1131
+ msgid "Failed to commit"
+-msgstr "提交失敗"
++msgstr "送交失敗"
+ 
+-#: gitg/commit/gitg-commit.vala:1137
++#: gitg/commit/gitg-commit.vala:1147
+ msgid "Failed to pass pre-commit"
+-msgstr "送出預先提交失敗"
++msgstr "送出預先送交失敗"
+ 
+-#: gitg/commit/gitg-commit.vala:1302 gitg/commit/gitg-commit.vala:1452
++#: gitg/commit/gitg-commit.vala:1315 gitg/commit/gitg-commit.vala:1465
+ msgid "Discard changes"
+ msgstr "放棄變更"
+ 
+-#: gitg/commit/gitg-commit.vala:1303
++#: gitg/commit/gitg-commit.vala:1316
+ msgid "Are you sure you want to permanently discard the selected changes?"
+ msgstr "確定要永久放棄選取的變更嗎？"
+ 
+-#: gitg/commit/gitg-commit.vala:1312 gitg/commit/gitg-commit.vala:1478
+-#: gitg/commit/gitg-commit.vala:1593
+-#: gitg/gitg-commit-action-create-patch.vala:154 gitg/gitg-dash-view.vala:453
+-#: gitg/gitg-window.vala:204 gitg/resources/ui/gitg-author-details-dialog.ui:20
++#: gitg/commit/gitg-commit.vala:1325 gitg/commit/gitg-commit.vala:1491
++#: gitg/commit/gitg-commit.vala:1606
++#: gitg/gitg-commit-action-create-patch.vala:154 gitg/gitg-dash-view.vala:469
++#: gitg/gitg-window.vala:205 gitg/gitg-window.vala:705
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:18
++#: gitg/resources/ui/gitg-author-details-dialog.ui:20
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:18
+ #: gitg/resources/ui/gitg-clone-dialog.ui:18
+ #: gitg/resources/ui/gitg-commit-dialog.ui:20
+ #: gitg/resources/ui/gitg-create-branch-dialog.ui:18
+ #: gitg/resources/ui/gitg-create-tag-dialog.ui:20
+-#: gitg/resources/ui/gitg-window.ui:152
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:18
++#: gitg/resources/ui/gitg-remote-notification.ui:30
++#: gitg/resources/ui/gitg-simple-notification.ui:61
++#: gitg/resources/ui/gitg-window.ui:154
+ #: libgitg/resources/ui/gitg-authentication-dialog.ui:11
+ msgid "_Cancel"
+ msgstr "取消(_C)"
+ 
+-#: gitg/commit/gitg-commit.vala:1313 gitg/commit/gitg-commit.vala:1479
++#: gitg/commit/gitg-commit.vala:1326 gitg/commit/gitg-commit.vala:1492
+ msgid "Discard"
+ msgstr "放棄"
+ 
+-#: gitg/commit/gitg-commit.vala:1342
++#: gitg/commit/gitg-commit.vala:1355
+ msgid "Failed to discard selection"
+ msgstr "無法放棄選取項目"
+ 
+-#: gitg/commit/gitg-commit.vala:1372
++#: gitg/commit/gitg-commit.vala:1385
+ msgid "Failed to stage selection"
+ msgstr "無法暫存選擇"
+ 
+-#: gitg/commit/gitg-commit.vala:1376
++#: gitg/commit/gitg-commit.vala:1389
+ msgid "Failed to unstage selection"
+ msgstr "無法取消暫存選擇"
+ 
+-#: gitg/commit/gitg-commit.vala:1436
++#: gitg/commit/gitg-commit.vala:1449
+ msgid "Failed to discard changes"
+ msgstr "無法放棄變更"
+ 
+-#: gitg/commit/gitg-commit.vala:1457
++#: gitg/commit/gitg-commit.vala:1470
+ #, c-format
+ msgid ""
+ "Are you sure you want to permanently discard all changes made to the file "
+ "“%s”?"
+ msgstr "您確定要永久放棄對檔案「%s」所進行的所有變更？"
+ 
+-#: gitg/commit/gitg-commit.vala:1468
++#: gitg/commit/gitg-commit.vala:1481
+ #, c-format
+ msgid ""
+ "Are you sure you want to permanently discard all changes made to the files "
+ "%s and “%s”?"
+ msgstr "您確定要永久放棄對檔案 %s 與「%s」所進行的所有變更？"
+ 
+-#: gitg/commit/gitg-commit.vala:1551
++#: gitg/commit/gitg-commit.vala:1564
+ msgid "Failed to delete files"
+ msgstr "無法刪除檔案"
+ 
+-#: gitg/commit/gitg-commit.vala:1567
++#: gitg/commit/gitg-commit.vala:1580
+ msgid "Delete file"
+ msgid_plural "Delete files"
+ msgstr[0] "刪除檔案"
+ 
+-#: gitg/commit/gitg-commit.vala:1572
++#: gitg/commit/gitg-commit.vala:1585
+ #, c-format
+ msgid "Are you sure you want to permanently delete the file “%s”?"
+ msgstr "確定要永遠刪除檔案「%s」嗎？"
+ 
+-#: gitg/commit/gitg-commit.vala:1583
++#: gitg/commit/gitg-commit.vala:1596
+ #, c-format
+ msgid "Are you sure you want to permanently delete the files %s and “%s”?"
+ msgstr "確定要永遠刪除檔案「%s」與「%s」嗎？"
+ 
+-#: gitg/commit/gitg-commit.vala:1629
++#: gitg/commit/gitg-commit.vala:1642
+ msgid "_Stage changes"
+ msgstr "暫存變更(_S)"
+ 
+-#: gitg/commit/gitg-commit.vala:1641
++#: gitg/commit/gitg-commit.vala:1654
+ msgid "_Unstage changes"
+ msgstr "取消暫存變更(_U)"
+ 
+-#: gitg/commit/gitg-commit.vala:1653
++#: gitg/commit/gitg-commit.vala:1666
+ msgid "_Discard changes"
+ msgstr "放棄變更(_D)"
+ 
+-#: gitg/commit/gitg-commit.vala:1665
++#: gitg/commit/gitg-commit.vala:1678
+ msgid "D_elete file"
+ msgid_plural "D_elete files"
+ msgstr[0] "刪除檔案(_E)"
+ 
+-#: gitg/commit/gitg-commit.vala:1695
++#: gitg/commit/gitg-commit.vala:1708
+ msgid "_Edit file"
+ msgstr "編輯檔案(_E)"
+ 
+@@ -654,10 +696,9 @@ msgstr "您的工作目錄中似乎有未暫存的變更。您是否想要在檢
+ 
+ #: gitg/gitg-action-support.vala:133
+ #: gitg/gitg-commit-action-cherry-pick.vala:163
+-#: gitg/gitg-ref-action-delete.vala:88 gitg/gitg-ref-action-push.vala:138
+-#: gitg/gitg-ref-action-merge.vala:194
+-#: gitg/resources/ui/gitg-remote-notification.ui:30
+-#: gitg/resources/ui/gitg-simple-notification.ui:61
++#: gitg/gitg-ref-action-delete.vala:88 gitg/gitg-ref-action-merge.vala:194
++#: gitg/gitg-ref-action-push.vala:138 gitg/gitg-remove-remote-action.vala:66
++#: libgitg/gitg-repository-list-box.vala:567
+ msgid "Cancel"
+ msgstr "取消"
+ 
+@@ -681,57 +722,103 @@ msgstr "無法獲得作者詳細資料"
+ #: gitg/gitg-action-support.vala:223 gitg/gitg-ref-action-checkout.vala:88
+ #, c-format
+ msgid "Failed to lookup commit: %s"
+-msgstr "查詢提交失敗：%s"
++msgstr "查詢送交失敗：%s"
+ 
+ #: gitg/gitg-action-support.vala:255
+ #, c-format
+ msgid "Failed to create commit: %s"
+-msgstr "建立提交失敗：%s"
++msgstr "建立送交失敗：%s"
+ 
+ #: gitg/gitg-action-support.vala:277
+ #, c-format
+ msgid "Failed to checkout index: %s"
+ msgstr "無法檢出索引：%s"
+ 
+-#: gitg/gitg-application.vala:38
++#: gitg/gitg-add-remote-action.vala:46
++msgid "Add Remote"
++msgstr "加入遠端"
++
++#: gitg/gitg-add-remote-action.vala:51
++msgid "Adds remote to the remotes list"
++msgstr ""
++
++#: gitg/gitg-add-remote-action.vala:59 gitg/gitg-ref-action-fetch.vala:107
++#, c-format
++msgid "Fetching from %s"
++msgstr "正在從 %s 取回"
++
++#. Translators: new refers to a new remote reference having been fetched,
++#: gitg/gitg-add-remote-action.vala:65 gitg/gitg-ref-action-fetch.vala:115
++msgid "new"
++msgstr "新的"
++
++#: gitg/gitg-add-remote-action.vala:75 gitg/gitg-ref-action-fetch.vala:130
++#, c-format
++msgid "Failed to fetch from %s: %s"
++msgstr "從 %s 取回失敗：%s"
++
++#: gitg/gitg-add-remote-action.vala:78
++#, fuzzy
++#| msgid "Failed to add repository"
++msgid "Failed to fetch added remote"
++msgstr "無法加入儲存庫"
++
++#. Translators: the first %s is the remote url to fetch from,
++#. * the second is a list of references that got updated.
++#: gitg/gitg-add-remote-action.vala:90 gitg/gitg-ref-action-fetch.vala:149
++#, c-format
++msgid "Fetched from %s: %s"
++msgstr "已從 %s 取回：%s"
++
++#: gitg/gitg-add-remote-action.vala:129
++#, fuzzy
++#| msgid "Failed to add repository"
++msgid "Failed to add remote"
++msgstr "無法加入儲存庫"
++
++#: gitg/gitg-application.vala:39
+ msgid "Show the application’s version"
+ msgstr "顯示應用程式的版本"
+ 
+-#: gitg/gitg-application.vala:40
++#: gitg/gitg-application.vala:41
+ msgid "Start gitg with a particular activity"
+ msgstr "以特定活動啟動 gitg"
+ 
+-#: gitg/gitg-application.vala:42
++#: gitg/gitg-application.vala:43
+ msgid "Start gitg with the commit activity (shorthand for --activity commit)"
+-msgstr "以提交活動啟動 gitg (--activity 提交的簡寫)"
++msgstr "以送交活動啟動 gitg (--activity 送交的簡寫)"
+ 
+-#: gitg/gitg-application.vala:44
++#: gitg/gitg-application.vala:45
+ msgid "Do not try to load a repository from the current working directory"
+-msgstr "不要嘗試從目前工作目錄載入版本庫"
++msgstr "不要嘗試從目前工作目錄載入儲存庫"
+ 
+-#: gitg/gitg-application.vala:46
++#: gitg/gitg-application.vala:47
+ msgid "Run gitg in standalone mode"
+ msgstr "以獨立模式執行 gitg"
+ 
+-#: gitg/gitg-application.vala:92
++#: gitg/gitg-application.vala:49
++msgid "Put paths under git if needed"
++msgstr ""
++
++#: gitg/gitg-application.vala:95
+ msgid "— Git repository viewer"
+-msgstr "— Git 版本庫檢視器"
++msgstr "— Git 儲存庫檢視器"
+ 
+-#: gitg/gitg-application.vala:226
++#: gitg/gitg-application.vala:229
+ msgid "gitg is a Git repository viewer for GTK+/GNOME"
+-msgstr "gitg 是為 GTK+/GNOME 設計的 Git 版本庫檢視器"
++msgstr "gitg 是為 GTK+/GNOME 設計的 Git 儲存庫檢視器"
+ 
+-#: gitg/gitg-application.vala:235
++#: gitg/gitg-application.vala:238
+ msgid "translator-credits"
+ msgstr ""
+ "Cheng-Chia Tseng <pswo10680@gmail.com>, 2013.\n"
+ "Yi-Jyun Pan <pan93412@gmail.com>, 2018."
+ 
+-#: gitg/gitg-application.vala:238
++#: gitg/gitg-application.vala:241
+ msgid "gitg homepage"
+ msgstr "gitg 首頁"
+ 
+-#: gitg/gitg-application.vala:368
++#: gitg/gitg-application.vala:399
+ msgid ""
+ "We are terribly sorry, but gitg requires libgit2 (a library on which gitg "
+ "depends) to be compiled with threading support.\n"
+@@ -749,23 +836,23 @@ msgstr ""
+ "\n"
+ "否則，請在您的散布版錯誤回報系統中回報，指出 libgit2 未提供執行緒支援。"
+ 
+-#: gitg/gitg-author-details-dialog.vala:97
+-#: gitg/gitg-author-details-dialog.vala:117
++#: gitg/gitg-author-details-dialog.vala:79
++#: gitg/gitg-author-details-dialog.vala:99
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:9
+ msgid "Author Details"
+ msgstr "作者詳細資訊"
+ 
+-#: gitg/gitg-author-details-dialog.vala:98
++#: gitg/gitg-author-details-dialog.vala:80
+ msgid "Enter default details used for all repositories:"
+-msgstr "輸入所有版本庫的預設詳細資料："
++msgstr "輸入所有儲存庫的預設詳細資料："
+ 
+ #. Translators: %s is the repository name
+-#: gitg/gitg-author-details-dialog.vala:120
++#: gitg/gitg-author-details-dialog.vala:102
+ #, c-format
+ msgid "Override global details for repository “%s”:"
+-msgstr "覆蓋版本庫「%s」的全域詳細資料："
++msgstr "覆蓋儲存庫「%s」的全域詳細資料："
+ 
+-#: gitg/gitg-author-details-dialog.vala:232
++#: gitg/gitg-author-details-dialog.vala:214
+ msgid "Failed to set Git user config."
+ msgstr "無法設定 Git 使用者組態。"
+ 
+@@ -779,17 +866,18 @@ msgstr "挑選到"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:58
+ msgid "Cherry pick this commit onto a branch"
+-msgstr "將這個提交挑選到分支"
++msgstr "將這個送交挑選到分支"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:117
+-#, c-format
+-msgid "Failed to lookup the commit for branch %s: %s"
+-msgstr "無法查詢分支 %s 的提交：%s"
++#, fuzzy, c-format
++#| msgid "Failed to lookup the commit for branch %s: %s"
++msgid "Failed to lookup the commit for branch “%s”: %s"
++msgstr "無法查詢分支 %s 的送交：%s"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:132
+ #, c-format
+ msgid "Failed to cherry-pick the commit: %s"
+-msgstr "無法挑選此提交：%s"
++msgstr "無法挑選此送交：%s"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:144
+ #: gitg/gitg-commit-action-cherry-pick.vala:160
+@@ -797,19 +885,27 @@ msgid "Cherry pick has conflicts"
+ msgstr "挑選產生衝突"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:153
+-#, c-format
++#, fuzzy, c-format
++#| msgid ""
++#| "The cherry pick of %s onto %s has caused conflicts, would you like to "
++#| "checkout branch %s with the cherry pick to your working directory to "
++#| "resolve the conflicts?"
+ msgid ""
+-"The cherry pick of %s onto %s has caused conflicts, would you like to "
+-"checkout branch %s with the cherry pick to your working directory to resolve "
+-"the conflicts?"
++"The cherry pick of “%s” onto “%s” has caused conflicts, would you like to "
++"checkout branch “%s” with the cherry pick to your working directory to "
++"resolve the conflicts?"
+ msgstr ""
+ "將 %s 挑選到 %s 上的操作造成衝突，您是否想要檢出挑選的分支 %s 到您的工作目錄"
+ "以解決衝突？"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:157
+-#, c-format
++#, fuzzy, c-format
++#| msgid ""
++#| "The cherry-pick of %s onto %s has caused conflicts, would you like to "
++#| "checkout the cherry pick to your working directory to resolve the "
++#| "conflicts?"
+ msgid ""
+-"The cherry-pick of %s onto %s has caused conflicts, would you like to "
++"The cherry-pick of “%s” onto “%s” has caused conflicts, would you like to "
+ "checkout the cherry pick to your working directory to resolve the conflicts?"
+ msgstr ""
+ "將 %s 挑選到 %s 上的操作造成衝突，您是否想要檢出挑選到您的工作目錄以解決衝"
+@@ -829,8 +925,9 @@ msgid "Cherry pick finished with conflicts in working directory"
+ msgstr "工作目錄中的挑選以發生衝突的狀況結束"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:199
+-#, c-format
+-msgid "Cherry pick %s onto %s"
++#, fuzzy, c-format
++#| msgid "Cherry pick %s onto %s"
++msgid "Cherry pick “%s” onto “%s”"
+ msgstr "挑選 %s 到 %s 上"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:224
+@@ -838,8 +935,9 @@ msgid "Successfully cherry picked"
+ msgstr "成功進行挑選"
+ 
+ #: gitg/gitg-commit-action-cherry-pick.vala:261
+-#, c-format
+-msgid "Cherry pick onto %s"
++#, fuzzy, c-format
++#| msgid "Cherry pick onto %s"
++msgid "Cherry pick onto “%s”"
+ msgstr "挑選到 %s 上"
+ 
+ #: gitg/gitg-commit-action-create-branch.vala:48
+@@ -848,9 +946,10 @@ msgstr "建立分支"
+ 
+ #: gitg/gitg-commit-action-create-branch.vala:53
+ msgid "Create a new branch at the selected commit"
+-msgstr "以選取的提交建立新的分支"
++msgstr "以選取的送交建立新的分支"
+ 
+ #: gitg/gitg-commit-action-create-branch.vala:75
++#: gitg/gitg-ref-action-checkout.vala:180
+ msgid "Failed to create branch"
+ msgstr "無法建立分支"
+ 
+@@ -860,7 +959,7 @@ msgstr "建立修補"
+ 
+ #: gitg/gitg-commit-action-create-patch.vala:68
+ msgid "Create a patch from the selected commit"
+-msgstr "以選取的提交建立新的修補檔"
++msgstr "以選取的送交建立新的修補檔"
+ 
+ #: gitg/gitg-commit-action-create-patch.vala:152
+ msgid "Save Patch File"
+@@ -880,7 +979,7 @@ msgstr "建立標籤"
+ 
+ #: gitg/gitg-commit-action-create-tag.vala:53
+ msgid "Create a new tag at the selected commit"
+-msgstr "以選取的提交建立新的標籤"
++msgstr "以選取的送交建立新的標籤"
+ 
+ #: gitg/gitg-commit-action-create-tag.vala:92
+ msgid "Failed to create tag"
+@@ -902,52 +1001,68 @@ msgstr "選擇與管理專案"
+ msgid "_Remove"
+ msgstr "移除(_R)"
+ 
++#: gitg/gitg-dash-view.vala:190
++msgid "_Delete sources"
++msgstr "刪除來源(_D)"
++
+ #. Translators: the two %s will be replaced to create a link to perform the scanning action.
+-#: gitg/gitg-dash-view.vala:230
++#: gitg/gitg-dash-view.vala:246
+ #, c-format
+ msgid "We can also %sscan your home directory%s for git repositories."
+-msgstr "我們也可以 %s掃描您的家目錄%s 尋找 git 版本庫。"
++msgstr "我們也可以 %s掃描您的家目錄%s 尋找 git 儲存庫。"
+ 
+ #. Translators: the two %s will be used to create a link to the author dialog.
+-#: gitg/gitg-dash-view.vala:233
++#: gitg/gitg-dash-view.vala:249
+ #, c-format
+ msgid "In the mean time, you may want to %sset up your git profile%s."
+ msgstr "在此同時，您可能會想要 %s設定您的 git 設定檔%s。"
+ 
+-#: gitg/gitg-dash-view.vala:398
++#: gitg/gitg-dash-view.vala:414
+ msgid "Failed to clone repository"
+-msgstr "無法重製版本庫"
++msgstr "無法重製儲存庫"
+ 
+-#: gitg/gitg-dash-view.vala:429
++#: gitg/gitg-dash-view.vala:445
+ msgid "Failed to add repository"
+-msgstr "無法加入版本庫"
++msgstr "無法加入儲存庫"
+ 
+-#: gitg/gitg-dash-view.vala:445
++#: gitg/gitg-dash-view.vala:461
+ msgid "Create new repository"
+-msgstr "建立新版本庫"
++msgstr "建立新儲存庫"
+ 
+ #. Translators: %s is a file name
+-#: gitg/gitg-dash-view.vala:448
++#: gitg/gitg-dash-view.vala:464
+ #, c-format
+ msgid ""
+ "The location <i>%s</i> does not appear to be a valid git repository. Would "
+ "you like to initialize a new git repository at this location?"
+ msgstr ""
+-"位置 <i>%s</i> 似乎不是有效的 git 版本庫。您想要在這個位置初始化一個新的 git "
+-"版本庫嗎？"
++"位置 <i>%s</i> 似乎不是有效的 git 儲存庫。您想要在這個位置初始化一個新的 git "
++"儲存庫嗎？"
+ 
+-#: gitg/gitg-dash-view.vala:454
++#: gitg/gitg-dash-view.vala:470
+ msgid "Create repository"
+-msgstr "建立版本庫"
++msgstr "建立儲存庫"
+ 
+-#: gitg/gitg-dash-view.vala:470
++#: gitg/gitg-dash-view.vala:486
+ msgid "Failed to create repository"
+-msgstr "無法建立版本庫"
++msgstr "無法建立儲存庫"
+ 
+-#: gitg/gitg-dash-view.vala:540
++#: gitg/gitg-dash-view.vala:556
+ #, c-format
+ msgid "Scanning for repositories in %s"
+-msgstr "掃描「%s」內的版本庫"
++msgstr "掃描「%s」內的儲存庫"
++
++#: gitg/gitg-edit-remote-action.vala:51
++msgid "Edit remote"
++msgstr "編輯遠端"
++
++#: gitg/gitg-edit-remote-action.vala:56
++msgid "Edits the remote from the remotes list"
++msgstr ""
++
++#: gitg/gitg-edit-remote-action.vala:82
++msgid "Failed to edit remote"
++msgstr "無法編輯遠端"
+ 
+ #: gitg/gitg-ref-action-checkout.vala:53
+ msgid "Checkout the selected reference"
+@@ -955,8 +1070,8 @@ msgstr "檢出選取的參照"
+ 
+ #: gitg/gitg-ref-action-checkout.vala:72
+ #, c-format
+-msgid "Checkout %s"
+-msgstr "檢出 %s"
++msgid "Checkout “%s”"
++msgstr "檢出「%s」"
+ 
+ #: gitg/gitg-ref-action-checkout.vala:101
+ #, c-format
+@@ -972,6 +1087,12 @@ msgstr "無法更新 HEAD：%s"
+ msgid "Successfully checked out branch to working directory"
+ msgstr "成功檢出分支到工作目錄"
+ 
++#: gitg/gitg-ref-action-checkout.vala:195
++#, fuzzy, c-format
++#| msgid "Failed to delete branch %s"
++msgid "Failed to set the upstream branch %s for %s"
++msgstr "刪除分支 %s 失敗"
++
+ #: gitg/gitg-ref-action-copy-name.vala:48
+ msgid "Copy name"
+ msgstr "複製名稱"
+@@ -980,6 +1101,32 @@ msgstr "複製名稱"
+ msgid "Copy the name of the reference to the clipboard"
+ msgstr "將參照的名稱複製到剪貼簿"
+ 
++#: gitg/gitg-ref-action-create-branch.vala:46
++#, fuzzy
++#| msgid "Create a new branch at the selected commit"
++msgid "Create a new branch at the selected reference"
++msgstr "以選取的送交建立新的分支"
++
++#: gitg/gitg-ref-action-create-branch.vala:58
++#: gitg/gitg-ref-action-create-patch.vala:58
++#: gitg/gitg-ref-action-create-tag.vala:58
++#, fuzzy
++#| msgid "Failed to lookup tag"
++msgid "Failed to lookup reference"
++msgstr "搜尋標籤失敗"
++
++#: gitg/gitg-ref-action-create-patch.vala:46
++#, fuzzy
++#| msgid "Create a patch from the selected commit"
++msgid "Create a patch from the selected reference"
++msgstr "以選取的送交建立新的修補檔"
++
++#: gitg/gitg-ref-action-create-tag.vala:46
++#, fuzzy
++#| msgid "Create a new tag at the selected commit"
++msgid "Create a new tag at the selected reference"
++msgstr "以選取的送交建立新的標籤"
++
+ #: gitg/gitg-ref-action-delete.vala:48 gitg/gitg-ref-action-delete.vala:89
+ msgid "Delete"
+ msgstr "刪除"
+@@ -1042,89 +1189,27 @@ msgstr "刪除分支 %s 失敗"
+ msgid "The branch %s could not be deleted: %s"
+ msgstr "分支 %s 無法被刪除：%s"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:74
++#: gitg/gitg-ref-action-fetch.vala:83
+ #, c-format
+ msgid "Fetch from %s"
+ msgstr "從 %s 取回"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:85
++#: gitg/gitg-ref-action-fetch.vala:94
+ #, c-format
+ msgid "Fetch remote objects from %s"
+ msgstr "從 %s 取回遠端物件"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:98
+-#, c-format
+-msgid "Fetching from %s"
+-msgstr "正在從 %s 取回"
+-
+-#. Translators: new refers to a new remote reference having been fetched,
+-#: gitg/gitg-ref-action-fetch.vala:106
+-msgid "new"
+-msgstr "新的"
+-
+ #. Translators: updated refers to a remote reference having been updated,
+-#: gitg/gitg-ref-action-fetch.vala:111
++#: gitg/gitg-ref-action-fetch.vala:120
+ msgid "updated"
+ msgstr "已更新"
+ 
+-#: gitg/gitg-ref-action-fetch.vala:121
+-#, c-format
+-msgid "Failed to fetch from %s: %s"
+-msgstr "從 %s 取回失敗：%s"
+-
+ #. Translators: the %s will get replaced with the remote url,
+-#: gitg/gitg-ref-action-fetch.vala:134
++#: gitg/gitg-ref-action-fetch.vala:143
+ #, c-format
+ msgid "Fetched from %s: everything is up to date"
+ msgstr "從 %s 取回：一切都是最新的"
+ 
+-#. Translators: the first %s is the remote url to fetch from,
+-#. * the second is a list of references that got updated.
+-#: gitg/gitg-ref-action-fetch.vala:140
+-#, c-format
+-msgid "Fetched from %s: %s"
+-msgstr "已從 %s 取回：%s"
+-
+-#: gitg/gitg-ref-action-push.vala:80
+-#, c-format
+-msgid "Push to %s"
+-msgstr "推送至 %s"
+-
+-#: gitg/gitg-ref-action-push.vala:91
+-#, c-format
+-msgid "Push branch to %s"
+-msgstr "推送分支至 %s"
+-
+-#: gitg/gitg-ref-action-push.vala:107
+-#, c-format
+-msgid "Pushing to %s"
+-msgstr "正在推送至 %s"
+-
+-#: gitg/gitg-ref-action-push.vala:116
+-#, c-format
+-msgid "Failed to push to %s: %s"
+-msgstr "無法推送至 %s：%s"
+-
+-#. Translators: the %s will get replaced with the remote url,
+-#: gitg/gitg-ref-action-push.vala:123
+-#, c-format
+-msgid "Pushed to %s"
+-msgstr "已推送至 %s"
+-
+-#: gitg/gitg-ref-action-push.vala:134
+-#, c-format
+-msgid "Push branch %s"
+-msgstr "推送分支 %s"
+-
+-#: gitg/gitg-ref-action-push.vala:135
+-#, c-format
+-msgid "Are you sure that you want to push the branch %s?"
+-msgstr "您確定推送分支 %s？"
+-
+-#: gitg/gitg-ref-action-push.vala:139
+-msgid "Push"
+-msgstr "推送"
+-
+ #: gitg/gitg-ref-action-merge.vala:63
+ #, c-format
+ msgid "Merge into %s"
+@@ -1139,26 +1224,34 @@ msgstr "從另一個分支合併到分支 %s"
+ #: gitg/gitg-ref-action-merge.vala:106
+ #, c-format
+ msgid "Failed to merge commits: %s"
+-msgstr "無法合併提交：%s"
++msgstr "無法合併送交：%s"
+ 
+ #: gitg/gitg-ref-action-merge.vala:175 gitg/gitg-ref-action-merge.vala:191
+ msgid "Merge has conflicts"
+ msgstr "合併有衝突"
+ 
+ #: gitg/gitg-ref-action-merge.vala:184
+-#, c-format
++#, fuzzy, c-format
++#| msgid ""
++#| "The merge of %s into %s has caused conflicts, would you like to checkout "
++#| "branch %s with the merge to your working directory to resolve the "
++#| "conflicts?"
+ msgid ""
+-"The merge of %s into %s has caused conflicts, would you like to checkout "
+-"branch %s with the merge to your working directory to resolve the conflicts?"
++"The merge of “%s” into “%s” has caused conflicts, would you like to checkout "
++"branch “%s” with the merge to your working directory to resolve the "
++"conflicts?"
+ msgstr ""
+ "將 %s 合併到 %s 上的操作造成衝突，您是否想要檢出合併的分支 %s 到您的工作目錄"
+ "以解決衝突？"
+ 
+ #: gitg/gitg-ref-action-merge.vala:188
+-#, c-format
++#, fuzzy, c-format
++#| msgid ""
++#| "The merge of %s into %s has caused conflicts, would you like to checkout "
++#| "the merge to your working directory to resolve the conflicts?"
+ msgid ""
+-"The merge of %s into %s has caused conflicts, would you like to checkout the "
+-"merge to your working directory to resolve the conflicts?"
++"The merge of “%s” into “%s” has caused conflicts, would you like to checkout "
++"the merge to your working directory to resolve the conflicts?"
+ msgstr ""
+ "將 %s 合併到 %s 上的操作造成衝突，您是否想要檢出合併到您的工作目錄以解決衝"
+ "突？"
+@@ -1172,35 +1265,77 @@ msgid "Finished merge with conflicts in working directory"
+ msgstr "工作目錄中的合併以發生衝突的狀況結束"
+ 
+ #: gitg/gitg-ref-action-merge.vala:222
+-#, c-format
+-msgid "Merge %s into %s"
++#, fuzzy, c-format
++#| msgid "Merge %s into %s"
++msgid "Merge “%s” into “%s”"
+ msgstr "合併 %s 到 %s"
+ 
+ #: gitg/gitg-ref-action-merge.vala:231
+ #, c-format
+ msgid "Failed to lookup our commit: %s"
+-msgstr "無法查詢我們的提交：%s"
++msgstr "無法查詢我們的送交：%s"
+ 
+ #: gitg/gitg-ref-action-merge.vala:241
+ #, c-format
+ msgid "Failed to lookup their commit: %s"
+-msgstr "無法查詢他們的提交：%s"
++msgstr "無法查詢他們的送交：%s"
+ 
+ #: gitg/gitg-ref-action-merge.vala:278
+-#, c-format
+-msgid "Successfully merged %s into %s"
++#, fuzzy, c-format
++#| msgid "Successfully merged %s into %s"
++msgid "Successfully merged “%s” into “%s”"
+ msgstr "已成功合併 %s 到 %s"
+ 
+ #: gitg/gitg-ref-action-merge.vala:320
+ #, c-format
+-msgid "Merge %s into branch %s"
+-msgstr "合併 %s 到分支 %s"
++msgid "Merge “%s” into branch “%s”"
++msgstr "將「%s」合併到「%s」分支"
+ 
+ #: gitg/gitg-ref-action-merge.vala:482
+-#: gitg/history/gitg-history-refs-list.vala:1179
++#: gitg/history/gitg-history-refs-list.vala:1199
+ msgid "Tags"
+ msgstr "標籤"
+ 
++#: gitg/gitg-ref-action-push.vala:80
++#, c-format
++msgid "Push to %s"
++msgstr "推送至 %s"
++
++#: gitg/gitg-ref-action-push.vala:91
++#, c-format
++msgid "Push branch to %s"
++msgstr "推送分支至 %s"
++
++#: gitg/gitg-ref-action-push.vala:107
++#, c-format
++msgid "Pushing to %s"
++msgstr "正在推送至 %s"
++
++#: gitg/gitg-ref-action-push.vala:116
++#, c-format
++msgid "Failed to push to %s: %s"
++msgstr "無法推送至 %s：%s"
++
++#. Translators: the %s will get replaced with the remote url,
++#: gitg/gitg-ref-action-push.vala:123
++#, c-format
++msgid "Pushed to %s"
++msgstr "已推送至 %s"
++
++#: gitg/gitg-ref-action-push.vala:134
++#, c-format
++msgid "Push branch %s"
++msgstr "推送分支 %s"
++
++#: gitg/gitg-ref-action-push.vala:135
++#, c-format
++msgid "Are you sure that you want to push the branch %s?"
++msgstr "您確定推送分支 %s？"
++
++#: gitg/gitg-ref-action-push.vala:139
++msgid "Push"
++msgstr "推送"
++
+ #: gitg/gitg-ref-action-rename.vala:48
+ msgid "Rename"
+ msgstr "重新命名"
+@@ -1209,75 +1344,115 @@ msgstr "重新命名"
+ msgid "Rename the selected reference"
+ msgstr "重新命名所選取的參照"
+ 
+-#: gitg/gitg-ref-action-rename.vala:100
++#: gitg/gitg-ref-action-rename.vala:104
+ #, c-format
+-msgid "The specified name “%s” contains invalid characters"
+-msgstr "指定名稱「%s」包含無效的字元"
++msgid "The specified name “%s” match with existing branch “%s”"
++msgstr "指定的「%s」名稱符合既有的「%s」分支"
+ 
+-#: gitg/gitg-ref-action-rename.vala:102
++#: gitg/gitg-ref-action-rename.vala:106 gitg/gitg-ref-action-rename.vala:118
+ msgid "Invalid name"
+ msgstr "無效的名稱"
+ 
+-#: gitg/gitg-ref-action-rename.vala:131
++#: gitg/gitg-ref-action-rename.vala:116
++#, c-format
++msgid "The specified name “%s” contains invalid characters"
++msgstr "指定名稱「%s」包含無效的字元"
++
++#: gitg/gitg-ref-action-rename.vala:147
+ msgid "Failed to rename"
+ msgstr "無法重新命名"
+ 
+ #: gitg/gitg-remote-notification.vala:90 gitg/gitg-simple-notification.vala:99
+-#: gitg/resources/ui/gitg-window.ui:227
+ msgid "Close"
+ msgstr "關閉"
+ 
+-#: gitg/gitg-window.vala:201
++#: gitg/gitg-remove-remote-action.vala:50
++msgid "Remove remote"
++msgstr "移除遠端"
++
++#: gitg/gitg-remove-remote-action.vala:55
++msgid "Removes remote from the remotes list"
++msgstr "從遠端清單中移除遠端"
++
++#: gitg/gitg-remove-remote-action.vala:62
++#, c-format
++msgid "Delete remote %s"
++msgstr "刪除 %s 遠端"
++
++#: gitg/gitg-remove-remote-action.vala:63
++#, c-format
++msgid "Are you sure that you want to remove the remote %s?"
++msgstr "您確定要移除 %s 遠端？"
++
++#: gitg/gitg-remove-remote-action.vala:67
++msgid "Remove"
++msgstr "移除"
++
++#: gitg/gitg-remove-remote-action.vala:91
++msgid "Failed to remove remote"
++msgstr "無法建立遠端"
++
++#: gitg/gitg-window.vala:202
+ msgid "Add Repository"
+-msgstr "加入版本庫"
++msgstr "加入儲存庫"
+ 
+-#: gitg/gitg-window.vala:205
++#: gitg/gitg-window.vala:206
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:34
++#: gitg/resources/ui/gitg-window.ui:64
+ msgid "_Add"
+ msgstr "加入(_A)"
+ 
+-#: gitg/gitg-window.vala:207
++#: gitg/gitg-window.vala:208
+ msgid "_Scan for all git repositories from this directory"
+-msgstr "掃描這個目錄中所有的 git 版本庫(_S)"
++msgstr "掃描這個目錄中所有的 git 儲存庫(_S)"
+ 
+-#: gitg/gitg-window.vala:516
++#: gitg/gitg-window.vala:517
+ msgid "Projects"
+ msgstr "專案"
+ 
+-#: gitg/gitg-window.vala:815
++#: gitg/gitg-window.vala:703
++msgid "Open Repository"
++msgstr "開啟儲存庫"
++
++#: gitg/gitg-window.vala:706 gitg/resources/ui/gitg-commit-submodule-info.ui:70
++msgid "_Open"
++msgstr "開啟(_O)"
++
++#: gitg/gitg-window.vala:846
+ msgid "Select items"
+ msgstr "選擇項目"
+ 
+-#: gitg/gitg-window.vala:1026
++#: gitg/gitg-window.vala:1064
+ #, c-format
+ msgid "“%s” is not a Git repository."
+-msgstr "「%s」不是 Git 版本庫。"
++msgstr "「%s」不是 Git 儲存庫。"
+ 
+-#: gitg/gitg-window.vala:1175
++#: gitg/gitg-window.vala:1213
+ msgid ""
+ "Your user name and email are not configured yet. Please go to the user "
+ "configuration and provide your name and email."
+ msgstr ""
+ "您的使用者名稱與電子郵件尚未設定。請至使用者組態並提供您的姓名與電子郵件。"
+ 
+-#: gitg/gitg-window.vala:1179
++#: gitg/gitg-window.vala:1217
+ msgid ""
+ "Your user name is not configured yet. Please go to the user configuration "
+ "and provide your name."
+ msgstr "您的使用者名稱尚未設定。請至使用者組態並提供您的姓名。"
+ 
+-#: gitg/gitg-window.vala:1183
++#: gitg/gitg-window.vala:1221
+ msgid ""
+ "Your email is not configured yet. Please go to the user configuration and "
+ "provide your email."
+ msgstr "您的電子郵件尚未設定。請至使用者組態並提供您的電子郵件。"
+ 
+-#: gitg/gitg-window.vala:1186
++#: gitg/gitg-window.vala:1224
+ msgid "Missing author details"
+ msgstr "缺少作者詳細資料"
+ 
+ #: gitg/history/gitg-history-command-line.vala:42
+ msgid "Select all commits by default in the history activity"
+-msgstr "在歷史活動中預設選擇所有的提交"
++msgstr "在歷史活動中預設選擇所有的送交"
+ 
+ #: gitg/history/gitg-history-command-line.vala:44
+ msgid "Select all branches by default in the history activity"
+@@ -1317,34 +1492,34 @@ msgstr "%zu 落後"
+ #: gitg/history/gitg-history-refs-list.vala:207
+ #: gitg/resources/ui/gitg-preferences-history.ui:81
+ msgid "All commits"
+-msgstr "所有的提交"
++msgstr "所有的送交"
+ 
+-#: gitg/history/gitg-history-refs-list.vala:1177
++#: gitg/history/gitg-history-refs-list.vala:1197
+ msgid "Branches"
+ msgstr "分支"
+ 
+-#: gitg/history/gitg-history-refs-list.vala:1178
++#: gitg/history/gitg-history-refs-list.vala:1198
+ msgid "Remotes"
+ msgstr "遠端"
+ 
+-#: gitg/history/gitg-history.vala:342
++#: gitg/history/gitg-history.vala:348
+ #: gitg/preferences/gitg-preferences-history.vala:218
+ #: gitg/resources/ui/gitg-preferences-interface.ui:60
+ msgid "History"
+ msgstr "歷史"
+ 
+-#: gitg/history/gitg-history.vala:347
++#: gitg/history/gitg-history.vala:353
+ msgid "Examine the history of the repository"
+-msgstr "檢驗版本庫的歷史"
++msgstr "檢驗儲存庫的歷史"
+ 
+-#: gitg/history/gitg-history.vala:918
++#: gitg/history/gitg-history.vala:959
+ msgid "Mainline"
+ msgstr "主線"
+ 
+-#: gitg/preferences/gitg-preferences-commit.vala:142
++#: gitg/preferences/gitg-preferences-commit.vala:180
+ msgctxt "Preferences"
+ msgid "Commit"
+-msgstr "提交"
++msgstr "送交"
+ 
+ #: gitg/preferences/gitg-preferences-interface.vala:142
+ #, c-format
+@@ -1355,13 +1530,29 @@ msgstr "使用系統的等寬字型 (%s)(_U)"
+ msgid "Interface"
+ msgstr "介面"
+ 
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:7
++msgid "Create Remote"
++msgstr "建立遠端"
++
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:69
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:69
++msgid "Remote _name:"
++msgstr "遠端名稱(_N)："
++
++#: gitg/resources/ui/gitg-add-remote-action-dialog.ui:99
++#: gitg/resources/ui/gitg-clone-dialog.ui:68
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:99
++msgid "Remote _URL:"
++msgstr "遠端 _URL："
++
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:35
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:34
+ msgid "_Save"
+ msgstr "儲存(_S)"
+ 
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:65
+ msgid "Default details used for all repositories"
+-msgstr "所有版本庫的預設詳細資料"
++msgstr "所有儲存庫的預設詳細資料"
+ 
+ #: gitg/resources/ui/gitg-author-details-dialog.ui:114
+ msgid "E-mail:"
+@@ -1371,18 +1562,35 @@ msgstr "電子郵件："
+ msgid "Name:"
+ msgstr "名稱："
+ 
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:7
++msgid "Checkout Remote Branch"
++msgstr "檢出遠端分支"
++
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:34
++msgid "C_heckout"
++msgstr "檢出(_H)"
++
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:69
++msgid "Local branch _name:"
++msgstr "本機分支名稱(_N)："
++
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:99
++msgid "_Remote branch:"
++msgstr "遠端分支(_R)："
++
++#: gitg/resources/ui/gitg-checkout-remote-branch-dialog.ui:125
++msgid "_Track remote branch"
++msgstr "追蹤遠端分支(_T)"
++
+ #: gitg/resources/ui/gitg-clone-dialog.ui:7
+ msgid "Clone Repository"
+-msgstr "重製版本庫"
++msgstr "重製儲存庫"
+ 
+ #: gitg/resources/ui/gitg-clone-dialog.ui:33
++#: gitg/resources/ui/gitg-window.ui:47
+ msgid "Cl_one"
+ msgstr "重製(_O)"
+ 
+-#: gitg/resources/ui/gitg-clone-dialog.ui:68
+-msgid "Remote _URL:"
+-msgstr "遠端 _URL："
+-
+ #: gitg/resources/ui/gitg-clone-dialog.ui:99
+ msgid "_Local Folder:"
+ msgstr "本地資料夾(_L):"
+@@ -1398,30 +1606,38 @@ msgstr "原始檔案庫"
+ #: gitg/resources/ui/gitg-commit-dialog.ui:8
+ msgctxt "Create Dialog"
+ msgid "Commit"
+-msgstr "提交"
++msgstr "送交"
+ 
+ #: gitg/resources/ui/gitg-commit-dialog.ui:36
+-#: gitg/resources/ui/gitg-commit-paned.ui:86
++#: gitg/resources/ui/gitg-commit-paned.ui:111
+ msgid "C_ommit"
+-msgstr "提交(_O)"
++msgstr "送交(_O)"
+ 
+ #: gitg/resources/ui/gitg-commit-dialog.ui:217
+ msgid "_Amend previous commit"
+-msgstr "修正上一次提交(_A)"
++msgstr "修正上一次送交(_A)"
+ 
+ #: gitg/resources/ui/gitg-commit-dialog.ui:234
+ msgid "Add _signed-off-by signature"
+ msgstr "加入 _signed-off-by 簽章"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:76
++#: gitg/resources/ui/gitg-commit-dialog.ui:251
++msgid "Add si_gnature"
++msgstr "加入簽章(_G)"
++
++#: gitg/resources/ui/gitg-commit-paned.ui:33
++msgid "Filter Files"
++msgstr "篩選檔案"
++
++#: gitg/resources/ui/gitg-commit-paned.ui:101
+ msgid "Skip commit _hooks"
+-msgstr "略過提交掛鉤(_H)"
++msgstr "略過送交掛鉤(_H)"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:96
++#: gitg/resources/ui/gitg-commit-paned.ui:121
+ msgid "S_tage selection"
+ msgstr "S_tage 選擇"
+ 
+-#: gitg/resources/ui/gitg-commit-paned.ui:107
++#: gitg/resources/ui/gitg-commit-paned.ui:132
+ msgid "D_iscard selection"
+ msgstr "放棄選取項目(_I)"
+ 
+@@ -1429,7 +1645,7 @@ msgstr "放棄選取項目(_I)"
+ msgid ""
+ "The submodule is in a dirty state and has staged and/or unstaged changes "
+ "that are not yet committed as shown below."
+-msgstr "子模組處於粗糙狀態，且有尚未提交的已暫存與/或未暫存更動會顯示於下方。"
++msgstr "子模組處於粗糙狀態，且有尚未送交的已暫存與/或未暫存更動會顯示於下方。"
+ 
+ #: gitg/resources/ui/gitg-commit-submodule-diff-view.ui:50
+ msgid "Staged:"
+@@ -1451,13 +1667,19 @@ msgstr "作者"
+ 
+ #: gitg/resources/ui/gitg-commit-submodule-history-view.ui:58
+ #: gitg/resources/ui/gitg-history-paned.ui:127
++msgid "Committer"
++msgstr "送交者"
++
++#: gitg/resources/ui/gitg-commit-submodule-history-view.ui:74
++#: gitg/resources/ui/gitg-history-paned.ui:143
++msgid "SHA1"
++msgstr "SHA1"
++
++#: gitg/resources/ui/gitg-commit-submodule-history-view.ui:90
++#: gitg/resources/ui/gitg-history-paned.ui:159
+ msgid "Date"
+ msgstr "日期"
+ 
+-#: gitg/resources/ui/gitg-commit-submodule-info.ui:70
+-msgid "Open"
+-msgstr "開啟"
+-
+ #: gitg/resources/ui/gitg-create-branch-dialog.ui:7
+ msgid "Create Branch"
+ msgstr "建立分支"
+@@ -1471,6 +1693,10 @@ msgstr "建立(_R)"
+ msgid "Branch _name:"
+ msgstr "分支名稱(_N):"
+ 
++#: gitg/resources/ui/gitg-create-branch-dialog.ui:96
++msgid "_Checkout the created branch"
++msgstr "檢出選取的分支(_C)"
++
+ #: gitg/resources/ui/gitg-create-tag-dialog.ui:7
+ msgid "Create Tag"
+ msgstr "建立標籤"
+@@ -1484,32 +1710,36 @@ msgid ""
+ "No repositories have been added yet. To get started, you can add an existing "
+ "repository or clone a new one."
+ msgstr ""
+-"尚未加入版本庫。要開始使用，您可以加入既存的版本庫或重製一個新的版本庫。"
++"尚未加入儲存庫。要開始使用，您可以加入既存的儲存庫或重製一個新的儲存庫。"
++
++#: gitg/resources/ui/gitg-edit-remote-dialog.ui:7
++msgid "Edit Remote"
++msgstr "編輯遠端"
+ 
+ #: gitg/resources/ui/gitg-menus.ui:7
+ msgid "_Reload"
+ msgstr "重新載入(_R)"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:14 gitg/resources/ui/gitg-menus.ui:48
++#: gitg/resources/ui/gitg-menus.ui:13 gitg/resources/ui/gitg-menus.ui:49
+ msgid "_Preferences"
+ msgstr "偏好設定(_P)"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:21 gitg/resources/ui/gitg-menus.ui:42
++#: gitg/resources/ui/gitg-menus.ui:19 gitg/resources/ui/gitg-menus.ui:43
+ msgid "_Author Details"
+ msgstr "作者詳細資料(_A)"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:27 gitg/resources/ui/gitg-menus.ui:55
++#: gitg/resources/ui/gitg-menus.ui:25 gitg/resources/ui/gitg-menus.ui:55
+ msgid "_Keyboard Shortcuts"
+ msgstr "鍵盤捷徑鍵(_K)"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:36
++#: gitg/resources/ui/gitg-menus.ui:29 gitg/resources/ui/gitg-menus.ui:59
++msgid "_About gitg"
++msgstr "關於 gitg(_A)"
++
++#: gitg/resources/ui/gitg-menus.ui:37
+ msgid "_New Window"
+ msgstr "新開視窗(_N)"
+ 
+-#: gitg/resources/ui/gitg-menus.ui:60
+-msgid "_About"
+-msgstr "關於(_A)"
+-
+ #: gitg/resources/ui/gitg-preferences-commit.ui:58
+ msgid "Show markup"
+ msgstr "顯示標記"
+@@ -1548,7 +1778,23 @@ msgstr "啟用拼字檢查"
+ 
+ #: gitg/resources/ui/gitg-preferences-commit.ui:341
+ msgid "Commit Message"
+-msgstr "提交訊息"
++msgstr "送交訊息"
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:372
++msgid "Datetime format"
++msgstr "日期時間格式"
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:410
++msgid "Predefined:"
++msgstr "預先定義："
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:435
++msgid "Custom:"
++msgstr "自訂："
++
++#: gitg/resources/ui/gitg-preferences-commit.ui:453
++msgid "Check in vala documentation for datetime to write your own format."
++msgstr ""
+ 
+ #: gitg/resources/ui/gitg-preferences-history.ui:31
+ msgid "Default selection"
+@@ -1576,7 +1822,7 @@ msgstr "當選擇一個本地端分支時顯示上游 (遠端) 分支"
+ 
+ #: gitg/resources/ui/gitg-preferences-history.ui:154
+ msgid "Commits"
+-msgstr "提交"
++msgstr "送交"
+ 
+ #: gitg/resources/ui/gitg-preferences-history.ui:174
+ msgid "Collapse inactive lanes"
+@@ -1608,7 +1854,7 @@ msgstr "以特定活動啟動："
+ 
+ #: gitg/resources/ui/gitg-preferences-interface.ui:61
+ msgid "Commit"
+-msgstr "提交"
++msgstr "送交"
+ 
+ #: gitg/resources/ui/gitg-preferences-interface.ui:80
+ msgid "Layout"
+@@ -1643,7 +1889,7 @@ msgid "Pick the editor font"
+ msgstr "選擇編輯器字型"
+ 
+ #: gitg/resources/ui/gitg-preferences-interface.ui:292
+-#: plugins/diff/gitg-diff.vala:115
++#: plugins/diff/gitg-diff.vala:120
+ msgid "Diff"
+ msgstr "Diff"
+ 
+@@ -1676,142 +1922,148 @@ msgstr "開啟新的視窗"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:33
+ msgctxt "shortcut window"
+-msgid "Open the window menu"
+-msgstr "開啟視窗選單"
++msgid "Reload the window"
++msgstr "重新載入視窗"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:40
+ msgctxt "shortcut window"
+-msgid "Open a repository"
+-msgstr "開啟版本庫"
++msgid "Open the window menu"
++msgstr "開啟視窗選單"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:47
+ msgctxt "shortcut window"
+-msgid "Open the help"
+-msgstr "開啟求助文件"
++msgid "Open a repository"
++msgstr "開啟儲存庫"
+ 
+ #: gitg/resources/ui/gitg-shortcuts.ui:54
+ msgctxt "shortcut window"
++msgid "Open preferences"
++msgstr "開啟偏好設定"
++
++#: gitg/resources/ui/gitg-shortcuts.ui:61
++msgctxt "shortcut window"
+ msgid "Find"
+ msgstr "尋找"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:61
++#: gitg/resources/ui/gitg-shortcuts.ui:68
+ msgctxt "shortcut window"
+ msgid "Close the active window"
+ msgstr "關閉使用中視窗"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:68
++#: gitg/resources/ui/gitg-shortcuts.ui:75
+ msgctxt "shortcut window"
+ msgid "Quit the application"
+ msgstr "退出應用程式"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:75
++#: gitg/resources/ui/gitg-shortcuts.ui:82
+ msgctxt "shortcut window"
+ msgid "Change to Dash"
+-msgstr ""
++msgstr "變更成 Dash"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:82
++#: gitg/resources/ui/gitg-shortcuts.ui:89
+ msgctxt "shortcut window"
+ msgid "Change to History View"
+ msgstr "變更成歷史記錄檢視"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:89
++#: gitg/resources/ui/gitg-shortcuts.ui:96
+ msgctxt "shortcut window"
+ msgid "Change to Commit View"
+-msgstr "變更成提交檢視"
++msgstr "變更成送交檢視"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:96
++#: gitg/resources/ui/gitg-shortcuts.ui:103
+ msgctxt "shortcut window"
+ msgid "Change to activity"
+ msgstr "變更成活動"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:104
++#: gitg/resources/ui/gitg-shortcuts.ui:111
+ msgctxt "shortcut window"
+ msgid "Commit Activity"
+-msgstr "提交活動"
++msgstr "送交活動"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:109
++#: gitg/resources/ui/gitg-shortcuts.ui:116
+ msgctxt "shortcut window"
+ msgid "Select/Unselect"
+ msgstr "選擇／取消選擇"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:116
++#: gitg/resources/ui/gitg-shortcuts.ui:123
+ msgctxt "shortcut window"
+ msgid "Open commit dialog"
+-msgstr "開啟提交對話框"
++msgstr "開啟送交對話框"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:123
++#: gitg/resources/ui/gitg-shortcuts.ui:130
+ msgctxt "shortcut window"
+ msgid "Stage selection"
+ msgstr "暫存選擇"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:130
++#: gitg/resources/ui/gitg-shortcuts.ui:137
+ msgctxt "shortcut window"
+ msgid "Unstage selection"
+ msgstr "取消暫存選擇"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:137
++#: gitg/resources/ui/gitg-shortcuts.ui:144
+ msgctxt "shortcut window"
+ msgid "Discard selection"
+ msgstr "放棄選擇"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:144
++#: gitg/resources/ui/gitg-shortcuts.ui:151
+ msgctxt "shortcut window"
+ msgid "Edit selection"
+ msgstr "編輯選擇"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:152
++#: gitg/resources/ui/gitg-shortcuts.ui:159
+ msgctxt "shortcut window"
+ msgid "Commit Dialog"
+-msgstr "提交對話框"
++msgstr "送交對話框"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:157
++#: gitg/resources/ui/gitg-shortcuts.ui:164
+ msgctxt "shortcut window"
+ msgid "Commit"
+-msgstr "提交"
++msgstr "送交"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:164
++#: gitg/resources/ui/gitg-shortcuts.ui:171
+ msgctxt "shortcut window"
+ msgid "Cancel Commit"
+-msgstr "取消提交"
++msgstr "取消送交"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:171
++#: gitg/resources/ui/gitg-shortcuts.ui:178
+ msgctxt "shortcut window"
+ msgid "Previous commit message"
+-msgstr "上一個提交訊息"
++msgstr "上一個送交訊息"
+ 
+-#: gitg/resources/ui/gitg-shortcuts.ui:178
++#: gitg/resources/ui/gitg-shortcuts.ui:185
+ msgctxt "shortcut window"
+ msgid "Next commit message"
+-msgstr "下一個提交訊息"
++msgstr "下一個送交訊息"
++
++#: gitg/resources/ui/gitg-shortcuts.ui:193
++msgctxt "shortcut window"
++msgid "History Activity"
++msgstr "歷史活動"
+ 
+ #: gitg/resources/ui/gitg-window.ui:24
+ msgid "Show the list of recently used repositories"
+-msgstr "顯示目前使用的版本庫清單"
+-
+-#: gitg/resources/ui/gitg-window.ui:46
+-msgid "Clone"
+-msgstr "重製"
++msgstr "顯示目前使用的儲存庫清單"
+ 
+-#: gitg/resources/ui/gitg-window.ui:47
++#: gitg/resources/ui/gitg-window.ui:48
+ msgid "Clone repository"
+-msgstr "重製版本庫"
+-
+-#: gitg/resources/ui/gitg-window.ui:62
+-msgid "Add"
+-msgstr "加入"
++msgstr "重製儲存庫"
+ 
+-#: gitg/resources/ui/gitg-window.ui:63
++#: gitg/resources/ui/gitg-window.ui:65
+ msgid "Add repository"
+-msgstr "加入版本庫"
++msgstr "加入儲存庫"
+ 
+-#: gitg/resources/ui/gitg-window.ui:87
++#: gitg/resources/ui/gitg-window.ui:89
+ msgid "Find a word or phrase"
+ msgstr "尋找字詞"
+ 
+-#: gitg/resources/ui/gitg-window.ui:132
++#: gitg/resources/ui/gitg-window.ui:134
+ msgid "General settings and options"
+ msgstr "一般設定值與選項"
+ 
++#: gitg/resources/ui/gitg-window.ui:230
++msgid "_Close"
++msgstr "關閉(_C)"
++
+ #. Translators: %s will be replaced with a URL indicating the resource
+ #. for which the authentication is required.
+ #: libgitg/gitg-authentication-dialog.vala:69
+@@ -1901,52 +2153,101 @@ msgstr "晚於 (%s)"
+ msgid "added (%s)"
+ msgstr "已新增 (%s)"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:143
++#: libgitg/gitg-diff-view-commit-details.vala:172
+ msgid "Collapse all"
+ msgstr "全部收摺"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:147
++#: libgitg/gitg-diff-view-commit-details.vala:176
+ #: libgitg/resources/ui/gitg-diff-view-commit-details.ui:211
+ msgid "Expand all"
+ msgstr "全部展開"
+ 
+-#: libgitg/gitg-diff-view-commit-details.vala:202
++#: libgitg/gitg-diff-view-commit-details.vala:237
+ #, c-format
+ msgid "Committed by %s"
+-msgstr "由 %s 提交"
++msgstr "由 %s 送交"
++
++#. Translators: Unif stands for unified diff format
++#: libgitg/gitg-diff-view-file.vala:160
++msgid "Unif"
++msgstr ""
++
++#. Translators: Split stands for the noun
++#: libgitg/gitg-diff-view-file.vala:165
++msgid "Split"
++msgstr ""
++
++#: libgitg/gitg-diff-view-file.vala:172
++msgid "Binary"
++msgstr ""
++
++#: libgitg/gitg-diff-view-file.vala:179
++msgid "Image"
++msgstr ""
+ 
+-#: libgitg/gitg-diff-view-file.vala:177
++#: libgitg/gitg-diff-view-file.vala:224
+ msgid "_Open file"
+ msgstr "開啟檔案(_O)"
+ 
+-#: libgitg/gitg-diff-view-file.vala:209
++#: libgitg/gitg-diff-view-file.vala:257
+ msgid "Open containing _folder"
+ msgstr "開啟包含的資料夾(_F)"
+ 
+-#: libgitg/gitg-diff-view-file.vala:229
++#: libgitg/gitg-diff-view-file.vala:277
+ msgid "_Copy file path"
+ msgstr "複製檔案路徑(_C)"
+ 
+ #. Translators: this is used to construct: "at <directory>", to indicate where the repository is at.
+-#: libgitg/gitg-repository-list-box.vala:153
++#: libgitg/gitg-repository-list-box.vala:161
+ #, c-format
+ msgid "at %s"
+ msgstr "在 %s"
+ 
+ #. Translators: this is used to construct: "<branch-name> at <directory>"
+-#: libgitg/gitg-repository-list-box.vala:162
++#: libgitg/gitg-repository-list-box.vala:170
+ #, c-format
+ msgid "%s at %s"
+ msgstr "%s 在 %s"
+ 
+-#: libgitg/gitg-repository-list-box.vala:545
++#: libgitg/gitg-repository-list-box.vala:553
+ msgid "Cloning…"
+ msgstr "重製中…"
+ 
+-#: libgitg/gitg-stage.vala:337
++#: libgitg/gitg-repository-list-box.vala:566
++#, c-format
++msgid ""
++"Deleting repository source files “%s” will delete them from disk and cannot "
++"be undone. Are you sure?"
++msgstr ""
++
++#: libgitg/gitg-repository-list-box.vala:568
++msgid "Move to trash"
++msgstr "丟進垃圾桶"
++
++#: libgitg/gitg-repository-list-box.vala:569
++msgid "Delete permanently"
++msgstr "永久刪除"
++
++#: libgitg/gitg-stage.vala:343
+ #, c-format
+ msgid "Could not read commit message after running commit-msg hook: %s"
+-msgstr "在執行 commit-msg 掛鉤後無法讀取提交訊息：%s"
++msgstr "在執行 commit-msg 掛鉤後無法讀取送交訊息：%s"
++
++#: libgitg/gitg-stage.vala:464
++#, c-format
++msgid "setup “%s” to do a signed commit"
++msgstr ""
++
++#: libgitg/gitg-stage.vala:484
++#, fuzzy, c-format
++#| msgid "Failed to stage the file “%s”"
++msgid "error signing the commit “%s”"
++msgstr "無法暫存檔案「%s」"
++
++#: libgitg/gitg-stage.vala:496
++#, c-format
++msgid "error updating current ref “%s”"
++msgstr ""
+ 
+ #: libgitg/resources/ui/gitg-authentication-dialog.ui:18
+ msgid "_Authenticate"
+@@ -2026,19 +2327,32 @@ msgstr "間隔"
+ msgid ""
+ "Remove the repository from the list (does not delete the repository from "
+ "disk)"
+-msgstr "從清單中移除版本庫 (不會將版本庫自硬碟上刪除)"
++msgstr "從清單中移除儲存庫 (不會將儲存庫自硬碟上刪除)"
+ 
+-#: plugins/diff/gitg-diff.vala:120
++#: plugins/diff/gitg-diff.vala:125
+ msgid "Show the changes introduced by the selected commit"
+-msgstr "顯示選取的提交所造成的變更"
++msgstr "顯示選取的送交所造成的變更"
+ 
+-#: plugins/files/gitg-files.vala:63
++#: plugins/files/gitg-files.vala:68
+ msgid "Files"
+ msgstr "檔案"
+ 
+-#: plugins/files/gitg-files.vala:68
++#: plugins/files/gitg-files.vala:73
+ msgid "Show the files in the tree of the selected commit"
+-msgstr "在選取提交的樹狀圖中顯示檔案"
++msgstr "在選取送交的樹狀圖中顯示檔案"
++
++#~ msgid "The GNOME Project"
++#~ msgstr "GNOME 專案"
++
++#~ msgctxt "shortcut window"
++#~ msgid "Open the help"
++#~ msgstr "開啟求助文件"
++
++#~ msgid "Clone"
++#~ msgstr "重製"
++
++#~ msgid "Add"
++#~ msgstr "加入"
+ 
+ #~ msgid "Cannot set spell checking language: %s"
+ #~ msgstr "不能設定拼字檢查語言：%s"
+@@ -2079,9 +2393,6 @@ msgstr "在選取提交的樹狀圖中顯示檔案"
+ #~ msgid "Save"
+ #~ msgstr "儲存"
+ 
+-#~ msgid "_Open Repository…"
+-#~ msgstr "開啟倉儲(_O)…"
+-
+ #~ msgid "_Clone Repository…"
+ #~ msgstr "重製倉儲(_C)…"
+ 

@@ -1,0 +1,22 @@
+From 2d65ffe63991a4ec1ddf1409e3102f95e1d90791 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sat, 11 May 2024 11:04:21 -0500
+Subject: [PATCH] Update meson.build
+
+---
+ data/resources/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/resources/meson.build b/data/resources/meson.build
+index 3d18cd7..339d3c6 100644
+--- a/data/resources/meson.build
++++ b/data/resources/meson.build
+@@ -1,7 +1,7 @@
+ pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), meson.project_name())
+ gnome = import('gnome')
+ 
+-blueprint = find_program('blueprint-compiler')
++blueprint = find_program('/usr/bin/blueprint-compiler')
+ blueprints = custom_target('blueprints',
+   input: files(
+     'about.blp',

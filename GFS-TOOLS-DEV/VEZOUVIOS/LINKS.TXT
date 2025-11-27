@@ -1,0 +1,1517 @@
+20:45:41 01-10-23
+
+ ../
+   ..//BLACKLIST46
+     ..//BLACKLIST46/adwaita-icon-theme
+https://download.gnome.org/sources/adwaita-icon-theme/45/adwaita-icon-theme-45.0.tar.xz
+
+     ..//BLACKLIST46/at-spi2-core
+https://download.gnome.org/sources/at-spi2-core/2.50/at-spi2-core-2.50.0.tar.xz
+
+     ..//BLACKLIST46/cairo
+https://gitlab.freedesktop.org/cairo/cairo/-/archive/1.18.0/cairo-1.18.0.tar.gz
+
+     ..//BLACKLIST46/cairomm
+https://gitlab.freedesktop.org/cairo/cairomm/-/archive/1.16.2/cairomm-1.16.2.tar.gz
+
+     ..//BLACKLIST46/dconf-editor
+https://download.gnome.org/sources/dconf-editor/45/dconf-editor-45.0.1.tar.xz
+
+     ..//BLACKLIST46/gi-docgen
+https://download.gnome.org/sources/gi-docgen/2023/gi-docgen-2023.1.tar.xz
+
+     ..//BLACKLIST46/gjs
+https://download.gnome.org/sources/gjs/1.78/gjs-1.78.0.tar.xz
+
+     ..//BLACKLIST46/glib-networking
+https://download.gnome.org/sources/glib-networking/2.78/glib-networking-2.78.0.tar.xz
+
+     ..//BLACKLIST46/glib2
+https://download.gnome.org/sources/glib/2.78/glib-2.78.0.tar.xz
+
+     ..//BLACKLIST46/glibmm
+https://download.gnome.org/sources/glibmm/2.68/glibmm-2.68.2.tar.xz
+
+     ..//BLACKLIST46/gobject-introspection
+https://download.gnome.org/sources/gobject-introspection/1.78/gobject-introspection-1.78.1.tar.xz
+
+     ..//BLACKLIST46/graphviz
+https://gitlab.com/graphviz/graphviz/-/archive/8.1.0/graphviz-8.1.0.tar.bz2
+
+     ..//BLACKLIST46/gtk4
+https://download.gnome.org/sources/gtk/4.13/gtk-4.13.1.tar.xz
+
+     ..//BLACKLIST46/gtkmm4
+https://download.gnome.org/sources/gtkmm/4.11/gtkmm-4.11.3.tar.xz
+
+     ..//BLACKLIST46/gvfs
+https://download.gnome.org/sources/gvfs/1.51/gvfs-1.51.91.tar.xz
+
+     ..//BLACKLIST46/librsvg
+https://download.gnome.org/sources/librsvg/2.57/librsvg-2.57.0.tar.xz
+
+     ..//BLACKLIST46/libsoup3
+https://download.gnome.org/sources/libsoup/3.4/libsoup-3.4.3.tar.xz
+
+     ..//BLACKLIST46/mm-common
+https://download.gnome.org/sources/mm-common/1.0/mm-common-1.0.5.tar.xz
+
+     ..//BLACKLIST46/mozjs115
+https://archive.mozilla.org/pub/firefox/releases/115.1.0esr/source/firefox-115.1.0esr.source.tar.xz
+
+     ..//BLACKLIST46/order
+     ..//BLACKLIST46/pango
+https://download.gnome.org/sources/pango/1.51/pango-1.51.0.tar.xz
+
+     ..//BLACKLIST46/pangomm
+https://download.gnome.org/sources/pangomm/2.50/pangomm-2.50.1.tar.xz
+
+     ..//BLACKLIST46/python3-smartypants
+https://github.com/leohemsted/smartypants.py/archive/v2.0.1/smartypants.py-2.0.1.tar.gz
+
+     ..//BLACKLIST46/python3-toml
+https://files.pythonhosted.org/packages/be/ba/1f744cdc819428fc6b5084ec34d9b30660f6f9daaf70eead706e3203ec3c/toml-0.10.2.tar.gz
+
+     ..//BLACKLIST46/python3-typogrify
+https://files.pythonhosted.org/packages/8a/bf/64959d6187d42472acb846bcf462347c9124952c05bd57e5769d5f28f9a6/typogrify-2.0.7.tar.gz
+
+     ..//BLACKLIST46/xdg-desktop-portal
+https://github.com/flatpak/xdg-desktop-portal/releases/download/1.18.0/xdg-desktop-portal-1.18.0.tar.xz
+
+   ..//BUILD_LOGS
+   ..//GFS-TOOLS-DEV
+     ..//GFS-TOOLS-DEV/GFSBUILDS-TEMPLATES
+       ..//GFS-TOOLS-DEV/GFSBUILDS-TEMPLATES/order
+       ..//GFS-TOOLS-DEV/GFSBUILDS-TEMPLATES/package-name
+
+       ..//GFS-TOOLS-DEV/GFSBUILDS-TEMPLATES/package-name2
+
+     ..//GFS-TOOLS-DEV/SUMS
+   ..//VRR
+     ..//VRR/gnome-control-center-vrr
+https://download.gnome.org/sources/gnome-control-center/45/gnome-control-center-45.rc.tar.xz
+
+     ..//VRR/mutter-vrr
+https://download.gnome.org/sources/mutter/45/mutter-45.rc.tar.xz
+
+     ..//VRR/order
+   ..//backgrounds
+     ..//backgrounds/gnome-backgrounds-extra
+https://reddoglinux.ddns.net/distfile/gnome-backgrounds-extra-45.tar.xz
+https://reddoglinux.ddns.net/distfile/rizits.tar.xz
+https://reddoglinux.ddns.net/distfile/AI-rizitis-wallpapers.tar.xz
+
+     ..//backgrounds/order
+   ..//extensions
+     ..//extensions/gnome-shell-extension-appindicator
+
+     ..//extensions/gnome-shell-extension-arc-menu
+
+     ..//extensions/gnome-shell-extension-autohide-battery
+
+     ..//extensions/gnome-shell-extension-coverflow-alt-tab
+
+     ..//extensions/gnome-shell-extension-cpufreq
+
+     ..//extensions/gnome-shell-extension-dash-to-dock
+
+     ..//extensions/gnome-shell-extension-dash-to-panel
+
+     ..//extensions/gnome-shell-extension-desktop-icons-ng
+
+     ..//extensions/gnome-shell-extension-eortologio
+
+     ..//extensions/gnome-shell-extension-overview-feature-pack
+
+     ..//extensions/gnome-shell-extension-show-desktop
+
+     ..//extensions/gnome-shell-extension-tray-icons-reloaded
+
+     ..//extensions/gnome-shell-extension-webfeed
+
+     ..//extensions/order
+   ..//extras
+     ..//extras/boxes
+       ..//extras/boxes/device-tree-compiler
+https://git.kernel.org/pub/scm/utils/dtc/dtc.git/snapshot/dtc-1.6.1.tar.gz
+
+       ..//extras/boxes/gnome-boxes
+https://download.gnome.org/sources/gnome-boxes/45/gnome-boxes-45.rc.tar.xz
+
+       ..//extras/boxes/libcacard
+https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz
+
+       ..//extras/boxes/libnfs
+https://github.com/sahlberg/libnfs/archive/libnfs-5.0.2/libnfs-libnfs-5.0.2.tar.gz
+
+       ..//extras/boxes/libovf-glib
+https://reddoglinux.ddns.net/distfile/libovf-glib-0.1.0.tar.gz
+
+       ..//extras/boxes/libvirt
+https://libvirt.org/sources/libvirt-9.6.0.tar.xz
+
+       ..//extras/boxes/libvirt-glib
+https://libvirt.org/sources/glib/libvirt-glib-4.0.0.tar.xz
+
+       ..//extras/boxes/libvirt-python
+https://libvirt.org/sources/python/libvirt-python-9.1.0.tar.gz
+
+       ..//extras/boxes/numactl
+https://github.com/numactl/numactl/releases/download/v2.0.16/numactl-2.0.16.tar.gz
+
+       ..//extras/boxes/order_boxes
+       ..//extras/boxes/phodav
+https://download.gnome.org/sources/phodav/3.0/phodav-3.0.tar.xz
+
+       ..//extras/boxes/qemu
+https://download.qemu.org/qemu-7.2.0.tar.xz
+
+       ..//extras/boxes/snappy
+https://github.com/google/snappy/archive/1.1.8/snappy-1.1.8.tar.gz
+
+       ..//extras/boxes/spice
+https://www.spice-space.org/download/releases/spice-server/spice-0.15.1.tar.bz2
+
+       ..//extras/boxes/spice-gtk
+https://www.spice-space.org/download/gtk/spice-gtk-0.42.tar.xz
+
+       ..//extras/boxes/spice-protocol
+https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz
+
+       ..//extras/boxes/usbredir
+https://www.spice-space.org/download/usbredir/usbredir-0.13.0.tar.xz
+
+       ..//extras/boxes/vde2
+http://downloads.sourceforge.net/project/vde/vde2/2.3.2/vde2-2.3.2.tar.bz2
+
+       ..//extras/boxes/virglrenderer
+https://gitlab.freedesktop.org/virgl/virglrenderer/-/archive/virglrenderer-0.10.4/virglrenderer-virglrenderer-0.10.4.tar.bz2
+
+       ..//extras/boxes/virt-manager
+https://releases.pagure.org/virt-manager/virt-manager-4.1.0.tar.gz
+
+       ..//extras/boxes/yajl
+
+     ..//extras/gtranslator
+       ..//extras/gtranslator/gtranslator
+https://gitlab.gnome.org/GNOME/gtranslator/-/archive/45.alpha0/gtranslator-45.alpha0.tar.gz
+
+       ..//extras/gtranslator/libgda
+https://download.gnome.org/sources/libgda/6.0/libgda-6.0.0.tar.xz
+
+       ..//extras/gtranslator/order_gtranslator
+     ..//extras/order
+     ..//extras/pika-backup
+       ..//extras/pika-backup/borgbackup
+https://github.com/borgbackup/borg/releases/download/1.2.3/borgbackup-1.2.3.tar.gz
+
+       ..//extras/pika-backup/order_pika_backup
+       ..//extras/pika-backup/pika-backup
+https://gitlab.gnome.org/World/pika-backup/-/archive/v0.4.2/pika-backup-v0.4.2.tar.gz
+
+       ..//extras/pika-backup/python-cachetools
+https://files.pythonhosted.org/packages/c2/6f/278225c5a070a18a76f85db5f1238f66476579fa9b04cda3722331dcc90f/cachetools-5.2.0.tar.gz
+
+       ..//extras/pika-backup/python-cryptography
+https://files.pythonhosted.org/packages/e3/3f/41186b1f2fd86a542d399175f6b8e43f82cd4dfa51235a0b030a042b811a/cryptography-38.0.4.tar.gz
+
+       ..//extras/pika-backup/python-google-api-core
+https://files.pythonhosted.org/packages/2b/15/7bafa5379a228ed72baf769eea5e6019a944469fe637ea0742c0351109bf/google-api-core-2.11.0.tar.gz
+
+       ..//extras/pika-backup/python-google-api-python-client
+https://files.pythonhosted.org/packages/a8/fe/71091bf1a9f2fa50c06a6caa94b579da7d354d83ac01a4c34b139808d332/google-api-python-client-2.70.0.tar.gz
+
+       ..//extras/pika-backup/python-google-auth
+https://files.pythonhosted.org/packages/52/a6/72c80f4a0b37c2c32d35636b2373bdf07c1dad81b109f9361742d3aa1cbe/google-auth-2.15.0.tar.gz
+
+       ..//extras/pika-backup/python-google-auth-httplib2
+https://files.pythonhosted.org/packages/c6/b5/a9e956fd904ecb34ec9d297616fe98fa4106fc12f3b0a914dec983c267b9/google-auth-httplib2-0.1.0.tar.gz
+
+       ..//extras/pika-backup/python-google-cloud-core
+https://files.pythonhosted.org/packages/40/4b/f4cebb92fe965f02f4a9c06f16355cf83a61a2d5db110df9af71191c830a/google-cloud-core-2.3.2.tar.gz
+
+       ..//extras/pika-backup/python-google-cloud-storage
+https://files.pythonhosted.org/packages/9f/9c/8cd4da7df57284832c3853aa565de278ca6d33a47ebe6722628488dc01ca/google-cloud-storage-2.7.0.tar.gz
+
+       ..//extras/pika-backup/python-google-crc32c
+https://files.pythonhosted.org/packages/d3/a5/4bb58448fffd36ede39684044df93a396c13d1ea3516f585767f9f960352/google-crc32c-1.5.0.tar.gz
+
+       ..//extras/pika-backup/python-google-resumable-media
+https://files.pythonhosted.org/packages/71/d2/d681d0c192d2948b692f155bc20ee03727ab3a70d541b0c39a327c9689a9/google-resumable-media-2.4.0.tar.gz
+
+       ..//extras/pika-backup/python-googleapis-common-protos
+https://files.pythonhosted.org/packages/c5/db/9b98c3a9e148b5daaa2e26ce4faeb6ade28dc623dcc109f2ac7efee514de/googleapis-common-protos-1.57.0.tar.gz
+
+       ..//extras/pika-backup/python-guzzle_sphinx_theme
+https://files.pythonhosted.org/packages/f4/7d/aed8cd5e4ca52bb8550d2c33fcbb8d6dbd5c2cf5e1694202d2135b374eba/guzzle_sphinx_theme-0.7.11.tar.gz
+
+       ..//extras/pika-backup/python-httplib2
+https://files.pythonhosted.org/packages/c2/37/a093aaa902f6b2301f0f2cff5285548dbc4ab9b9a29215eb440381cbb32b/httplib2-0.21.0.tar.gz
+
+       ..//extras/pika-backup/python-msgpack
+https://files.pythonhosted.org/packages/22/44/0829b19ac243211d1d2bd759999aa92196c546518b0be91de9cacc98122a/msgpack-1.0.4.tar.gz
+
+       ..//extras/pika-backup/python-oauth2client
+https://files.pythonhosted.org/packages/a6/7b/17244b1083e8e604bf154cf9b716aecd6388acd656dd01893d0d244c94d9/oauth2client-4.1.3.tar.gz
+
+       ..//extras/pika-backup/python-protobuf
+https://files.pythonhosted.org/packages/ba/dd/f8a01b146bf45ac12a829bbc599e6590aa6a6849ace7d28c42d77041d6ab/protobuf-4.21.12.tar.gz
+
+       ..//extras/pika-backup/python-pyasn1
+https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7bad3d504147f9094830b704527a7fc098b721d38cc7fa7/pyasn1-0.4.8.tar.gz
+
+       ..//extras/pika-backup/python-pyasn1-modules
+https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021c542de2588a867dbefc7556e14b2866d1e40e9e2b587e/pyasn1-modules-0.2.8.tar.gz
+
+       ..//extras/pika-backup/python-pydrive2
+https://files.pythonhosted.org/packages/05/e8/4d227db64308b3ccc81e7ef5df2432c4b97ecc835b9f291fd07f5be93c58/PyDrive2-1.15.0.tar.gz
+
+       ..//extras/pika-backup/python-pyopenssl
+https://files.pythonhosted.org/packages/e7/2f/c6d89edac75482f11e231b644e365d31d5479b7b727734e6a8f3d00decd5/pyOpenSSL-22.1.0.tar.gz
+
+       ..//extras/pika-backup/python-rsa
+https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351d7fb232c2e452547ddfa243e93131e7cfa766da627b52/rsa-4.9.tar.gz
+
+       ..//extras/pika-backup/python-semantic_version
+https://files.pythonhosted.org/packages/7d/31/f2289ce78b9b473d582568c234e104d2a342fd658cc288a7553d83bb8595/semantic_version-2.10.0.tar.gz
+
+       ..//extras/pika-backup/python-setuptools_rust
+https://files.pythonhosted.org/packages/99/db/e4ecb483ffa194d632ed44bda32cb740e564789fed7e56c2be8e2a0e2aa6/setuptools-rust-1.5.2.tar.gz
+
+       ..//extras/pika-backup/python-typing_extensions
+https://files.pythonhosted.org/packages/source/t/typing_extensions/typing_extensions-4.4.0.tar.gz
+
+       ..//extras/pika-backup/python-uritemplate
+https://files.pythonhosted.org/packages/d2/5a/4742fdba39cd02a56226815abfa72fe0aa81c33bed16ed045647d6000eba/uritemplate-4.1.1.tar.gz
+
+       ..//extras/pika-backup/python3-cryptography
+https://files.pythonhosted.org/packages/e3/3f/41186b1f2fd86a542d399175f6b8e43f82cd4dfa51235a0b030a042b811a/cryptography-38.0.4.tar.gz
+
+   ..//games
+     ..//games/atomix
+https://download.gnome.org/sources/atomix/44/atomix-44.0.tar.xz
+
+     ..//games/chess-clock
+https://gitlab.gnome.org/World/chess-clock/-/archive/v0.5.0/chess-clock-v0.5.0.tar.gz
+
+     ..//games/clairvoyant
+https://github.com/cassidyjames/clairvoyant/archive/3.0.6/clairvoyant-3.0.6.tar.gz
+
+     ..//games/five-or-more
+https://download.gnome.org/sources/five-or-more/3.32/five-or-more-3.32.3.tar.xz
+
+     ..//games/four-in-a-row
+https://download.gnome.org/sources/four-in-a-row/3.38/four-in-a-row-3.38.1.tar.xz
+
+     ..//games/gnome-2048
+https://download.gnome.org/sources/gnome-2048/3.38/gnome-2048-3.38.2.tar.xz
+
+     ..//games/gnome-chess
+https://download.gnome.org/sources/gnome-chess/43/gnome-chess-43.2.tar.xz
+
+     ..//games/gnome-klotski
+https://download.gnome.org/sources/gnome-klotski/3.38/gnome-klotski-3.38.2.tar.xz
+
+     ..//games/gnome-mahjongg
+https://download.gnome.org/sources/gnome-mahjongg/3.40/gnome-mahjongg-3.40.0.tar.xz
+
+     ..//games/gnome-mines
+https://download.gnome.org/sources/gnome-mines/40/gnome-mines-40.1.tar.xz
+
+     ..//games/gnome-nibbles
+https://download.gnome.org/sources/gnome-nibbles/3.38/gnome-nibbles-3.38.3.tar.xz
+
+     ..//games/gnome-robots
+https://download.gnome.org/sources/gnome-robots/40/gnome-robots-40.0.tar.xz
+
+     ..//games/gnome-sudoku
+https://download.gnome.org/sources/gnome-sudoku/45/gnome-sudoku-45.alpha.tar.xz
+
+     ..//games/gnome-tetravex
+https://download.gnome.org/sources/gnome-tetravex/3.38/gnome-tetravex-3.38.2.tar.xz
+
+     ..//games/highscore
+
+     ..//games/libgnome-games-support
+https://download.gnome.org/sources/libgnome-games-support/1.8/libgnome-games-support-1.8.2.tar.xz
+
+     ..//games/order
+     ..//games/qqwing
+https://qqwing.com/qqwing-1.3.4.tar.gz
+
+     ..//games/retro-gtk
+
+   ..//gnome
+     ..//gnome/baobab
+https://download.gnome.org/sources/baobab/45/baobab-45.alpha.tar.xz
+
+     ..//gnome/brasero
+https://download.gnome.org/sources/brasero/3.12/brasero-3.12.3.tar.xz
+
+     ..//gnome/cmark
+https://github.com/commonmark/cmark/archive/0.30.2/cmark-0.30.2.tar.gz
+
+     ..//gnome/epiphany
+https://download.gnome.org/sources/epiphany/45/epiphany-45.beta.tar.xz
+
+     ..//gnome/evince
+https://download.gnome.org/sources/evince/45/evince-45.rc.tar.xz
+
+     ..//gnome/evolution
+https://download.gnome.org/sources/evolution/3.49/evolution-3.49.3.tar.xz
+
+     ..//gnome/exempi
+https://libopenraw.freedesktop.org/download/exempi-2.6.4.tar.xz
+
+     ..//gnome/fdkaac
+https://github.com/nu774/fdkaac/archive/v1.0.5/fdkaac-1.0.5.tar.gz
+
+     ..//gnome/file-roller
+https://download.gnome.org/sources/file-roller/43/file-roller-43.0.tar.xz
+
+     ..//gnome/folks
+https://download.gnome.org/sources/folks/0.15/folks-0.15.6.tar.xz
+
+     ..//gnome/gedit
+https://download.gnome.org/sources/gedit/46/gedit-46.1.tar.xz
+
+     ..//gnome/glycin-loaders
+https://download.gnome.org/sources/glycin-loaders/0.1/glycin-loaders-0.1.rc.tar.xz
+
+     ..//gnome/gnome-calculator
+https://download.gnome.org/sources/gnome-calculator/45/gnome-calculator-45.0.1.tar.xz
+
+     ..//gnome/gnome-calendar
+https://download.gnome.org/sources/gnome-calendar/45/gnome-calendar-45.beta.tar.xz
+
+     ..//gnome/gnome-characters
+https://download.gnome.org/sources/gnome-characters/45/gnome-characters-45.alpha.tar.xz
+
+     ..//gnome/gnome-clocks
+https://download.gnome.org/sources/gnome-clocks/44/gnome-clocks-44.0.tar.xz
+
+     ..//gnome/gnome-font-viewer
+https://download.gnome.org/sources/gnome-font-viewer/45/gnome-font-viewer-45.alpha.tar.xz
+
+     ..//gnome/gnome-maps
+https://download.gnome.org/sources/gnome-maps/45/gnome-maps-45.rc.tar.xz
+
+     ..//gnome/gnome-power-manager
+https://download.gnome.org/sources/gnome-power-manager/43/gnome-power-manager-43.0.tar.xz
+
+     ..//gnome/gnome-remote-desktop
+https://download.gnome.org/sources/gnome-remote-desktop/45/gnome-remote-desktop-45.rc.tar.xz
+
+     ..//gnome/gnome-system-monitor
+https://download.gnome.org/sources/gnome-system-monitor/45/gnome-system-monitor-45.0.1.tar.xz
+
+     ..//gnome/gnome-user-docs
+https://download.gnome.org/sources/gnome-user-docs/44/gnome-user-docs-44.0.tar.xz
+
+     ..//gnome/gom
+https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz
+
+     ..//gnome/grilo
+https://download.gnome.org/sources/grilo/0.3/grilo-0.3.16.tar.xz
+
+     ..//gnome/grilo-plugins
+https://download.gnome.org/sources/grilo-plugins/0.3/grilo-plugins-0.3.16.tar.xz
+
+     ..//gnome/gsettings-desktop-schemas
+https://download.gnome.org/sources/gsettings-desktop-schemas/45/gsettings-desktop-schemas-45.rc.tar.xz
+
+     ..//gnome/gspell
+https://download.gnome.org/sources/gspell/1.12/gspell-1.12.2.tar.xz
+
+     ..//gnome/highlight
+http://www.andre-simon.de/zip/highlight-4.7.tar.bz2
+
+     ..//gnome/libdazzle
+https://download.gnome.org/sources/libdazzle/3.44/libdazzle-3.44.0.tar.xz
+
+     ..//gnome/libdmapsharing
+https://gitlab.gnome.org/GNOME/libdmapsharing/-/archive/LIBDMAPSHARING_3_9_13/libdmapsharing-LIBDMAPSHARING_3_9_13.tar.gz
+
+     ..//gnome/libfdk-aac
+https://github.com/mstorsjo/fdk-aac/archive/v2.0.2/fdk-aac-2.0.2.tar.gz
+
+     ..//gnome/libgedit-amtk
+https://gedit-technology.net/tarballs/libgedit-amtk/libgedit-amtk-5.8.0.tar.xz
+
+     ..//gnome/libgedit-gtksourceview
+https://gedit-technology.net/tarballs/libgedit-gtksourceview/libgedit-gtksourceview-299.0.4.tar.xz
+
+     ..//gnome/libgrss
+https://download.gnome.org/sources/libgrss/0.7/libgrss-0.7.0.tar.xz
+
+     ..//gnome/libgxps
+https://download.gnome.org/sources/libgxps/0.3/libgxps-0.3.2.tar.xz
+
+     ..//gnome/libheif
+https://github.com/strukturag/libheif/releases/download/v1.16.2/libheif-1.16.2.tar.gz
+
+     ..//gnome/libiptcdata
+https://github.com/ianw/libiptcdata/releases/download/release_1_0_5/libiptcdata-1.0.5.tar.gz
+
+     ..//gnome/liblouis
+https://github.com/liblouis/liblouis/releases/download/v3.24.0/liblouis-3.24.0.tar.gz
+
+     ..//gnome/libmediaart
+https://download.gnome.org/sources/libmediaart/1.9/libmediaart-1.9.6.tar.xz
+
+     ..//gnome/liboauth
+
+     ..//gnome/libosinfo
+https://releases.pagure.org/libosinfo/libosinfo-1.10.0.tar.xz
+
+     ..//gnome/libpeas
+https://download.gnome.org/sources/libpeas/1.36/libpeas-1.36.0.tar.xz
+
+     ..//gnome/libpeas2
+https://download.gnome.org/sources/libpeas/1.99/libpeas-1.99.1.tar.xz
+
+     ..//gnome/libpst
+https://www.five-ten-sg.com/libpst/packages/libpst-0.6.76.tar.gz
+
+     ..//gnome/libshumate
+https://download.gnome.org/sources/libshumate/1.1/libshumate-1.1.rc.tar.xz
+
+     ..//gnome/loupe
+https://download.gnome.org/sources/loupe/45/loupe-45.beta.1.tar.xz
+
+     ..//gnome/lua53
+https://www.lua.org/ftp/lua-5.3.6.tar.gz
+
+     ..//gnome/nv-codec-headers
+https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.0.16.0/nv-codec-headers-12.0.16.0.tar.gz
+
+     ..//gnome/orca
+https://download.gnome.org/sources/orca/45/orca-45.rc.tar.xz
+
+     ..//gnome/order
+     ..//gnome/osinfo-db
+https://releases.pagure.org/libosinfo/osinfo-db-20230719.tar.xz
+https://harrier.slackbuilds.org/misc/osinfo-db-slackware-20220214.tar.xz
+
+     ..//gnome/osinfo-db-tools
+https://releases.pagure.org/libosinfo/osinfo-db-tools-1.10.0.tar.xz
+
+     ..//gnome/power-profiles-daemon
+https://gitlab.freedesktop.org/hadess/power-profiles-daemon/-/archive/0.13/power-profiles-daemon-0.13.tar.gz
+
+     ..//gnome/pyatspi
+https://download.gnome.org/sources/pyatspi/2.46/pyatspi-2.46.0.tar.xz
+
+     ..//gnome/seahorse
+https://download.gnome.org/sources/seahorse/43/seahorse-43.0.tar.xz
+
+     ..//gnome/simple-scan
+https://download.gnome.org/sources/simple-scan/44/simple-scan-44.0.tar.xz
+
+     ..//gnome/telepathy-glib
+https://github.com/TelepathyIM/telepathy-glib/archive/refs/tags/telepathy-glib-0.24.2.tar.gz
+
+     ..//gnome/tepl
+https://download.gnome.org/sources/tepl/6.8/tepl-6.8.0.tar.xz
+
+     ..//gnome/totem-pl-parser
+https://download.gnome.org/sources/totem-pl-parser/3.26/totem-pl-parser-3.26.6.tar.xz
+
+     ..//gnome/tpm2-tss
+https://github.com/tpm2-software/tpm2-tss/releases/download/4.0.1/tpm2-tss-4.0.1.tar.gz
+
+     ..//gnome/tracker-miners
+https://download.gnome.org/sources/tracker-miners/3.6/tracker-miners-3.6.beta.tar.xz
+
+     ..//gnome/xdg-desktop-portal
+https://github.com/flatpak/xdg-desktop-portal/releases/download/1.17.2/xdg-desktop-portal-1.17.2.tar.xz
+
+     ..//gnome/xdg-desktop-portal-gnome
+https://download.gnome.org/sources/xdg-desktop-portal-gnome/45/xdg-desktop-portal-gnome-45.rc.tar.xz
+
+     ..//gnome/xdg-desktop-portal-gtk
+https://github.com/flatpak/xdg-desktop-portal-gtk/releases/download/1.14.1/xdg-desktop-portal-gtk-1.14.1.tar.xz
+
+     ..//gnome/ytnef
+https://github.com/Yeraze/ytnef/archive/v2.0/ytnef-2.0.tar.gz
+
+     ..//gnome/zenity
+https://download.gnome.org/sources/zenity/3.99/zenity-3.99.2.tar.xz
+
+   ..//gnome_builder
+     ..//gnome_builder/d-spy
+https://download.gnome.org/sources/d-spy/1.6/d-spy-1.6.0.tar.xz
+
+     ..//gnome_builder/devhelp
+https://download.gnome.org/sources/devhelp/43/devhelp-43.0.tar.xz
+
+     ..//gnome_builder/flatpak-builder
+https://github.com/flatpak/flatpak-builder/releases/download/1.2.3/flatpak-builder-1.2.3.tar.xz
+
+     ..//gnome_builder/gnome-builder
+https://download.gnome.org/sources/gnome-builder/45/gnome-builder-45.rc.tar.xz
+
+     ..//gnome_builder/jsonrpc-glib
+https://download.gnome.org/sources/jsonrpc-glib/3.44/jsonrpc-glib-3.44.0.tar.xz
+
+     ..//gnome_builder/libdex
+https://download.gnome.org/sources/libdex/0.3/libdex-0.3.1.tar.xz
+
+     ..//gnome_builder/libpanel
+https://download.gnome.org/sources/libpanel/1.3/libpanel-1.3.1.tar.xz
+
+     ..//gnome_builder/order
+     ..//gnome_builder/sphinx_rtd_theme
+https://files.pythonhosted.org/packages/35/b4/40faec6790d4b08a6ef878feddc6ad11c3872b75f52273f1418c39f67cd6/sphinx_rtd_theme-1.2.0.tar.gz
+
+     ..//gnome_builder/sysprof
+https://download.gnome.org/sources/sysprof/45/sysprof-45.rc.tar.xz
+
+     ..//gnome_builder/sysprof_344
+https://gitlab.gnome.org/GNOME/sysprof/-/archive/3.44.0/sysprof-3.44.0.tar.bz2
+
+     ..//gnome_builder/template-glib
+https://download.gnome.org/sources/template-glib/3.36/template-glib-3.36.1.tar.xz
+
+   ..//gnome_more
+     ..//gnome_more/cozy
+https://github.com/geigi/cozy/archive/1.2.1/cozy-1.2.1.tar.gz
+
+     ..//gnome_more/elastic
+https://gitlab.gnome.org/World/elastic/-/archive/0.1.3/elastic-0.1.3.tar.gz
+
+     ..//gnome_more/emblem
+https://gitlab.gnome.org/World/design/emblem/-/archive/1.2.0/emblem-1.2.0.tar.gz
+
+     ..//gnome_more/eyedropper
+https://github.com/FineFindus/eyedropper/archive/refs/tags/v0.6.0.tar.gz
+
+     ..//gnome_more/font-noto-emoji
+https://github.com/googlei18n/noto-emoji/archive/v2.038/noto-emoji-2.038.tar.gz
+
+     ..//gnome_more/gaphor
+https://github.com/gaphor/gaphor/archive/2.19.3/gaphor-2.19.3.tar.gz
+
+     ..//gnome_more/gnome-commander
+https://download.gnome.org/sources/gnome-commander/1.16/gnome-commander-1.16.1.tar.xz
+
+     ..//gnome_more/gnome-flashback
+https://download.gnome.org/sources/gnome-flashback/3.46/gnome-flashback-3.46.0.tar.xz
+
+     ..//gnome_more/gnome-latex
+https://download.gnome.org/sources/gnome-latex/3.46/gnome-latex-3.46.0.tar.xz
+
+     ..//gnome_more/gnote
+https://download.gnome.org/sources/gnote/45/gnote-45.alpha.tar.xz
+
+     ..//gnome_more/gnumeric
+https://download.gnome.org/sources/gnumeric/1.12/gnumeric-1.12.55.tar.xz
+
+     ..//gnome_more/goffice
+https://download.gnome.org/sources/goffice/0.10/goffice-0.10.55.tar.xz
+
+     ..//gnome_more/gthumb
+https://gitlab.gnome.org/GNOME/gthumb/-/archive/3.12.3/gthumb-3.12.3.tar.gz
+
+     ..//gnome_more/gtk-internet-radio-locator
+https://download.gnome.org/sources/gtk-internet-radio-locator/4.8/gtk-internet-radio-locator-4.8.3.tar.xz
+
+     ..//gnome_more/gupnp
+https://download.gnome.org/sources/gupnp/1.6/gupnp-1.6.5.tar.xz
+
+     ..//gnome_more/gupnp-av
+https://download.gnome.org/sources/gupnp-av/0.14/gupnp-av-0.14.1.tar.xz
+
+     ..//gnome_more/gupnp-dlna
+https://download.gnome.org/sources/gupnp-dlna/0.12/gupnp-dlna-0.12.0.tar.xz
+
+     ..//gnome_more/health
+https://gitlab.gnome.org/World/Health/-/archive/0.94.0/Health-0.94.0.tar.gz
+
+     ..//gnome_more/hitori
+https://download.gnome.org/sources/hitori/44/hitori-44.0.tar.xz
+
+     ..//gnome_more/identity
+https://gitlab.gnome.org/YaLTeR/identity/-/archive/v0.5.0/identity-v0.5.0.tar.gz
+
+     ..//gnome_more/khronos
+https://github.com/lainsce/khronos/archive/3.7.0/khronos-3.7.0.tar.gz
+
+     ..//gnome_more/komikku
+
+     ..//gnome_more/libgnome-volume-control
+
+     ..//gnome_more/libmusicbrainz5
+https://github.com/metabrainz/libmusicbrainz/releases/download/release-5.1.0/libmusicbrainz-5.1.0.tar.gz
+
+     ..//gnome_more/lightsoff
+https://gitlab.gnome.org/GNOME/lightsoff/-/archive/40.0.1/lightsoff-40.0.1.tar.gz
+
+     ..//gnome_more/lorem
+https://gitlab.gnome.org/World/design/lorem/-/archive/1.2/lorem-1.2.tar.gz
+
+     ..//gnome_more/meld
+https://download.gnome.org/sources/meld/3.22/meld-3.22.0.tar.xz
+
+     ..//gnome_more/metadata-cleaner
+https://gitlab.com/rmnvgr/metadata-cleaner/-/archive/v2.5.2/metadata-cleaner-v2.5.2.tar.gz
+
+     ..//gnome_more/metronome
+https://gitlab.gnome.org/World/metronome/-/archive/1.3.0/metronome-1.3.0.tar.gz
+
+     ..//gnome_more/mousai
+https://github.com/SeaDve/Mousai/archive/v0.7.5/Mousai-0.7.5.tar.gz
+
+     ..//gnome_more/news_flash_gtk
+https://gitlab.com/news-flash/news_flash_gtk/-/archive/v.2.3.0/news_flash_gtk-v.2.3.0.tar.gz
+
+     ..//gnome_more/obfuscate
+https://gitlab.gnome.org/World/obfuscate/-/archive/0.0.9/obfuscate-0.0.9.tar.gz
+
+     ..//gnome_more/order
+     ..//gnome_more/polari
+https://gitlab.gnome.org/GNOME/polari/-/archive/43.0/polari-43.0.tar.gz
+
+     ..//gnome_more/python3-better-exceptions
+https://github.com/Qix-/better-exceptions/archive/0.2.1/better-exceptions-0.2.1.tar.gz
+
+     ..//gnome_more/python3-cachetools
+https://files.pythonhosted.org/packages/c2/6f/278225c5a070a18a76f85db5f1238f66476579fa9b04cda3722331dcc90f/cachetools-5.2.0.tar.gz
+
+     ..//gnome_more/python3-dateparser
+
+     ..//gnome_more/python3-emoji
+https://github.com/carpedm20/emoji/archive/v.1.2.1/emoji-v.1.2.1.tar.gz
+
+     ..//gnome_more/python3-entrypoints
+
+     ..//gnome_more/python3-exceptiongroup
+https://files.pythonhosted.org/packages/source/e/exceptiongroup/exceptiongroup-1.1.1.tar.gz
+
+     ..//gnome_more/python3-flit_scm
+https://files.pythonhosted.org/packages/source/f/flit_scm/flit_scm-1.7.0.tar.gz
+
+     ..//gnome_more/python3-gaphas
+https://github.com/gaphor/gaphas/archive/3.11.3/gaphas-3.11.3.tar.gz
+
+     ..//gnome_more/python3-generic
+https://github.com/gaphor/generic/archive/1.1.2/generic-1.1.2.tar.gz
+
+     ..//gnome_more/python3-google-api-core
+https://files.pythonhosted.org/packages/2b/15/7bafa5379a228ed72baf769eea5e6019a944469fe637ea0742c0351109bf/google-api-core-2.11.0.tar.gz
+
+     ..//gnome_more/python3-google-api-python-client
+https://files.pythonhosted.org/packages/a8/fe/71091bf1a9f2fa50c06a6caa94b579da7d354d83ac01a4c34b139808d332/google-api-python-client-2.70.0.tar.gz
+
+     ..//gnome_more/python3-google-auth
+https://files.pythonhosted.org/packages/52/a6/72c80f4a0b37c2c32d35636b2373bdf07c1dad81b109f9361742d3aa1cbe/google-auth-2.15.0.tar.gz
+
+     ..//gnome_more/python3-google-auth-httplib2
+https://files.pythonhosted.org/packages/c6/b5/a9e956fd904ecb34ec9d297616fe98fa4106fc12f3b0a914dec983c267b9/google-auth-httplib2-0.1.0.tar.gz
+
+     ..//gnome_more/python3-google-cloud-core
+https://files.pythonhosted.org/packages/40/4b/f4cebb92fe965f02f4a9c06f16355cf83a61a2d5db110df9af71191c830a/google-cloud-core-2.3.2.tar.gz
+
+     ..//gnome_more/python3-google-cloud-storage
+https://files.pythonhosted.org/packages/9f/9c/8cd4da7df57284832c3853aa565de278ca6d33a47ebe6722628488dc01ca/google-cloud-storage-2.7.0.tar.gz
+
+     ..//gnome_more/python3-google-crc32c
+https://files.pythonhosted.org/packages/d3/a5/4bb58448fffd36ede39684044df93a396c13d1ea3516f585767f9f960352/google-crc32c-1.5.0.tar.gz
+
+     ..//gnome_more/python3-google-resumable-media
+https://files.pythonhosted.org/packages/71/d2/d681d0c192d2948b692f155bc20ee03727ab3a70d541b0c39a327c9689a9/google-resumable-media-2.4.0.tar.gz
+
+     ..//gnome_more/python3-googleapis-common-protos
+https://files.pythonhosted.org/packages/c5/db/9b98c3a9e148b5daaa2e26ce4faeb6ade28dc623dcc109f2ac7efee514de/googleapis-common-protos-1.57.0.tar.gz
+
+     ..//gnome_more/python3-guzzle_sphinx_theme
+https://files.pythonhosted.org/packages/f4/7d/aed8cd5e4ca52bb8550d2c33fcbb8d6dbd5c2cf5e1694202d2135b374eba/guzzle_sphinx_theme-0.7.11.tar.gz
+
+     ..//gnome_more/python3-httplib2
+https://files.pythonhosted.org/packages/c2/37/a093aaa902f6b2301f0f2cff5285548dbc4ab9b9a29215eb440381cbb32b/httplib2-0.21.0.tar.gz
+
+     ..//gnome_more/python3-jedi
+https://files.pythonhosted.org/packages/source/j/jedi/jedi-0.18.2.tar.gz
+
+     ..//gnome_more/python3-keyring
+https://files.pythonhosted.org/packages/ee/46/77fdb7cd2b0f1f684afbc35a59b3d7ebb6961fe528f97b86900002968914/keyring-19.2.0.tar.gz
+
+     ..//gnome_more/python3-magic
+https://pypi.io/packages/source/p/python-magic/python-magic-0.4.27.tar.gz
+
+     ..//gnome_more/python3-mat2
+https://0xacab.org/jvoisin/mat2/-/archive/0.13.3/mat2-0.13.3.tar.gz
+
+     ..//gnome_more/python3-msgpack
+https://files.pythonhosted.org/packages/22/44/0829b19ac243211d1d2bd759999aa92196c546518b0be91de9cacc98122a/msgpack-1.0.4.tar.gz
+
+     ..//gnome_more/python3-mutagen
+https://files.pythonhosted.org/packages/b1/54/d1760a363d0fe345528e37782f6c18123b0e99e8ea755022fd51f1ecd0f9/mutagen-1.46.0.tar.gz
+
+     ..//gnome_more/python3-natsort
+https://files.pythonhosted.org/packages/f7/37/207acdf07c2229a799b7a042c0977ad2372f4adb3446fba8f7703e2840e1/natsort-8.1.0.tar.gz
+
+     ..//gnome_more/python3-oauth2client
+https://files.pythonhosted.org/packages/a6/7b/17244b1083e8e604bf154cf9b716aecd6388acd656dd01893d0d244c94d9/oauth2client-4.1.3.tar.gz
+
+     ..//gnome_more/python3-parso
+https://github.com/davidhalter/parso/archive/v0.8.3/parso-0.8.3.tar.gz
+
+     ..//gnome_more/python3-peewee
+https://files.pythonhosted.org/packages/a9/50/1dd5ea74c559df4afb8391f8d05f0fec685dbe8effba13bb9072901eb288/peewee-3.16.2.tar.gz
+
+     ..//gnome_more/python3-piexif
+https://files.pythonhosted.org/packages/fa/84/a3f25cec7d0922bf60be8000c9739d28d24b6896717f44cc4cfb843b1487/piexif-1.1.3.zip
+
+     ..//gnome_more/python3-poetry-core
+https://files.pythonhosted.org/packages/source/p/poetry_core/poetry_core-1.5.2.tar.gz
+
+     ..//gnome_more/python3-pyasn1
+https://files.pythonhosted.org/packages/a4/db/fffec68299e6d7bad3d504147f9094830b704527a7fc098b721d38cc7fa7/pyasn1-0.4.8.tar.gz
+
+     ..//gnome_more/python3-pyasn1-modules
+https://files.pythonhosted.org/packages/88/87/72eb9ccf8a58021c542de2588a867dbefc7556e14b2866d1e40e9e2b587e/pyasn1-modules-0.2.8.tar.gz
+
+     ..//gnome_more/python3-pydot
+https://files.pythonhosted.org/packages/13/6e/916cdf94f9b38ae0777b254c75c3bdddee49a54cc4014aac1460a7a172b3/pydot-1.4.2.tar.gz
+
+     ..//gnome_more/python3-pydrive2
+https://files.pythonhosted.org/packages/05/e8/4d227db64308b3ccc81e7ef5df2432c4b97ecc835b9f291fd07f5be93c58/PyDrive2-1.15.0.tar.gz
+
+     ..//gnome_more/python3-pyopenssl
+https://files.pythonhosted.org/packages/e7/2f/c6d89edac75482f11e231b644e365d31d5479b7b727734e6a8f3d00decd5/pyOpenSSL-22.1.0.tar.gz
+
+     ..//gnome_more/python3-pyproject-hooks
+https://files.pythonhosted.org/packages/source/p/pyproject_hooks/pyproject_hooks-1.0.0.tar.gz
+
+     ..//gnome_more/python3-rarfile
+https://files.pythonhosted.org/packages/88/0b/107dde3f330d04668e126932a09002ac47348841453aa0391634381fa087/rarfile-3.1.tar.gz
+
+     ..//gnome_more/python3-regex
+https://files.pythonhosted.org/packages/source/r/regex/regex-2023.6.3.tar.gz
+
+     ..//gnome_more/python3-rsa
+https://files.pythonhosted.org/packages/aa/65/7d973b89c4d2351d7fb232c2e452547ddfa243e93131e7cfa766da627b52/rsa-4.9.tar.gz
+
+     ..//gnome_more/python3-semantic_version
+https://files.pythonhosted.org/packages/7d/31/f2289ce78b9b473d582568c234e104d2a342fd658cc288a7553d83bb8595/semantic_version-2.10.0.tar.gz
+
+     ..//gnome_more/python3-setuptools-rust
+https://files.pythonhosted.org/packages/99/db/e4ecb483ffa194d632ed44bda32cb740e564789fed7e56c2be8e2a0e2aa6/setuptools-rust-1.5.2.tar.gz
+
+     ..//gnome_more/python3-soupsieve
+https://github.com/facelessuser/soupsieve/archive/2.3.1/soupsieve-2.3.1.tar.gz
+
+     ..//gnome_more/python3-tinycss2
+https://files.pythonhosted.org/packages/ce/d3/ece7a98d5826bd134e269a3a3030153d30482194fca71d95a3041812aab8/tinycss2-1.1.0.tar.gz
+
+     ..//gnome_more/python3-tzlocal
+
+     ..//gnome_more/python3-unidecode
+https://files.pythonhosted.org/packages/source/u/unidecode/Unidecode-1.3.6.tar.gz
+
+     ..//gnome_more/python3-uritemplate
+https://files.pythonhosted.org/packages/d2/5a/4742fdba39cd02a56226815abfa72fe0aa81c33bed16ed045647d6000eba/uritemplate-4.1.1.tar.gz
+
+     ..//gnome_more/python3-webencodings
+https://github.com/gsnedders/python-webencodings/archive/v0.5.1/python-webencodings-0.5.1.tar.gz
+
+     ..//gnome_more/raider
+https://github.com/ADBeveridge/raider/archive/refs/tags/v1.3.1.tar.gz
+
+     ..//gnome_more/rhythmbox
+https://download.gnome.org/sources/rhythmbox/3.4/rhythmbox-3.4.6.tar.xz
+
+     ..//gnome_more/rhythmbox-tray-icon
+
+     ..//gnome_more/rome
+
+     ..//gnome_more/rygel
+https://download.gnome.org/sources/rygel/0.42/rygel-0.42.4.tar.xz
+
+     ..//gnome_more/share-preview
+https://github.com/rafaelmardojai/share-preview/archive/0.3.0/share-preview-0.3.0.tar.gz
+
+     ..//gnome_more/shotwell
+https://download.gnome.org/sources/shotwell/0.32/shotwell-0.32.2.tar.xz
+
+     ..//gnome_more/sound-juicer
+https://download.gnome.org/sources/sound-juicer/3.40/sound-juicer-3.40.0.tar.xz
+
+     ..//gnome_more/telegraph
+https://github.com/fkinoshita/Telegraph/releases/download/v0.1.7/telegraph-0.1.7.tar.xz
+
+     ..//gnome_more/telepathy-idle
+http://telepathy.freedesktop.org/releases/telepathy-idle/telepathy-idle-0.2.2.tar.gz
+
+     ..//gnome_more/telepathy-logger
+http://telepathy.freedesktop.org/releases/telepathy-logger/telepathy-logger-0.8.2.tar.bz2
+
+     ..//gnome_more/telepathy-mission-control
+http://telepathy.freedesktop.org/releases/telepathy-mission-control/telepathy-mission-control-5.16.6.tar.gz
+
+     ..//gnome_more/textpieces
+https://github.com/liferooter/textpieces/archive/v3.1.1/textpieces-3.1.1.tar.gz
+
+     ..//gnome_more/vala-language-server
+
+     ..//gnome_more/video-trimmer
+https://gitlab.gnome.org/YaLTeR/video-trimmer/-/archive/v0.8.1/video-trimmer-0.8.1.tar.gz
+
+     ..//gnome_more/warp
+https://gitlab.gnome.org/World/warp/-/archive/v0.5.4/warp-0.5.4.tar.gz
+
+     ..//gnome_more/webfont-kit-generator
+https://github.com/rafaelmardojai/webfont-kit-generator/archive/1.0.3/webfont-kit-generator-1.0.3.tar.gz
+
+     ..//gnome_more/wike
+
+     ..//gnome_more/workbench
+
+     ..//gnome_more/xdg-user-dirs-gtk
+https://download.gnome.org/sources/xdg-user-dirs-gtk/0.11/xdg-user-dirs-gtk-0.11.tar.xz
+
+     ..//gnome_more/zap
+https://gitlab.com/rmnvgr/zap/-/archive/1.2.3/zap-1.2.3.tar.gz
+
+   ..//gnome_soft
+     ..//gnome_soft/Authenticator
+https://gitlab.gnome.org/World/Authenticator/-/archive/4.3.1/Authenticator-4.3.1.tar.gz
+
+     ..//gnome_soft/Collision
+https://github.com/GeopJr/Collision/archive/v3.5.0/Collision-3.5.0.tar.gz
+
+     ..//gnome_soft/Commit
+https://github.com/sonnyp/Commit/archive/296e3fcc2990e3197c30d308cf1ce577ffddc044/Commit-296e3fcc2990e3197c30d308cf1ce577ffddc044.tar.gz
+https://github.com/sonnyp/troll/archive/63392a57392fb8ed944e859269a3751f649f64ec/troll-63392a57392fb8ed944e859269a3751f649f64ec.tar.gz
+
+     ..//gnome_soft/Curtail
+https://github.com/Huluti/Curtail/archive/1.7.0/Curtail-1.7.0.tar.gz
+
+     ..//gnome_soft/Endeavour
+https://gitlab.gnome.org/World/Endeavour/-/archive/43.0/Endeavour-43.0.tar.gz
+
+     ..//gnome_soft/Feeds
+https://gitlab.gnome.org/World/gfeeds/-/archive/2.2.0/gfeeds-2.2.0.tar.gz
+
+     ..//gnome_soft/Flatseal
+https://github.com/tchx84/Flatseal/archive/v2.0.2/Flatseal-2.0.2.tar.gz
+
+     ..//gnome_soft/Font-Downloader
+https://github.com/GustavoPeredo/Font-Downloader/archive/refs/tags/v10.0.0.tar.gz
+
+     ..//gnome_soft/Fragments
+https://gitlab.gnome.org/World/Fragments/-/archive/2.1.1/Fragments-2.1.1.tar.gz
+
+     ..//gnome_soft/Junction
+https://github.com/sonnyp/Junction/archive/refs/tags/v1.6.tar.gz
+
+     ..//gnome_soft/NetworkManager-openvpn-gtk4
+https://download.gnome.org/sources/NetworkManager-openvpn/1.10/NetworkManager-openvpn-1.10.2.tar.xz
+
+     ..//gnome_soft/Plots
+
+     ..//gnome_soft/Shortwave
+https://gitlab.gnome.org/World/Shortwave/-/archive/3.2.0/Shortwave-3.2.0.tar.gz
+
+     ..//gnome_soft/Solanum
+https://gitlab.gnome.org/World/Solanum/-/archive/4.0.0/Solanum-4.0.0.tar.gz
+
+     ..//gnome_soft/Tangram
+https://github.com/sonnyp/Tangram/archive/v3.0/Tangram-3.0.tar.gz
+
+     ..//gnome_soft/adobe-source-code-pro-font
+https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip
+
+     ..//gnome_soft/aisleriot
+https://gitlab.gnome.org/GNOME/aisleriot/-/archive/3.22.29/aisleriot-3.22.29.tar.gz
+
+     ..//gnome_soft/alacarte
+https://download.gnome.org/sources/alacarte/3.44/alacarte-3.44.3.tar.xz
+
+     ..//gnome_soft/amberol
+https://gitlab.gnome.org/World/amberol/-/archive/0.10.3/amberol-0.10.3.tar.gz
+
+     ..//gnome_soft/apostrophe
+https://gitlab.gnome.org/World/apostrophe/-/archive/v2.6.3/apostrophe-v2.6.3.tar.bz2
+
+     ..//gnome_soft/blanket
+https://github.com/rafaelmardojai/blanket/archive/0.6.0/blanket-0.6.0.tar.gz
+
+     ..//gnome_soft/blueprint-compiler
+https://gitlab.gnome.org/jwestman/blueprint-compiler/-/archive/v0.10.0/blueprint-compiler-v0.10.0.tar.gz
+
+     ..//gnome_soft/boatswain
+https://gitlab.gnome.org/World/boatswain/-/archive/0.3.0/boatswain-0.3.0.tar.gz
+
+     ..//gnome_soft/callaudiod
+https://gitlab.com/mobian1/callaudiod/-/archive/0.1.7/callaudiod-0.1.7.tar.gz
+
+     ..//gnome_soft/calls
+https://download.gnome.org/sources/calls/45/calls-45.rc.0.tar.xz
+
+     ..//gnome_soft/cantarell-fonts
+https://download.gnome.org/sources/cantarell-fonts/0.303/cantarell-fonts-0.303.1.tar.xz
+
+     ..//gnome_soft/cogl
+https://download.gnome.org/sources/cogl/1.22/cogl-1.22.8.tar.xz
+
+     ..//gnome_soft/crystal-lang
+https://github.com/crystal-lang/crystal/releases/download/1.7.1/crystal-1.7.1-1-linux-x86_64-bundled.tar.gz
+
+     ..//gnome_soft/cups-pk-helper
+https://www.freedesktop.org/software/cups-pk-helper/releases/cups-pk-helper-0.2.7.tar.xz
+
+     ..//gnome_soft/decoder
+https://gitlab.gnome.org/World/decoder/-/archive/0.3.3/decoder-0.3.3.tar.gz
+
+     ..//gnome_soft/deja-dup
+https://gitlab.gnome.org/World/deja-dup/-/archive/44.2/deja-dup-44.2.tar.gz
+
+     ..//gnome_soft/dialect
+
+     ..//gnome_soft/drawing
+https://github.com/maoschanz/drawing/archive/refs/tags/1.0.2.tar.gz
+
+     ..//gnome_soft/eog
+https://download.gnome.org/sources/eog/45/eog-45.rc.tar.xz
+
+     ..//gnome_soft/eog-plugins
+https://download.gnome.org/sources/eog-plugins/44/eog-plugins-44.0.tar.xz
+
+     ..//gnome_soft/extension-manager
+https://github.com/mjakeman/extension-manager/archive/v0.4.2/extension-manager-0.4.2.tar.gz
+
+     ..//gnome_soft/feedbackd
+https://gitlab.gnome.org/guidog/gmobile/-/archive/v0.0.1/gmobile-v0.0.1.tar.gz
+
+     ..//gnome_soft/fwupd
+https://github.com/fwupd/fwupd/releases/download/1.7.10/fwupd-1.7.10.tar.xz
+
+     ..//gnome_soft/gcab
+https://download.gnome.org/sources/gcab/1.6/gcab-1.6.tar.xz
+
+     ..//gnome_soft/gdm-settings
+
+     ..//gnome_soft/geary
+https://download.gnome.org/sources/geary/44/geary-44.0.tar.xz
+
+     ..//gnome_soft/gedit-plugins
+https://download.gnome.org/sources/gedit-plugins/46/gedit-plugins-46.0.tar.xz
+
+     ..//gnome_soft/ghex
+https://download.gnome.org/sources/ghex/45/ghex-45.beta.tar.xz
+
+     ..//gnome_soft/giara
+https://gitlab.gnome.org/World/giara/-/archive/1.1.0/giara-1.1.0.tar.gz
+
+     ..//gnome_soft/gitg
+https://download.gnome.org/sources/gitg/44/gitg-44.tar.xz
+
+     ..//gnome_soft/gnome-applets
+https://download.gnome.org/sources/gnome-applets/3.49/gnome-applets-3.49.1.tar.xz
+
+     ..//gnome_soft/gnome-browser-connector
+https://download.gnome.org/sources/gnome-browser-connector/42/gnome-browser-connector-42.1.tar.xz
+https://gitlab.gnome.org/GNOME/gnome-browser-extension/-/archive/v11.1/gnome-browser-extension-v11.1.tar.gz
+
+     ..//gnome_soft/gnome-color-manager
+https://download.gnome.org/sources/gnome-color-manager/3.36/gnome-color-manager-3.36.0.tar.xz
+
+     ..//gnome_soft/gnome-connections
+https://download.gnome.org/sources/gnome-connections/45/gnome-connections-45.rc.tar.xz
+
+     ..//gnome_soft/gnome-contacts
+https://download.gnome.org/sources/gnome-contacts/45/gnome-contacts-45.beta.tar.xz
+
+     ..//gnome_soft/gnome-dictionary
+
+     ..//gnome_soft/gnome-firmware
+https://gitlab.gnome.org/World/gnome-firmware/-/archive/43.2/gnome-firmware-43.2.tar.gz
+
+     ..//gnome_soft/gnome-initial-setup
+https://download.gnome.org/sources/gnome-initial-setup/45/gnome-initial-setup-45.beta.tar.xz
+
+     ..//gnome_soft/gnome-keyring
+https://download.gnome.org/sources/gnome-keyring/42/gnome-keyring-42.1.tar.xz
+
+     ..//gnome_soft/gnome-music
+https://download.gnome.org/sources/gnome-music/44/gnome-music-44.0.tar.xz
+
+     ..//gnome_soft/gnome-nettool
+https://download.gnome.org/sources/gnome-nettool/42/gnome-nettool-42.0.tar.xz
+
+     ..//gnome_soft/gnome-photos
+https://download.gnome.org/sources/gnome-photos/44/gnome-photos-44.0.tar.xz
+
+     ..//gnome_soft/gnome-software
+https://download.gnome.org/sources/gnome-software/45/gnome-software-45.rc.tar.xz
+
+     ..//gnome_soft/gnome-text-editor
+https://download.gnome.org/sources/gnome-text-editor/45/gnome-text-editor-45.beta.tar.xz
+
+     ..//gnome_soft/gnome-tour
+https://download.gnome.org/sources/gnome-tour/44/gnome-tour-44.0.tar.xz
+
+     ..//gnome_soft/gnome-user-share
+https://download.gnome.org/sources/gnome-user-share/43/gnome-user-share-43.0.tar.xz
+
+     ..//gnome_soft/gom
+https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz
+
+     ..//gnome_soft/gssdp
+https://download.gnome.org/sources/gssdp/1.6/gssdp-1.6.2.tar.xz
+
+     ..//gnome_soft/gst-editing-services
+https://gstreamer.freedesktop.org/src/gst-editing-services/gst-editing-services-1.20.3.tar.xz
+
+     ..//gnome_soft/gtk-doc
+https://download.gnome.org/sources/gtk-doc/1.33/gtk-doc-1.33.2.tar.xz
+
+     ..//gnome_soft/gtk-vnc
+https://download.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
+
+     ..//gnome_soft/gtksourceview4
+https://download.gnome.org/sources/gtksourceview/4.8/gtksourceview-4.8.3.tar.xz
+
+     ..//gnome_soft/hidapi
+https://github.com/libusb/hidapi/archive/refs/tags/hidapi-0.10.1.tar.gz
+
+     ..//gnome_soft/http-parser
+https://github.com/nodejs/http-parser/archive/v2.9.4/http-parser-2.9.4.tar.gz
+
+     ..//gnome_soft/iagno
+https://download.gnome.org/sources/iagno/3.38/iagno-3.38.1.tar.xz
+
+     ..//gnome_soft/ibus-gtk4
+https://github.com/ibus/ibus/releases/download/1.5.29-rc1/ibus-1.5.29-rc1.tar.gz
+
+     ..//gnome_soft/jpegoptim
+https://github.com/tjko/jpegoptim/archive/v1.5.1/jpegoptim-1.5.1.tar.gz
+
+     ..//gnome_soft/kooha
+https://github.com/SeaDve/Kooha/releases/download/v2.2.3/kooha-2.2.3.tar.xz
+
+     ..//gnome_soft/libaccounts-glib
+https://gitlab.com/accounts-sso/libaccounts-glib/-/archive/1.26/libaccounts-glib-1.26.tar.gz
+
+     ..//gnome_soft/libbacktrace
+https://reddoglinux.ddns.net/distfile/libbacktrace-1.0.tar.xz
+
+     ..//gnome_soft/libgit2
+https://github.com/libgit2/libgit2/archive/v1.7.0/libgit2-1.7.0.tar.gz
+
+     ..//gnome_soft/libgit2-glib
+https://download.gnome.org/sources/libgit2-glib/1.1/libgit2-glib-1.2.0.tar.xz
+
+     ..//gnome_soft/libgnome-games-support
+https://download.gnome.org/sources/libgnome-games-support/1.8/libgnome-games-support-1.8.2.tar.xz
+
+     ..//gnome_soft/libjcat
+https://github.com/hughsie/libjcat/archive/0.1.14/libjcat-0.1.14.tar.gz
+
+     ..//gnome_soft/libmanette
+https://download.gnome.org/sources/libmanette/0.2/libmanette-0.2.6.tar.xz
+
+     ..//gnome_soft/libsmbios
+https://github.com/dell/libsmbios/archive/v2.4.3/libsmbios-2.4.3.tar.gz
+
+     ..//gnome_soft/libspelling
+
+     ..//gnome_soft/mod_dnssd
+http://0pointer.de/lennart/projects/mod_dnssd/mod_dnssd-0.6.tar.gz
+
+     ..//gnome_soft/nautilus-code
+
+     ..//gnome_soft/nautilus-python
+https://download.gnome.org/sources/nautilus-python/4.0/nautilus-python-4.0.tar.xz
+
+     ..//gnome_soft/nautilus-sendto
+https://download.gnome.org/sources/nautilus-sendto/3.8/nautilus-sendto-3.8.6.tar.xz
+
+     ..//gnome_soft/network-manager-applet
+https://download.gnome.org/sources/network-manager-applet/1.32/network-manager-applet-1.32.0.tar.xz
+
+     ..//gnome_soft/order
+     ..//gnome_soft/oxipng
+
+     ..//gnome_soft/p7zip
+https://github.com/p7zip-project/p7zip/archive/v17.04/p7zip-17.04.tar.gz
+
+     ..//gnome_soft/pngquant
+https://pngquant.org/pngquant-2.9.0-src.tar.gz
+
+     ..//gnome_soft/podcasts
+https://gitlab.gnome.org/World/podcasts/-/archive/0.5.1/podcasts-0.5.1.tar.gz
+
+     ..//gnome_soft/protobuf-c
+https://github.com/protobuf-c/protobuf-c/releases/download/v1.4.1/protobuf-c-1.4.1.tar.gz
+
+     ..//gnome_soft/protobuf3
+https://github.com/google/protobuf/archive/v3.20.1/protobuf-3.20.1.tar.gz
+
+     ..//gnome_soft/pure-protobuf
+https://files.pythonhosted.org/packages/47/0c/afa77d73b8366a82e865ca5d248bea090e2b4659460a86f9adf0a2522f7d/pure-protobuf-2.0.0.tar.gz
+
+     ..//gnome_soft/python3-argon2-cffi
+https://files.pythonhosted.org/packages/3f/18/20bb5b6bf55e55d14558b57afc3d4476349ab90e0c43e60f27a7c2187289/argon2-cffi-21.3.0.tar.gz
+
+     ..//gnome_soft/python3-argon2-cffi-bindings
+https://files.pythonhosted.org/packages/b9/e9/184b8ccce6683b0aa2fbb7ba5683ea4b9c5763f1356347f1312c32e3c66e/argon2-cffi-bindings-21.2.0.tar.gz
+
+     ..//gnome_soft/python3-beautifulsoup4
+https://www.crummy.com/software/BeautifulSoup/bs4/download/4.10/beautifulsoup4-4.10.0.tar.gz
+
+     ..//gnome_soft/python3-build
+https://files.pythonhosted.org/packages/source/b/build/build-0.10.0.tar.gz
+
+     ..//gnome_soft/python3-construct
+https://files.pythonhosted.org/packages/e0/b7/a4a032e94bcfdff481f2e6fecd472794d9da09f474a2185ed33b2c7cad64/construct-2.10.68.tar.gz
+
+     ..//gnome_soft/python3-dateutil
+https://files.pythonhosted.org/packages/source/p/python-dateutil/python-dateutil-2.8.2.tar.gz
+
+     ..//gnome_soft/python3-decorator
+https://files.pythonhosted.org/packages/66/0c/8d907af351aa16b42caae42f9d6aa37b900c67308052d10fdce809f8d952/decorator-5.1.1.tar.gz
+
+     ..//gnome_soft/python3-flit_core
+https://files.pythonhosted.org/packages/source/f/flit_core/flit_core-3.9.0.tar.gz
+
+     ..//gnome_soft/python3-freetype
+https://github.com/rougier/freetype-py/archive/v2.4.0/freetype-py-2.4.0.tar.gz
+
+     ..//gnome_soft/python3-glm
+https://files.pythonhosted.org/packages/4e/4c/ca1a71217c4ac5b0f9ef56681ebe9eae14b5bb0d3ac8bb58f392bad445a5/PyGLM-2.7.0.tar.gz
+
+     ..//gnome_soft/python3-gtts
+https://files.pythonhosted.org/packages/8b/63/fd0d51530696af71b17d3d3d8aacf181ae2040065dd8fe54e85c32ca28ec/gTTS-2.3.2.tar.gz
+
+     ..//gnome_soft/python3-installer
+https://files.pythonhosted.org/packages/source/i/installer/installer-0.7.0.tar.gz
+
+     ..//gnome_soft/python3-lark
+
+     ..//gnome_soft/python3-mistune
+https://files.pythonhosted.org/packages/source/m/mistune/mistune-2.0.5.tar.gz
+
+     ..//gnome_soft/python3-numpy
+https://github.com/numpy/numpy/releases/download/v1.22.3/numpy-1.22.3.tar.gz
+
+     ..//gnome_soft/python3-opengl
+https://files.pythonhosted.org/packages/5b/01/f8fd986bc7f456f1a925ee0239f0391838ade92cdb6e5b674ffb8b86cfd6/PyOpenGL-3.1.6.tar.gz
+
+     ..//gnome_soft/python3-pep517
+https://files.pythonhosted.org/packages/0a/65/6e656d49c679136edfba25f25791f45ffe1ea4ae2ec1c59fe9c35e061cd1/pep517-0.12.0.tar.gz
+
+     ..//gnome_soft/python3-praw
+https://github.com/praw-dev/praw/archive/v7.6.1/praw-7.6.1.tar.gz
+
+     ..//gnome_soft/python3-prawcore
+https://files.pythonhosted.org/packages/ed/85/13e76be737f3159514cce609b29e95499ba6d2cfa0b88761bab318b5f63e/prawcore-2.3.0.tar.gz
+
+     ..//gnome_soft/python3-protobuf
+https://files.pythonhosted.org/packages/ba/dd/f8a01b146bf45ac12a829bbc599e6590aa6a6849ace7d28c42d77041d6ab/protobuf-4.21.12.tar.gz
+
+     ..//gnome_soft/python3-pycryptodomex
+https://files.pythonhosted.org/packages/40/92/efd675dba957315d705f792b28d900bddc36f39252f6713961b4221ee9af/pycryptodomex-3.18.0.tar.gz
+
+     ..//gnome_soft/python3-pykeepass
+https://files.pythonhosted.org/packages/85/60/2e033401578976102e5a10b1abde5d0900cb4879579cb8c3c16bdc9cdeea/pykeepass-4.0.5.tar.gz
+
+     ..//gnome_soft/python3-pyotp
+https://files.pythonhosted.org/packages/7e/f9/4c2ec78572a2d25f669220b8b9700c1133905ff6af9bf93c010778e82c65/pyotp-2.8.0.tar.gz
+
+     ..//gnome_soft/python3-pypandoc
+https://files.pythonhosted.org/packages/c3/14/33725e5e7b9c36679c04d200d10e48d6da90d8d91420248a9d11263feb1c/pypandoc-1.11.tar.gz
+
+     ..//gnome_soft/python3-scour
+https://github.com/scour-project/scour/archive/v0.35/scour-0.35.tar.gz
+
+     ..//gnome_soft/python3-validators
+https://files.pythonhosted.org/packages/95/14/ed0af6865d378cfc3c504aed0d278a890cbefb2f1934bf2dbe92ecf9d6b1/validators-0.20.0.tar.gz
+
+     ..//gnome_soft/python3-websocket-client
+https://github.com/liris/websocket-client/archive/v1.4.2/websocket-client-1.4.2.tar.gz
+
+     ..//gnome_soft/python3-wheel
+https://files.pythonhosted.org/packages/fc/ef/0335f7217dd1e8096a9e8383e1d472aa14717878ffe07c4772e68b6e8735/wheel-0.40.0.tar.gz
+
+     ..//gnome_soft/python3-zxcvbn-python
+https://files.pythonhosted.org/packages/54/67/c6712608c99e7720598e769b8fb09ebd202119785adad0bbce25d330243c/zxcvbn-4.4.28.tar.gz
+
+     ..//gnome_soft/secrets
+https://gitlab.gnome.org/World/secrets/-/archive/7.0/secrets-7.0.tar.gz
+
+     ..//gnome_soft/sofia-sip
+https://github.com/freeswitch/sofia-sip/archive/v1.13.14/sofia-sip-1.13.16.tar.gz
+
+     ..//gnome_soft/sushi
+https://download.gnome.org/sources/sushi/45/sushi-45.alpha.2.tar.xz
+
+     ..//gnome_soft/text-engine
+https://github.com/mjakeman/text-engine/archive/v0.1.1/text-engine-0.1.1.tar.gz
+
+     ..//gnome_soft/totem
+https://download.gnome.org/sources/totem/43/totem-43.0.tar.xz
+
+     ..//gnome_soft/transmission
+https://github.com/transmission/transmission-releases/raw/master/transmission-3.00.tar.xz
+
+     ..//gnome_soft/vinagre
+https://download.gnome.org/sources/vinagre/3.22/vinagre-3.22.0.tar.xz
+
+     ..//gnome_soft/zbar
+https://linuxtv.org/downloads/zbar/zbar-0.23.90.tar.gz
+
+   ..//main_gnome
+     ..//main_gnome/AppStream
+https://freedesktop.org/software/appstream/releases/AppStream-0.16.3.tar.xz
+
+     ..//main_gnome/appstream-glib
+https://github.com/hughsie/appstream-glib/archive/appstream_glib_0_8_2/appstream-glib-appstream_glib_0_8_2.tar.gz
+
+     ..//main_gnome/avahi
+http://avahi.org/download/avahi-0.8.tar.gz
+
+       ..//main_gnome/avahi/patches
+     ..//main_gnome/blocaled
+https://github.com/lfs-book/blocaled/releases/download/v0.5/blocaled-0.5.tar.xz
+
+     ..//main_gnome/bubblewrap
+https://github.com/containers/bubblewrap/releases/download/v0.8.0/bubblewrap-0.8.0.tar.xz
+
+     ..//main_gnome/colord
+https://www.freedesktop.org/software/colord/releases/colord-1.4.6.tar.xz
+
+     ..//main_gnome/colord-gtk
+http://www.freedesktop.org/software/colord/releases/colord-gtk-0.3.0.tar.xz
+
+     ..//main_gnome/dav1d
+http://downloads.videolan.org/pub/videolan/dav1d/1.2.1/dav1d-1.2.1.tar.xz
+
+     ..//main_gnome/evolution-data-server
+https://download.gnome.org/sources/evolution-data-server/3.49/evolution-data-server-3.49.3.tar.xz
+
+     ..//main_gnome/flatpak
+https://github.com/flatpak/flatpak/releases/download/1.15.4/flatpak-1.15.4.tar.xz
+
+     ..//main_gnome/gcr4
+https://download.gnome.org/sources/gcr/4.1/gcr-4.1.0.tar.xz
+
+     ..//main_gnome/gdm
+https://download.gnome.org/sources/gdm/45/gdm-45.beta.tar.xz
+
+     ..//main_gnome/geoclue2
+https://gitlab.freedesktop.org/geoclue/geoclue/-/archive/2.7.0/geoclue-2.7.0.tar.gz
+
+     ..//main_gnome/geocode-glib
+https://download.gnome.org/sources/geocode-glib/3.26/geocode-glib-3.26.4.tar.xz
+
+     ..//main_gnome/gnome-autoar
+https://download.gnome.org/sources/gnome-autoar/0.4/gnome-autoar-0.4.4.tar.xz
+
+     ..//main_gnome/gnome-backgrounds
+https://download.gnome.org/sources/gnome-backgrounds/45/gnome-backgrounds-45.rc.tar.xz
+
+     ..//main_gnome/gnome-bluetooth
+https://download.gnome.org/sources/gnome-bluetooth/42/gnome-bluetooth-42.6.tar.xz
+
+     ..//main_gnome/gnome-console
+https://download.gnome.org/sources/gnome-console/45/gnome-console-45.beta.tar.xz
+
+     ..//main_gnome/gnome-control-center
+https://download.gnome.org/sources/gnome-control-center/45/gnome-control-center-45.rc.tar.xz
+
+     ..//main_gnome/gnome-desktop
+https://download.gnome.org/sources/gnome-desktop/44/gnome-desktop-44.0.tar.xz
+
+     ..//main_gnome/gnome-disk-utility
+https://download.gnome.org/sources/gnome-disk-utility/44/gnome-disk-utility-44.0.tar.xz
+
+     ..//main_gnome/gnome-menus
+https://download.gnome.org/sources/gnome-menus/3.36/gnome-menus-3.36.0.tar.xz
+
+     ..//main_gnome/gnome-online-accounts
+https://download.gnome.org/sources/gnome-online-accounts/3.48/gnome-online-accounts-3.48.0.tar.xz
+
+     ..//main_gnome/gnome-panel
+https://download.gnome.org/sources/gnome-panel/3.49/gnome-panel-3.49.1.tar.xz
+
+     ..//main_gnome/gnome-session
+https://download.gnome.org/sources/gnome-session/44/gnome-session-44.0.tar.xz
+
+     ..//main_gnome/gnome-settings-daemon
+https://download.gnome.org/sources/gnome-settings-daemon/45/gnome-settings-daemon-45.rc.tar.xz
+
+     ..//main_gnome/gnome-shell
+https://download.gnome.org/sources/gnome-shell/45/gnome-shell-45.rc.tar.xz
+
+     ..//main_gnome/gnome-shell-extensions
+https://download.gnome.org/sources/gnome-shell-extensions/45/gnome-shell-extensions-45.rc.tar.xz
+
+     ..//main_gnome/gnome-terminal
+https://gitlab.gnome.org/GNOME/gnome-terminal/-/archive/3.49.99/gnome-terminal-3.49.99.tar.gz
+
+     ..//main_gnome/gnome-tweaks
+https://download.gnome.org/sources/gnome-tweaks/42/gnome-tweaks-42.beta.tar.xz
+
+     ..//main_gnome/gnome-weather
+https://download.gnome.org/sources/gnome-weather/45/gnome-weather-45.alpha.tar.xz
+
+     ..//main_gnome/gsound
+https://download.gnome.org/sources/gsound/1.0/gsound-1.0.3.tar.xz
+
+     ..//main_gnome/gtksourceview5
+https://download.gnome.org/sources/gtksourceview/5.9/gtksourceview-5.9.0.tar.xz
+
+     ..//main_gnome/jq
+https://github.com/stedolan/jq/releases/download/jq-1.6/jq-1.6.tar.gz
+
+     ..//main_gnome/libadwaita
+https://download.gnome.org/sources/libadwaita/1.4/libadwaita-1.4.0.tar.xz
+
+     ..//main_gnome/libaom
+https://github.com/jbeich/aom/archive/v3.6.1/aom-3.6.1.tar.gz
+
+     ..//main_gnome/libavif
+https://github.com/AOMediaCodec/libavif/archive/v0.11.1/libavif-0.11.1.tar.gz
+
+     ..//main_gnome/libcloudproviders
+https://download.gnome.org/sources/libcloudproviders/0.3/libcloudproviders-0.3.4.tar.xz
+
+     ..//main_gnome/libdaemon
+http://0pointer.de/lennart/projects/libdaemon/libdaemon-0.14.tar.gz
+
+     ..//main_gnome/libei
+https://gitlab.freedesktop.org/libinput/libei/-/archive/1.0.901/libei-1.0.901.tar.gz
+
+     ..//main_gnome/libgdata
+https://download.gnome.org/sources/libgdata/0.18/libgdata-0.18.1.tar.xz
+
+     ..//main_gnome/libgusb
+https://github.com/hughsie/libgusb/releases/download/0.4.6/libgusb-0.4.6.tar.xz
+
+     ..//main_gnome/libgweather4
+https://download.gnome.org/sources/libgweather/4.3/libgweather-4.3.2.tar.xz
+
+     ..//main_gnome/libnma-gtk4
+https://download.gnome.org/sources/libnma/1.10/libnma-1.10.6.tar.xz
+
+     ..//main_gnome/libostree
+https://github.com/ostreedev/ostree/releases/download/v2023.4/libostree-2023.4.tar.xz
+
+     ..//main_gnome/libportal
+https://github.com/flatpak/libportal/releases/download/0.7/libportal-0.7.tar.xz
+
+     ..//main_gnome/librest
+https://download.gnome.org/sources/rest/0.9/rest-0.9.1.tar.xz
+
+     ..//main_gnome/libstemmer
+https://dev.gentoo.org/~graaff/libstemmer_c-20140325.tgz
+
+     ..//main_gnome/libwpe
+https://wpewebkit.org/releases/libwpe-1.15.1.tar.xz
+
+     ..//main_gnome/libxmlb
+https://github.com/hughsie/libxmlb/archive/0.3.14/libxmlb-0.3.14.tar.gz
+
+     ..//main_gnome/libyuv
+
+     ..//main_gnome/lxml
+https://github.com/lxml/lxml/releases/download/lxml-4.9.3/lxml-4.9.3.tar.gz
+
+     ..//main_gnome/malcontent
+https://gitlab.freedesktop.org/pwithnall/malcontent/-/archive/0.11.1/malcontent-0.11.1.tar.gz
+
+     ..//main_gnome/mutter
+https://download.gnome.org/sources/mutter/45/mutter-45.rc.tar.xz
+
+     ..//main_gnome/nautilus
+https://download.gnome.org/sources/nautilus/45/nautilus-45.rc.tar.xz
+
+     ..//main_gnome/order
+     ..//main_gnome/python3-attrs
+https://files.pythonhosted.org/packages/source/a/attrs/attrs-21.4.0.tar.gz
+
+     ..//main_gnome/snapshot
+https://download.gnome.org/sources/snapshot/45/snapshot-45.beta.tar.xz
+
+     ..//main_gnome/svt-av1
+https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.6.0/SVT-AV1-v1.6.0.tar.gz
+
+     ..//main_gnome/tecla
+https://download.gnome.org/sources/tecla/45/tecla-45.rc.tar.xz
+
+     ..//main_gnome/tracker
+https://download.gnome.org/sources/tracker/3.6/tracker-3.6.rc.tar.xz
+
+     ..//main_gnome/unifdef
+https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+
+     ..//main_gnome/vte-gtk4
+https://download.gnome.org/sources/vte/0.73/vte-0.73.99.tar.xz
+
+     ..//main_gnome/webkit2gtk4.1
+https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
+
+     ..//main_gnome/webkit2gtk6.0
+https://webkitgtk.org/releases/webkitgtk-2.41.91.tar.xz
+
+     ..//main_gnome/webp-pixbuf-loader
+https://github.com/aruiz/webp-pixbuf-loader/archive/0.2.4/webp-pixbuf-loader-0.2.4.tar.gz
+
+     ..//main_gnome/wpebackend-fdo
+https://wpewebkit.org/releases/wpebackend-fdo-1.14.2.tar.xz
+
+     ..//main_gnome/xdg-dbus-proxy
+https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.5/xdg-dbus-proxy-0.1.5.tar.xz
+
+     ..//main_gnome/xvfb-run
+http://ftp.us.debian.org/debian/pool/main/x/xorg-server/xvfb_21.1.7-3_i386.deb
+
+     ..//main_gnome/yelp
+https://download.gnome.org/sources/yelp/42/yelp-42.2.tar.xz
+
+     ..//main_gnome/yelp-tools
+https://download.gnome.org/sources/yelp-tools/42/yelp-tools-42.1.tar.xz
+
+     ..//main_gnome/yelp-xsl
+https://download.gnome.org/sources/yelp-xsl/42/yelp-xsl-42.1.tar.xz
+
+   ..//removed
+     ..//removed/amtk
+https://download.gnome.org/sources/amtk/5.6/amtk-5.6.1.tar.xz
+
+     ..//removed/cheese
+https://download.gnome.org/sources/cheese/43/cheese-43.0.tar.xz
+
+     ..//removed/clutter
+https://download.gnome.org/sources/clutter/1.26/clutter-1.26.4.tar.xz
+
+     ..//removed/clutter-gst
+https://download.gnome.org/sources/clutter-gst/3.0/clutter-gst-3.0.27.tar.xz
+
+     ..//removed/clutter-gtk
+https://download.gnome.org/sources/clutter-gtk/1.8/clutter-gtk-1.8.4.tar.xz
+
+     ..//removed/gnome-video-effects
+https://download.gnome.org/sources/gnome-video-effects/0.6/gnome-video-effects-0.6.0.tar.xz
+
+     ..//removed/libgnomekbd
+https://download.gnome.org/sources/libgnomekbd/3.28/libgnomekbd-3.28.1.tar.xz
+
+     ..//removed/libhandy
+https://download.gnome.org/sources/libhandy/1.8/libhandy-1.8.0.tar.xz
+
+     ..//removed/libwnck3
+https://download.gnome.org/sources/libwnck/43/libwnck-43.0.tar.xz
+
+     ..//removed/lua54
+http://www.lua.org/ftp/lua-5.4.4.tar.gz
+
+     ..//removed/upower
+https://gitlab.freedesktop.org/upower/upower/-/archive/v0.99.20/upower-v0.99.20.tar.gz
+
+     ..//removed/vala
+https://download.gnome.org/sources/vala/0.56/vala-0.56.4.tar.xz
+

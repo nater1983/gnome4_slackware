@@ -1,0 +1,13 @@
+diff --git a/winpr/libwinpr/utils/image.c b/winpr/libwinpr/utils/image.c
+index c60982571..8cf95df6c 100644
+--- a/winpr/libwinpr/utils/image.c
++++ b/winpr/libwinpr/utils/image.c
+@@ -626,7 +626,7 @@ void* winpr_convert_to_jpeg(const void* data, size_t size, UINT32 width, UINT32
+ 	for (size_t x = 0; x < height; x++)
+ 	{
+ 		const JDIMENSION offset = x * stride;
+-		const JSAMPLE* coffset = &cdata[offset];
++		JSAMPLE* coffset = &cdata[offset];
+ 		if (jpeg_write_scanlines(&cinfo, &coffset, 1) != 1)
+ 			goto fail;
+ 	}

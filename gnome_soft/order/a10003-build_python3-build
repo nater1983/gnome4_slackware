@@ -1,0 +1,6 @@
+#!/bin/bash
+PP=python3-build
+echo "$PP" 
+cd ../../python3/python3-build || exit 1
+bash python3-build.SlackBuild
+upgradepkg --install-new --reinstall "$PP"-*.txz

@@ -1,0 +1,65 @@
+diff --git a/cmake/protobuf-module.cmake.in b/cmake/protobuf-module.cmake.in
+index 0bb05e38fad..e5b2b2e4b3a 100644
+--- a/cmake/protobuf-module.cmake.in
++++ b/cmake/protobuf-module.cmake.in
+@@ -153,6 +153,10 @@ if(NOT Protobuf_PROTOC_EXECUTABLE AND TARGET protobuf::protoc)
+     get_target_property(Protobuf_PROTOC_EXECUTABLE protobuf::protoc
+       IMPORTED_LOCATION_NOCONFIG)
+   endif()
++  if(NOT EXISTS "${Protobuf_PROTOC_EXECUTABLE}")
++    get_target_property(Protobuf_PROTOC_EXECUTABLE protobuf::protoc
++      IMPORTED_LOCATION_NONE)
++  endif()
+ endif()
+ 
+ # Version info variable
+ 
+diff --git a/cmake/libprotobuf-lite.cmake b/cmake/libprotobuf-lite.cmake
+index 9b1de677b4f..276c99c489e 100644
+--- a/cmake/libprotobuf-lite.cmake
++++ b/cmake/libprotobuf-lite.cmake
+@@ -30,6 +30,7 @@ if(protobuf_BUILD_SHARED_LIBS)
+ endif()
+ set_target_properties(libprotobuf-lite PROPERTIES
+     VERSION ${protobuf_VERSION}
++    SOVERSION ${protobuf_VERSION_MINOR}
+     OUTPUT_NAME ${LIB_PREFIX}protobuf-lite
+     DEBUG_POSTFIX "${protobuf_DEBUG_POSTFIX}")
+ add_library(protobuf::libprotobuf-lite ALIAS libprotobuf-lite)
+diff --git a/cmake/libprotobuf.cmake b/cmake/libprotobuf.cmake
+index aa3efc9a68a..0f34d20b97d 100644
+--- a/cmake/libprotobuf.cmake
++++ b/cmake/libprotobuf.cmake
+@@ -33,6 +33,7 @@ if(protobuf_BUILD_SHARED_LIBS)
+ endif()
+ set_target_properties(libprotobuf PROPERTIES
+     VERSION ${protobuf_VERSION}
++    SOVERSION ${protobuf_VERSION_MINOR}
+     OUTPUT_NAME ${LIB_PREFIX}protobuf
+     DEBUG_POSTFIX "${protobuf_DEBUG_POSTFIX}")
+ add_library(protobuf::libprotobuf ALIAS libprotobuf)
+diff --git a/cmake/libprotoc.cmake b/cmake/libprotoc.cmake
+index 72b4a1abb92..91e8bbeb04e 100644
+--- a/cmake/libprotoc.cmake
++++ b/cmake/libprotoc.cmake
+@@ -24,6 +24,7 @@ endif()
+ set_target_properties(libprotoc PROPERTIES
+     COMPILE_DEFINITIONS LIBPROTOC_EXPORTS
+     VERSION ${protobuf_VERSION}
++    SOVERSION ${protobuf_VERSION_MINOR}
+     OUTPUT_NAME ${LIB_PREFIX}protoc
+     DEBUG_POSTFIX "${protobuf_DEBUG_POSTFIX}")
+ add_library(protobuf::libprotoc ALIAS libprotoc)
+
+diff --git a/src/google/protobuf/text_format.h b/src/google/protobuf/text_format.h
+index 72b4a1abb92..91e8bbeb04e 100644
+--- a/src/google/protobuf/text_format.h
++++ b/src/google/protobuf/text_format.h
+@@ -42,6 +42,7 @@
+ #include <memory>
+ #include <string>
+ #include <vector>
++#include <cmath>
+ 
+ #include <google/protobuf/stubs/common.h>
+ #include <google/protobuf/descriptor.h>

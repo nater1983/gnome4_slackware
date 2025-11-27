@@ -1,0 +1,56 @@
+From 5649ad6752f0d1fa6f9f580d90b3784c699e4a1f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jonas=20=C3=85dahl?= <jadahl@gmail.com>
+Date: Thu, 30 May 2024 21:52:29 +0200
+Subject: [PATCH] Switch to fetching gvc via a meson subproject
+
+Hopefully this will avoid the accidental subprojects/gvc changes.
+
+Developers need to switch from doing
+
+    git submodule update
+
+to
+
+    meson subprojects update
+
+Part-of: <https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/3353>
+---
+ .gitmodules          | 3 ---
+ subprojects/gvc      | 1 -
+ subprojects/gvc.wrap | 6 ++++++
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+ delete mode 100644 .gitmodules
+ delete mode 160000 subprojects/gvc
+ create mode 100644 subprojects/gvc.wrap
+
+diff --git a/.gitmodules b/.gitmodules
+deleted file mode 100644
+index bb57dfc6c6c..00000000000
+--- a/.gitmodules
++++ /dev/null
+@@ -1,3 +0,0 @@
+-[submodule "subprojects/gvc"]
+-	path = subprojects/gvc
+-	url = ../../GNOME/libgnome-volume-control.git
+diff --git a/subprojects/gvc b/subprojects/gvc
+deleted file mode 160000
+index 91f3f414906..00000000000
+--- a/subprojects/gvc
++++ /dev/null
+@@ -1 +0,0 @@
+-Subproject commit 91f3f41490666a526ed78af744507d7ee1134323
+diff --git a/subprojects/gvc.wrap b/subprojects/gvc.wrap
+new file mode 100644
+index 00000000000..0ad1575d29d
+--- /dev/null
++++ b/subprojects/gvc.wrap
+@@ -0,0 +1,6 @@
++[wrap-git]
++directory=gvc
++url=https://gitlab.gnome.org/GNOME/libgnome-volume-control.git
++push-url=ssh://git@gitlab.gnome.org:GNOME/libgnome-volume-control.git
++revision=5f9768a2eac29c1ed56f1fbb449a77a3523683b6
++depth=1
+-- 
+GitLab
+

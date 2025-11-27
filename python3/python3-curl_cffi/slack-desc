@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                 |-----handy-ruler------------------------------------------------------|
+python3-curl_cffi: python3-curl_cffi (Python binding for curl-impersonate via cffi.)
+python3-curl_cffi:
+python3-curl_cffi: Python binding for curl-impersonate via cffi. A http client that can 
+python3-curl_cffi: impersonate browser tls/ja3/http2 fingerprints. Unlike other pure
+python3-curl_cffi: python http clients like httpx or requests, curl_cffi can impersonate 
+python3-curl_cffi: browsers' TLS/JA3 and HTTP/2 fingerprints. If you are blocked by some
+python3-curl_cffi: website for no obvious reason, you can give curl_cffi a try.
+python3-curl_cffi:
+python3-curl_cffi:
+python3-curl_cffi: Homepage: https://github.com/yifeikong/curl_cffi
+python3-curl_cffi:

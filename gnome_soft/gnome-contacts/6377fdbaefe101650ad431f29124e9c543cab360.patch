@@ -1,0 +1,46 @@
+diff --git a/6377fdbaefe101650ad431f29124e9c543cab360.patch b/6377fdbaefe101650ad431f29124e9c543cab360.patch
+new file mode 100644
+index 0000000..e50f831
+--- /dev/null
++++ b/6377fdbaefe101650ad431f29124e9c543cab360.patch
+@@ -0,0 +1,25 @@
++From 6377fdbaefe101650ad431f29124e9c543cab360 Mon Sep 17 00:00:00 2001
++From: Niels De Graef <nielsdegraef@gmail.com>
++Date: Mon, 1 Apr 2024 15:36:59 +0200
++Subject: [PATCH] contacts-pane: Keep a ref on newly created contacts
++
++---
++ src/contacts-contact-pane.vala | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/src/contacts-contact-pane.vala b/src/contacts-contact-pane.vala
++index 17e2ec36..a8309fad 100644
++--- a/src/contacts-contact-pane.vala
+++++ b/src/contacts-contact-pane.vala
++@@ -169,7 +169,7 @@ public class Contacts.ContactPane : Adw.Bin {
++       // The new individual. Even when editing an exisiting contact, it might
++       // be a different Individual than before, so make sure to adjust our
++       // selected contact afterwards
++-      unowned var individual =
+++      var individual =
++           yield contact.apply_changes (this.store.aggregator.primary_store);
++       debug ("Applied changes resulted in individual (%s)",
++              (individual != null)? individual.id : "null");
++-- 
++GitLab
++
+diff --git a/gnome-contacts.spec b/gnome-contacts.spec
+index 78028a2..e7a938d 100644
+--- a/gnome-contacts.spec
++++ b/gnome-contacts.spec
+@@ -12,6 +12,10 @@ License:        GPL-2.0-or-later AND CC0-1.0 AND CC-BY-SA-4.0
+ URL:            https://apps.gnome.org/Contacts
+ Source0:        https://download.gnome.org/sources/%{name}/46/%{name}-%{tarball_version}.tar.xz
+ Patch0:         216.patch
++# https://gitlab.gnome.org/GNOME/gnome-contacts/-/commit/6377fdbaefe101650ad431f29124e9c543cab360
++# Requested by Niels in https://gitlab.gnome.org/GNOME/gnome-contacts/-/issues/345#note_2070044
++# to see if this fixes that issue
++Patch:          6377fdbaefe101650ad431f29124e9c543cab360.patch
+ 
+ BuildRequires:  desktop-file-utils
+ BuildRequires:  docbook-dtds

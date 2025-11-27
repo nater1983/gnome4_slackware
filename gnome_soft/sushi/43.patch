@@ -1,0 +1,3430 @@
+From 6a9d8538a543e6b9c7e4c218a94e6611f9c73b05 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 14:57:22 -0700
+Subject: [PATCH 01/15] build: Bump to gtk4 and related libraries
+
+---
+ meson.build              | 10 +++++-----
+ src/libsushi/meson.build |  2 +-
+ src/ui/main.js           |  8 ++++----
+ src/viewers/html.js      |  4 ++--
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index dab36a5..2872dc5 100644
+--- a/meson.build
++++ b/meson.build
+@@ -16,12 +16,12 @@ gstreamer_dep = dependency('gstreamer-1.0')
+ gstreamer_audio_dep = dependency('gstreamer-audio-1.0')
+ gstreamer_tag_dep = dependency('gstreamer-tag-1.0')
+ gstreamer_video_dep = dependency('gstreamer-video-1.0')
+-gtk_dep = dependency('gtk+-3.0', version: '>=3.13.2')
+-gtk_x11_dep = dependency('gtk+-x11-3.0', required: get_option('X11'))
+-gtk_wayland_dep = dependency('gtk+-wayland-3.0', version: '>= 3.21.5', required: get_option('wayland'))
+-gtksourceview_dep = dependency('gtksourceview-4', version: '>=4.0.3')
++gtk_wayland_dep = dependency('gtk4-wayland', required: get_option('wayland'))
++gtk_x11_dep = dependency('gtk4-x11', required: get_option('X11'))
++gtk_dep = dependency('gtk4', version: '>= 4.10')
++gtksourceview_dep = dependency('gtksourceview-5')
+ harfbuzz_dep = dependency('harfbuzz', version: '>=0.9.9')
+-webkit_dep = dependency('webkit2gtk-4.1')
++webkit_dep = dependency('webkitgtk-6.0')
+ 
+ bindir = join_paths(get_option('prefix'), get_option('bindir'))
+ datadir = join_paths(get_option('prefix'), get_option('datadir'))
+diff --git a/src/libsushi/meson.build b/src/libsushi/meson.build
+index 8740954..1793e7b 100644
+--- a/src/libsushi/meson.build
++++ b/src/libsushi/meson.build
+@@ -82,9 +82,9 @@ gnome.generate_gir(
+   includes: [
+     'GstTag-1.0',
+     'GdkPixbuf-2.0',
+-    'Gtk-3.0',
+     'EvinceDocument-3.0',
+     'EvinceView-3.0',
++    'Gtk-4.0',
+   ],
+   install: true,
+   install_dir_gir: join_paths(pkgdatadir, 'gir-1.0'),
+diff --git a/src/ui/main.js b/src/ui/main.js
+index fcd447d..b2a564c 100644
+--- a/src/ui/main.js
++++ b/src/ui/main.js
+@@ -27,19 +27,19 @@ pkg.initFormat();
+ pkg.require({
+     EvinceDocument: '3.0',
+     EvinceView: '3.0',
+-    Gdk: '3.0',
++    Gdk: '4.0',
+     GdkPixbuf: '2.0',
+     Gio: '2.0',
+     GLib: '2.0',
+     GObject: '2.0',
+     Gst: '1.0',
+     GstTag: '1.0',
+-    Gtk: '3.0',
+-    GtkSource: '4',
++    Gtk: '4.0',
++    GtkSource: '5',
+     Pango: '1.0',
+     Soup: '3.0',
+     Sushi: '1.0',
+-    WebKit2: '4.1',
++    WebKit: '6.0',
+ });
+ 
+ const {Gio, GLib} = imports.gi;
+diff --git a/src/viewers/html.js b/src/viewers/html.js
+index 985d957..d6fe50e 100644
+--- a/src/viewers/html.js
++++ b/src/viewers/html.js
+@@ -23,7 +23,7 @@
+  *
+  */
+ 
+-const {Gtk, GLib, GObject, Sushi, WebKit2} = imports.gi;
++const {Gtk, GLib, GObject, Sushi, WebKit} = imports.gi;
+ 
+ const Renderer = imports.ui.renderer;
+ 
+@@ -37,7 +37,7 @@ var Klass = GObject.registerClass({
+                                          GObject.ParamFlags.READABLE,
+                                          false)
+     },
+-}, class HTMLRenderer extends WebKit2.WebView {
++}, class HTMLRenderer extends WebKit.WebView {
+     get ready() {
+         return !!this._ready;
+     }
+-- 
+GitLab
+
+
+From ac243499c5084e0ebbda58ffe11d10668036d622 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:00:23 -0700
+Subject: [PATCH 02/15] build: Temporarily stop including evince
+
+evince is still depending on gtk3.  We can use WebKit to view pdf
+files in the meantime.
+
+Related: https://gitlab.gnome.org/GNOME/evince/-/merge_requests/373
+---
+ meson.build                                       | 4 ++--
+ src/libsushi/meson.build                          | 8 ++++----
+ src/libsushi/sushi-utils.c                        | 3 ++-
+ src/libsushi/sushi-utils.h                        | 5 ++++-
+ src/org.gnome.NautilusPreviewer.src.gresource.xml | 2 +-
+ src/ui/main.js                                    | 4 ++--
+ src/viewers/html.js                               | 3 ++-
+ 7 files changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 2872dc5..b96e480 100644
+--- a/meson.build
++++ b/meson.build
+@@ -6,8 +6,8 @@ project(
+ )
+ 
+ epoxy_dep = dependency('epoxy')
+-evince_document_dep = dependency('evince-document-3.0')
+-evince_view_dep = dependency('evince-view-3.0')
++# evince_document_dep = dependency('evince-document-3.0')
++# evince_view_dep = dependency('evince-view-3.0')
+ freetype_dep = dependency('freetype2')
+ gdk_pixbuf_dep = dependency('gdk-pixbuf-2.0', version: '>=2.23.0')
+ gio_unix_dep = dependency('gio-unix-2.0', version: '>=2.29.14')
+diff --git a/src/libsushi/meson.build b/src/libsushi/meson.build
+index 1793e7b..a0330e7 100644
+--- a/src/libsushi/meson.build
++++ b/src/libsushi/meson.build
+@@ -28,8 +28,8 @@ endif
+ 
+ libsushi_deps = [
+   epoxy_dep,
+-  evince_document_dep,
+-  evince_view_dep,
++  # evince_document_dep,
++  # evince_view_dep,
+   freetype_dep,
+   gdk_pixbuf_dep,
+   glib_dep,
+@@ -82,9 +82,9 @@ gnome.generate_gir(
+   includes: [
+     'GstTag-1.0',
+     'GdkPixbuf-2.0',
+-    'EvinceDocument-3.0',
+-    'EvinceView-3.0',
+     'Gtk-4.0',
++    # 'EvinceDocument-3.0',
++    # 'EvinceView-3.0',
+   ],
+   install: true,
+   install_dir_gir: join_paths(pkgdatadir, 'gir-1.0'),
+diff --git a/src/libsushi/sushi-utils.c b/src/libsushi/sushi-utils.c
+index d39b3f4..eb28c18 100644
+--- a/src/libsushi/sushi-utils.c
++++ b/src/libsushi/sushi-utils.c
+@@ -51,6 +51,7 @@ sushi_window_set_child_of_external (GtkWindow *window,
+   g_object_unref (external_window);
+ }
+ 
++#if 0 && reimplement_ev
+ /**
+  * sushi_get_evince_document_from_job:
+  * @job:
+@@ -103,7 +104,7 @@ sushi_query_supported_document_types (void)
+ 
+   return retval;
+ }
+-
++#endif
+ static void load_libreoffice (GTask *task);
+ 
+ typedef struct {
+diff --git a/src/libsushi/sushi-utils.h b/src/libsushi/sushi-utils.h
+index b36ff2b..46e3601 100644
+--- a/src/libsushi/sushi-utils.h
++++ b/src/libsushi/sushi-utils.h
+@@ -26,19 +26,22 @@
+ #ifndef __SUSHI_UTILS_H__
+ #define __SUSHI_UTILS_H__
+ 
++#if 0 && REIMPLEMENT_EVINCE
+ #include <evince-document.h>
+ #include <evince-view.h>
++#endif
+ #include <gdk/gdk.h>
+ #include <gio/gio.h>
+ #include <gst/gst.h>
+ 
+ G_BEGIN_DECLS
+ 
++#if 0 && REIMPLEMENT_EVINCE
+ gchar **       sushi_query_supported_document_types (void);
+ 
+ EvDocument *   sushi_get_evince_document_from_job (EvJob   *job,
+                                                    GError **error);
+-
++#endif
+ void           sushi_convert_libreoffice (GFile *file,
+                                           GAsyncReadyCallback callback,
+                                           gpointer user_data);
+diff --git a/src/org.gnome.NautilusPreviewer.src.gresource.xml b/src/org.gnome.NautilusPreviewer.src.gresource.xml
+index e5e99a3..85d1934 100644
+--- a/src/org.gnome.NautilusPreviewer.src.gresource.xml
++++ b/src/org.gnome.NautilusPreviewer.src.gresource.xml
+@@ -11,7 +11,7 @@
+     <file>util/constants.js</file>
+     <file>util/totemMimeTypes.js</file>
+     <file>viewers/audio.js</file>
+-    <file>viewers/evince.js</file>
++    <!-- <file>viewers/evince.js</file> -->
+     <file>viewers/font.js</file>
+     <file>viewers/gst.js</file>
+     <file>viewers/html.js</file>
+diff --git a/src/ui/main.js b/src/ui/main.js
+index b2a564c..fe52246 100644
+--- a/src/ui/main.js
++++ b/src/ui/main.js
+@@ -25,8 +25,8 @@
+ pkg.initGettext();
+ pkg.initFormat();
+ pkg.require({
+-    EvinceDocument: '3.0',
+-    EvinceView: '3.0',
++    // EvinceDocument: '3.0',
++    // EvinceView: '3.0',
+     Gdk: '4.0',
+     GdkPixbuf: '2.0',
+     Gio: '2.0',
+diff --git a/src/viewers/html.js b/src/viewers/html.js
+index d6fe50e..77ac35f 100644
+--- a/src/viewers/html.js
++++ b/src/viewers/html.js
+@@ -70,5 +70,6 @@ var Klass = GObject.registerClass({
+ });
+ 
+ var mimeTypes = [
+-    'text/html'
++    'text/html',
++    'application/pdf'
+ ];
+-- 
+GitLab
+
+
+From 761e54263b97c8e3ebad04c750681694714c6d5c Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:03:52 -0700
+Subject: [PATCH 03/15] externalwindow: Port to gtk4
+
+There's substantial simplification that can be done here.  Merge the
+x11 and wayland files into externalwindow.c and use the compile time
+and run-time checks properly.  gdk4 doesn't include the ability to
+set the transient directly for x11 so use XSetTransientForHint
+directly.
+---
+ meson.build                           |   1 +
+ src/libsushi/externalwindow-wayland.c | 118 ------------------
+ src/libsushi/externalwindow-wayland.h |  34 ------
+ src/libsushi/externalwindow-x11.c     | 136 ---------------------
+ src/libsushi/externalwindow-x11.h     |  35 ------
+ src/libsushi/externalwindow.c         | 166 ++++++++++++--------------
+ src/libsushi/externalwindow.h         |  25 +---
+ src/libsushi/meson.build              |  24 +---
+ src/libsushi/sushi-utils.c            |   3 +-
+ src/libsushi/sushi-utils.h            |   1 +
+ 10 files changed, 82 insertions(+), 461 deletions(-)
+ delete mode 100644 src/libsushi/externalwindow-wayland.c
+ delete mode 100644 src/libsushi/externalwindow-wayland.h
+ delete mode 100644 src/libsushi/externalwindow-x11.c
+ delete mode 100644 src/libsushi/externalwindow-x11.h
+
+diff --git a/meson.build b/meson.build
+index b96e480..294cafb 100644
+--- a/meson.build
++++ b/meson.build
+@@ -22,6 +22,7 @@ gtk_dep = dependency('gtk4', version: '>= 4.10')
+ gtksourceview_dep = dependency('gtksourceview-5')
+ harfbuzz_dep = dependency('harfbuzz', version: '>=0.9.9')
+ webkit_dep = dependency('webkitgtk-6.0')
++x11_dep = dependency('x11', required: get_option('X11'))
+ 
+ bindir = join_paths(get_option('prefix'), get_option('bindir'))
+ datadir = join_paths(get_option('prefix'), get_option('datadir'))
+diff --git a/src/libsushi/externalwindow-wayland.c b/src/libsushi/externalwindow-wayland.c
+deleted file mode 100644
+index 077ac24..0000000
+--- a/src/libsushi/externalwindow-wayland.c
++++ /dev/null
+@@ -1,118 +0,0 @@
+-/*
+- * Copyright Â© 2016 Red Hat, Inc
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+- *
+- * Authors:
+- *       Jonas Ã…dahl <jadahl@redhat.com>
+- */
+-
+-#include "config.h"
+-
+-#include <gdk/gdk.h>
+-#include <gdk/gdkwayland.h>
+-
+-#include "externalwindow-wayland.h"
+-
+-static GdkDisplay *wayland_display;
+-
+-struct _ExternalWindowWayland
+-{
+-  ExternalWindow parent;
+-
+-  char *handle_str;
+-};
+-
+-struct _ExternalWindowWaylandClass
+-{
+-  ExternalWindowClass parent_class;
+-};
+-
+-G_DEFINE_TYPE (ExternalWindowWayland, external_window_wayland,
+-               EXTERNAL_TYPE_WINDOW)
+-
+-static GdkDisplay *
+-get_wayland_display (void)
+-{
+-  if (wayland_display)
+-    return wayland_display;
+-
+-  gdk_set_allowed_backends ("wayland");
+-  wayland_display = gdk_display_open (NULL);
+-  gdk_set_allowed_backends (NULL);
+-  if (!wayland_display)
+-    g_warning ("Failed to open Wayland display");
+-
+-  return wayland_display;
+-}
+-
+-ExternalWindowWayland *
+-external_window_wayland_new (const char *handle_str)
+-{
+-  ExternalWindowWayland *external_window_wayland;
+-  GdkDisplay *display;
+-
+-  display = get_wayland_display ();
+-  if (!display)
+-    {
+-      g_warning ("No Wayland display connection, ignoring Wayland parent");
+-      return NULL;
+-    }
+-
+-  external_window_wayland = g_object_new (EXTERNAL_TYPE_WINDOW_WAYLAND,
+-                                          "display", display,
+-                                          NULL);
+-  external_window_wayland->handle_str = g_strdup (handle_str);
+-
+-  return external_window_wayland;
+-}
+-
+-static void
+-external_window_wayland_set_parent_of (ExternalWindow *external_window,
+-                                       GdkWindow      *child_window)
+-{
+-  ExternalWindowWayland *external_window_wayland =
+-    EXTERNAL_WINDOW_WAYLAND (external_window);
+-  char *handle_str = external_window_wayland->handle_str;
+-
+-  if (!gdk_wayland_window_set_transient_for_exported (child_window, handle_str))
+-    g_warning ("Failed to set portal window transient for external parent");
+-}
+-
+-static void
+-external_window_wayland_dispose (GObject *object)
+-{
+-  ExternalWindowWayland *external_window_wayland =
+-    EXTERNAL_WINDOW_WAYLAND (object);
+-
+-  g_free (external_window_wayland->handle_str);
+-
+-  G_OBJECT_CLASS (external_window_wayland_parent_class)->dispose (object);
+-}
+-
+-static void
+-external_window_wayland_init (ExternalWindowWayland *external_window_wayland)
+-{
+-}
+-
+-static void
+-external_window_wayland_class_init (ExternalWindowWaylandClass *klass)
+-{
+-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-  ExternalWindowClass *external_window_class = EXTERNAL_WINDOW_CLASS (klass);
+-
+-  object_class->dispose = external_window_wayland_dispose;
+-
+-  external_window_class->set_parent_of = external_window_wayland_set_parent_of;
+-}
+diff --git a/src/libsushi/externalwindow-wayland.h b/src/libsushi/externalwindow-wayland.h
+deleted file mode 100644
+index ede29ef..0000000
+--- a/src/libsushi/externalwindow-wayland.h
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/*
+- * Copyright Â© 2016 Red Hat, Inc
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+- *
+- * Authors:
+- *       Jonas Ã…dahl <jadahl@redhat.com>
+- */
+-
+-#pragma once
+-
+-#include <glib-object.h>
+-
+-#include "externalwindow.h"
+-
+-#define EXTERNAL_TYPE_WINDOW_WAYLAND (external_window_wayland_get_type ())
+-#define EXTERNAL_WINDOW_WAYLAND(object) (G_TYPE_CHECK_INSTANCE_CAST (object, EXTERNAL_TYPE_WINDOW_WAYLAND, ExternalWindowWayland))
+-
+-typedef struct _ExternalWindowWayland ExternalWindowWayland;
+-typedef struct _ExternalWindowWaylandClass ExternalWindowWaylandClass;
+-
+-GType external_window_wayland_get_type (void);
+-ExternalWindowWayland *external_window_wayland_new (const char *handle_str);
+diff --git a/src/libsushi/externalwindow-x11.c b/src/libsushi/externalwindow-x11.c
+deleted file mode 100644
+index 75de557..0000000
+--- a/src/libsushi/externalwindow-x11.c
++++ /dev/null
+@@ -1,136 +0,0 @@
+-/*
+- * Copyright Â© 2016 Red Hat, Inc
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+- *
+- * Authors:
+- *       Jonas Ã…dahl <jadahl@redhat.com>
+- */
+-
+-#include "config.h"
+-
+-#include <errno.h>
+-#include <gdk/gdkx.h>
+-#include <gdk/gdk.h>
+-#include <stdlib.h>
+-
+-#include "externalwindow-x11.h"
+-
+-
+-static GdkDisplay *x11_display;
+-
+-struct _ExternalWindowX11
+-{
+-  ExternalWindow parent;
+-
+-  GdkWindow *foreign_gdk_window;
+-};
+-
+-struct _ExternalWindowX11Class
+-{
+-  ExternalWindowClass parent_class;
+-};
+-
+-G_DEFINE_TYPE (ExternalWindowX11, external_window_x11,
+-               EXTERNAL_TYPE_WINDOW)
+-
+-static GdkDisplay *
+-get_x11_display (void)
+-{
+-  if (x11_display)
+-    return x11_display;
+-
+-  gdk_set_allowed_backends ("x11");
+-  x11_display = gdk_display_open (NULL);
+-  gdk_set_allowed_backends (NULL);
+-  if (!x11_display)
+-    g_warning ("Failed to open X11 display");
+-
+-  return x11_display;
+-}
+-
+-ExternalWindowX11 *
+-external_window_x11_new (const char *handle_str)
+-{
+-  ExternalWindowX11 *external_window_x11;
+-  GdkDisplay *display;
+-  int xid;
+-  GdkWindow *foreign_gdk_window;
+-
+-  display = get_x11_display ();
+-  if (!display)
+-    {
+-      g_warning ("No X display connection, ignoring X11 parent");
+-      return NULL;
+-    }
+-
+-  errno = 0;
+-  xid = strtol (handle_str, NULL, 16);
+-  if (errno != 0)
+-    {
+-      g_warning ("Failed to reference external X11 window, invalid XID %s", handle_str);
+-      return NULL;
+-    }
+-
+-  foreign_gdk_window = gdk_x11_window_foreign_new_for_display (display, xid);
+-  if (!foreign_gdk_window)
+-    {
+-      g_warning ("Failed to create foreign window for XID %d", xid);
+-      return NULL;
+-    }
+-
+-  external_window_x11 = g_object_new (EXTERNAL_TYPE_WINDOW_X11,
+-                                      "display", display,
+-                                      NULL);
+-  external_window_x11->foreign_gdk_window = foreign_gdk_window;
+-
+-  return external_window_x11;
+-}
+-
+-static void
+-external_window_x11_set_parent_of (ExternalWindow *external_window,
+-                                   GdkWindow      *child_window)
+-{
+-  ExternalWindowX11 *external_window_x11 =
+-    EXTERNAL_WINDOW_X11 (external_window);
+-
+-  gdk_window_set_transient_for (child_window,
+-                                external_window_x11->foreign_gdk_window);
+-}
+-
+-static void
+-external_window_x11_dispose (GObject *object)
+-{
+-  ExternalWindowX11 *external_window_x11 = EXTERNAL_WINDOW_X11 (object);
+-
+-  g_clear_object (&external_window_x11->foreign_gdk_window);
+-
+-  G_OBJECT_CLASS (external_window_x11_parent_class)->dispose (object);
+-}
+-
+-static void
+-external_window_x11_init (ExternalWindowX11 *external_window_x11)
+-{
+-}
+-
+-static void
+-external_window_x11_class_init (ExternalWindowX11Class *klass)
+-{
+-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-  ExternalWindowClass *external_window_class = EXTERNAL_WINDOW_CLASS (klass);
+-
+-  object_class->dispose = external_window_x11_dispose;
+-
+-  external_window_class->set_parent_of = external_window_x11_set_parent_of;
+-}
+diff --git a/src/libsushi/externalwindow-x11.h b/src/libsushi/externalwindow-x11.h
+deleted file mode 100644
+index d380a3d..0000000
+--- a/src/libsushi/externalwindow-x11.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Copyright Â© 2016 Red Hat, Inc
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Lesser General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Lesser General Public License for more details.
+- *
+- * You should have received a copy of the GNU Lesser General Public
+- * License along with this library. If not, see <http://www.gnu.org/licenses/>.
+- *
+- * Authors:
+- *       Jonas Ã…dahl <jadahl@redhat.com>
+- */
+-
+-#pragma once
+-
+-#include <glib-object.h>
+-
+-#include "externalwindow.h"
+-
+-
+-#define EXTERNAL_TYPE_WINDOW_X11 (external_window_x11_get_type ())
+-#define EXTERNAL_WINDOW_X11(object) (G_TYPE_CHECK_INSTANCE_CAST (object, EXTERNAL_TYPE_WINDOW_X11, ExternalWindowX11))
+-
+-typedef struct _ExternalWindowX11 ExternalWindowX11;
+-typedef struct _ExternalWindowX11Class ExternalWindowX11Class;
+-
+-GType external_window_get_type (void);
+-ExternalWindowX11 *external_window_x11_new (const char *handle_str);
+diff --git a/src/libsushi/externalwindow.c b/src/libsushi/externalwindow.c
+index 9b81670..97eb11d 100644
+--- a/src/libsushi/externalwindow.c
++++ b/src/libsushi/externalwindow.c
+@@ -16,64 +16,65 @@
+  *
+  * Authors:
+  *       Jonas Ã…dahl <jadahl@redhat.com>
++ *       Corey Berla <corey@berla.me>
+  */
+ 
+-#include "config.h"
+-
+ #include <string.h>
+ 
+-#include "externalwindow.h"
+-#ifdef HAVE_GTK_X11
+-#include "externalwindow-x11.h"
++#include <gtk/gtk.h>
++
++#ifdef GDK_WINDOWING_WAYLAND
++#include <gdk/wayland/gdkwayland.h>
+ #endif
+-#ifdef HAVE_GTK_WAYLAND
+-#include "externalwindow-wayland.h"
++
++#ifdef GDK_WINDOWING_X11
++#include <gdk/x11/gdkx.h>
+ #endif
+ 
+-enum
+-{
+-  PROP_0,
++#include "externalwindow.h"
+ 
+-  PROP_DISPLAY,
++struct _ExternalWindow
++{
++  GObject parent_instance;
+ };
+ 
+ typedef struct _ExternalWindowPrivate
+ {
+   GdkDisplay *display;
++  char *wayland_str;
++  Window xid;
+ } ExternalWindowPrivate;
+ 
+-G_DEFINE_TYPE_WITH_PRIVATE (ExternalWindow, external_window, G_TYPE_OBJECT)
++G_DEFINE_TYPE_WITH_CODE (ExternalWindow, external_window, G_TYPE_OBJECT,
++                         G_ADD_PRIVATE (ExternalWindow));
+ 
+ ExternalWindow *
+ create_external_window_from_handle (const char *handle_str)
+ {
+-#ifdef HAVE_GTK_X11
++    ExternalWindow *external_window;
++    ExternalWindowPrivate *priv;
++    const char x11_prefix[] = "x11:";
++    const char wayland_prefix[] = "wayland:";
++
++    external_window = g_object_new (EXTERNAL_TYPE_WINDOW, NULL);
++    priv = external_window_get_instance_private (external_window);
++
++  if (g_str_has_prefix (handle_str, x11_prefix))
+     {
+-      const char x11_prefix[] = "x11:";
+-      if (g_str_has_prefix (handle_str, x11_prefix))
+-        {
+-          ExternalWindowX11 *external_window_x11;
+-          const char *x11_handle_str = handle_str + strlen (x11_prefix);
++      const char *x11_handle_str = handle_str + strlen (x11_prefix);
+ 
+-          external_window_x11 = external_window_x11_new (x11_handle_str);
+-          return EXTERNAL_WINDOW (external_window_x11);
+-        }
++      priv->xid = strtol (x11_handle_str, NULL, 16);
++      priv->wayland_str = NULL;
++      return external_window;
+     }
+-#endif
+-#ifdef HAVE_GTK_WAYLAND
++  else if (g_str_has_prefix (handle_str, wayland_prefix))
+     {
+-      const char wayland_prefix[] = "wayland:";
+-      if (g_str_has_prefix (handle_str, wayland_prefix))
+-        {
+-          ExternalWindowWayland *external_window_wayland;
+-          const char *wayland_handle_str = handle_str + strlen (wayland_prefix);
++      const char *wayland_handle_str = handle_str + strlen (wayland_prefix);
+ 
+-          external_window_wayland =
+-            external_window_wayland_new (wayland_handle_str);
+-          return EXTERNAL_WINDOW (external_window_wayland);
+-        }
++      priv->wayland_str = g_strdup (wayland_handle_str);
++      priv->xid = 0;
++      return external_window;
+     }
+-#endif
+ 
+   g_warning ("Unhandled parent window type %s\n", handle_str);
+   return NULL;
+@@ -81,61 +82,57 @@ create_external_window_from_handle (const char *handle_str)
+ 
+ void
+ external_window_set_parent_of (ExternalWindow *external_window,
+-                               GdkWindow      *child_window)
++                               GtkWindow      *child_window)
+ {
+-  EXTERNAL_WINDOW_GET_CLASS (external_window)->set_parent_of (external_window,
+-                                                              child_window);
+-}
++    GdkSurface *surface = gtk_native_get_surface (GTK_NATIVE (child_window));
++    ExternalWindowPrivate *priv = external_window_get_instance_private (external_window);
+ 
+-GdkDisplay *
+-external_window_get_display (ExternalWindow *external_window)
+-{
+-  ExternalWindowPrivate *priv =
+-    external_window_get_instance_private (external_window);
++#ifdef GDK_WINDOWING_WAYLAND
++    if (GDK_IS_WAYLAND_DISPLAY (gtk_widget_get_display (GTK_WIDGET (child_window))))
++    {
++        if (priv->xid)
++        {
++            g_warning ("Wayland / x11 mismatch");
++            return;
++        }
+ 
+-  return priv->display;
+-}
++        if (!gdk_wayland_toplevel_set_transient_for_exported (GDK_TOPLEVEL (surface), priv->wayland_str))
++          g_warning ("Failed to set portal window transient for external parent");
+ 
+-static void
+-external_window_set_property (GObject      *object,
+-                              guint         prop_id,
+-                              const GValue *value,
+-                              GParamSpec   *pspec)
+-{
+-  ExternalWindow *external_window = EXTERNAL_WINDOW (object);
+-  ExternalWindowPrivate *priv =
+-    external_window_get_instance_private (external_window);
++        return;
++    }
++#endif
+ 
+-  switch (prop_id)
+-    {
+-    case PROP_DISPLAY:
+-      g_set_object (&priv->display, g_value_get_object (value));
+-      break;
++#ifdef GDK_WINDOWING_X11
++    if (GDK_IS_X11_DISPLAY (gtk_widget_get_display (GTK_WIDGET (child_window))))
++      {
++        GdkDisplay *display = gtk_widget_get_display (GTK_WIDGET (child_window));
++        Display *dpy = gdk_x11_display_get_xdisplay (display);
++        Window parent_xid = gdk_x11_surface_get_xid (surface);
+ 
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-    }
++        if (priv->wayland_str)
++        {
++            g_warning ("Wayland / x11 mismatch");
++            return;
++        }
++
++        if (!XSetTransientForHint (dpy, parent_xid, priv->xid))
++          g_warning ("Failed to set portal window transient for external parent");
++
++        return;
++      }
++#endif
+ }
+ 
+ static void
+-external_window_get_property (GObject    *object,
+-                              guint       prop_id,
+-                              GValue     *value,
+-                              GParamSpec *pspec)
++external_window_dispose (GObject *object)
+ {
+-  ExternalWindow *external_window = EXTERNAL_WINDOW (object);
+-  ExternalWindowPrivate *priv =
+-    external_window_get_instance_private (external_window);
++    ExternalWindow *self = EXTERNAL_WINDOW (object);
++    ExternalWindowPrivate *priv = external_window_get_instance_private (self);
+ 
+-  switch (prop_id)
+-    {
+-    case PROP_DISPLAY:
+-      g_value_set_object (value, priv->display);
+-      break;
++    g_clear_pointer (&priv->wayland_str, g_free);
+ 
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-    }
++    G_OBJECT_CLASS (external_window_parent_class)->dispose (object);
+ }
+ 
+ static void
+@@ -146,18 +143,7 @@ external_window_init (ExternalWindow *external_window)
+ static void
+ external_window_class_init (ExternalWindowClass *klass)
+ {
+-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-
+-  object_class->get_property = external_window_get_property;
+-  object_class->set_property = external_window_set_property;
+-
+-  g_object_class_install_property (object_class,
+-                                   PROP_DISPLAY,
+-                                   g_param_spec_object ("display",
+-                                                        "GdkDisplay",
+-                                                        "The GdkDisplay instance",
+-                                                        GDK_TYPE_DISPLAY,
+-                                                        G_PARAM_READWRITE |
+-                                                        G_PARAM_CONSTRUCT_ONLY |
+-                                                        G_PARAM_STATIC_STRINGS));
++    GObjectClass *object_class = G_OBJECT_CLASS (klass);
++
++    object_class->dispose = external_window_dispose;
+ }
+diff --git a/src/libsushi/externalwindow.h b/src/libsushi/externalwindow.h
+index 8282fc2..f955e3e 100644
+--- a/src/libsushi/externalwindow.h
++++ b/src/libsushi/externalwindow.h
+@@ -25,30 +25,9 @@
+ 
+ 
+ #define EXTERNAL_TYPE_WINDOW (external_window_get_type ())
+-#define EXTERNAL_WINDOW(object) (G_TYPE_CHECK_INSTANCE_CAST (object, EXTERNAL_TYPE_WINDOW, ExternalWindow))
+-#define EXTERNAL_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST (klass, EXTERNAL_TYPE_WINDOW, ExternalWindowClass))
+-#define EXTERNAL_WINDOW_GET_CLASS(klass) (G_TYPE_INSTANCE_GET_CLASS (klass, EXTERNAL_TYPE_WINDOW, ExternalWindowClass))
++G_DECLARE_FINAL_TYPE (ExternalWindow, external_window, EXTERNAL, WINDOW, GObject)
+ 
+-typedef struct _ExternalWindow ExternalWindow;
+-typedef struct _ExternalWindowClass ExternalWindowClass;
+-
+-struct _ExternalWindow
+-{
+-  GObject parent_instance;
+-};
+-
+-struct _ExternalWindowClass
+-{
+-  GObjectClass parent_class;
+-
+-  void (*set_parent_of) (ExternalWindow *external_window,
+-                         GdkWindow      *child_window);
+-};
+-
+-GType external_window_get_type (void);
+ ExternalWindow *create_external_window_from_handle (const char *handle_str);
+ 
+ void external_window_set_parent_of (ExternalWindow *external_window,
+-                                    GdkWindow      *child_window);
+-
+-GdkDisplay *external_window_get_display (ExternalWindow *external_window);
++                                    GtkWindow      *child_window);
+diff --git a/src/libsushi/meson.build b/src/libsushi/meson.build
+index a0330e7..c28e18d 100644
+--- a/src/libsushi/meson.build
++++ b/src/libsushi/meson.build
+@@ -1,31 +1,8 @@
+-config_data = configuration_data()
+-if gtk_x11_dep.found()
+-  config_data.set('HAVE_GTK_X11', 1)
+-endif
+-if gtk_wayland_dep.found()
+-  config_data.set('HAVE_GTK_WAYLAND', 1)
+-endif
+-configure_file(output: 'config.h', configuration: config_data)
+-
+ externalwindow_sources = [
+   'externalwindow.c',
+   'externalwindow.h',
+ ]
+ 
+-if gtk_x11_dep.found()
+-  externalwindow_sources += [
+-    'externalwindow-x11.c',
+-    'externalwindow-x11.h',
+-  ]
+-endif
+-
+-if gtk_wayland_dep.found()
+-  externalwindow_sources += [
+-    'externalwindow-wayland.c',
+-    'externalwindow-wayland.h',
+-  ]
+-endif
+-
+ libsushi_deps = [
+   epoxy_dep,
+   # evince_document_dep,
+@@ -39,6 +16,7 @@ libsushi_deps = [
+   gstreamer_video_dep,
+   gtk_dep,
+   harfbuzz_dep,
++  x11_dep,
+ ]
+ 
+ libsushi_sources = [
+diff --git a/src/libsushi/sushi-utils.c b/src/libsushi/sushi-utils.c
+index eb28c18..3b535c0 100644
+--- a/src/libsushi/sushi-utils.c
++++ b/src/libsushi/sushi-utils.c
+@@ -46,8 +46,7 @@ sushi_window_set_child_of_external (GtkWindow *window,
+   if (!external_window)
+     return;
+ 
+-  external_window_set_parent_of (external_window,
+-                                 gtk_widget_get_window (GTK_WIDGET (window)));
++  external_window_set_parent_of (external_window, window);
+   g_object_unref (external_window);
+ }
+ 
+diff --git a/src/libsushi/sushi-utils.h b/src/libsushi/sushi-utils.h
+index 46e3601..acfc564 100644
+--- a/src/libsushi/sushi-utils.h
++++ b/src/libsushi/sushi-utils.h
+@@ -33,6 +33,7 @@
+ #include <gdk/gdk.h>
+ #include <gio/gio.h>
+ #include <gst/gst.h>
++#include <gtk/gtk.h>
+ 
+ G_BEGIN_DECLS
+ 
+-- 
+GitLab
+
+
+From f127c9d35b520223f640df51e9096759a8a54ec3 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:08:10 -0700
+Subject: [PATCH 04/15] html: Stop setting sandbox enabled
+
+Sandboxing is enabled by default
+---
+ src/viewers/html.js | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/viewers/html.js b/src/viewers/html.js
+index 77ac35f..0ea090d 100644
+--- a/src/viewers/html.js
++++ b/src/viewers/html.js
+@@ -60,10 +60,6 @@ var Klass = GObject.registerClass({
+         this.isReady();
+     }
+ 
+-    static {
+-        WebKit2.WebContext.get_default().set_sandbox_enabled(true);
+-    }
+-
+     get moveOnClick() {
+         return false;
+     }
+-- 
+GitLab
+
+
+From 824a0b721d2e0c4e5930b7f8506a3b82be7aca82 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:26:58 -0700
+Subject: [PATCH 05/15] video: Port gst video player to GtkVideo
+
+GStreamer plugins for gtk4 are limited and not always available.
+Use GtkVideo
+---
+ src/libsushi/sushi-media-bin.c                | 249 ------------------
+ ....gnome.NautilusPreviewer.src.gresource.xml |   2 +-
+ src/viewers/{gst.js => video.js}              |  23 +-
+ 3 files changed, 6 insertions(+), 268 deletions(-)
+ rename src/viewers/{gst.js => video.js} (78%)
+
+diff --git a/src/libsushi/sushi-media-bin.c b/src/libsushi/sushi-media-bin.c
+index b5e00da..9cd2a36 100644
+--- a/src/libsushi/sushi-media-bin.c
++++ b/src/libsushi/sushi-media-bin.c
+@@ -505,173 +505,6 @@ sushi_media_bin_video_pixbuf_new (SushiMediaBin *self)
+   return pixbuf;
+ }
+ 
+-static inline gboolean
+-sushi_media_bin_gl_check (GtkWidget *widget)
+-{
+-  static gsize gl_works = 0;
+-
+-  if (g_once_init_enter (&gl_works))
+-    {
+-      GError *error = NULL;
+-      gsize works = 1;
+-      GdkGLContext *context;
+-      GdkWindow *window;
+-
+-      if ((window  = gtk_widget_get_window (widget)) &&
+-           (context = gdk_window_create_gl_context (window, &error)))
+-        {
+-          const gchar *vendor, *renderer;
+-
+-          gdk_gl_context_make_current (context);
+-
+-          vendor   = (const gchar *) glGetString (GL_VENDOR);
+-          renderer = (const gchar *) glGetString (GL_RENDERER);
+-
+-          GST_INFO ("GL Vendor: %s, renderer: %s", vendor, renderer);
+-
+-          if (g_str_equal (vendor, "nouveau"))
+-            GST_WARNING ("nouveau is blacklisted, since sharing gl contexts in "
+-                         "multiple threads is not supported "
+-                         "and will eventually make it crash.");
+-          else if (g_strstr_len (renderer, -1, "Gallium") &&
+-                   g_strstr_len (renderer, -1, "llvmpipe"))
+-            GST_INFO ("Detected software GL rasterizer, falling back to gtksink");
+-          else
+-            works = 2;
+-
+-          gdk_gl_context_clear_current ();
+-        }
+-
+-        if (error)
+-          {
+-            GST_WARNING ("Could not window to create GL context, %s", error->message);
+-            g_error_free (error);
+-          }
+-
+-      g_once_init_leave (&gl_works, works);
+-    }
+-
+-  return (gl_works > 1);
+-}
+-
+-static inline void
+-sushi_media_bin_init_video_sink (SushiMediaBin *self)
+-{
+-  SushiMediaBinPrivate *priv = SMB_PRIVATE (self);
+-  GtkWidget *video_widget = NULL;
+-  GstElement *video_sink = NULL;
+-
+-  if (priv->video_sink)
+-    return;
+-
+-  if (priv->audio_mode)
+-    {
+-      video_sink = gst_element_factory_make ("fakesink", "SushiMediaBinNullSink");
+-      g_object_set (video_sink, "sync", TRUE, NULL);
+-      g_object_set (priv->play, "video-sink", video_sink, NULL);
+-      priv->video_sink = gst_object_ref_sink (video_sink);
+-      return;
+-    }
+-
+-  if (sushi_media_bin_gl_check (GTK_WIDGET (self)))
+-    {
+-      video_sink = gst_element_factory_make ("glsinkbin", "SushiMediaBinGLVideoSink");
+-
+-      if (video_sink)
+-        {
+-          GstElement *gtkglsink = gst_element_factory_make ("gtkglsink", NULL);
+-
+-          if (gtkglsink)
+-            {
+-              GST_INFO ("Using gtkglsink");
+-              g_object_set (video_sink, "sink", gtkglsink, NULL);
+-              g_object_get (gtkglsink, "widget", &video_widget, NULL);
+-            }
+-          else
+-            {
+-              GST_WARNING ("Could not create gtkglsink");
+-              gst_object_replace ((GstObject**)&video_sink, NULL);
+-            }
+-        }
+-      else
+-        {
+-          GST_WARNING ("Could not create glsinkbin");
+-        }
+-    }
+-
+-  /* Fallback to gtksink */
+-  if (!video_sink)
+-    {
+-      GST_INFO ("Falling back to gtksink");
+-      video_sink = gst_element_factory_make ("gtksink", NULL);
+-      g_object_get (video_sink, "widget", &video_widget, NULL);
+-    }
+-
+-  /* We use a null sink as a last resort */
+-  if (video_sink && video_widget)
+-    {
+-      g_object_set (video_widget, "expand", TRUE, NULL);
+-
+-      /* And pack it where we want the video to show up */
+-      gtk_container_add (GTK_CONTAINER (priv->overlay), video_widget);
+-      gtk_widget_show (video_widget);
+-
+-      /* g_object_get() returns a new reference */
+-      priv->video_widget = video_widget;
+-    }
+-  else
+-    {
+-      GtkWidget *img = gtk_image_new_from_icon_name ("image-missing",
+-                                                     GTK_ICON_SIZE_DIALOG);
+-
+-      GST_WARNING ("Could not get video widget from gtkglsink/gtksink, falling back to fakesink");
+-
+-      g_object_unref (video_widget);
+-      gst_object_unref (video_sink);
+-      video_sink = gst_element_factory_make ("fakesink", "SushiMediaBinFakeSink");
+-      g_object_set (video_sink, "sync", TRUE, NULL);
+-
+-      gtk_container_add (GTK_CONTAINER (priv->overlay), img);
+-      gtk_widget_show (img);
+-
+-      /* FIXME: the overlay does not get motion and press events with this code path */
+-    }
+-
+-  /* Setup playbin video sink */
+-  if (video_sink)
+-    {
+-      g_object_set (priv->play, "video-sink", video_sink, NULL);
+-      priv->video_sink = gst_object_ref_sink (video_sink);
+-    }
+-}
+-
+-static inline void
+-sushi_media_bin_deinit_video_sink (SushiMediaBin *self)
+-{
+-  SushiMediaBinPrivate *priv = SMB_PRIVATE (self);
+-
+-  /* Stop Playback to give gst a chance to cleanup its mess */
+-  if (priv->play)
+-    gst_element_set_state (priv->play, GST_STATE_NULL);
+-
+-  /* Stop bus watch */
+-  if (priv->bus)
+-    {
+-      gst_bus_set_flushing (priv->bus, TRUE);
+-      gst_bus_remove_watch (priv->bus);
+-      gst_object_replace ((GstObject**)&priv->bus, NULL);
+-    }
+-
+-  /* Unref video sink */
+-  gst_object_replace ((GstObject**)&priv->video_sink, NULL);
+-
+-  /* Destroy video widget */
+-  g_clear_pointer (&priv->video_widget, gtk_widget_destroy);
+-
+-  /* Unref playbin */
+-  gst_object_replace ((GstObject**)&priv->play, NULL);
+-}
+-
+ static void
+ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+ {
+@@ -682,40 +515,6 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+       (!fullscreen && !priv->fullscreen_window))
+     return;
+ 
+-  /*
+-   * To avoid flickering, this will make the widget pack an image with the last
+-   * frame in the container before reparenting the video widget in the
+-   * fullscreen window
+-   */
+-  if (!priv->tmp_image)
+-    {
+-      GdkPixbuf *pixbuf = sushi_media_bin_video_pixbuf_new (self);
+-      priv->tmp_image = gtk_image_new_from_pixbuf (pixbuf);
+-      g_object_set (priv->tmp_image, "expand", TRUE, NULL);
+-      g_object_unref (pixbuf);
+-    }
+-
+-  /*
+-   * FIXME: GtkGstGLWidget does not support reparenting to a different toplevel
+-   * because the gl context is different and the pipeline does not know it
+-   * changes, so as a temporary workaround we simply reconstruct the whole
+-   * pipeline.
+-   *
+-   * See bug https://bugzilla.gnome.org/show_bug.cgi?id=775045
+-   */
+-  if ((priv->state == GST_STATE_PAUSED || priv->state == GST_STATE_PLAYING) &&
+-      g_strcmp0 (G_OBJECT_TYPE_NAME (priv->video_sink), "GstGLSinkBin") == 0)
+-    {
+-      /* NOTE: here we could set tmp_image to the content of the current sample
+-       * but it wont be updated until the main window is show at which point
+-       * we will see the old frame anyways.
+-       */
+-      position = sushi_media_bin_get_position (self);
+-
+-      gtk_container_remove (GTK_CONTAINER (priv->overlay), priv->video_widget);
+-      sushi_media_bin_deinit_video_sink (self);
+-    }
+-
+   g_object_ref (priv->overlay);
+ 
+   if (fullscreen)
+@@ -767,7 +566,6 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+   if (priv->play == NULL)
+     {
+       sushi_media_bin_init_playbin (self);
+-      sushi_media_bin_init_video_sink (self);
+ 
+       g_object_set (priv->play, "uri", priv->uri, NULL);
+ 
+@@ -801,9 +599,6 @@ on_sushi_media_bin_realize (GtkWidget *widget, SushiMediaBin *self)
+   priv->blank_cursor = gdk_cursor_new_from_name (gtk_widget_get_display (widget),
+                                                  "none");
+ 
+-  /* Create video sink */
+-  sushi_media_bin_init_video_sink (self);
+-
+   if (priv->fullscreen)
+     sushi_media_bin_fullscreen_apply (self, TRUE);
+ 
+@@ -917,9 +712,6 @@ sushi_media_bin_dispose (GObject *object)
+   /* Remove controls timeout */
+   ensure_no_timeout (priv);
+ 
+-  /* Finalize gstreamer related objects */
+-  sushi_media_bin_deinit_video_sink (self);
+-
+   /* Destroy fullscreen window */
+   if (priv->fullscreen_window)
+     {
+@@ -1068,45 +860,6 @@ sushi_media_bin_get_request_mode (GtkWidget *self)
+   return GTK_SIZE_REQUEST_CONSTANT_SIZE;
+ }
+ 
+-
+-static void
+-sushi_media_bin_get_preferred_width (GtkWidget *self,
+-                                     gint      *minimum_width,
+-                                     gint      *natural_width)
+-{
+-  SushiMediaBinPrivate *priv = SMB_PRIVATE (SUSHI_MEDIA_BIN (self));
+-
+-  if (priv->audio_mode)
+-    {
+-      GTK_WIDGET_CLASS (sushi_media_bin_parent_class)->get_preferred_width
+-        (self, minimum_width, natural_width);
+-    }
+-  else
+-    {
+-      *minimum_width = priv->video_width ? 320 : 0;
+-      *natural_width = priv->video_width ? priv->video_width : 0;
+-    }
+-}
+-
+-static void
+-sushi_media_bin_get_preferred_height (GtkWidget *self,
+-                                      gint      *minimum_height,
+-                                      gint      *natural_height)
+-{
+-  SushiMediaBinPrivate *priv = SMB_PRIVATE (SUSHI_MEDIA_BIN (self));
+-
+-  if (priv->audio_mode)
+-    {
+-      GTK_WIDGET_CLASS (sushi_media_bin_parent_class)->get_preferred_height
+-        (self, minimum_height, natural_height);
+-    }
+-  else
+-    {
+-      *minimum_height = priv->video_height ? 240 : 0;
+-      *natural_height = priv->video_height ? priv->video_height : 0;
+-    }
+-}
+-
+ #define SMB_DEFINE_ACTION_SIGNAL(klass, name, handler,...) \
+   g_signal_new_class_handler (name, \
+                               G_TYPE_FROM_CLASS (klass), \
+@@ -1127,8 +880,6 @@ sushi_media_bin_class_init (SushiMediaBinClass *klass)
+   object_class->get_property = sushi_media_bin_get_property;
+ 
+   widget_class->get_request_mode = sushi_media_bin_get_request_mode;
+-  widget_class->get_preferred_width = sushi_media_bin_get_preferred_width;
+-  widget_class->get_preferred_height = sushi_media_bin_get_preferred_height;
+ 
+   /* Properties */
+   properties[PROP_URI] =
+diff --git a/src/org.gnome.NautilusPreviewer.src.gresource.xml b/src/org.gnome.NautilusPreviewer.src.gresource.xml
+index 85d1934..a7e2511 100644
+--- a/src/org.gnome.NautilusPreviewer.src.gresource.xml
++++ b/src/org.gnome.NautilusPreviewer.src.gresource.xml
+@@ -13,10 +13,10 @@
+     <file>viewers/audio.js</file>
+     <!-- <file>viewers/evince.js</file> -->
+     <file>viewers/font.js</file>
+-    <file>viewers/gst.js</file>
+     <file>viewers/html.js</file>
+     <file>viewers/image.js</file>
+     <file>viewers/libreoffice.js</file>
+     <file>viewers/text.js</file>
++    <file>viewers/video.js</file>
+   </gresource>
+ </gresources>
+diff --git a/src/viewers/gst.js b/src/viewers/video.js
+similarity index 78%
+rename from src/viewers/gst.js
+rename to src/viewers/video.js
+index 0c5654a..7eb09f8 100644
+--- a/src/viewers/gst.js
++++ b/src/viewers/video.js
+@@ -23,7 +23,7 @@
+  *
+  */
+ 
+-const {GLib, GObject, Sushi} = imports.gi;
++const {GLib, GObject, Gtk, Sushi} = imports.gi;
+ 
+ const Renderer = imports.ui.renderer;
+ const TotemMimeTypes = imports.util.totemMimeTypes;
+@@ -38,7 +38,7 @@ var Klass = GObject.registerClass({
+                                          GObject.ParamFlags.READABLE,
+                                          false)
+     },
+-}, class GstRenderer extends Sushi.MediaBin {
++}, class VideoRenderer extends Gtk.Video {
+     get ready() {
+         return !!this._ready;
+     }
+@@ -48,23 +48,10 @@ var Klass = GObject.registerClass({
+     }
+ 
+     _init(file) {
+-        super._init({ uri: file.get_uri() });
++        super._init();
+ 
+-        this._autoplayId = GLib.idle_add(0, () => {
+-            this._autoplayId = 0;
+-            this.play();
+-            return false;
+-        });
+-
+-        this.connect('destroy', this._onDestroy.bind(this));
+-        this.connect('size-change', this.isReady.bind(this));
+-    }
+-
+-    _onDestroy() {
+-        if (this._autoplayId > 0) {
+-            GLib.source_remove(this._autoplayId);
+-            this._autoplayId = 0;
+-        }
++        this.set_file(file);
++        this.autoplay = true;
+     }
+ 
+     get canFullscreen() {
+-- 
+GitLab
+
+
+From fa3aebbe185d3357a874be53e95c442a074c4844 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:28:17 -0700
+Subject: [PATCH 06/15] sushi-media-bin: Port ui file to gtk4
+
+---
+ src/libsushi/SushiMediaBin.ui | 357 ++++++++++------------------------
+ 1 file changed, 103 insertions(+), 254 deletions(-)
+
+diff --git a/src/libsushi/SushiMediaBin.ui b/src/libsushi/SushiMediaBin.ui
+index c06a385..f94ec53 100644
+--- a/src/libsushi/SushiMediaBin.ui
++++ b/src/libsushi/SushiMediaBin.ui
+@@ -1,30 +1,12 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<!-- Generated with glade 3.20.0 -->
+ <interface>
+-  <requires lib="gtk+" version="3.20"/>
+-  <object class="GtkImage" id="audio_playback_image">
+-    <property name="visible">True</property>
+-    <property name="can_focus">False</property>
+-    <property name="icon_name">media-playback-start-symbolic</property>
+-  </object>
+-  <object class="GtkImage" id="fullscreen_image">
+-    <property name="visible">True</property>
+-    <property name="can_focus">False</property>
+-    <property name="icon_size">1</property>
+-    <property name="icon_name">view-fullscreen-symbolic</property>
+-  </object>
++  <requires lib="gtk" version="4.0"/>
+   <object class="GtkAdjustment" id="playback_adjustment">
+     <property name="upper">128</property>
+     <property name="step_increment">60</property>
+     <property name="page_increment">300</property>
+     <signal name="value-changed" handler="on_playback_adjustment_value_changed" swapped="no"/>
+   </object>
+-  <object class="GtkImage" id="playback_image">
+-    <property name="visible">True</property>
+-    <property name="can_focus">False</property>
+-    <property name="icon_size">1</property>
+-    <property name="icon_name">media-playback-start-symbolic</property>
+-  </object>
+   <object class="GtkAdjustment" id="volume_adjustment">
+     <property name="upper">1</property>
+     <property name="value">1</property>
+@@ -32,205 +14,131 @@
+     <property name="page_increment">0.10000000000000001</property>
+   </object>
+   <template class="SushiMediaBin" parent="GtkBox">
+-    <property name="visible">True</property>
+-    <property name="can_focus">True</property>
++    <property name="focusable">1</property>
+     <property name="orientation">vertical</property>
+     <signal name="realize" handler="on_sushi_media_bin_realize" swapped="no"/>
+     <child>
+       <object class="GtkStack" id="stack">
+-        <property name="visible">True</property>
+-        <property name="can_focus">False</property>
+-        <property name="hexpand">True</property>
+-        <property name="vexpand">True</property>
+-        <property name="hhomogeneous">False</property>
+-        <property name="vhomogeneous">False</property>
++        <property name="hexpand">1</property>
++        <property name="vexpand">1</property>
++        <property name="hhomogeneous">0</property>
++        <property name="vhomogeneous">0</property>
+         <child>
+           <object class="GtkOverlay" id="overlay">
+-            <property name="visible">True</property>
+-            <property name="can_focus">False</property>
+-            <property name="events">GDK_POINTER_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_STRUCTURE_MASK</property>
+-            <property name="no_show_all">True</property>
+-            <signal name="button-press-event" handler="on_overlay_button_press_event" swapped="no"/>
+-            <signal name="button-release-event" handler="on_overlay_button_release_event" swapped="no"/>
+-            <signal name="motion-notify-event" handler="on_overlay_motion_notify_event" swapped="no"/>
+             <child>
+               <placeholder/>
+             </child>
+             <child type="overlay">
+               <object class="GtkRevealer" id="top_revealer">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_STRUCTURE_MASK</property>
+                 <property name="valign">start</property>
+-                <signal name="leave-notify-event" handler="on_revealer_leave_notify_event" swapped="no"/>
+-                <signal name="motion-notify-event" handler="on_revealer_motion_notify_event" swapped="no"/>
+-                <child>
++                <property name="child">
+                   <object class="GtkBox">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+                     <property name="orientation">vertical</property>
+                     <child>
+                       <object class="GtkLabel" id="title_label">
+-                        <property name="can_focus">False</property>
++                        <property name="visible">0</property>
+                         <property name="halign">start</property>
+                         <style>
+                           <class name="title"/>
+                         </style>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">0</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkBox" id="info_box">
+-                        <property name="can_focus">False</property>
++                        <property name="visible">0</property>
+                         <child>
+                           <placeholder/>
+                         </child>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">1</property>
+-                      </packing>
+                     </child>
+                     <style>
+                       <class name="overlay-bar"/>
+                       <class name="top"/>
+                     </style>
+                   </object>
+-                </child>
++                </property>
+               </object>
+-              <packing>
+-                <property name="index">1</property>
+-              </packing>
+             </child>
+             <child type="overlay">
+               <object class="GtkRevealer" id="bottom_revealer">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="events">GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_STRUCTURE_MASK</property>
+                 <property name="valign">end</property>
+                 <property name="transition_type">crossfade</property>
+-                <signal name="leave-notify-event" handler="on_revealer_leave_notify_event" swapped="no"/>
+-                <signal name="motion-notify-event" handler="on_revealer_motion_notify_event" swapped="no"/>
+-                <child>
++                <property name="child">
+                   <object class="GtkBox" id="bottom_box">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+                     <property name="valign">end</property>
+-                    <property name="orientation">horizontal</property>
+                     <property name="margin-start">32</property>
+                     <property name="margin-end">32</property>
+                     <property name="margin-bottom">32</property>
+                     <child>
+                       <object class="GtkButton" id="playback_button">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="receives_default">False</property>
+-                        <property name="image">playback_image</property>
+-                        <property name="relief">none</property>
++                        <property name="focusable">1</property>
+                         <signal name="clicked" handler="sushi_media_bin_toggle_playback" swapped="yes"/>
++                        <child>
++                          <object class="GtkImage" id="playback_image">
++                            <property name="icon_size">normal</property>
++                            <property name="icon_name">media-playback-start-symbolic</property>
++                          </object>
++                        </child>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">0</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkLabel" id="progress_position_label">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+                         <property name="valign">center</property>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">1</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkScale" id="progress_scale">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
++                        <property name="hexpand">1</property>
++                        <property name="focusable">1</property>
+                         <property name="adjustment">playback_adjustment</property>
+                         <property name="round_digits">2</property>
+-                        <property name="draw_value">False</property>
+-                        <signal name="format-value" handler="on_progress_scale_format_value" swapped="no"/>
++                        <!-- <signal name="format-value" handler="on_progress_scale_format_value" swapped="no"/> -->
+                       </object>
+-                      <packing>
+-                        <property name="expand">True</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">2</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkLabel" id="progress_duration_label">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">False</property>
+                         <property name="valign">center</property>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="position">3</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkButton" id="fullscreen_button">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="receives_default">False</property>
+-                        <property name="image">fullscreen_image</property>
+-                        <property name="relief">none</property>
++                        <property name="focusable">1</property>
+                         <signal name="clicked" handler="sushi_media_bin_toggle_fullscreen" swapped="yes"/>
++                        <child>
++                          <object class="GtkImage" id="fullscreen_image">
++                            <property name="icon_size">normal</property>
++                            <property name="icon_name">view-fullscreen-symbolic</property>
++                          </object>
++                        </child>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="pack_type">end</property>
+-                        <property name="position">4</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <object class="GtkVolumeButton" id="volume_button">
+-                        <property name="visible">True</property>
+-                        <property name="can_focus">True</property>
+-                        <property name="focus_on_click">False</property>
+-                        <property name="receives_default">False</property>
+-                        <property name="relief">none</property>
++                        <property name="focusable">1</property>
++                        <property name="focus_on_click">0</property>
+                         <property name="orientation">vertical</property>
+                         <property name="value">1</property>
+-                        <property name="size">menu</property>
++                        <!-- <property name="size">menu</property> -->
+                         <property name="adjustment">volume_adjustment</property>
+                         <child internal-child="plus_button">
+                           <object class="GtkButton">
+-                            <property name="can_focus">True</property>
+-                            <property name="receives_default">True</property>
++                            <property name="visible">0</property>
++                            <property name="focusable">1</property>
++                            <property name="receives_default">1</property>
+                             <property name="halign">center</property>
+                             <property name="valign">center</property>
+-                            <property name="relief">none</property>
+                           </object>
+                         </child>
+                         <child internal-child="minus_button">
+                           <object class="GtkButton">
+-                            <property name="can_focus">True</property>
+-                            <property name="receives_default">True</property>
++                            <property name="visible">0</property>
++                            <property name="focusable">1</property>
++                            <property name="receives_default">1</property>
+                             <property name="halign">center</property>
+                             <property name="valign">center</property>
+-                            <property name="relief">none</property>
+                           </object>
+                         </child>
+                       </object>
+-                      <packing>
+-                        <property name="expand">False</property>
+-                        <property name="fill">True</property>
+-                        <property name="pack_type">end</property>
+-                        <property name="position">5</property>
+-                      </packing>
+                     </child>
+                     <child>
+                       <placeholder/>
+@@ -241,161 +149,102 @@
+                       <class name="bottom"/>
+                     </style>
+                   </object>
+-                </child>
++                </property>
+               </object>
+-              <packing>
+-                <property name="index">2</property>
+-              </packing>
+             </child>
+             <child type="overlay">
+               <object class="GtkBox" id="play_box">
+-                <property name="visible">False</property>
+-                <property name="can_focus">False</property>
++                <property name="can-target">0</property>
++                <property name="visible">0</property>
+                 <property name="halign">center</property>
+                 <property name="valign">center</property>
+                 <child>
+                   <object class="GtkImage" id="play_image">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
+                     <property name="pixel_size">32</property>
+                     <property name="icon_name">media-playback-start-symbolic</property>
+                   </object>
+-                  <packing>
+-                    <property name="expand">False</property>
+-                    <property name="fill">True</property>
+-                    <property name="position">0</property>
+-                  </packing>
+                 </child>
+                 <child>
+                   <object class="GtkLabel" id="duration_label">
+-                    <property name="visible">True</property>
+-                    <property name="can_focus">False</property>
++                    <property name="hexpand">1</property>
+                     <property name="halign">start</property>
+                   </object>
+-                  <packing>
+-                    <property name="expand">True</property>
+-                    <property name="fill">True</property>
+-                    <property name="position">1</property>
+-                  </packing>
+                 </child>
+               </object>
+-              <packing>
+-                <property name="pass_through">True</property>
+-                <property name="index">2</property>
+-              </packing>
+             </child>
+           </object>
+         </child>
+         <child>
+-          <object class="GtkBox" id="audio_box">
+-            <property name="visible">True</property>
+-            <property name="can_focus">False</property>
+-            <property name="spacing">2</property>
+-            <child>
+-              <object class="GtkButton" id="audio_playback_button">
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="receives_default">False</property>
+-                <property name="image">audio_playback_image</property>
+-                <property name="relief">none</property>
+-                <signal name="clicked" handler="sushi_media_bin_toggle_playback" swapped="yes"/>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="position">0</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkLabel" id="audio_position_label">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="width_chars">4</property>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="position">1</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkScale" id="audio_progress_scale">
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="adjustment">playback_adjustment</property>
+-                <property name="draw_value">False</property>
+-              </object>
+-              <packing>
+-                <property name="expand">True</property>
+-                <property name="fill">True</property>
+-                <property name="position">2</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkLabel" id="audio_duration_label">
+-                <property name="visible">True</property>
+-                <property name="can_focus">False</property>
+-                <property name="width_chars">4</property>
+-              </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="pack_type">end</property>
+-                <property name="position">4</property>
+-              </packing>
+-            </child>
+-            <child>
+-              <object class="GtkVolumeButton" id="audio_volume_button">
+-                <property name="visible">True</property>
+-                <property name="can_focus">True</property>
+-                <property name="focus_on_click">False</property>
+-                <property name="receives_default">False</property>
+-                <property name="relief">none</property>
+-                <property name="orientation">vertical</property>
+-                <property name="value">1</property>
+-                <property name="size">menu</property>
+-                <property name="adjustment">volume_adjustment</property>
+-                <child internal-child="plus_button">
+-                  <object class="GtkButton">
+-                    <property name="can_focus">True</property>
+-                    <property name="receives_default">True</property>
+-                    <property name="halign">center</property>
+-                    <property name="valign">center</property>
+-                    <property name="relief">none</property>
++          <object class="GtkStackPage">
++            <property name="child">
++              <object class="GtkBox" id="audio_box">
++                <property name="spacing">2</property>
++                <child>
++                  <object class="GtkButton" id="audio_playback_button">
++                    <property name="focusable">1</property>
++                    <signal name="clicked" handler="sushi_media_bin_toggle_playback" swapped="yes"/>
++                    <child>
++                      <object class="GtkImage" id="audio_playback_image">
++                        <property name="icon_name">media-playback-start-symbolic</property>
++                      </object>"
++                    </child>
++                  </object>
++                </child>
++                <child>
++                  <object class="GtkLabel" id="audio_position_label">
++                    <property name="width_chars">4</property>
++                  </object>
++                </child>
++                <child>
++                  <object class="GtkScale" id="audio_progress_scale">
++                    <property name="hexpand">1</property>
++                    <property name="focusable">1</property>
++                    <property name="adjustment">playback_adjustment</property>
+                   </object>
+                 </child>
+-                <child internal-child="minus_button">
+-                  <object class="GtkButton">
+-                    <property name="can_focus">True</property>
+-                    <property name="receives_default">True</property>
+-                    <property name="halign">center</property>
+-                    <property name="valign">center</property>
+-                    <property name="relief">none</property>
++                <child>
++                  <object class="GtkLabel" id="audio_duration_label">
++                    <property name="width_chars">4</property>
+                   </object>
+                 </child>
++                <child>
++                  <object class="GtkVolumeButton" id="audio_volume_button">
++                    <property name="focusable">1</property>
++                    <property name="focus_on_click">0</property>
++                    <property name="orientation">vertical</property>
++                    <property name="value">1</property>
++                    <!-- <property name="size">menu</property> -->
++                    <property name="adjustment">volume_adjustment</property>
++                    <child internal-child="plus_button">
++                      <object class="GtkButton">
++                        <property name="visible">0</property>
++                        <property name="focusable">1</property>
++                        <property name="receives_default">1</property>
++                        <property name="halign">center</property>
++                        <property name="valign">center</property>
++                      </object>
++                    </child>
++                    <child internal-child="minus_button">
++                      <object class="GtkButton">
++                        <property name="visible">0</property>
++                        <property name="focusable">1</property>
++                        <property name="receives_default">1</property>
++                        <property name="halign">center</property>
++                        <property name="valign">center</property>
++                      </object>
++                    </child>
++                  </object>
++                </child>
++                <style>
++                  <class name="bottom"/>
++                  <class name="audio"/>
++                </style>
+               </object>
+-              <packing>
+-                <property name="expand">False</property>
+-                <property name="fill">True</property>
+-                <property name="pack_type">end</property>
+-                <property name="position">3</property>
+-              </packing>
+-            </child>
+-            <style>
+-              <class name="bottom"/>
+-              <class name="audio"/>
+-            </style>
++            </property>
+           </object>
+-          <packing>
+-            <property name="position">1</property>
+-          </packing>
+         </child>
+       </object>
+-      <packing>
+-        <property name="expand">False</property>
+-        <property name="fill">True</property>
+-        <property name="position">0</property>
+-      </packing>
+     </child>
+   </template>
+ </interface>
++
+-- 
+GitLab
+
+
+From 9d6cd37b9e61d9fa89c994daff33cbf71aec0331 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:33:25 -0700
+Subject: [PATCH 07/15] general: Replace container api calls with widget api
+
+---
+ src/libsushi/sushi-media-bin.c |  8 ++++----
+ src/ui/fallbackRenderer.js     | 16 ++++++++--------
+ src/ui/mainWindow.js           |  6 +++---
+ src/ui/renderer.js             |  8 ++++----
+ src/viewers/audio.js           | 14 +++++++-------
+ src/viewers/text.js            |  2 +-
+ 6 files changed, 27 insertions(+), 27 deletions(-)
+
+diff --git a/src/libsushi/sushi-media-bin.c b/src/libsushi/sushi-media-bin.c
+index 9cd2a36..c51c472 100644
+--- a/src/libsushi/sushi-media-bin.c
++++ b/src/libsushi/sushi-media-bin.c
+@@ -525,12 +525,12 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+       gtk_container_remove (GTK_CONTAINER (priv->stack), priv->overlay);
+ 
+       /* Pack an image with the last frame inside the bin */
+-      gtk_container_add (GTK_CONTAINER (priv->stack), priv->tmp_image);
++      gtk_stack_add_child (priv->stack, priv->tmp_image);
+       gtk_widget_show (priv->tmp_image);
+       gtk_stack_set_visible_child (GTK_STACK (priv->stack), priv->tmp_image);
+ 
+       /* Pack video in the fullscreen window */
+-      gtk_container_add (GTK_CONTAINER (priv->fullscreen_window), priv->overlay);
++      gtk_window_set_child (priv->fullscreen_window, priv->overlay);
+ 
+       gtk_window_fullscreen (priv->fullscreen_window);
+       gtk_window_present (priv->fullscreen_window);
+@@ -549,7 +549,7 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+ 
+       /* Reparent video widget back into ourselves */
+       gtk_container_remove (GTK_CONTAINER (priv->fullscreen_window), priv->overlay);
+-      gtk_container_add (GTK_CONTAINER (priv->stack), priv->overlay);
++      gtk_stack_add_child (priv->stack, priv->overlay);
+       gtk_stack_set_visible_child (GTK_STACK (priv->stack), priv->overlay);
+ 
+       gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window));
+@@ -686,7 +686,7 @@ sushi_media_bin_init (SushiMediaBin *self)
+     {
+       GtkWidget *label = gtk_label_new ("");
+       priv->info_column_label[i] = GTK_LABEL (label);
+-      gtk_container_add (GTK_CONTAINER (priv->info_box), label);
++      gtk_box_append (priv->info_box, label);
+       gtk_widget_set_valign (label, GTK_ALIGN_START);
+       gtk_widget_show (label);
+     }
+diff --git a/src/ui/fallbackRenderer.js b/src/ui/fallbackRenderer.js
+index cfc843e..8420f53 100644
+--- a/src/ui/fallbackRenderer.js
++++ b/src/ui/fallbackRenderer.js
+@@ -188,41 +188,41 @@ var FallbackRenderer = GObject.registerClass({
+                       spacing: 6 });
+ 
+         this._image = new Gtk.Image();
+-        this.pack_start(this._image, false, false, 0);
+         this._updateIcon(new Gio.ThemedIcon({ name: 'text-x-generic' }));
++        this.append(this._image);
+ 
+         let vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL,
+                                  spacing: 1,
+                                  margin_top: 48,
+                                  margin_start: 12,
+                                  margin_end: 12 });
+-        this.pack_start(vbox, false, false, 0);
++        this.append(vbox);
+ 
+         let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL,
+                                  spacing: 6 });
+-        vbox.pack_start(hbox, false, false, 0);
++        vbox.append(hbox);
+ 
+         this._titleLabel = new Gtk.Label({ max_width_chars: 48,
+                                            ellipsize: Pango.EllipsizeMode.MIDDLE });
+         this._titleLabel.set_halign(Gtk.Align.START);
+-        hbox.pack_start(this._titleLabel, false, false, 0);
++        hbox.append(this._titleLabel);
+ 
+         this._spinner = new Gtk.Spinner();
+-        hbox.pack_start(this._spinner, false, false, 0);
++        hbox.append(this._spinner);
+         this._spinner.start();
+         this._spinner.show();
+ 
+         this._typeLabel = new Gtk.Label({ no_show_all: true });
+         this._typeLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._typeLabel, false, false, 0);
++        vbox.append(this._typeLabel);
+ 
+         this._sizeLabel = new Gtk.Label();
+         this._sizeLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._sizeLabel, false, false, 0);
++        vbox.append(this._sizeLabel);
+ 
+         this._dateLabel = new Gtk.Label();
+         this._dateLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._dateLabel, false, false, 0);
++        vbox.append(this._dateLabel);
+ 
+         this._cancellable = new Gio.Cancellable();
+         loadFile(file, fileInfo, this._cancellable, this._onFileInfoUpdated.bind(this));
+diff --git a/src/ui/mainWindow.js b/src/ui/mainWindow.js
+index f8f5915..c0d0089 100644
+--- a/src/ui/mainWindow.js
++++ b/src/ui/mainWindow.js
+@@ -84,7 +84,7 @@ const ErrorBox = GObject.registerClass({
+                                     icon_name: 'face-uncertain-symbolic',
+                                     halign: Gtk.Align.CENTER,
+                                     valign: Gtk.Align.CENTER });
+-        this.add(image);
++        this.append(image);
+ 
+         // TRANSLATORS: This is a filename, e.g. "image.jpg"
+         let primary = _("Unable to display %s").format(file.get_basename());
+@@ -93,15 +93,15 @@ const ErrorBox = GObject.registerClass({
+                                            use_markup: true,
+                                            halign: Gtk.Align.CENTER,
+                                            valign: Gtk.Align.CENTER });
+-        this.add(primaryLabel);
++        this.append(primaryLabel);
+ 
+         let secondaryLabel = new Gtk.Label({ label: error.message,
+                                              wrap: true,
+                                              halign: Gtk.Align.CENTER,
+                                              valign: Gtk.Align.CENTER });
+-        this.add(secondaryLabel);
+ 
+         this.show_all();
++        this.append(secondaryLabel);
+     }
+ });
+ 
+diff --git a/src/ui/renderer.js b/src/ui/renderer.js
+index f939dcb..b3e4fd7 100644
+--- a/src/ui/renderer.js
++++ b/src/ui/renderer.js
+@@ -81,10 +81,10 @@ var Renderer = GObject.registerClass({
+             this.populateToolbar(this._toolbar.box);
+ 
+             if (this.canFullscreen) {
+-                if (this._toolbar.box.get_children().length > 0)
+-                    this._toolbar.box.add(new Gtk.Separator({ orientation: Gtk.Orientation.VERTICAL }));
++                if (this._toolbar.box.get_first_child())
++                    this._toolbar.box.append(new Gtk.Separator({ orientation: Gtk.Orientation.VERTICAL }));
+ 
+-                this._toolbar.box.add(Utils.createFullscreenButton(this));
++                this._toolbar.box.append(Utils.createFullscreenButton(this));
+             }
+         }
+ 
+@@ -114,7 +114,7 @@ var RendererToolbar = GObject.registerClass(class RendererToolbar extends Gtk.Re
+                       transition_type: Gtk.RevealerTransitionType.CROSSFADE });
+ 
+         this.box = new RendererToolbarBox();
+-        this.add(this.box);
++        this.set_child(this.box);
+ 
+         this.connect('destroy', this._onDestroy.bind(this));
+     }
+diff --git a/src/viewers/audio.js b/src/viewers/audio.js
+index dba474e..ce3d8a2 100644
+--- a/src/viewers/audio.js
++++ b/src/viewers/audio.js
+@@ -274,7 +274,7 @@ var Klass = GObject.registerClass({
+ 
+         let box = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL,
+                                 spacing: 6 });
+-        this.add(box);
++        this.set_child(box);
+ 
+         this._player = new AudioPlayer(file);
+         this._player.connect('tags-change', (p) => {
+@@ -295,30 +295,30 @@ var Klass = GObject.registerClass({
+         let frame = new Gtk.Frame({ height_request: COVER_SIZE,
+                                     width_request: COVER_SIZE,
+                                     shadow_type: Gtk.ShadowType.NONE });
+-        box.pack_start(frame, false, false, 0);
++        box.append(frame);
+ 
+         this._image = new Gtk.Image({ icon_name: 'media-optical-symbolic',
+                                       pixel_size: COVER_SIZE });
+-        frame.add(this._image);
++        frame.set_child(this._image);
+ 
+         let vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL,
+                                  spacing: 1,
+                                  margin_top: 48,
+                                  margin_start: 12,
+                                  margin_end: 12 });
+-        box.pack_start(vbox, false, false, 0);
++        box.append(vbox);
+ 
+         this._titleLabel = new Gtk.Label();
+         this._titleLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._titleLabel, false, false, 0);
++        vbox.append(this._titleLabel);
+ 
+         this._authorLabel = new Gtk.Label();
+         this._authorLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._authorLabel, false, false, 0);
++        vbox.append(this._authorLabel);
+ 
+         this._albumLabel = new Gtk.Label();
+         this._albumLabel.set_halign(Gtk.Align.START);
+-        vbox.pack_start(this._albumLabel, false, false, 0);
++        vbox.append(this._albumLabel);
+ 
+         this.connect('destroy', this._onDestroy.bind(this));
+         this.isReady();
+diff --git a/src/viewers/text.js b/src/viewers/text.js
+index 4c16fb5..2de238b 100644
+--- a/src/viewers/text.js
++++ b/src/viewers/text.js
+@@ -56,7 +56,7 @@ var Klass = GObject.registerClass({
+                                           monospace: true,
+                                           show_line_numbers: !!buffer.language });
+         this._view.set_can_focus(false);
+-        this.add(this._view);
++        this.set_child(this._view);
+         this.isReady();
+     }
+ 
+-- 
+GitLab
+
+
+From ab47f4b54adaf5be24643d6e6288df34c8a0c159 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:40:59 -0700
+Subject: [PATCH 08/15] image: Use GtkPicture
+
+---
+ src/viewers/image.js | 153 +++----------------------------------------
+ 1 file changed, 10 insertions(+), 143 deletions(-)
+
+diff --git a/src/viewers/image.js b/src/viewers/image.js
+index 8befc05..1497afb 100644
+--- a/src/viewers/image.js
++++ b/src/viewers/image.js
+@@ -37,7 +37,7 @@ var Klass = GObject.registerClass({
+                                          GObject.ParamFlags.READABLE,
+                                          false)
+     },
+-}, class ImageRenderer extends Gtk.DrawingArea {
++}, class ImageRenderer extends Gtk.Picture {
+     get ready() {
+         return !!this._ready;
+     }
+@@ -46,153 +46,20 @@ var Klass = GObject.registerClass({
+         return !!this._fullscreen;
+     }
+ 
+-    _init(file) {
+-        super._init();
+-
+-        this._pix = null;
+-        this._scaledSurface = null;
+-        this._timeoutId = 0;
+-
+-        this._createImageTexture(file);
+-
+-        this.connect('destroy', this._onDestroy.bind(this));
+-    }
+-
+-    vfunc_get_preferred_width() {
+-        return [1, this._pix ? this._pix.get_width() : 1];
+-    }
+-
+-    vfunc_get_preferred_height() {
+-        return [1, this._pix ? this._pix.get_height() : 1];
+-    }
+-
+-    vfunc_size_allocate(allocation) {
+-        super.vfunc_size_allocate(allocation);
+-        this._ensureScaledPix();
+-    }
+-
+-    vfunc_draw(context) {
+-        if (!this._scaledSurface)
+-            return false;
+-
+-        let width = this.get_allocated_width();
+-        let height = this.get_allocated_height();
+-
+-        let scaleFactor = this.get_scale_factor();
+-        let offsetX = (width - this._scaledSurface.getWidth() / scaleFactor) / 2;
+-        let offsetY = (height - this._scaledSurface.getHeight() / scaleFactor) / 2;
+-
+-        context.setSourceSurface(this._scaledSurface, offsetX, offsetY);
+-        context.paint();
+-        return false;
+-    }
+-
+-    _createImageTexture(file) {
+-        file.read_async(GLib.PRIORITY_DEFAULT, null, (obj, res) => {
+-            try {
+-                let stream = obj.read_finish(res);
+-                this._textureFromStream(stream);
+-            } catch (e) {
+-                this.emit('error', e);
+-            }
+-        });
+-    }
+-
+-    _ensureScaledPix() {
+-        if (!this._pix)
+-            return;
+-
+-        let scaleFactor = this.get_scale_factor();
+-        let width = this.get_allocated_width() * scaleFactor;
+-        let height = this.get_allocated_height() * scaleFactor;
+-
+-        // Scale original to fit, if necessary
+-        let origWidth = this._pix.get_width();
+-        let origHeight = this._pix.get_height();
+-
+-        let scaleX = width / origWidth;
+-        let scaleY = height / origHeight;
+-        let scale = Math.min(scaleX, scaleY);
+-
+-        // Do not upscale unless we're fullscreen
+-        if (!this.fullscreen)
+-            scale = Math.min(scale, 1.0 * scaleFactor);
+-
+-        let newWidth = Math.floor(origWidth * scale);
+-        let newHeight = Math.floor(origHeight * scale);
+-
+-        let scaledWidth = this._scaledSurface ? this._scaledSurface.getWidth() : 0;
+-        let scaledHeight = this._scaledSurface ? this._scaledSurface.getHeight() : 0;
+-
+-        if (newWidth == scaledWidth && newHeight == scaledHeight)
+-            return;
+-
+-        // Avoid blur if we're upscaling a lot, e.g. when fullscreening
+-        // a small image. We use nearest neighbor interpolation for that case.
+-        let interpType = GdkPixbuf.InterpType.BILINEAR;
+-        if (scale >= 3.0 * scaleFactor)
+-            interpType = GdkPixbuf.InterpType.NEAREST;
+-
+-        let scaledPixbuf = this._pix.scale_simple(newWidth, newHeight, interpType);
+-        this._scaledSurface = Gdk.cairo_surface_create_from_pixbuf(scaledPixbuf,
+-                                                                   scaleFactor,
+-                                                                   this.get_window());
+     }
+ 
+-    _setPix(pix) {
+-        this._pix = pix;
+-        this._scaledSurface = null;
+-
+-        this.queue_resize();
+-        this.isReady();
+     }
+ 
+-    _textureFromStream(stream) {
+-        GdkPixbuf.PixbufAnimation.new_from_stream_async(stream, null, (obj, res) => {
+-            let anim;
+-            try {
+-                anim = GdkPixbuf.PixbufAnimation.new_from_stream_finish(res);
+-            } catch (e) {
+-                this.emit('error', e);
+-                return;
+-            }
+-
+-            this._iter = anim.get_iter(null);
+-            this._update();
+-
+-            stream.close_async(GLib.PRIORITY_DEFAULT, null, (obj, res) => {
+-                try {
+-                    obj.close_finish(res);
+-                } catch (e) {
+-                    logError(e, 'Unable to close the stream');
+-                }
+-            });
+-         });
+-    }
+-
+-    _update() {
+-        this._setPix(this._iter.get_pixbuf().apply_embedded_orientation());
+-
+-        let delay = this._iter.get_delay_time();
+-        if (delay == -1)
+-            return;
+-
+-        this._timeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, () => {
+-            this._timeoutId = 0;
+-            if (this._iter.advance(null))
+-                this._update();
+-            return false;
+-        });
+-    }
+-
+-    get resizePolicy() {
+-        return Renderer.ResizePolicy.SCALED;
+-    }
++    _init(file) {
++        super._init();
+ 
+-    _onDestroy() {
+-        if (this._timeoutId) {
+-            GLib.source_remove(this._timeoutId);
+-            this._timeoutId = 0;
++        try {
++          this._texture = Gdk.Texture.new_from_file(file);
++          this.set_paintable(this._texture);
++          this.content_fit = Gtk.ContentFit.SCALE_DOWN;
++        }
++        catch (e) {
++          logError(e, 'Error loading image');
+         }
+     }
+ });
+-- 
+GitLab
+
+
+From 50465bc96a811d2735c90cdef9da6a77aeb043e0 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:41:35 -0700
+Subject: [PATCH 09/15] audio: Port to gtk4
+
+---
+ src/viewers/audio.js | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/viewers/audio.js b/src/viewers/audio.js
+index ce3d8a2..2ff52f1 100644
+--- a/src/viewers/audio.js
++++ b/src/viewers/audio.js
+@@ -293,8 +293,7 @@ var Klass = GObject.registerClass({
+         });
+ 
+         let frame = new Gtk.Frame({ height_request: COVER_SIZE,
+-                                    width_request: COVER_SIZE,
+-                                    shadow_type: Gtk.ShadowType.NONE });
++                                    width_request: COVER_SIZE });
+         box.append(frame);
+ 
+         this._image = new Gtk.Image({ icon_name: 'media-optical-symbolic',
+@@ -346,8 +345,7 @@ var Klass = GObject.registerClass({
+ 
+         let coverArt = cover.scale_simple(targetWidth, targetHeight,
+                                           GdkPixbuf.InterpType.BILINEAR);
+-        let surface = Gdk.cairo_surface_create_from_pixbuf(coverArt, scaleFactor, this.get_window());
+-        this._image.set_from_surface(surface);
++        this._image.set_from_pixbuf(coverArt);
+     }
+ 
+     _onCoverArtFetched(err, cover) {
+-- 
+GitLab
+
+
+From 5778afc657b7587c1378296bbd150ca20b435f5a Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:45:03 -0700
+Subject: [PATCH 10/15] mainWindow: Use gtk file launcher
+
+---
+ src/ui/application.js |  6 +++---
+ src/ui/mainWindow.js  | 40 ++++++----------------------------------
+ 2 files changed, 9 insertions(+), 37 deletions(-)
+
+diff --git a/src/ui/application.js b/src/ui/application.js
+index 53fe2b4..f3968d7 100644
+--- a/src/ui/application.js
++++ b/src/ui/application.js
+@@ -116,7 +116,7 @@ var Application = GObject.registerClass(class Application extends Gtk.Applicatio
+         this._skeleton2.impl.emit_property_changed(
+             'Visible', new GLib.Variant('b', true));
+ 
+-        this._mainWindow.connect('destroy', () => {
++        this._mainWindow.connect('close-request', () => {
+             this._mainWindow = null;
+             this._skeleton2.impl.emit_property_changed(
+                 'Visible', new GLib.Variant('b', false));
+@@ -130,7 +130,7 @@ var Application = GObject.registerClass(class Application extends Gtk.Applicatio
+ 
+     close() {
+         if (this._mainWindow)
+-            this._mainWindow.destroy();
++            this._mainWindow.close();
+     }
+ 
+     emitSelectionEvent(direction) {
+@@ -145,7 +145,7 @@ var Application = GObject.registerClass(class Application extends Gtk.Applicatio
+         if (closeIfAlreadyShown &&
+             this._mainWindow.file &&
+             this._mainWindow.file.equal(file)) {
+-            this._mainWindow.destroy();
++            this._mainWindow.close();
+         } else {
+             this._mainWindow.setParent(windowHandle);
+             this._mainWindow.setFile(file);
+diff --git a/src/ui/mainWindow.js b/src/ui/mainWindow.js
+index c0d0089..0cb2daf 100644
+--- a/src/ui/mainWindow.js
++++ b/src/ui/mainWindow.js
+@@ -138,7 +138,7 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+                                              decoration_layout: _getDecorationLayout() });
+         this.set_titlebar(this._titlebar);
+ 
+-        this._openButton = new Gtk.Button();
++        this._openButton = new Gtk.Button({ label: _("Open") });
+         this._openButton.connect('clicked', this._onFileOpenClicked.bind(this));
+         this._titlebar.pack_end(this._openButton);
+ 
+@@ -165,7 +165,7 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+     _defineActions() {
+         let quit = new Gio.SimpleAction({ name: 'quit' });
+         quit.connect('activate', () => {
+-            this.destroy();
++            this.close();
+         });
+         this.application.set_accels_for_action('win.quit', ['q', 'Escape', 'space']);
+         this.add_action(quit);
+@@ -335,38 +335,11 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+         this.set_title(fileInfo.get_display_name());
+     }
+ 
+-    _updateTitlebar() {
+-        try {
+-            let appInfo = this.file.query_default_handler(null);
+-            // TRANSLATORS: This is the display name of an application, e.g. "Open With Image Viewer"
+-            this._openButton.set_label(_("Open With %s").format(appInfo.get_display_name()));
+-        } catch (e) {
+-            // This happens when running under flatpak, since we don't have direct access
+-            // to the other applications
+-            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_SUPPORTED))
+-                logError(e, `Failed to query default handler for ${this.file.get_uri()}`);
+-            this._openButton.set_label(_("Open"));
+-        }
+-    }
+-
+     _onFileOpenClicked() {
+-        let ctx = this.get_display().get_app_launch_context();
+-        ctx.set_timestamp(Gtk.get_current_event_time());
+-        ctx.set_screen(this.get_screen());
+-
+-        // Ideally we would use gtk_show_uri_on_window() here, since it properly
+-        // parents dialogs that may come from a flatpak portal over the window.
+-        //
+-        // Unfortunately we need to wait until the result of the launch before
+-        // destroying our window, which gtk_show_uri_on_window() doesn't allow,
+-        // so we use GIO directly.
+-        Gio.AppInfo.launch_default_for_uri_async(this.file.get_uri(), ctx, null, (obj, result) => {
+-            try {
+-                Gio.AppInfo.launch_default_for_uri_finish(result);
+-                this.destroy();
+-            } catch (e) {
+-                logError(e, `Failed to launch default handler for ${this.file.get_uri()}`);
+-            }
++        let fileLauncher = new Gtk.FileLauncher({ file: this.file });
++        fileLauncher.launch(null, null, (obj, result) => {
++          obj.launch_finish(result);
++          this.close();
+         });
+     }
+ 
+@@ -379,7 +352,6 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+ 
+     setFile(file) {
+         this.file = file;
+-        this._updateTitlebar();
+         this._createRenderer();
+     }
+ });
+-- 
+GitLab
+
+
+From c3f1ccbe9ffd4d430a95980755f08d67c048b7b3 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:53:26 -0700
+Subject: [PATCH 11/15] sushi-font-widget: Update style context api
+
+---
+ src/libsushi/sushi-font-widget.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/src/libsushi/sushi-font-widget.c b/src/libsushi/sushi-font-widget.c
+index ac1fcd4..70e2632 100644
+--- a/src/libsushi/sushi-font-widget.c
++++ b/src/libsushi/sushi-font-widget.c
+@@ -454,7 +454,6 @@ sushi_font_widget_size_request (GtkWidget *drawing_area,
+   cairo_surface_t *surface;
+   FT_Face face = self->face;
+   GtkStyleContext *context;
+-  GtkStateFlags state;
+   GtkBorder padding;
+ 
+   if (face == NULL) {
+@@ -475,8 +474,7 @@ sushi_font_widget_size_request (GtkWidget *drawing_area,
+                                         SURFACE_SIZE, SURFACE_SIZE);
+   cr = cairo_create (surface);
+   context = gtk_widget_get_style_context (drawing_area);
+-  state = gtk_style_context_get_state (context);
+-  gtk_style_context_get_padding (context, state, &padding);
++  gtk_style_context_get_padding (context, &padding);
+ 
+   sizes = build_sizes_table (face, &n_sizes, &alpha_size, &title_size);
+ 
+@@ -595,14 +593,12 @@ sushi_font_widget_draw (GtkWidget *drawing_area,
+   GtkStyleContext *context;
+   GdkRGBA color;
+   GtkBorder padding;
+-  GtkStateFlags state;
+   gint allocated_width, allocated_height;
+ 
+   if (face == NULL)
+     return FALSE;
+ 
+   context = gtk_widget_get_style_context (drawing_area);
+-  state = gtk_style_context_get_state (context);
+ 
+   allocated_width = gtk_widget_get_allocated_width (drawing_area);
+   allocated_height = gtk_widget_get_allocated_height (drawing_area);
+@@ -610,8 +606,8 @@ sushi_font_widget_draw (GtkWidget *drawing_area,
+   gtk_render_background (context, cr,
+                          0, 0, allocated_width, allocated_height);
+ 
+-  gtk_style_context_get_color (context, state, &color);
+-  gtk_style_context_get_padding (context, state, &padding);
++  gtk_style_context_get_color (context, &color);
++  gtk_style_context_get_padding (context, &padding);
+ 
+   gdk_cairo_set_source_rgba (cr, &color);
+ 
+-- 
+GitLab
+
+
+From 8c75a7d885449fb5113c34f1e3861ecd9c31cecc Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:58:23 -0700
+Subject: [PATCH 12/15] fallbackRenderer: Port to gtk4
+
+---
+ src/ui/fallbackRenderer.js | 31 +++++++++++++------------------
+ 1 file changed, 13 insertions(+), 18 deletions(-)
+
+diff --git a/src/ui/fallbackRenderer.js b/src/ui/fallbackRenderer.js
+index 8420f53..9fc9894 100644
+--- a/src/ui/fallbackRenderer.js
++++ b/src/ui/fallbackRenderer.js
+@@ -23,7 +23,7 @@
+  *
+  */
+ 
+-const {Gio, GLib, GObject, Gtk, Pango} = imports.gi;
++const {Gdk, Gio, GLib, GObject, Gtk, Pango} = imports.gi;
+ const Gettext = imports.gettext;
+ 
+ const Renderer = imports.ui.renderer;
+@@ -187,19 +187,22 @@ var FallbackRenderer = GObject.registerClass({
+         super._init({ orientation: Gtk.Orientation.HORIZONTAL,
+                       spacing: 6 });
+ 
+-        this._image = new Gtk.Image();
++        this._image = new Gtk.Image ({ hexpand: true });
+         this._updateIcon(new Gio.ThemedIcon({ name: 'text-x-generic' }));
+         this.append(this._image);
+ 
+         let vbox = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL,
+                                  spacing: 1,
+-                                 margin_top: 48,
++                                 margin_top: 12,
+                                  margin_start: 12,
+-                                 margin_end: 12 });
++                                 margin_end: 12,
++                                 margin_bottom: 12,
++                                 valign: Gtk.Align.CENTER,
++                                 vexpand: true});
+         this.append(vbox);
+ 
+         let hbox = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL,
+-                                 spacing: 6 });
++                                 spacing: 6});
+         vbox.append(hbox);
+ 
+         this._titleLabel = new Gtk.Label({ max_width_chars: 48,
+@@ -212,7 +215,7 @@ var FallbackRenderer = GObject.registerClass({
+         this._spinner.start();
+         this._spinner.show();
+ 
+-        this._typeLabel = new Gtk.Label({ no_show_all: true });
++        this._typeLabel = new Gtk.Label();
+         this._typeLabel.set_halign(Gtk.Align.START);
+         vbox.append(this._typeLabel);
+ 
+@@ -271,18 +274,10 @@ var FallbackRenderer = GObject.registerClass({
+     }
+ 
+     _updateIcon(icon) {
+-        let iconTheme = Gtk.IconTheme.get_default();
+-        let iconInfo = iconTheme.lookup_by_gicon_for_scale(icon, 256,
+-            this._image.scale_factor, 0);
+-        if (!iconInfo)
+-            return;
+-
+-        try {
+-            let surface = iconInfo.load_surface(this._image.get_window());
+-            this._image.surface = surface;
+-        } catch (e) {
+-            logError(e, `Error loading surface for icon ${icon.to_string()}`);
+-        }
++        let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default());
++        let paintable = iconTheme.lookup_by_gicon(icon, 256, this._image.scale_factor, 0, 0);
++        if (paintable)
++            this._image.set_from_paintable (paintable);
+     }
+ 
+     _onFileInfoUpdated(state) {
+-- 
+GitLab
+
+
+From 35fac037fccb1eebd944b9940435e6542c5c6b46 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 15:58:47 -0700
+Subject: [PATCH 13/15] font: Missing semicolon
+
+---
+ src/viewers/font.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/viewers/font.js b/src/viewers/font.js
+index 330c92b..d95974b 100644
+--- a/src/viewers/font.js
++++ b/src/viewers/font.js
+@@ -48,7 +48,7 @@ var Klass = GObject.registerClass({
+ 
+     _init(file) {
+         super._init({ uri: file.get_uri(),
+-                      visible: true })
++                      visible: true });
+ 
+         this.isReady();
+     }
+-- 
+GitLab
+
+
+From cc7c8654de78e9ce007acd7cc34211a32c764e0b Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 16:06:35 -0700
+Subject: [PATCH 14/15] general: Replace GtkImage api
+
+---
+ src/libsushi/sushi-media-bin.c | 10 +++++-----
+ src/ui/utils.js                |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/libsushi/sushi-media-bin.c b/src/libsushi/sushi-media-bin.c
+index c51c472..f57dfbf 100644
+--- a/src/libsushi/sushi-media-bin.c
++++ b/src/libsushi/sushi-media-bin.c
+@@ -540,7 +540,7 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+         gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (priv->fullscreen_window)),
+                                priv->blank_cursor);
+ 
+-      gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_RESTORE, SMB_ICON_SIZE);
++      gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_RESTORE);
+     }
+   else
+     {
+@@ -555,7 +555,7 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+       gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window));
+       g_clear_object (&priv->fullscreen_window);
+ 
+-      gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_FULLSCREEN, SMB_ICON_SIZE);
++      gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_FULLSCREEN);
+ 
+       gtk_widget_grab_focus (GTK_WIDGET (self));
+     }
+@@ -1370,19 +1370,19 @@ sushi_media_bin_handle_msg_state_changed (SushiMediaBin *self, GstMessage *msg)
+   /* Update UI */
+   if (old_state == GST_STATE_READY && new_state == GST_STATE_PAUSED)
+     {
+-      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PLAY, SMB_ICON_SIZE);
++      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PLAY);
+       widget_set_visible (priv->play_box, FALSE);
+       sushi_media_bin_update_duration (self);
+     }
+   else if (new_state == GST_STATE_PLAYING)
+     {
+       widget_set_visible (priv->play_box, FALSE);
+-      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PAUSE, SMB_ICON_SIZE);
++      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PAUSE);
+       sushi_media_bin_set_tick_enabled (self, TRUE);
+     }
+   else
+     {
+-      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PLAY, SMB_ICON_SIZE);
++      gtk_image_set_from_icon_name (priv->playback_image, SMB_ICON_NAME_PLAY);
+       widget_set_visible (priv->play_box, FALSE);
+       priv->position = 0;
+       sushi_media_bin_set_tick_enabled (self, FALSE);
+diff --git a/src/ui/utils.js b/src/ui/utils.js
+index 5f70feb..f0c246a 100644
+--- a/src/ui/utils.js
++++ b/src/ui/utils.js
+@@ -59,8 +59,8 @@ function getScaledSize(baseSize, allocSize, upscale) {
+ }
+ 
+ function createToolButton(renderer, iconName, callback) {
+-    let button = Gtk.Button.new_from_icon_name(iconName, Gtk.IconSize.MENU);
+     button.set_relief(Gtk.ReliefStyle.NONE);
++    let button = Gtk.Button.new_from_icon_name(iconName);
+     button.connect('clicked', () => {
+         renderer.toolbar.resetTimeout();
+         callback(button);
+-- 
+GitLab
+
+
+From 1ee6f417dd128b2b8663d849d66aee73c85d4721 Mon Sep 17 00:00:00 2001
+From: Corey Berla <corey@berla.me>
+Date: Mon, 22 May 2023 16:10:12 -0700
+Subject: [PATCH 15/15] WIP
+
+---
+ src/libsushi/sushi-font-widget.c |  21 ++++--
+ src/libsushi/sushi-media-bin.c   |  64 +++++++++---------
+ src/libsushi/sushi-utils.c       |  18 ++---
+ src/ui/application.js            |   3 +-
+ src/ui/fallbackRenderer.js       |   1 +
+ src/ui/mainWindow.js             | 110 ++++++++-----------------------
+ src/ui/renderer.js               |   3 +-
+ src/ui/utils.js                  |   2 +-
+ src/viewers/audio.js             |   4 +-
+ src/viewers/image.js             |  17 ++++-
+ src/viewers/text.js              |  14 ++--
+ 11 files changed, 113 insertions(+), 144 deletions(-)
+
+diff --git a/src/libsushi/sushi-font-widget.c b/src/libsushi/sushi-font-widget.c
+index 70e2632..73cd5e7 100644
+--- a/src/libsushi/sushi-font-widget.c
++++ b/src/libsushi/sushi-font-widget.c
+@@ -662,6 +662,19 @@ sushi_font_widget_draw (GtkWidget *drawing_area,
+   return FALSE;
+ }
+ 
++
++static void
++sushi_font_widget_measure (GtkWidget     *widget,
++                           GtkOrientation orientation,
++                           int            for_size,
++                           int           *minimum,
++                           int           *natural,
++                           int           *minimum_baseline,
++                           int           *natural_baseline)
++{
++ //TODO bring in preferred width / height
++}
++
+ static void
+ font_face_async_ready_cb (GObject *object,
+                           GAsyncResult *result,
+@@ -707,7 +720,7 @@ sushi_font_widget_init (SushiFontWidget *self)
+     g_error ("Unable to initialize FreeType");
+ 
+   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (self)),
+-                               GTK_STYLE_CLASS_VIEW);
++                               "view");
+ }
+ 
+ static void
+@@ -797,9 +810,9 @@ sushi_font_widget_class_init (SushiFontWidgetClass *klass)
+   oclass->get_property = sushi_font_widget_get_property;
+   oclass->constructed = sushi_font_widget_constructed;
+ 
+-  wclass->draw = sushi_font_widget_draw;
+-  wclass->get_preferred_width = sushi_font_widget_get_preferred_width;
+-  wclass->get_preferred_height = sushi_font_widget_get_preferred_height;
++  //TODO reimplement
++  /* wclass->draw = sushi_font_widget_draw; */
++  wclass->measure = sushi_font_widget_measure;
+ 
+   properties[PROP_URI] =
+     g_param_spec_string ("uri",
+diff --git a/src/libsushi/sushi-media-bin.c b/src/libsushi/sushi-media-bin.c
+index f57dfbf..fa8e3d8 100644
+--- a/src/libsushi/sushi-media-bin.c
++++ b/src/libsushi/sushi-media-bin.c
+@@ -45,8 +45,6 @@
+ 
+ #define FPS_WINDOW_SIZE          2  /* Window size in seconds to calculate fps */
+ 
+-#define SMB_ICON_SIZE            GTK_ICON_SIZE_BUTTON
+-
+ #define SMB_ICON_NAME_PLAY       "media-playback-start-symbolic"
+ #define SMB_ICON_NAME_PAUSE      "media-playback-pause-symbolic"
+ #define SMB_ICON_NAME_FULLSCREEN "view-fullscreen-symbolic"
+@@ -235,7 +233,7 @@ sushi_media_bin_reveal_controls (SushiMediaBin *self)
+ {
+   SushiMediaBinPrivate *priv = SMB_PRIVATE (self);
+ 
+-  gdk_window_set_cursor (gtk_widget_get_window (priv->overlay), NULL);
++  gtk_widget_set_cursor (priv->overlay, NULL);
+ 
+   /* We only show the top bar if there is something in the info labels */
+   if (!g_str_equal (gtk_label_get_label (priv->title_label), "") ||
+@@ -251,16 +249,16 @@ static gboolean
+ revealer_timeout (gpointer data)
+ {
+   SushiMediaBinPrivate *priv = SMB_PRIVATE (data);
+-  GdkWindow *window;
++  /* GdkWindow *window; */
+ 
+   if (++priv->timeout_count < priv->autohide_timeout)
+     return G_SOURCE_CONTINUE;
+-  
++#if 0 && REIMPLEMENT
+   window = gtk_widget_get_window (priv->overlay);
+   
+   if (window != NULL)
+     gdk_window_set_cursor (window, priv->blank_cursor);
+-
++#endif
+   gtk_revealer_set_reveal_child (priv->top_revealer, FALSE);
+   gtk_revealer_set_reveal_child (priv->bottom_revealer, FALSE);
+ 
+@@ -294,12 +292,14 @@ sushi_media_bin_revealer_timeout (SushiMediaBin *self, gboolean activate)
+     }
+   else
+    {
++#if 0 && reimp
+       GdkWindow *window = gtk_widget_get_window (priv->overlay);
+ 
+       ensure_no_timeout (priv);
+ 
+       if (window)
+         gdk_window_set_cursor (window, NULL);
++#endif
+    }
+ }
+ 
+@@ -334,7 +334,7 @@ sushi_media_bin_action_seek (SushiMediaBin *self, gint seconds)
+                            GST_SEEK_FLAG_ACCURATE,
+                            seconds ? CLAMP (position, 0, priv->duration) : 0);
+ }
+-
++#if 0
+ /* Signals handlers */
+ static gboolean
+ on_overlay_button_press_event (GtkWidget   *widget,
+@@ -407,7 +407,7 @@ on_overlay_motion_notify_event (GtkWidget   *widget,
+   sushi_media_bin_revealer_timeout (self, TRUE);
+   return FALSE;
+ }
+-
++#endif
+ static void
+ on_playback_adjustment_value_changed (GtkAdjustment *adjustment,
+                                       SushiMediaBin   *self)
+@@ -459,7 +459,7 @@ sushi_media_bin_update_state (SushiMediaBin *self)
+       gst_element_set_state (priv->play, priv->state);
+     }
+ }
+-
++#if 0
+ static GdkPixbuf *
+ sushi_media_bin_video_pixbuf_new (SushiMediaBin *self)
+ {
+@@ -504,6 +504,7 @@ sushi_media_bin_video_pixbuf_new (SushiMediaBin *self)
+ 
+   return pixbuf;
+ }
++#endif
+ 
+ static void
+ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+@@ -521,9 +522,6 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+     {
+       priv->fullscreen_window = g_object_ref (sushi_media_bin_window_new (self));
+ 
+-      /* Reparent video widget in a fullscreen window */
+-      gtk_container_remove (GTK_CONTAINER (priv->stack), priv->overlay);
+-
+       /* Pack an image with the last frame inside the bin */
+       gtk_stack_add_child (priv->stack, priv->tmp_image);
+       gtk_widget_show (priv->tmp_image);
+@@ -537,22 +535,22 @@ sushi_media_bin_fullscreen_apply (SushiMediaBin *self, gboolean fullscreen)
+ 
+       /* Hide cursor if controls are hidden */
+       if (!gtk_revealer_get_reveal_child (priv->bottom_revealer))
+-        gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (priv->fullscreen_window)),
++        gtk_widget_set_cursor (GTK_WIDGET (priv->fullscreen_window),
+                                priv->blank_cursor);
+ 
+       gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_RESTORE);
+     }
+   else
+     {
+-      gtk_container_remove (GTK_CONTAINER (priv->stack), priv->tmp_image);
++      /* gtk_container_remove (GTK_CONTAINER (priv->stack), priv->tmp_image); */
+       priv->tmp_image = NULL;
+ 
+       /* Reparent video widget back into ourselves */
+-      gtk_container_remove (GTK_CONTAINER (priv->fullscreen_window), priv->overlay);
++      /* gtk_container_remove (GTK_CONTAINER (priv->fullscreen_window), priv->overlay); */
+       gtk_stack_add_child (priv->stack, priv->overlay);
+       gtk_stack_set_visible_child (GTK_STACK (priv->stack), priv->overlay);
+ 
+-      gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window));
++      /* gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window)); */
+       g_clear_object (&priv->fullscreen_window);
+ 
+       gtk_image_set_from_icon_name (priv->fullscreen_image, SMB_ICON_NAME_FULLSCREEN);
+@@ -596,11 +594,9 @@ on_sushi_media_bin_realize (GtkWidget *widget, SushiMediaBin *self)
+   SushiMediaBinPrivate *priv = SMB_PRIVATE (self);
+ 
+   /* Create a blank_cursor */
+-  priv->blank_cursor = gdk_cursor_new_from_name (gtk_widget_get_display (widget),
+-                                                 "none");
+-
+-  if (priv->fullscreen)
+-    sushi_media_bin_fullscreen_apply (self, TRUE);
++  /* priv->blank_cursor = gdk_cursor_new_from_name (gtk_widget_get_display (widget), */
++  /*                                                "none"); */
++  priv->blank_cursor = NULL;  //TODO fix me
+ 
+   /* Make playbin show the first video frame if there is an URI */
+   sushi_media_bin_update_state (self);
+@@ -655,9 +651,9 @@ sushi_media_bin_init_style (SushiMediaBin *self)
+       GtkCssProvider *css_provider = gtk_css_provider_new ();
+ 
+       gtk_css_provider_load_from_resource (css_provider, "/org/gnome/Sushi/libsushi/sushi-media-bin.css");
+-      gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+-                                                 GTK_STYLE_PROVIDER (css_provider),
+-                                                 GTK_STYLE_PROVIDER_PRIORITY_APPLICATION-10);
++      /* gtk_style_context_add_provider_for_screen (gdk_screen_get_default (), */
++      /*                                            GTK_STYLE_PROVIDER (css_provider), */
++      /*                                            GTK_STYLE_PROVIDER_PRIORITY_APPLICATION-10); */
+       g_object_unref (css_provider);
+ 
+       g_once_init_leave (&style_initialized, 1);
+@@ -676,7 +672,7 @@ sushi_media_bin_init (SushiMediaBin *self)
+ 
+   priv->state = SMB_INITIAL_STATE;
+   priv->autohide_timeout = AUTOHIDE_TIMEOUT_DEFAULT;
+-  priv->pressed_button_type = GDK_NOTHING;
++  /* priv->pressed_button_type = GDK_NOTHING; */
+   priv->dump_dot_file = (g_getenv ("GST_DEBUG_DUMP_DOT_DIR") != NULL);
+ 
+   sushi_media_bin_init_playbin (self);
+@@ -715,7 +711,7 @@ sushi_media_bin_dispose (GObject *object)
+   /* Destroy fullscreen window */
+   if (priv->fullscreen_window)
+     {
+-      gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window));
++      /* gtk_widget_destroy (GTK_WIDGET (priv->fullscreen_window)); */
+       g_clear_object (&priv->fullscreen_window);
+     }
+ 
+@@ -1009,12 +1005,12 @@ sushi_media_bin_class_init (SushiMediaBinClass *klass)
+   gtk_widget_class_bind_template_callback (widget_class, on_sushi_media_bin_realize);
+   gtk_widget_class_bind_template_callback (widget_class, on_sushi_media_bin_unrealize);
+ 
+-  gtk_widget_class_bind_template_callback (widget_class, on_overlay_motion_notify_event);
+-  gtk_widget_class_bind_template_callback (widget_class, on_overlay_button_press_event);
+-  gtk_widget_class_bind_template_callback (widget_class, on_overlay_button_release_event);
++  /* gtk_widget_class_bind_template_callback (widget_class, on_overlay_motion_notify_event); */
++  /* gtk_widget_class_bind_template_callback (widget_class, on_overlay_button_press_event); */
++  /* gtk_widget_class_bind_template_callback (widget_class, on_overlay_button_release_event); */
+ 
+-  gtk_widget_class_bind_template_callback (widget_class, on_revealer_motion_notify_event);
+-  gtk_widget_class_bind_template_callback (widget_class, on_revealer_leave_notify_event);
++  /* gtk_widget_class_bind_template_callback (widget_class, on_revealer_motion_notify_event); */
++  /* gtk_widget_class_bind_template_callback (widget_class, on_revealer_leave_notify_event); */
+ 
+   gtk_widget_class_bind_template_callback (widget_class, on_progress_scale_format_value);
+   gtk_widget_class_bind_template_callback (widget_class, on_playback_adjustment_value_changed);
+@@ -1105,9 +1101,9 @@ on_widget_style_updated (GtkWidget *widget, gpointer data)
+   gboolean visible = GPOINTER_TO_INT (data);
+   gdouble opacity;
+ 
+-  gtk_style_context_get (gtk_widget_get_style_context (widget),
+-                         gtk_widget_get_state_flags (widget),
+-                         "opacity", &opacity, NULL);
++  /* gtk_style_context_get (gtk_widget_get_style_context (widget), */
++  /*                        gtk_widget_get_state_flags (widget), */
++  /*                        "opacity", &opacity, NULL); */
+ 
+   if ((visible && opacity >= 1.0) || (!visible && opacity == 0.0))
+     {
+diff --git a/src/libsushi/sushi-utils.c b/src/libsushi/sushi-utils.c
+index 3b535c0..39c736a 100644
+--- a/src/libsushi/sushi-utils.c
++++ b/src/libsushi/sushi-utils.c
+@@ -29,7 +29,7 @@
+ #include <gtk/gtk.h>
+ 
+ #ifdef GDK_WINDOWING_X11
+-#include <gdk/gdkx.h>
++#include <gdk/x11/gdkx.h>
+ #endif
+ 
+ #include "externalwindow.h"
+@@ -161,10 +161,10 @@ libreoffice_missing (GTask *task)
+   const gchar *libreoffice_path[2];
+ 
+ #ifdef GDK_WINDOWING_X11
+-  GdkWindow *gdk_window;
+-  gdk_window = gtk_widget_get_window (widget);
+-  if (gdk_window != NULL)
+-    xid = GDK_WINDOW_XID (gdk_window);
++  /* GdkWindow *gdk_window; */
++  /* gdk_window = gtk_widget_get_window (widget); */
++  /* if (gdk_window != NULL) */
++  /*   xid = GDK_WINDOW_XID (gdk_window); */
+ #endif
+ 
+   libreoffice_path[0] = "/usr/bin/libreoffice";
+@@ -208,7 +208,7 @@ check_libreoffice_flatpak (GTask       *task,
+   const gchar *check_argv[] = { flatpak_path, "info", LIBREOFFICE_FLATPAK, NULL };
+   g_autoptr(GError) error = NULL;
+   gboolean ret;
+-  gint exit_status = -1;
++  gint wait_status = -1;
+   TaskData *data = g_task_get_task_data (task);
+ 
+   if (data->checked_libreoffice_flatpak)
+@@ -222,16 +222,16 @@ check_libreoffice_flatpak (GTask       *task,
+                       G_SPAWN_STDOUT_TO_DEV_NULL,
+                       NULL, NULL,
+                       NULL, NULL,
+-                      &exit_status, &error);
++                      &wait_status, &error);
+ 
+   if (ret) {
+     g_autoptr(GError) child_error = NULL;
+-    if (g_spawn_check_exit_status (exit_status, &child_error)) {
++    if (g_spawn_check_wait_status (wait_status, &child_error)) {
+       g_debug ("Found LibreOffice flatpak!");
+       data->have_libreoffice_flatpak = TRUE;
+     } else {
+       g_debug ("LibreOffice flatpak not found, flatpak info returned %i (%s)",
+-               exit_status, child_error->message);
++               wait_status, child_error->message);
+     }
+   } else {
+     g_warning ("Error while checking for LibreOffice flatpak: %s",
+diff --git a/src/ui/application.js b/src/ui/application.js
+index f3968d7..98a4fe3 100644
+--- a/src/ui/application.js
++++ b/src/ui/application.js
+@@ -125,7 +125,7 @@ var Application = GObject.registerClass(class Application extends Gtk.Applicatio
+ 
+     _defineStyleAndThemes() {
+         let settings = Gtk.Settings.get_default();
+-        settings.gtk_application_prefer_dark_theme = true;
++        // settings.gtk_application_prefer_dark_theme = true;
+     }
+ 
+     close() {
+@@ -149,6 +149,7 @@ var Application = GObject.registerClass(class Application extends Gtk.Applicatio
+         } else {
+             this._mainWindow.setParent(windowHandle);
+             this._mainWindow.setFile(file);
++            this._mainWindow.show();
+         }
+     }
+ });
+diff --git a/src/ui/fallbackRenderer.js b/src/ui/fallbackRenderer.js
+index 9fc9894..5cb5519 100644
+--- a/src/ui/fallbackRenderer.js
++++ b/src/ui/fallbackRenderer.js
+@@ -230,6 +230,7 @@ var FallbackRenderer = GObject.registerClass({
+         this._cancellable = new Gio.Cancellable();
+         loadFile(file, fileInfo, this._cancellable, this._onFileInfoUpdated.bind(this));
+ 
++        this.connect('unmap', this._onDestroy.bind(this));
+         this.connect('destroy', this._onDestroy.bind(this));
+         this.isReady();
+     }
+diff --git a/src/ui/mainWindow.js b/src/ui/mainWindow.js
+index 0cb2daf..10abad0 100644
+--- a/src/ui/mainWindow.js
++++ b/src/ui/mainWindow.js
+@@ -36,29 +36,7 @@ const WINDOW_MAX_W_BASE = 1368;
+ const WINDOW_MAX_H_BASE = 768;
+ 
+ const Embed = GObject.registerClass(class Embed extends Gtk.Overlay {
+-    vfunc_get_request_mode() {
+-        return Gtk.SizeRequestMode.HEIGHT_FOR_WIDTH;
+-    }
+-
+-    vfunc_get_preferred_width() {
+-        let [min, nat] = super.vfunc_get_preferred_width();
+-
+-        min = Math.max(min, Constants.VIEW_MIN);
+-        nat = Math.max(nat, Constants.VIEW_MIN);
+-
+-        return [min, nat];
+-    }
+-
+-    vfunc_get_preferred_height_for_width(forWidth) {
+-        let [min, nat] = super.vfunc_get_preferred_height_for_width(forWidth);
+ 
+-        if (forWidth <= Constants.VIEW_MIN) {
+-            min = Math.max(min, Constants.VIEW_MIN);
+-            nat = Math.max(nat, Constants.VIEW_MIN);
+-        }
+-
+-        return [min, nat];
+-    }
+ });
+ 
+ const ErrorBox = GObject.registerClass({
+@@ -71,10 +49,10 @@ const ErrorBox = GObject.registerClass({
+                                          GObject.ParamFlags.READABLE,
+                                          false)
+     },
+-}, class ErrorBox extends Gtk.Grid {
++}, class ErrorBox extends Gtk.Box {
+     _init(file, error) {
+         super._init({ orientation: Gtk.Orientation.VERTICAL,
+-                      row_spacing: 12,
++                      spacing: 12,
+                       hexpand: true,
+                       vexpand: true,
+                       halign: Gtk.Align.CENTER,
+@@ -99,8 +77,6 @@ const ErrorBox = GObject.registerClass({
+                                              wrap: true,
+                                              halign: Gtk.Align.CENTER,
+                                              valign: Gtk.Align.CENTER });
+-
+-        this.show_all();
+         this.append(secondaryLabel);
+     }
+ });
+@@ -127,41 +103,27 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+         this._lastWindowSize = [0, 0];
+         this.file = null;
+ 
+-        super._init({ type: Gtk.WindowType.TOPLEVEL,
+-                      skipPagerHint: true,
+-                      skipTaskbarHint: true,
+-                      windowPosition: Gtk.WindowPosition.CENTER,
+-                      gravity: Gdk.Gravity.CENTER,
+-                      application: application });
++        super._init({ application: application });
+ 
+-        this._titlebar = new Gtk.HeaderBar({ show_close_button: true,
+-                                             decoration_layout: _getDecorationLayout() });
++        this._titlebar = new Gtk.HeaderBar({ decoration_layout: _getDecorationLayout() });
+         this.set_titlebar(this._titlebar);
+ 
++
++
+         this._openButton = new Gtk.Button({ label: _("Open") });
+         this._openButton.connect('clicked', this._onFileOpenClicked.bind(this));
+         this._titlebar.pack_end(this._openButton);
+ 
+-        this.connect('motion-notify-event', this._onMotionNotifyEvent.bind(this));
+-        this.connect('realize', this._onRealize.bind(this));
+-
+-        let eventBox = new Gtk.EventBox({ visible_window: false });
+-        eventBox.connect('button-press-event', this._onButtonPressEvent.bind(this));
+-        this.add(eventBox);
++        // this.connect('motion-notify-event', this._onMotionNotifyEvent.bind(this));
++        let motion = new Gtk.EventControllerMotion();
++        this.add_controller(motion);
++        motion.connect('motion', this._onMotionNotifyEvent.bind(this));
+ 
+         this._embed = new Embed();
+-        eventBox.add(this._embed);
+-
++        this.set_child(this._embed);
+         this._defineActions();
+     }
+ 
+-    _onRealize() {
+-        // don't support maximize and minimize
+-        this.get_window().set_functions(Gdk.WMFunction.MOVE |
+-                                        Gdk.WMFunction.RESIZE |
+-                                        Gdk.WMFunction.CLOSE);
+-    }
+-
+     _defineActions() {
+         let quit = new Gio.SimpleAction({ name: 'quit' });
+         quit.connect('activate', () => {
+@@ -226,33 +188,19 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+ 
+     _onRendererReady() {
+         if (this._renderer.ready) {
+-            this._resizeWindow();
+-            this.queue_resize();
++            // this._resizeWindow();
++            // this.queue_resize();
+         }
+-
+-        if (!this.visible)
+-            this.show_all();
+     }
+ 
+     _getMaxSize() {
+-        let gdkWin = this.get_window();
+-        let display = this.get_display();
+-        let monitor = display.get_monitor_at_window(gdkWin);
++        let display = Gdk.Display.get_default();
++        let surface = this.get_surface();
++        let monitor = display.get_monitor_at_surface(surface);
+         let geometry = monitor.get_geometry();
+ 
+-        // Scale our maximum with the actual monitor geometry
+-        let scaleW = 1.0;
+-        let scaleH = 1.0;
+-
+-        // FIXME: We can only trust GTK >= 3.24.9 to report the right
+-        // monitor geometry under Wayland when fractional scaling is enabled.
+-        // Disable the scaling logic for older GTK versions.
+-        // See https://gitlab.gnome.org/GNOME/gtk/issues/1828
+-        let versionCheck = Gtk.check_version(3, 24, 9);
+-        if (!versionCheck) {
+-            scaleW = (geometry.width / WINDOW_MAX_W_BASE) / this.get_scale_factor ();
+-            scaleH = (geometry.height / WINDOW_MAX_H_BASE) / this.get_scale_factor ();
+-        }
++        let scaleW = (geometry.width / WINDOW_MAX_W_BASE) / this.get_scale_factor ();
++        let scaleH = (geometry.height / WINDOW_MAX_H_BASE) / this.get_scale_factor ();
+ 
+         return [Math.floor(scaleW * WINDOW_MAX_W),
+                 Math.floor(scaleH * WINDOW_MAX_H)];
+@@ -266,8 +214,8 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+             return;
+ 
+         let maxSize = this._getMaxSize();
+-        let rendererSize = [this._renderer.get_preferred_width(), this._renderer.get_preferred_height()];
+-        let natSize = [rendererSize[0][1], rendererSize[1][1]];
++        let rendererSize = [this._renderer.width, this._renderer.height];
++        let natSize = [rendererSize[0], rendererSize[1]];
+         let windowSize;
+         let resizePolicy = this._renderer.resizePolicy;
+ 
+@@ -283,7 +231,8 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+         if ((windowSize[0] > 0 && windowSize[0] != this._lastWindowSize[0]) ||
+             (windowSize[1] > 0 && windowSize[1] != this._lastWindowSize[1])) {
+             this._lastWindowSize = windowSize;
+-            this.resize(windowSize[0], windowSize[1]);
++            this.default_width = windowSize[0];
++            this.default_height = windowSize[1];
+         }
+     }
+ 
+@@ -307,30 +256,23 @@ var MainWindow = GObject.registerClass(class MainWindow extends Gtk.ApplicationW
+     }
+ 
+     _embedRenderer(renderer) {
+-        if (this._renderer) {
+-            this._renderer.destroy()
+-            this._renderer = null;
+-        }
+-
+         this._renderer = renderer;
+-        this._renderer.show_all();
+         this._renderer.expand = true;
+-        this._embed.add(this._renderer);
+-
++        this._embed.set_child(this._renderer);
+         if (this._renderer.toolbar)
+-            this._embed.add_overlay(this._renderer.toolbar);
++          this._embed.add_overlay(this._renderer.toolbar);
+     }
+ 
+     _createView(fileInfo) {
+         let klass = MimeHandler.getKlass(fileInfo.get_content_type());
++        log(fileInfo.get_content_type());
+         let renderer = new klass(this.file, fileInfo);
+         this._embedRenderer(renderer);
+-
+         renderer.connect('error', (r, err) => { this._reportError(err); });
+         renderer.connect('notify::fullscreen', this._onRendererFullscreen.bind(this));
+         renderer.connect('notify::ready', this._onRendererReady.bind(this));
++        this._resizeWindow();
+         this._onRendererReady();
+-
+         this.set_resizable(this._renderer.resizable);
+         this.set_title(fileInfo.get_display_name());
+     }
+diff --git a/src/ui/renderer.js b/src/ui/renderer.js
+index b3e4fd7..9f253db 100644
+--- a/src/ui/renderer.js
++++ b/src/ui/renderer.js
+@@ -76,7 +76,6 @@ var Renderer = GObject.registerClass({
+ 
+         if (!this._toolbar) {
+             this._toolbar = new RendererToolbar();
+-            this.connect('destroy', () => { this._toolbar.destroy(); });
+ 
+             this.populateToolbar(this._toolbar.box);
+ 
+@@ -116,7 +115,7 @@ var RendererToolbar = GObject.registerClass(class RendererToolbar extends Gtk.Re
+         this.box = new RendererToolbarBox();
+         this.set_child(this.box);
+ 
+-        this.connect('destroy', this._onDestroy.bind(this));
++        this.connect('unmap', this._onDestroy.bind(this));
+     }
+ 
+     resetTimeout() {
+diff --git a/src/ui/utils.js b/src/ui/utils.js
+index f0c246a..dc78339 100644
+--- a/src/ui/utils.js
++++ b/src/ui/utils.js
+@@ -59,8 +59,8 @@ function getScaledSize(baseSize, allocSize, upscale) {
+ }
+ 
+ function createToolButton(renderer, iconName, callback) {
+-    button.set_relief(Gtk.ReliefStyle.NONE);
+     let button = Gtk.Button.new_from_icon_name(iconName);
++    // button.set_relief(Gtk.ReliefStyle.NONE);
+     button.connect('clicked', () => {
+         renderer.toolbar.resetTimeout();
+         callback(button);
+diff --git a/src/viewers/audio.js b/src/viewers/audio.js
+index 2ff52f1..bec2645 100644
+--- a/src/viewers/audio.js
++++ b/src/viewers/audio.js
+@@ -319,7 +319,7 @@ var Klass = GObject.registerClass({
+         this._albumLabel.set_halign(Gtk.Align.START);
+         vbox.append(this._albumLabel);
+ 
+-        this.connect('destroy', this._onDestroy.bind(this));
++        this.connect('unmap', this._onDestroy.bind(this));
+         this.isReady();
+     }
+ 
+@@ -328,6 +328,8 @@ var Klass = GObject.registerClass({
+             GLib.source_remove(this._autoplayId);
+             this._autoplayId = 0;
+         }
++        this._player.stop();
++        this.remove_overlay(this._player);
+     }
+ 
+     _setCover(cover) {
+diff --git a/src/viewers/image.js b/src/viewers/image.js
+index 1497afb..71a0280 100644
+--- a/src/viewers/image.js
++++ b/src/viewers/image.js
+@@ -35,7 +35,13 @@ var Klass = GObject.registerClass({
+                                               false),
+         ready: GObject.ParamSpec.boolean('ready', '', '',
+                                          GObject.ParamFlags.READABLE,
+-                                         false)
++                                         false),
++        width: GObject.ParamSpec.int('width', '', '',
++                                         GObject.ParamFlags.READWRITE,
++                                         1, 9999, 1),
++        height: GObject.ParamSpec.int('height', '', '',
++                                         GObject.ParamFlags.READWRITE,
++                                         1, 9999, 1),
+     },
+ }, class ImageRenderer extends Gtk.Picture {
+     get ready() {
+@@ -46,8 +52,12 @@ var Klass = GObject.registerClass({
+         return !!this._fullscreen;
+     }
+ 
++    get height() {
++      return this._texture ? this._texture.get_intrinsic_height() : 1;
+     }
+ 
++    get width() {
++      return this._texture ? this._texture.get_intrinsic_width() : 1;
+     }
+ 
+     _init(file) {
+@@ -62,6 +72,11 @@ var Klass = GObject.registerClass({
+           logError(e, 'Error loading image');
+         }
+     }
++
++    get resizePolicy() {
++        return Renderer.ResizePolicy.SCALED;
++    }
++
+ });
+ 
+ var mimeTypes = [];
+diff --git a/src/viewers/text.js b/src/viewers/text.js
+index 2de238b..c8c5c28 100644
+--- a/src/viewers/text.js
++++ b/src/viewers/text.js
+@@ -62,14 +62,14 @@ var Klass = GObject.registerClass({
+ 
+     _createBuffer(file, fileInfo) {
+         let buffer = new GtkSource.Buffer();
+-        let styleManager = GtkSource.StyleSchemeManager.get_default();
+-        let stylePath = GLib.build_filenamev([pkg.pkgdatadir,
+-                                              'gtksourceview-4',
+-                                              'styles']);
+-        styleManager.prepend_search_path(stylePath);
++        // let styleManager = GtkSource.StyleSchemeManager.get_default();
++        // let stylePath = GLib.build_filenamev([pkg.pkgdatadir,
++        //                                       'gtksourceview-4',
++        //                                       'styles']);
++        // styleManager.prepend_search_path(stylePath);
+ 
+-        let scheme = styleManager.get_scheme('builder-dark');
+-        buffer.set_style_scheme(scheme);
++        // let scheme = styleManager.get_scheme('builder-dark');
++        // buffer.set_style_scheme(scheme);
+ 
+         let langManager = GtkSource.LanguageManager.get_default();
+         let language = langManager.guess_language(file.get_basename(),
+-- 
+GitLab
+

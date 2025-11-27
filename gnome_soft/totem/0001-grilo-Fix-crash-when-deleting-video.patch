@@ -1,0 +1,37 @@
+From a9c4b7606e40847ee79ff4f7cb85e757d6cdd4ce Mon Sep 17 00:00:00 2001
+From: krifa <yahiaoui.fakhri@gmail.com>
+Date: Fri, 25 Aug 2023 21:59:31 +0200
+Subject: [PATCH] grilo: Fix crash when deleting video
+
+Wrong argument in the call of g_signal_handlers_(un)block_by_func
+
+Closes: #593
+---
+ src/totem-grilo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/totem-grilo.c b/src/totem-grilo.c
+index d4490a9f6..a0f269e55 100644
+--- a/src/totem-grilo.c
++++ b/src/totem-grilo.c
+@@ -2213,7 +2213,7 @@ delete_cb (TotemSelectionToolbar *bar,
+ 	GtkTreeModel *model;
+ 	GList *list, *l;
+ 
+-	g_signal_handlers_block_by_func (self->browser, "view-selection-changed", self);
++	g_signal_handlers_block_by_func (self->browser, view_selection_changed_cb, self);
+ 
+ 	model = gd_main_view_get_model (GD_MAIN_VIEW (self->browser));
+ 	list = gd_main_view_get_selection (GD_MAIN_VIEW (self->browser));
+@@ -2228,7 +2228,7 @@ delete_cb (TotemSelectionToolbar *bar,
+ 	}
+ 	g_list_foreach (list, delete_foreach, model);
+ 
+-	g_signal_handlers_unblock_by_func (self->browser, "view-selection-changed", self);
++	g_signal_handlers_unblock_by_func (self->browser, view_selection_changed_cb, self);
+ 
+ 	g_object_set (G_OBJECT (self->browser), "selection-mode", FALSE, NULL);
+ }
+-- 
+2.45.0
+

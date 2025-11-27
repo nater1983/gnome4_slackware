@@ -1,0 +1,13 @@
+to run gfs-com.py or gfs-commander first: run the Slackbuild provided in python3-pillow which will then
+produce a tarball to install on your system
+installpkg /tmp/python3-pillow-10.1.0-x86_64-1_gfs.txz or
+installpkg /tmp/python3-pillow-10.1.0-i686-1_gfs.txz
+
+openrc-settingsd (D-Bus services for OpenRC-based systems)
+
+OpenRC-settingsd provides an implementation of the the hostnamed,
+localed, and timedated D-Bus services for OpenRC-based systems - in
+particular, for typical installations of Gentoo or Slackware Linux.
+
+installpkg /tmp/openrc-settingsd-1.4.0-x86_64-1_gfs.txz or
+installpkg /tmp/openrc-settingsd-1.4.0-i686-1_gfs.txz

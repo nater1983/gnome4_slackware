@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                      |-----handy-ruler------------------------------------------------------|
+gnome-network-displays: gnome-network-displays (Screencasting for GNOME.)
+gnome-network-displays:
+gnome-network-displays: Screencasting for GNOME. Supports the Miracast and Chromecast
+gnome-network-displays: protocols. The application will stream the selected monitor if the
+gnome-network-displays: mutter screencast portal is available. This is an experimental
+gnome-network-displays: implementation of Wi-Fi Display (aka Miracast).
+gnome-network-displays:
+gnome-network-displays:
+gnome-network-displays: Homepage: https://gitlab.gnome.org/GNOME/gnome-network-displays
+gnome-network-displays:
+gnome-network-displays:

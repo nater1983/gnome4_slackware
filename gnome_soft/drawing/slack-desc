@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+drawing: drawing (Edit screenshots or memes)
+drawing:
+drawing: This basic image editor can resize, crop, or rotate an image, apply 
+drawing: simple filters, insert or censor text, and manipulate a selected 
+drawing: portion of the picture (cut/copy/paste/drag/…). And of course, you 
+drawing: can draw! Using tools such as the pencil, the straight line, the 
+drawing: curve tool, many shapes, several brushes, and their various colors 
+drawing: and options. Supported file types include PNG, JPEG and BMP.
+drawing: 
+drawing: https://github.com/maoschanz/drawing
+drawing:

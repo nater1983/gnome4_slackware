@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                   |-----handy-ruler------------------------------------------------------|
+gnome-power-manager: gnome-power-manager ( GNOME power management service )
+gnome-power-manager:
+gnome-power-manager: GNOME Power Manager uses the information and facilities provided by
+gnome-power-manager: UPower displaying icons and handling user callbacks in an interactive
+gnome-power-manager: GNOME session.
+gnome-power-manager:
+gnome-power-manager: Homepage: https://gitlab.gnome.org/GNOME/gnome-power-manager
+gnome-power-manager:
+gnome-power-manager:
+gnome-power-manager:
+gnome-power-manager:

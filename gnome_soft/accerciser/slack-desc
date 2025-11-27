@@ -1,0 +1,13 @@
+          |-----handy-ruler------------------------------------------------------|
+accerciser: accerciser (GNOME Assistant Technology Poke Tool)
+accerciser: 
+accerciser: Accerciser is an interactive Python accessibility explorer for the 
+accerciser: GNOME desktop. It uses AT-SPI to inspect and control widgets, 
+accerciser: allowing you to check if an application is providing correct 
+accerciser: information to assistive technologies and automated test frameworks. 
+accerciser: Accerciser has a simple plugin framework which you can use to 
+accerciser: create custom views of accessibility information.  In essence, 
+accerciser: Accerciser is a next generation at-poke tool.
+accerciser: 
+accerciser: 
+accerciser: 

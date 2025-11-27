@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=GFS-tracker
+Comment=configuration loader
+Exec=/usr/local/bin/GFS-tracker.py
+Icon=/usr/share/icons/GFS-tracker/GFS-tracker.png
+Terminal=true
+Categories=Settings;HardwareSettings;
+

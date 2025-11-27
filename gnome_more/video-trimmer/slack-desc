@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+             |-----handy-ruler------------------------------------------------------|
+video-trimmer: video-trimmer (Trim videos quickly)
+video-trimmer:
+video-trimmer: Video Trimmer cuts out a fragment of a video given the start and end
+video-trimmer: timestamps. The video is never re-encoded, so the process is very
+video-trimmer: fast and does not reduce the video quality.
+video-trimmer:
+video-trimmer:  Homepage: https://gitlab.gnome.org/YaLTeR/video-trimmer
+video-trimmer:
+video-trimmer:
+video-trimmer:
+video-trimmer:

@@ -1,0 +1,1045 @@
+From fda6216679915707208bd7794ae22c0c92b808cd Mon Sep 17 00:00:00 2001
+From: Carlos Garcia Campos <cgarcia@igalia.com>
+Date: Mon, 5 Feb 2024 03:27:45 -0800
+Subject: [PATCH] [WPE] WPE Platform: add monitors API
+ https://bugs.webkit.org/show_bug.cgi?id=265639
+
+Reviewed by Adrian Perez de Castro.
+
+Add monitors API with implementation for the wayland platform for now.
+This API is used inside WebKit to set the screen properties, set the
+platform display ID and get the refresh rate for display link.
+
+* Source/WebCore/platform/PlatformScreen.cpp:
+* Source/WebCore/platform/ScreenProperties.h:
+* Source/WebCore/platform/wpe/PlatformScreenWPE.cpp:
+(WebCore::widgetDisplayID):
+(WebCore::screenDepth):
+(WebCore::screenDepthPerComponent):
+(WebCore::screenIsMonochrome):
+(WebCore::screenDPI):
+(WebCore::screenRect):
+(WebCore::screenAvailableRect):
+(WebCore::setScreenDPIObserverHandler): Deleted.
+* Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in:
+* Source/WebKit/Shared/WebPageCreationParameters.h:
+* Source/WebKit/Shared/WebPageCreationParameters.serialization.in:
+* Source/WebKit/Shared/WebProcessCreationParameters.h:
+* Source/WebKit/Shared/WebProcessCreationParameters.serialization.in:
+* Source/WebKit/SourcesGTK.txt:
+* Source/WebKit/SourcesWPE.txt:
+* Source/WebKit/UIProcess/API/wpe/WPEWebView.cpp:
+(WKWPE::m_backend):
+(WKWPE::View::~View):
+(WKWPE::View::updateDisplayID):
+* Source/WebKit/UIProcess/API/wpe/WPEWebView.h:
+* Source/WebKit/UIProcess/WebPageProxy.cpp:
+(WebKit::WebPageProxy::creationParameters):
+* Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp:
+(WebKit::findCrtc):
+(WebKit::DisplayVBlankMonitorDRM::create):
+* Source/WebKit/UIProcess/glib/ScreenManager.cpp: Copied from Source/WebKit/UIProcess/gtk/ScreenManager.h.
+(WebKit::ScreenManager::singleton):
+(WebKit::ScreenManager::displayID const):
+(WebKit::ScreenManager::monitor const):
+(WebKit::ScreenManager::addMonitor):
+(WebKit::ScreenManager::removeMonitor):
+(WebKit::ScreenManager::propertiesDidChange const):
+* Source/WebKit/UIProcess/glib/ScreenManager.h: Renamed from Source/WebKit/UIProcess/gtk/ScreenManager.h.
+* Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp:
+(WebKit::WebProcessPool::platformInitializeWebProcess):
+* Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp: Renamed from Source/WebKit/UIProcess/gtk/ScreenManager.cpp.
+(WebKit::ScreenManager::generatePlatformDisplayID):
+(WebKit::ScreenManager::ScreenManager):
+(WebKit::ScreenManager::collectScreenProperties const):
+* Source/WebKit/UIProcess/wpe/ScreenManagerWPE.cpp: Added.
+(WebKit::ScreenManager::generatePlatformDisplayID):
+(WebKit::ScreenManager::ScreenManager):
+(WebKit::ScreenManager::collectScreenProperties const):
+* Source/WebKit/WPEPlatform/CMakeLists.txt:
+* Source/WebKit/WPEPlatform/wpe/WPEDisplay.cpp:
+(wpe_display_class_init):
+(wpe_display_get_n_monitors):
+(wpe_display_get_monitor):
+(wpe_display_monitor_added):
+(wpe_display_monitor_removed):
+(wpeDisplayDispose): Deleted.
+* Source/WebKit/WPEPlatform/wpe/WPEDisplay.h:
+* Source/WebKit/WPEPlatform/wpe/WPEMonitor.cpp: Added.
+(wpeMonitorGetProperty):
+(wpe_monitor_class_init):
+(wpe_monitor_get_id):
+(wpe_monitor_invalidate):
+(wpe_monitor_get_x):
+(wpe_monitor_get_y):
+(wpe_monitor_set_position):
+(wpe_monitor_get_width):
+(wpe_monitor_get_height):
+(wpe_monitor_set_size):
+(wpe_monitor_get_physical_width):
+(wpe_monitor_get_physical_height):
+(wpe_monitor_set_physical_size):
+(wpe_monitor_get_scale):
+(wpe_monitor_set_scale):
+(wpe_monitor_get_refresh_rate):
+(wpe_monitor_set_refresh_rate):
+* Source/WebKit/WPEPlatform/wpe/WPEMonitor.h: Added.
+* Source/WebKit/WPEPlatform/wpe/WPEView.cpp:
+(wpeViewGetProperty):
+(wpe_view_class_init):
+(wpe_view_get_monitor):
+* Source/WebKit/WPEPlatform/wpe/WPEView.h:
+* Source/WebKit/WPEPlatform/wpe/wayland/CMakeLists.txt:
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEDisplayWayland.cpp:
+(wpeDisplayWaylandDispose):
+(wpeDisplayWaylandGetNMonitors):
+(wpeDisplayWaylandGetMonitor):
+(wpeDisplayWaylandFindMonitor):
+(wpe_display_wayland_class_init):
+(wpeDisplayWaylandGetOutput): Deleted.
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEDisplayWaylandPrivate.h:
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEMonitorWayland.cpp: Added.
+(wpeMonitorWaylandInvalidate):
+(wpeMonitorWaylandDispose):
+(wpe_monitor_wayland_class_init):
+(wpe_monitor_wayland_get_wl_output):
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEMonitorWayland.h: Copied from Source/WebKit/WPEPlatform/wpe/wayland/wpe-wayland.h.
+* Source/WebKit/WPEPlatform/wpe/wayland/WPEViewWayland.cpp:
+(wpeViewWaylandConstructed):
+(wpeViewWaylandDispose):
+(wpeViewWaylandGetMonitor):
+(wpe_view_wayland_class_init):
+* Source/WebKit/WPEPlatform/wpe/wayland/wpe-wayland.h:
+* Source/WebKit/WPEPlatform/wpe/wpe-platform.h:
+* Source/WebKit/WebProcess/WebPage/WebPage.cpp:
+(WebKit::m_historyItemClient):
+* Source/WebKit/WebProcess/WebProcess.h:
+* Source/WebKit/WebProcess/WebProcess.messages.in:
+* Source/WebKit/WebProcess/glib/WebProcessGLib.cpp:
+(WebKit::WebProcess::platformInitializeWebProcess):
+
+Canonical link: https://commits.webkit.org/274090@main
+---
+ Source/WebCore/platform/PlatformScreen.cpp    |   4 +-
+ Source/WebCore/platform/ScreenProperties.h    |   2 +-
+ .../platform/wpe/PlatformScreenWPE.cpp        |  62 ++-
+ .../WebCoreArgumentCoders.serialization.in    |   2 +-
+ .../WebKit/Shared/WebPageCreationParameters.h |   3 +
+ ...WebPageCreationParameters.serialization.in |   3 +
+ .../Shared/WebProcessCreationParameters.h     |   4 +-
+ ...ProcessCreationParameters.serialization.in |   2 +-
+ Source/WebKit/SourcesGTK.txt                  |   3 +-
+ Source/WebKit/SourcesWPE.txt                  |   2 +
+ .../WebKit/UIProcess/API/wpe/WPEWebView.cpp   |  19 +
+ Source/WebKit/UIProcess/API/wpe/WPEWebView.h  |   5 +
+ .../mac/RemoteLayerTreeDrawingAreaProxyMac.mm |   2 +
+ Source/WebKit/UIProcess/WebPageProxy.cpp      |   4 +
+ .../glib/DisplayVBlankMonitorDRM.cpp          |  77 ++-
+ .../WebKit/UIProcess/glib/ScreenManager.cpp   |  78 +++
+ .../UIProcess/{gtk => glib}/ScreenManager.h   |  26 +-
+ .../UIProcess/glib/WebProcessPoolGLib.cpp     |  10 +-
+ ...ScreenManager.cpp => ScreenManagerGtk.cpp} |  45 +-
+ .../WebKit/UIProcess/wpe/ScreenManagerWPE.cpp |  95 ++++
+ Source/WebKit/WPEPlatform/CMakeLists.txt      |   2 +
+ Source/WebKit/WPEPlatform/wpe/WPEDisplay.cpp  | 113 ++++
+ Source/WebKit/WPEPlatform/wpe/WPEDisplay.h    |  11 +
+ Source/WebKit/WPEPlatform/wpe/WPEMonitor.cpp  | 527 ++++++++++++++++++
+ Source/WebKit/WPEPlatform/wpe/WPEMonitor.h    |  76 +++
+ Source/WebKit/WPEPlatform/wpe/WPEView.cpp     |  32 ++
+ Source/WebKit/WPEPlatform/wpe/WPEView.h       |  33 +-
+ .../WPEPlatform/wpe/wayland/CMakeLists.txt    |   2 +-
+ .../wpe/wayland/WPEDisplayWayland.cpp         |  54 +-
+ .../wpe/wayland/WPEDisplayWaylandPrivate.h    |   4 +-
+ .../wpe/wayland/WPEMonitorWayland.cpp         | 141 +++++
+ .../wpe/wayland/WPEMonitorWayland.h           |  46 ++
+ .../wpe/wayland/WPEMonitorWaylandPrivate.h    |  30 +
+ .../wpe/wayland/WPEViewWayland.cpp            |  68 ++-
+ .../WPEPlatform/wpe/wayland/wpe-wayland.h     |   1 +
+ Source/WebKit/WPEPlatform/wpe/wpe-platform.h  |   1 +
+ Source/WebKit/WebProcess/WebPage/WebPage.cpp  |   3 +
+ Source/WebKit/WebProcess/WebProcess.h         |   2 +-
+ .../WebKit/WebProcess/WebProcess.messages.in  |   2 +-
+ .../WebKit/WebProcess/glib/WebProcessGLib.cpp |  10 +-
+ 40 files changed, 1464 insertions(+), 142 deletions(-)
+ create mode 100644 Source/WebKit/UIProcess/glib/ScreenManager.cpp
+ rename Source/WebKit/UIProcess/{gtk => glib}/ScreenManager.h (71%)
+ rename Source/WebKit/UIProcess/gtk/{ScreenManager.cpp => ScreenManagerGtk.cpp} (81%)
+ create mode 100644 Source/WebKit/UIProcess/wpe/ScreenManagerWPE.cpp
+ create mode 100644 Source/WebKit/WPEPlatform/wpe/WPEMonitor.cpp
+ create mode 100644 Source/WebKit/WPEPlatform/wpe/WPEMonitor.h
+ create mode 100644 Source/WebKit/WPEPlatform/wpe/wayland/WPEMonitorWayland.cpp
+ create mode 100644 Source/WebKit/WPEPlatform/wpe/wayland/WPEMonitorWayland.h
+ create mode 100644 Source/WebKit/WPEPlatform/wpe/wayland/WPEMonitorWaylandPrivate.h
+
+diff --git a/Source/WebCore/platform/PlatformScreen.cpp b/Source/WebCore/platform/PlatformScreen.cpp
+index 39fbdb1be924d..ae46341ba71c7 100644
+--- a/Source/WebCore/platform/PlatformScreen.cpp
++++ b/Source/WebCore/platform/PlatformScreen.cpp
+@@ -26,7 +26,7 @@
+ #include "config.h"
+ #include "PlatformScreen.h"
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+ 
+ #include "ScreenProperties.h"
+ #include <wtf/NeverDestroyed.h>
+@@ -72,4 +72,4 @@ const ScreenData* screenData(PlatformDisplayID screenDisplayID)
+ 
+ } // namespace WebCore
+ 
+-#endif // PLATFORM(COCOA) || PLATFORM(GTK)
++#endif // PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+diff --git a/Source/WebCore/platform/ScreenProperties.h b/Source/WebCore/platform/ScreenProperties.h
+index bfc75c3f1bbac..c6c8ef374d566 100644
+--- a/Source/WebCore/platform/ScreenProperties.h
++++ b/Source/WebCore/platform/ScreenProperties.h
+@@ -52,6 +52,6 @@ struct ScreenData {
+     DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
+ #endif
+-#if PLATFORM(GTK)
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+     IntSize screenSize; // In millimeters.
+     double dpi;
+ #endif
+diff --git a/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in b/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
+index 60cb2d48e462b..5c46fb7a2a1c1 100644
+--- a/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
++++ b/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in
+@@ -2239,7 +2239,7 @@ header: <WebCore/ScreenProperties.h>
+     WebCore::PlatformGPUID gpuID;
+     WebCore::DynamicRangeMode preferredDynamicRangeMode;
+ #endif
+-#if PLATFORM(GTK)
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+     WebCore::IntSize screenSize;
+     double dpi;
+ #endif
+diff --git a/Source/WebKit/Shared/WebPageCreationParameters.h b/Source/WebKit/Shared/WebPageCreationParameters.h
+index 2ea7cff733553..fa75878f40592 100644
+--- a/Source/WebKit/Shared/WebPageCreationParameters.h
++++ b/Source/WebKit/Shared/WebPageCreationParameters.h
+@@ -105,6 +105,9 @@ struct WebPageCreationParameters {
+ 
+     std::optional<WebCore::FloatRect> viewExposedRect;
+ 
++    std::optional<uint32_t> displayID;
++    std::optional<unsigned> nominalFramesPerSecond;
++
+     bool alwaysShowsHorizontalScroller;
+     bool alwaysShowsVerticalScroller;
+ 
+diff --git a/Source/WebKit/Shared/WebPageCreationParameters.serialization.in b/Source/WebKit/Shared/WebPageCreationParameters.serialization.in
+index 12363533fca5e..5bee2a3eb5a87 100644
+--- a/Source/WebKit/Shared/WebPageCreationParameters.serialization.in
++++ b/Source/WebKit/Shared/WebPageCreationParameters.serialization.in
+@@ -46,6 +46,9 @@ headers: "ArgumentCoders.h"
+ 
+     std::optional<WebCore::FloatRect> viewExposedRect;
+ 
++    std::optional<uint32_t> displayID;
++    std::optional<unsigned> nominalFramesPerSecond;
++
+     bool alwaysShowsHorizontalScroller;
+     bool alwaysShowsVerticalScroller;
+ 
+diff --git a/Source/WebKit/Shared/WebProcessCreationParameters.h b/Source/WebKit/Shared/WebProcessCreationParameters.h
+index 85df7bc9ddcc3..d95844aacd23b 100644
+--- a/Source/WebKit/Shared/WebProcessCreationParameters.h
++++ b/Source/WebKit/Shared/WebProcessCreationParameters.h
+@@ -42,7 +42,7 @@
+ #include <wtf/text/StringHash.h>
+ #include <wtf/text/WTFString.h>
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+ #include <WebCore/ScreenProperties.h>
+ #endif
+ 
+@@ -169,7 +169,7 @@ struct WebProcessCreationParameters {
+     Vector<String> mediaMIMETypes;
+ #endif
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+     WebCore::ScreenProperties screenProperties;
+ #endif
+ 
+diff --git a/Source/WebKit/Shared/WebProcessCreationParameters.serialization.in b/Source/WebKit/Shared/WebProcessCreationParameters.serialization.in
+index 0b8265f8ff27d..2c4c7ccd31217 100644
+--- a/Source/WebKit/Shared/WebProcessCreationParameters.serialization.in
++++ b/Source/WebKit/Shared/WebProcessCreationParameters.serialization.in
+@@ -118,7 +118,7 @@
+     Vector<String> mediaMIMETypes;
+ #endif
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+     WebCore::ScreenProperties screenProperties;
+ #endif
+ 
+diff --git a/Source/WebKit/SourcesGTK.txt b/Source/WebKit/SourcesGTK.txt
+index 2db1af6d6140f..dbd2950cc54d6 100644
+--- a/Source/WebKit/SourcesGTK.txt
++++ b/Source/WebKit/SourcesGTK.txt
+@@ -260,6 +260,7 @@ UIProcess/glib/DisplayLinkGLib.cpp
+ UIProcess/glib/DisplayVBlankMonitor.cpp
+ UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+ UIProcess/glib/DisplayVBlankMonitorTimer.cpp
++UIProcess/glib/ScreenManager.cpp
+ UIProcess/glib/WebPageProxyGLib.cpp
+ UIProcess/glib/WebProcessPoolGLib.cpp
+ UIProcess/glib/WebProcessProxyGLib.cpp
+@@ -278,7 +279,7 @@ UIProcess/gtk/KeyBindingTranslator.cpp
+ UIProcess/gtk/PointerLockManager.cpp @no-unify
+ UIProcess/gtk/PointerLockManagerWayland.cpp @no-unify
+ UIProcess/gtk/PointerLockManagerX11.cpp @no-unify
+-UIProcess/gtk/ScreenManager.cpp @no-unify
++UIProcess/gtk/ScreenManagerGtk.cpp @no-unify
+ UIProcess/gtk/TextCheckerGtk.cpp @no-unify
+ UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
+ UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify
+ 
+diff --git a/Source/WebKit/UIProcess/WebPageProxy.cpp b/Source/WebKit/UIProcess/WebPageProxy.cpp
+index 9a2bae74232d0..c7612aeb06b73 100644
+--- a/Source/WebKit/UIProcess/WebPageProxy.cpp
++++ b/Source/WebKit/UIProcess/WebPageProxy.cpp
+@@ -9800,6 +9800,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
+     parameters.minimumUnobscuredSize = internals().minimumUnobscuredSize;
+     parameters.maximumUnobscuredSize = internals().maximumUnobscuredSize;
+     parameters.viewExposedRect = internals().viewExposedRect;
++    if (m_displayID) {
++        parameters.displayID = m_displayID;
++        parameters.nominalFramesPerSecond = drawingArea.displayNominalFramesPerSecond();
++    }
+     parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
+     parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
+     parameters.suppressScrollbarAnimations = m_suppressScrollbarAnimations;
+diff --git a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+index a74cb9be98513..c9c69df44cd22 100644
+--- a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
++++ b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+@@ -40,9 +40,12 @@
+ #include <xf86drm.h>
+ #include <xf86drmMode.h>
+ 
+-#if PLATFORM(GTK)
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+ #include "ScreenManager.h"
+ #include <WebCore/PlatformScreen.h>
++#endif
++
++#if PLATFORM(GTK)
+ #include <gtk/gtk.h>
+ #endif
+ 
+@@ -52,15 +55,20 @@
+ 
+ namespace WebKit {
+ 
+-#if PLATFORM(GTK)
+-static std::optional<uint32_t> findCrtc(int fd, GdkMonitor* monitor)
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
++static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd, PlatformMonitor* monitor)
+ {
+     drmModeRes* resources = drmModeGetResources(fd);
+     if (!resources)
+         return std::nullopt;
+ 
++#if PLATFORM(GTK)
+     uint32_t widthMM = gdk_monitor_get_width_mm(monitor);
+     uint32_t heightMM = gdk_monitor_get_height_mm(monitor);
++#elif PLATFORM(WPE)
++    uint32_t widthMM = wpe_monitor_get_physical_width(monitor);
++    uint32_t heightMM = wpe_monitor_get_physical_height(monitor);
++#endif
+ 
+     // First find connectors matching the size.
+     Vector<drmModeConnector*, 1> connectors;
+@@ -87,13 +95,18 @@ static std::optional<uint32_t> findCrtc(int fd, GdkMonitor* monitor)
+         return std::nullopt;
+     }
+ 
+-    std::optional<uint32_t> returnValue;
++    std::optional<std::pair<uint32_t, uint32_t>> returnValue;
+ 
+     // FIXME: if there are multiple connectors, check other properties.
+     if (drmModeEncoder* encoder = drmModeGetEncoder(fd, connectors[0]->encoder_id)) {
+         for (int i = 0; i < resources->count_crtcs; ++i) {
+             if (resources->crtcs[i] == encoder->crtc_id) {
+-                returnValue = i;
++#if PLATFORM(GTK)
++                auto refreshRate = gdk_monitor_get_refresh_rate(monitor);
++#elif PLATFORM(WPE)
++                auto refreshRate = wpe_monitor_get_refresh_rate(monitor);
++#endif
++                returnValue = { i, refreshRate };
+                 break;
+             }
+         }
+@@ -107,7 +120,9 @@ static std::optional<uint32_t> findCrtc(int fd, GdkMonitor* monitor)
+ 
+     return returnValue;
+ }
+-#elif PLATFORM(WPE)
++#endif
++
++#if PLATFORM(WPE)
+ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
+ {
+     drmModeRes* resources = drmModeGetResources(fd);
+@@ -176,9 +191,32 @@ static int crtcBitmaskForIndex(uint32_t crtcIndex)
+ 
+ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
+ {
++#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
++    static bool usingWPEPlatformAPI = !!g_type_class_peek(WPE_TYPE_DISPLAY);
++#endif
++
++#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
++    PlatformMonitor* monitor = nullptr;
++    if (usingWPEPlatformAPI) {
++        monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
++        if (!monitor) {
++            RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
++            return nullptr;
++        }
++    }
++#endif
++
++#if PLATFORM(GTK)
++    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
++    if (!monitor) {
++        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
++        return nullptr;
++    }
++#endif
++
+ #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+     String filename;
+-    if (g_type_class_peek(WPE_TYPE_DISPLAY))
++    if (usingWPEPlatformAPI)
+         filename = String::fromUTF8(wpe_render_device());
+     else
+         filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
+@@ -197,28 +235,21 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
+     }
+ 
+ #if PLATFORM(GTK)
+-    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
+-    if (!monitor) {
+-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+-        return nullptr;
+-    }
+-
+-    auto crtcIndex = findCrtc(fd.value(), monitor);
+-    if (!crtcIndex) {
+-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
+-        return nullptr;
+-    }
+-
+-    auto crtcBitmask = crtcBitmaskForIndex(crtcIndex.value());
++    auto crtcInfo = findCrtc(fd.value(), monitor);
+ #elif PLATFORM(WPE)
++#if ENABLE(WPE_PLATFORM)
++    auto crtcInfo = monitor ? findCrtc(fd.value(), monitor) : findCrtc(fd.value());
++#else
+     auto crtcInfo = findCrtc(fd.value());
++#endif
++#endif
++
+     if (!crtcInfo) {
+         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no CRTC found", displayID);
+         return nullptr;
+     }
+ 
+     auto crtcBitmask = crtcBitmaskForIndex(crtcInfo->first);
+-#endif
+ 
+     drmVBlank vblank;
+     vblank.request.type = static_cast<drmVBlankSeqType>(DRM_VBLANK_RELATIVE | crtcBitmask);
+@@ -230,11 +261,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
+         return nullptr;
+     }
+ 
+-#if PLATFORM(GTK)
+-    return makeUnique<DisplayVBlankMonitorDRM>(gdk_monitor_get_refresh_rate(monitor) / 1000, WTFMove(fd), crtcBitmask);
+-#elif PLATFORM(WPE)
+     return makeUnique<DisplayVBlankMonitorDRM>(crtcInfo->second / 1000, WTFMove(fd), crtcBitmask);
+-#endif
+ }
+ 
+ DisplayVBlankMonitorDRM::DisplayVBlankMonitorDRM(unsigned refreshRate, UnixFileDescriptor&& fd, int crtcBitmask)
+diff --git a/Source/WebKit/UIProcess/glib/ScreenManager.cpp b/Source/WebKit/UIProcess/glib/ScreenManager.cpp
+new file mode 100644
+index 0000000000000..52628e6ba9903
+--- /dev/null
++++ b/Source/WebKit/UIProcess/glib/ScreenManager.cpp
+@@ -0,0 +1,78 @@
++/*
++ * Copyright (C) 2023 Igalia S.L.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
++ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
++ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
++ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
++ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
++ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#include "config.h"
++#include "ScreenManager.h"
++
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
++#include "WebProcessMessages.h"
++#include "WebProcessPool.h"
++
++namespace WebKit {
++
++ScreenManager& ScreenManager::singleton()
++{
++    static NeverDestroyed<ScreenManager> manager;
++    return manager;
++}
++
++PlatformDisplayID ScreenManager::displayID(PlatformMonitor* monitor) const
++{
++    return m_monitorToDisplayIDMap.get(monitor);
++}
++
++PlatformMonitor* ScreenManager::monitor(PlatformDisplayID displayID) const
++{
++    for (const auto& iter : m_monitorToDisplayIDMap) {
++        if (iter.value == displayID)
++            return iter.key;
++    }
++    return nullptr;
++}
++
++void ScreenManager::addMonitor(PlatformMonitor* monitor)
++{
++    m_monitors.append(monitor);
++    m_monitorToDisplayIDMap.add(monitor, generatePlatformDisplayID(monitor));
++}
++
++void ScreenManager::removeMonitor(PlatformMonitor* monitor)
++{
++    m_monitorToDisplayIDMap.remove(monitor);
++    m_monitors.removeFirstMatching([monitor](const auto& item) {
++        return item.get() == monitor;
++    });
++}
++
++void ScreenManager::propertiesDidChange() const
++{
++    auto properties = collectScreenProperties();
++    for (auto& pool : WebProcessPool::allProcessPools())
++        pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
++}
++
++} // namespace WebKit
++
++#endif // PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+diff --git a/Source/WebKit/UIProcess/gtk/ScreenManager.h b/Source/WebKit/UIProcess/glib/ScreenManager.h
+similarity index 71%
+rename from Source/WebKit/UIProcess/gtk/ScreenManager.h
+rename to Source/WebKit/UIProcess/glib/ScreenManager.h
+index e46fc1900bf3c..4fc1199e634b0 100644
+--- a/Source/WebKit/UIProcess/gtk/ScreenManager.h
++++ b/Source/WebKit/UIProcess/glib/ScreenManager.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2023 Igalia S.L.
++ * Copyright (C) 2023,2024 Igalia S.L.
+  *
+  * Redistribution and use in source and binary forms, with or without
+  * modification, are permitted provided that the following conditions
+@@ -25,13 +25,21 @@
+ 
+ #pragma once
+ 
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
++
+ #include <WebCore/ScreenProperties.h>
+ #include <wtf/HashMap.h>
+ #include <wtf/NeverDestroyed.h>
+ #include <wtf/Vector.h>
+ #include <wtf/glib/GRefPtr.h>
+ 
++#if PLATFORM(GTK)
+ typedef struct _GdkMonitor GdkMonitor;
++using PlatformMonitor = GdkMonitor;
++#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
++typedef struct _WPEMonitor WPEMonitor;
++using PlatformMonitor = WPEMonitor;
++#endif
+ 
+ namespace WebKit {
+ 
+@@ -43,20 +51,24 @@ class ScreenManager {
+ public:
+     static ScreenManager& singleton();
+ 
+-    PlatformDisplayID displayID(GdkMonitor*) const;
+-    GdkMonitor* monitor(PlatformDisplayID) const;
++    PlatformDisplayID displayID(PlatformMonitor*) const;
++    PlatformMonitor* monitor(PlatformDisplayID) const;
+ 
+     WebCore::ScreenProperties collectScreenProperties() const;
+ 
+ private:
+     ScreenManager();
+ 
+-    void addMonitor(GdkMonitor*);
+-    void removeMonitor(GdkMonitor*);
++    static PlatformDisplayID generatePlatformDisplayID(PlatformMonitor*);
++
++    void addMonitor(PlatformMonitor*);
++    void removeMonitor(PlatformMonitor*);
+     void propertiesDidChange() const;
+ 
+-    Vector<GRefPtr<GdkMonitor>, 1> m_monitors;
+-    HashMap<GdkMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
++    Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
++    HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
+ };
+ 
+ } // namespace WebKit
++
++#endif // PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+diff --git a/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp b/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
+index d26efed5f6bd8..f62fef3f76288 100644
+--- a/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
++++ b/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
+@@ -48,12 +48,15 @@
+ #include <wpe/wpe.h>
+ #endif
+ 
++#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
++#include "ScreenManager.h"
++#endif
++
+ #if PLATFORM(GTK)
+ #if USE(EGL)
+ #include "AcceleratedBackingStoreDMABuf.h"
+ #endif
+ #include "GtkSettingsManager.h"
+-#include "ScreenManager.h"
+ #endif
+ 
+ #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+@@ -160,6 +163,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
+     parameters.gtkSettings = GtkSettingsManager::singleton().settingsState();
+     parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
+ #endif
++
++#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
++    if (usingWPEPlatformAPI)
++        parameters.screenProperties = ScreenManager::singleton().collectScreenProperties();
++#endif
+ }
+ 
+ void WebProcessPool::platformInvalidateContext()
+diff --git a/Source/WebKit/UIProcess/gtk/ScreenManager.cpp b/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
+similarity index 81%
+rename from Source/WebKit/UIProcess/gtk/ScreenManager.cpp
+rename to Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
+index 0f628fcac6520..536accd95fee9 100644
+--- a/Source/WebKit/UIProcess/gtk/ScreenManager.cpp
++++ b/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
+@@ -27,8 +27,6 @@
+ #include "ScreenManager.h"
+ 
+ #include "GtkSettingsManager.h"
+-#include "WebProcessMessages.h"
+-#include "WebProcessPool.h"
+ #include <WebCore/GtkUtilities.h>
+ #include <WebCore/PlatformScreen.h>
+ #include <cmath>
+@@ -36,13 +34,7 @@
+ namespace WebKit {
+ using namespace WebCore;
+ 
+-ScreenManager& ScreenManager::singleton()
+-{
+-    static NeverDestroyed<ScreenManager> manager;
+-    return manager;
+-}
+-
+-static PlatformDisplayID generatePlatformDisplayID()
++PlatformDisplayID ScreenManager::generatePlatformDisplayID(GdkMonitor*)
+ {
+     static PlatformDisplayID id;
+     return ++id;
+@@ -84,41 +76,6 @@ ScreenManager::ScreenManager()
+ #endif
+ }
+ 
+-PlatformDisplayID ScreenManager::displayID(GdkMonitor* monitor) const
+-{
+-    return m_monitorToDisplayIDMap.get(monitor);
+-}
+-
+-GdkMonitor* ScreenManager::monitor(PlatformDisplayID displayID) const
+-{
+-    for (const auto& iter : m_monitorToDisplayIDMap) {
+-        if (iter.value == displayID)
+-            return iter.key;
+-    }
+-    return nullptr;
+-}
+-
+-void ScreenManager::addMonitor(GdkMonitor* monitor)
+-{
+-    m_monitors.append(monitor);
+-    m_monitorToDisplayIDMap.add(monitor, generatePlatformDisplayID());
+-}
+-
+-void ScreenManager::removeMonitor(GdkMonitor* monitor)
+-{
+-    m_monitorToDisplayIDMap.remove(monitor);
+-    m_monitors.removeFirstMatching([monitor](const auto& item) {
+-        return item.get() == monitor;
+-    });
+-}
+-
+-void ScreenManager::propertiesDidChange() const
+-{
+-    auto properties = collectScreenProperties();
+-    for (auto& pool : WebProcessPool::allProcessPools())
+-        pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
+-}
+-
+ ScreenProperties ScreenManager::collectScreenProperties() const
+ {
+ #if USE(GTK4)
+ 
+diff --git a/Source/WebKit/WebProcess/WebPage/WebPage.cpp b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+index 62c6599edb668..b443fc73cca46 100644
+--- a/Source/WebKit/WebProcess/WebPage/WebPage.cpp
++++ b/Source/WebKit/WebProcess/WebPage/WebPage.cpp
+@@ -751,6 +751,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
+ 
+     updateAfterDrawingAreaCreation(parameters);
+ 
++    if (parameters.displayID)
++        windowScreenDidChange(*parameters.displayID, parameters.nominalFramesPerSecond);
++
+     WebStorageNamespaceProvider::incrementUseCount(sessionStorageNamespaceIdentifier());
+ 
+     updatePreferences(parameters.store);
+diff --git a/Source/WebKit/WebProcess/WebProcess.h b/Source/WebKit/WebProcess/WebProcess.h
+index 6873c9821f01f..686d385ab40ae 100644
+--- a/Source/WebKit/WebProcess/WebProcess.h
++++ b/Source/WebKit/WebProcess/WebProcess.h
+@@ -604,7 +604,7 @@ class WebProcess : public AuxiliaryProcess
+     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
+ #endif
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+     void setScreenProperties(const WebCore::ScreenProperties&);
+ #endif
+ 
+diff --git a/Source/WebKit/WebProcess/WebProcess.messages.in b/Source/WebKit/WebProcess/WebProcess.messages.in
+index c03d868dd326e..4af7663e3501f 100644
+--- a/Source/WebKit/WebProcess/WebProcess.messages.in
++++ b/Source/WebKit/WebProcess/WebProcess.messages.in
+@@ -109,7 +109,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
+     MarkIsNoLongerPrewarmed()
+     GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
+ 
+-#if PLATFORM(COCOA) || PLATFORM(GTK)
++#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
+ #endif
+ #if PLATFORM(MAC)
+diff --git a/Source/WebKit/WebProcess/glib/WebProcessGLib.cpp b/Source/WebKit/WebProcess/glib/WebProcessGLib.cpp
+index 52079a0b59523..99a3a8930ac33 100644
+--- a/Source/WebKit/WebProcess/glib/WebProcessGLib.cpp
++++ b/Source/WebKit/WebProcess/glib/WebProcessGLib.cpp
+@@ -195,8 +195,16 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
+ 
+ #if PLATFORM(GTK)
+     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
++#endif
++
++#if PLATFORM(GTK)
+     WebCore::setScreenProperties(parameters.screenProperties);
+ #endif
++
++#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
++    if (!m_dmaBufRendererBufferMode.isEmpty())
++        WebCore::setScreenProperties(parameters.screenProperties);
++#endif
+ }
+ 
+ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
+@@ -248,7 +256,7 @@ void WebProcess::releaseSystemMallocMemory()
+ #endif
+ }
+ 
+-#if PLATFORM(GTK)
++#if PLATFORM(GTK) || PLATFORM(WPE)
+ void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
+ {
+     WebCore::setScreenProperties(properties);
+
+From cad5d7e5ed760db4515ca25da8080fe5e85b7e90 Mon Sep 17 00:00:00 2001
+From: Carlos Garcia Campos <cgarcia@igalia.com>
+Date: Tue, 6 Feb 2024 01:26:25 -0800
+Subject: [PATCH] [GTK][WPE] Initialize display ID as early as possible
+ https://bugs.webkit.org/show_bug.cgi?id=268744
+
+Reviewed by Adrian Perez de Castro.
+
+In GTK we currently get the display ID when the toplevel window is
+realized and gets a monitor assigned. This is happening right after the
+web page is initialized, which means we always create the web page with
+0 display ID and right after that a window screen change happens.
+Because of this we end up creating two display link monitors. We can
+avoid this by initializing the web view display id as soon as possible
+using the primary display ID, that in most of the cases will be then one
+used when the monitor is assigned to the toplevel.
+
+This patch also ensures we never create a DRM vblank monitor when
+display ID is 0, since that's never a valid monitor. We just
+fallback to the timer vblank monitor in that case.
+
+* Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:
+(webkitWebViewBaseConstructed):
+* Source/WebKit/UIProcess/API/wpe/WPEWebView.cpp:
+(WKWPE::m_backend):
+* Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp:
+(WebKit::DisplayVBlankMonitor::create):
+* Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp:
+(WebKit::DisplayVBlankMonitorDRM::create):
+* Source/WebKit/UIProcess/glib/ScreenManager.h:
+(WebKit::ScreenManager::primaryDisplayID const):
+* Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp:
+(WebKit::ScreenManager::ScreenManager):
+(WebKit::ScreenManager::updatePrimaryDisplayID):
+(WebKit::ScreenManager::collectScreenProperties const):
+* Source/WebKit/UIProcess/wpe/ScreenManagerWPE.cpp:
+(WebKit::ScreenManager::ScreenManager):
+(WebKit::ScreenManager::updatePrimaryDisplayID):
+(WebKit::ScreenManager::collectScreenProperties const):
+
+Canonical link: https://commits.webkit.org/274136@main
+---
+ .../UIProcess/API/gtk/WebKitWebViewBase.cpp   |  2 ++
+ .../WebKit/UIProcess/API/wpe/WPEWebView.cpp   |  9 ++++-
+ .../UIProcess/glib/DisplayVBlankMonitor.cpp   |  4 +--
+ .../glib/DisplayVBlankMonitorDRM.cpp          |  5 ++-
+ Source/WebKit/UIProcess/glib/ScreenManager.h  |  3 ++
+ .../WebKit/UIProcess/gtk/ScreenManagerGtk.cpp | 35 +++++++++++++++----
+ .../WebKit/UIProcess/wpe/ScreenManagerWPE.cpp | 18 +++++++---
+ 7 files changed, 60 insertions(+), 16 deletions(-)
+
+diff --git a/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp b/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp
+index 60727fc9e2ad3..55701f7211548 100644
+--- a/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp
++++ b/Source/WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp
+@@ -2432,6 +2432,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
+     };
+     g_signal_connect_object(settings, "notify::gtk-theme-name", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
+     g_signal_connect_object(settings, "notify::gtk-application-prefer-dark-theme", G_CALLBACK(callback), viewWidget, G_CONNECT_SWAPPED);
++
++    priv->displayID = ScreenManager::singleton().primaryDisplayID();
+ }
+ 
+ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
+diff --git a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
+index 1c286f0715ae5..ccb1ce062649e 100644
+--- a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
++++ b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
+@@ -40,8 +40,8 @@ namespace WebKit {
+ 
+ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitor::create(PlatformDisplayID displayID)
+ {
+-    const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
+-    if (forceTimer && strcmp(forceTimer, "0"))
++    static const char* forceTimer = getenv("WEBKIT_FORCE_VBLANK_TIMER");
++    if (!displayID || (forceTimer && strcmp(forceTimer, "0")))
+         return DisplayVBlankMonitorTimer::create();
+ 
+ #if USE(LIBDRM)
+diff --git a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+index c9c69df44cd22..bbb7655a9539f 100644
+--- a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
++++ b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitorDRM.cpp
+@@ -42,7 +42,6 @@
+ 
+ #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+ #include "ScreenManager.h"
+-#include <WebCore/PlatformScreen.h>
+ #endif
+ 
+ #if PLATFORM(GTK)
+@@ -198,7 +197,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
+ #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+     PlatformMonitor* monitor = nullptr;
+     if (usingWPEPlatformAPI) {
+-        monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
++        monitor = ScreenManager::singleton().monitor(displayID);
+         if (!monitor) {
+             RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+             return nullptr;
+@@ -207,7 +206,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
+ #endif
+ 
+ #if PLATFORM(GTK)
+-    auto* monitor = ScreenManager::singleton().monitor(displayID ? displayID : WebCore::primaryScreenDisplayID());
++    auto* monitor = ScreenManager::singleton().monitor(displayID);
+     if (!monitor) {
+         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no monitor found", displayID);
+         return nullptr;
+diff --git a/Source/WebKit/UIProcess/glib/ScreenManager.h b/Source/WebKit/UIProcess/glib/ScreenManager.h
+index 4fc1199e634b0..3675fbf3bc72b 100644
+--- a/Source/WebKit/UIProcess/glib/ScreenManager.h
++++ b/Source/WebKit/UIProcess/glib/ScreenManager.h
+@@ -53,6 +53,7 @@ class ScreenManager {
+ 
+     PlatformDisplayID displayID(PlatformMonitor*) const;
+     PlatformMonitor* monitor(PlatformDisplayID) const;
++    PlatformDisplayID primaryDisplayID() const { return m_primaryDisplayID; }
+ 
+     WebCore::ScreenProperties collectScreenProperties() const;
+ 
+@@ -63,10 +64,12 @@ class ScreenManager {
+ 
+     void addMonitor(PlatformMonitor*);
+     void removeMonitor(PlatformMonitor*);
++    void updatePrimaryDisplayID();
+     void propertiesDidChange() const;
+ 
+     Vector<GRefPtr<PlatformMonitor>, 1> m_monitors;
+     HashMap<PlatformMonitor*, PlatformDisplayID> m_monitorToDisplayIDMap;
++    PlatformDisplayID m_primaryDisplayID { 0 };
+ };
+ 
+ } // namespace WebKit
+diff --git a/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp b/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
+index 536accd95fee9..39b61264e0431 100644
+--- a/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
++++ b/Source/WebKit/UIProcess/gtk/ScreenManagerGtk.cpp
+@@ -57,6 +57,7 @@ ScreenManager::ScreenManager()
+             auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, index + i)));
+             manager->addMonitor(monitor.get());
+         }
++        manager->updatePrimaryDisplayID();
+         manager->propertiesDidChange();
+     }), this);
+ #else
+@@ -67,20 +68,44 @@ ScreenManager::ScreenManager()
+     }
+     g_signal_connect(display, "monitor-added", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
+         manager->addMonitor(monitor);
++        manager->updatePrimaryDisplayID();
+         manager->propertiesDidChange();
+     }), this);
+     g_signal_connect(display, "monitor-removed", G_CALLBACK(+[](GdkDisplay*, GdkMonitor* monitor, ScreenManager* manager) {
+         manager->removeMonitor(monitor);
++        manager->updatePrimaryDisplayID();
+         manager->propertiesDidChange();
+     }), this);
+ #endif
++    updatePrimaryDisplayID();
+ }
+ 
+-ScreenProperties ScreenManager::collectScreenProperties() const
++void ScreenManager::updatePrimaryDisplayID()
+ {
++    auto* display = gdk_display_get_default();
+ #if USE(GTK4)
+-    GdkMonitor* primaryMonitor = nullptr;
++    // GTK4 doesn't have the concept of primary monitor, so we always use the first one.
++    auto* monitors = gdk_display_get_monitors(display);
++    if (!g_list_model_get_n_items(monitors)) {
++        m_primaryDisplayID = 0;
++        return;
++    }
++
++    auto monitor = adoptGRef(GDK_MONITOR(g_list_model_get_item(monitors, 0)));
++    m_primaryDisplayID = displayID(monitor.get());
+ #else
++    auto* primaryMonitor = gdk_display_get_primary_monitor(display);
++    if (!primaryMonitor) {
++        if (gdk_display_get_n_monitors(display))
++            primaryMonitor = gdk_display_get_monitor(display, 0);
++    }
++    m_primaryDisplayID = primaryMonitor ? displayID(primaryMonitor) : 0;
++#endif
++}
++
++ScreenProperties ScreenManager::collectScreenProperties() const
++{
++#if !USE(GTK4)
+     auto systemVisual = [](GdkDisplay* display) -> GdkVisual* {
+         if (auto* screen = gdk_display_get_default_screen(display))
+             return gdk_screen_get_system_visual(screen);
+@@ -89,15 +114,13 @@ ScreenProperties ScreenManager::collectScreenProperties() const
+     };
+ 
+     auto* display = gdk_display_get_default();
+-    auto* primaryMonitor = gdk_display_get_primary_monitor(display);
+ #endif
+ 
+     ScreenProperties properties;
++    properties.primaryDisplayID = m_primaryDisplayID;
++
+     for (const auto& iter : m_monitorToDisplayIDMap) {
+         GdkMonitor* monitor = iter.key;
+-        if (!properties.primaryDisplayID && (!primaryMonitor || primaryMonitor == monitor))
+-            properties.primaryDisplayID = iter.value;
+-
+         ScreenData data;
+         GdkRectangle workArea;
+         monitorWorkArea(monitor, &workArea);
+
+From 0a61478183a9db5ee3be866b5106eabd336a0be1 Mon Sep 17 00:00:00 2001
+From: Carlos Garcia Campos <cgarcia@igalia.com>
+Date: Wed, 7 Feb 2024 05:34:01 -0800
+Subject: [PATCH] [GTK][WPE] Do not use real time priority for the display link
+ thread https://bugs.webkit.org/show_bug.cgi?id=268900
+
+Reviewed by Michael Catanzaro.
+
+In some cases it can cause the rtkit daemon to kill the ui process due
+to CPU usage limit.
+
+* Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp:
+(WebKit::DisplayVBlankMonitor::startThreadIfNeeded):
+
+Canonical link: https://commits.webkit.org/274210@main
+---
+ Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
+index ccb1ce062649e..e225009c361ce 100644
+--- a/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
++++ b/Source/WebKit/UIProcess/glib/DisplayVBlankMonitor.cpp
+@@ -97,7 +97,7 @@ bool DisplayVBlankMonitor::startThreadIfNeeded()
+             if (active)
+                 m_handler();
+         }
+-    }, ThreadType::Graphics, Thread::QOS::UserInteractive);
++    }, ThreadType::Graphics, Thread::QOS::Default);
+     return true;
+ }
+ 

@@ -1,0 +1,37 @@
+From f943829dab8263fbbab7a951f9a12f48919d7648 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sat, 11 May 2024 15:30:23 +0000
+Subject: [PATCH] Revert meson.build commit: 58581ac4a7c5ddfe52fa507dda7b82913fc380c6
+
+---
+ meson.build | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 64e497d..737cf6c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -4,9 +4,6 @@ project(
+   meson_version: '>= 0.53.0'
+ )
+ 
+-# Importing modules
+-fs = import('fs')
+-
+ gnome  = import('gnome')
+ i18n   = import('i18n')
+ python = import('python')
+@@ -60,10 +57,6 @@ pkgdatadir = datadir / meson.project_name()
+ #bindir = join_paths(get_option('prefix'), get_option('bindir'))
+ podir = meson.source_root() / 'po'
+ 
+-if not fs.exists(join_paths(pkgdatadir, 'libs/reveal.js'))
+-  error('No valid reveal.js installation found')
+-endif
+-
+ subdir('data')
+ #subdir('help')
+ subdir('po')
+-- 
+GitLab
+

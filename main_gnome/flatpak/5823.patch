@@ -1,0 +1,80 @@
+From 9d60df4d0c889d2ff6d3d0f8bd71998f9bc49f9f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hubert=20Figui=C3=A8re?= <hub@figuiere.net>
+Date: Sun, 12 May 2024 17:37:54 -0400
+Subject: [PATCH] flatpak-dir: Fix a memory leak when installing a package
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The path was clobbered make the g_autoptr no work
+
+Signed-off-by: Hubert Figuière <hub@figuiere.net>
+---
+ common/flatpak-dir.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/common/flatpak-dir.c b/common/flatpak-dir.c
+index 3c3acbd933..dfe69cf5c4 100644
+--- a/common/flatpak-dir.c
++++ b/common/flatpak-dir.c
+@@ -1952,6 +1952,8 @@ flatpak_ensure_system_user_cache_dir_location (GError **error)
+       (st_buf.st_mode & 0777) == 0755)
+     return g_file_new_for_path (path);
+ 
++  g_clear_pointer (&path, g_free);
++
+   path = g_strdup ("/var/tmp/flatpak-cache-XXXXXX");
+ 
+   if (g_mkdtemp_full (path, 0755) == NULL)
+
+From ef575a40dadbd6c66f0b4ce6f4859e3d4b10cbf5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Hubert=20Figui=C3=A8re?= <hub@figuiere.net>
+Date: Thu, 23 May 2024 20:44:19 -0400
+Subject: [PATCH] Fix a memory leak in flatpak-update
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Close https://github.com/flatpak/flatpak/issues/5816
+
+Signed-off-by: Hubert Figuière <hub@figuiere.net>
+---
+ app/flatpak-cli-transaction.c   | 4 ++--
+ app/flatpak-quiet-transaction.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/app/flatpak-cli-transaction.c b/app/flatpak-cli-transaction.c
+index ee7030df29..ac8a724e2f 100644
+--- a/app/flatpak-cli-transaction.c
++++ b/app/flatpak-cli-transaction.c
+@@ -160,7 +160,7 @@ install_authenticator (FlatpakTransaction            *old_transaction,
+   g_autoptr(FlatpakTransaction)  transaction2 = NULL;
+   g_autoptr(GError) local_error = NULL;
+   g_autoptr(FlatpakInstallation) installation = flatpak_transaction_get_installation (old_transaction);
+-  FlatpakDir *dir = flatpak_installation_get_dir (installation, NULL);
++  g_autoptr(FlatpakDir) dir = flatpak_installation_get_dir (installation, NULL);
+ 
+   if (dir == NULL)
+     {
+@@ -889,7 +889,7 @@ end_of_lifed_with_rebase (FlatpakTransaction *transaction,
+   EolAction old_action = EOL_UNDECIDED;
+   gboolean can_rebase = rebased_to_ref != NULL && remote != NULL;
+   g_autoptr(FlatpakInstallation) installation = flatpak_transaction_get_installation (transaction);
+-  FlatpakDir *dir = flatpak_installation_get_dir (installation, NULL);
++  g_autoptr(FlatpakDir) dir = flatpak_installation_get_dir (installation, NULL);
+ 
+   if (ref == NULL)
+     return FALSE; /* Shouldn't happen, the ref should be valid */
+diff --git a/app/flatpak-quiet-transaction.c b/app/flatpak-quiet-transaction.c
+index 7b74e2b251..76f0f95803 100644
+--- a/app/flatpak-quiet-transaction.c
++++ b/app/flatpak-quiet-transaction.c
+@@ -191,7 +191,7 @@ install_authenticator (FlatpakTransaction            *old_transaction,
+   g_autoptr(FlatpakTransaction)  transaction2 = NULL;
+   g_autoptr(GError) local_error = NULL;
+   g_autoptr(FlatpakInstallation) installation = flatpak_transaction_get_installation (old_transaction);
+-  FlatpakDir *dir = flatpak_installation_get_dir (installation, NULL);
++  g_autoptr(FlatpakDir) dir = flatpak_installation_get_dir (installation, NULL);
+ 
+   if (dir == NULL)
+     {

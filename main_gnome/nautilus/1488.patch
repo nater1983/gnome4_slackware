@@ -1,0 +1,35 @@
+From 8d772b0981fda386c195e05489e11e48fdab7957 Mon Sep 17 00:00:00 2001
+From: Khalid Abu Shawarib <khalid.shawarib@gmail.com>
+Date: Sat, 13 Apr 2024 11:54:03 +0300
+Subject: [PATCH] file-utilities: Fix double free
+
+Fixes: #3389
+---
+ src/nautilus-file-utilities.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/nautilus-file-utilities.c b/src/nautilus-file-utilities.c
+index 8ad906051b..edc7bb5ed0 100644
+--- a/src/nautilus-file-utilities.c
++++ b/src/nautilus-file-utilities.c
+@@ -830,7 +830,7 @@ nautilus_get_common_filename_prefix (GList *file_list,
+ {
+     g_autoptr (GPtrArray) file_names = NULL;
+     g_autoptr (GPtrArray) directory_names = NULL;
+-    g_autofree char *result_files = NULL;
++    char *result_files = NULL;
+     g_autofree char *result = NULL;
+     g_autofree char *result_trimmed = NULL;
+ 
+@@ -868,7 +868,7 @@ nautilus_get_common_filename_prefix (GList *file_list,
+ 
+     if (directory_names->len == 0)
+     {
+-        return g_steal_pointer (&result_files);
++        return result_files;
+     }
+ 
+     if (result_files != NULL)
+-- 
+GitLab
+

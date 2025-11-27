@@ -1,0 +1,365 @@
+# From 2cff981870efd288787671b14f79bfa1cffac60d Mon Sep 17 00:00:00 2001
+# From: Corey Berla <corey@berla.me>
+# Date: Wed, 3 May 2023 15:50:08 -0700
+# Subject: [PATCH] properties: Rename page_provider to model_provider and clean up
+
+Be consistent because we are providing a model now
+
+diff --git a/meson.build b/meson.build
+index 2122cd894..54425fa6f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -167,7 +167,7 @@ if ev_platform == 'gnome'
+   # *** Nautilus property page build ***
+   enable_nautilus = get_option('nautilus')
+   if enable_nautilus
+-    libnautilus_extension_dep = dependency('libnautilus-extension', version: ['>= 3.28.0', '< 42.20'])
++    libnautilus_extension_dep = dependency('libnautilus-extension-4', version: '>= 45',)
+     nautilus_extension_dir = libnautilus_extension_dep.get_variable(pkgconfig: 'extensiondir', pkgconfig_define: ['libdir', ev_libdir])
+   endif
+
+-- 
+GitLab
+
+diff --git a/properties/ev-properties-main.c b/properties/ev-properties-main.c
+index 99f5e9fd2..cfcc42289 100644
+--- a/properties/ev-properties-main.c
++++ b/properties/ev-properties-main.c
+@@ -41,9 +41,9 @@
+ 
+ static GType epp_type = 0;
+ static void property_page_provider_iface_init
+-	(NautilusPropertyPageProviderIface *iface);
+-static GList *ev_properties_get_pages
+-	(NautilusPropertyPageProvider *provider, GList *files);
++	(NautilusPropertiesModelProviderInterface *iface);
++static GList *ev_properties_get_models
++	(NautilusPropertiesModelProvider *provider, GList *files);
+ 
+ static void
+ ev_properties_plugin_register_type (GTypeModule *module)
+@@ -70,29 +70,109 @@ ev_properties_plugin_register_type (GTypeModule *module)
+ 			&info, 0);
+ 	g_type_module_add_interface (module,
+ 			epp_type,
+-			NAUTILUS_TYPE_PROPERTY_PAGE_PROVIDER,
++			NAUTILUS_TYPE_PROPERTIES_MODEL_PROVIDER,
+ 			&property_page_provider_iface_info);
+ }
+ 
+ static void
+-property_page_provider_iface_init (NautilusPropertyPageProviderIface *iface)
++property_page_provider_iface_init (NautilusPropertiesModelProviderInterface *iface)
+ {
+-	iface->get_pages = ev_properties_get_pages;
++	iface->get_models = ev_properties_get_models;
++}
++
++static GListModel *
++build_properties (EvDocument *document)
++{
++	EvDocumentInfo *info = ev_document_get_info (document);
++	GListStore *model = g_list_store_new (NAUTILUS_TYPE_PROPERTIES_ITEM);
++	const char *uri = ev_document_get_uri (document);
++	GDateTime *datetime = NULL;
++	char *text;
++
++#define SET_PROPERTY(p, value) 	do  {				\
++	g_list_store_append (model, 				\
++		nautilus_properties_item_new (_(properties_info[p##_PROPERTY].label), value)); \
++	} while (0)
++
++#define FIELD_SET_PROPERTY(p, value) 			\
++	if (info->fields_mask & EV_DOCUMENT_INFO_##p) {	\
++		SET_PROPERTY (p, value);		\
++	}
++
++	FIELD_SET_PROPERTY (TITLE, info->title);
++	SET_PROPERTY (URI, uri);
++	FIELD_SET_PROPERTY (SUBJECT, info->subject);
++	FIELD_SET_PROPERTY (AUTHOR, info->author);
++	FIELD_SET_PROPERTY (KEYWORDS, info->keywords);
++	FIELD_SET_PROPERTY (PRODUCER, info->producer);
++	FIELD_SET_PROPERTY (CREATOR, info->creator);
++
++        datetime = ev_document_info_get_created_datetime (info);
++        if (datetime != NULL) {
++                text = ev_document_misc_format_datetime (datetime);
++                SET_PROPERTY (CREATION_DATE, text);
++                g_free (text);
++        } else {
++                SET_PROPERTY (CREATION_DATE, NULL);
++        }
++        datetime = ev_document_info_get_modified_datetime (info);
++        if (datetime != NULL) {
++                text = ev_document_misc_format_datetime (datetime);
++                SET_PROPERTY (MOD_DATE, text);
++                g_free (text);
++        } else {
++                SET_PROPERTY (MOD_DATE, NULL);
++        }
++
++	FIELD_SET_PROPERTY (FORMAT, info->format);
++
++	if (info->fields_mask & EV_DOCUMENT_INFO_N_PAGES) {
++		text = g_strdup_printf ("%d", info->n_pages);
++		SET_PROPERTY (N_PAGES, text);
++		g_free (text);
++	}
++	FIELD_SET_PROPERTY (LINEARIZED, info->linearized);
++	FIELD_SET_PROPERTY (SECURITY, info->security);
++
++	if (info->fields_mask & EV_DOCUMENT_INFO_PAPER_SIZE) {
++		text = ev_regular_paper_size (info);
++		SET_PROPERTY (PAPER_SIZE, text);
++		g_free (text);
++	}
++
++	if (info->fields_mask & EV_DOCUMENT_INFO_CONTAINS_JS) {
++		if (info->contains_js == EV_DOCUMENT_CONTAINS_JS_YES) {
++			text = _("Yes");
++		} else if (info->contains_js == EV_DOCUMENT_CONTAINS_JS_NO) {
++			text = _("No");
++		} else {
++			text = _("Unknown");
++		}
++		SET_PROPERTY (CONTAINS_JS, text);
++	}
++
++	if (ev_document_get_size (document)) {
++		text = g_format_size (ev_document_get_size (document));
++		SET_PROPERTY (FILE_SIZE, text);
++		g_free (text);
++	}
++
++	return G_LIST_MODEL (model);
++#undef SET_PROPERTY
++#undef FIELD_SET_PROPERTY
+ }
+ 
+ static GList *
+-ev_properties_get_pages (NautilusPropertyPageProvider *provider,
++ev_properties_get_models (NautilusPropertiesModelProvider *provider,
+ 			 GList *files)
+ {
+ 	GError *error = NULL;
+ 	EvDocument *document = NULL;
+-	GList *pages = NULL;
++	GList *models = NULL;
+ 	NautilusFileInfo *file;
+ 	gchar *uri = NULL;
+ 	gchar *mime_type = NULL;
+-	GtkWidget *page, *label;
+-	GtkWidget *scrolled;
+-	NautilusPropertyPage *property_page;
++	NautilusPropertiesModel *properties_group;
+ 
+ 	/* only add properties page if a single file is selected */
+ 	if (files == NULL || files->next != NULL)
+@@ -113,26 +193,9 @@ ev_properties_get_pages (NautilusPropertyPageProvider *provider,
+ 		goto end;
+ 	}
+ 
+-	label = gtk_label_new (_("Document"));
+-	page = ev_properties_view_new (document);
+-	ev_properties_view_set_info (EV_PROPERTIES_VIEW (page),
+-				     ev_document_get_info (document));
+-	gtk_widget_show (page);
+-
+-	scrolled = gtk_scrolled_window_new (NULL, NULL);
+-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled),
+-					GTK_POLICY_NEVER,
+-					GTK_POLICY_AUTOMATIC);
+-	gtk_scrolled_window_set_propagate_natural_width (GTK_SCROLLED_WINDOW (scrolled),
+-							 TRUE);
+-	gtk_container_add (GTK_CONTAINER (scrolled), page);
+-	gtk_widget_show (scrolled);
+-
+-	property_page = nautilus_property_page_new ("document-properties",
+-			label, scrolled);
+-
+-	pages = g_list_prepend (pages, property_page);
++	properties_group = nautilus_properties_model_new (_("Document"), build_properties (document));
+ 
++	models = g_list_prepend (models, properties_group);
+ end:
+ 	g_free (uri);
+ 	g_free (mime_type);
+@@ -140,7 +203,7 @@ end:
+ 	if (document != NULL)
+ 		g_object_unref (document);
+ 
+-	return pages;
++	return models;
+ }
+ 
+ /* --- extension interface --- */
+ 
+diff --git a/properties/ev-properties-main.c b/properties/ev-properties-main.c
+index 91b4dc0b2..682c9196f 100644
+--- a/properties/ev-properties-main.c
++++ b/properties/ev-properties-main.c
+@@ -39,7 +39,7 @@
+ #include "ev-properties-view.h"
+ 
+ static GType epp_type = 0;
+-static void property_page_provider_iface_init
++static void property_model_provider_iface_init
+ 	(NautilusPropertiesModelProviderInterface *iface);
+ static GList *ev_properties_get_models
+ 	(NautilusPropertiesModelProvider *provider, GList *files);
+@@ -58,8 +58,8 @@ ev_properties_plugin_register_type (GTypeModule *module)
+ 		0,
+ 		(GInstanceInitFunc) NULL
+ 	};
+-	const GInterfaceInfo property_page_provider_iface_info = {
+-		(GInterfaceInitFunc)property_page_provider_iface_init,
++	const GInterfaceInfo property_model_provider_iface_info = {
++		(GInterfaceInitFunc)property_model_provider_iface_init,
+ 		NULL,
+ 		NULL
+ 	};
+@@ -70,11 +70,11 @@ ev_properties_plugin_register_type (GTypeModule *module)
+ 	g_type_module_add_interface (module,
+ 			epp_type,
+ 			NAUTILUS_TYPE_PROPERTIES_MODEL_PROVIDER,
+-			&property_page_provider_iface_info);
++			&property_model_provider_iface_info);
+ }
+ 
+ static void
+-property_page_provider_iface_init (NautilusPropertiesModelProviderInterface *iface)
++property_model_provider_iface_init (NautilusPropertiesModelProviderInterface *iface)
+ {
+ 	iface->get_models = ev_properties_get_models;
+ }
+-- 
+GitLab
+
+diff --git a/properties/ev-properties-view.c b/properties/ev-properties-view.c
+index 04aa656f2..6c4066662 100644
+--- a/properties/ev-properties-view.c
++++ b/properties/ev-properties-view.c
+@@ -33,49 +33,6 @@
+ 
+ #include "ev-properties-view.h"
+ 
+-typedef enum {
+-	TITLE_PROPERTY,
+-	URI_PROPERTY,
+-	SUBJECT_PROPERTY,
+-	AUTHOR_PROPERTY,
+-	KEYWORDS_PROPERTY,
+-	PRODUCER_PROPERTY,
+-	CREATOR_PROPERTY,
+-	CREATION_DATE_PROPERTY,
+-	MOD_DATE_PROPERTY,
+-	N_PAGES_PROPERTY,
+-	LINEARIZED_PROPERTY,
+-	FORMAT_PROPERTY,
+-	SECURITY_PROPERTY,
+-	CONTAINS_JS_PROPERTY,
+-	PAPER_SIZE_PROPERTY,
+-	FILE_SIZE_PROPERTY,
+-	N_PROPERTIES,
+-} Property;
+-
+-typedef struct {
+-	Property property;
+-	const char *label;
+-} PropertyInfo;
+-
+-static const PropertyInfo properties_info[] = {
+-	{ TITLE_PROPERTY,         N_("Title:") },
+-	{ URI_PROPERTY,           N_("Location:") },
+-	{ SUBJECT_PROPERTY,       N_("Subject:") },
+-	{ AUTHOR_PROPERTY,        N_("Author:") },
+-	{ KEYWORDS_PROPERTY,      N_("Keywords:") },
+-	{ PRODUCER_PROPERTY,      N_("Producer:") },
+-	{ CREATOR_PROPERTY,       N_("Creator:") },
+-	{ CREATION_DATE_PROPERTY, N_("Created:") },
+-	{ MOD_DATE_PROPERTY,      N_("Modified:") },
+-	{ N_PAGES_PROPERTY,       N_("Number of Pages:") },
+-	{ LINEARIZED_PROPERTY,    N_("Optimized:") },
+-	{ FORMAT_PROPERTY,        N_("Format:") },
+-	{ SECURITY_PROPERTY,      N_("Security:") },
+-	{ CONTAINS_JS_PROPERTY,   N_("Contains Javascript:") },
+-	{ PAPER_SIZE_PROPERTY,    N_("Paper Size:") },
+-	{ FILE_SIZE_PROPERTY,     N_("Size:") }
+-};
+ 
+ struct _EvPropertiesView {
+ 	GtkBox base_instance;
+@@ -297,7 +254,7 @@ get_tolerance (gdouble size)
+ 		return 3.0f;
+ }
+ 
+-static char *
++char *
+ ev_regular_paper_size (const EvDocumentInfo *info)
+ {
+ 	GList *paper_sizes, *l;
+diff --git a/properties/ev-properties-view.h b/properties/ev-properties-view.h
+index 8d27d5b50..f620147b9 100644
+--- a/properties/ev-properties-view.h
++++ b/properties/ev-properties-view.h
+@@ -26,6 +26,50 @@
+ 
+ G_BEGIN_DECLS
+ 
++typedef enum {
++	TITLE_PROPERTY,
++	URI_PROPERTY,
++	SUBJECT_PROPERTY,
++	AUTHOR_PROPERTY,
++	KEYWORDS_PROPERTY,
++	PRODUCER_PROPERTY,
++	CREATOR_PROPERTY,
++	CREATION_DATE_PROPERTY,
++	MOD_DATE_PROPERTY,
++	N_PAGES_PROPERTY,
++	LINEARIZED_PROPERTY,
++	FORMAT_PROPERTY,
++	SECURITY_PROPERTY,
++	CONTAINS_JS_PROPERTY,
++	PAPER_SIZE_PROPERTY,
++	FILE_SIZE_PROPERTY,
++	N_PROPERTIES,
++} Property;
++
++typedef struct {
++	Property property;
++	const char *label;
++} PropertyInfo;
++
++static const PropertyInfo properties_info[] = {
++	{ TITLE_PROPERTY,         N_("Title:") },
++	{ URI_PROPERTY,           N_("Location:") },
++	{ SUBJECT_PROPERTY,       N_("Subject:") },
++	{ AUTHOR_PROPERTY,        N_("Author:") },
++	{ KEYWORDS_PROPERTY,      N_("Keywords:") },
++	{ PRODUCER_PROPERTY,      N_("Producer:") },
++	{ CREATOR_PROPERTY,       N_("Creator:") },
++	{ CREATION_DATE_PROPERTY, N_("Created:") },
++	{ MOD_DATE_PROPERTY,      N_("Modified:") },
++	{ N_PAGES_PROPERTY,       N_("Number of Pages:") },
++	{ LINEARIZED_PROPERTY,    N_("Optimized:") },
++	{ FORMAT_PROPERTY,        N_("Format:") },
++	{ SECURITY_PROPERTY,      N_("Security:") },
++	{ CONTAINS_JS_PROPERTY,   N_("Contains Javascript:") },
++	{ PAPER_SIZE_PROPERTY,    N_("Paper Size:") },
++	{ FILE_SIZE_PROPERTY,     N_("Size:") }
++};
++
+ typedef struct _EvPropertiesView EvPropertiesView;
+ typedef struct _EvPropertiesViewClass EvPropertiesViewClass;
+ typedef struct _EvPropertiesViewPrivate EvPropertiesViewPrivate;
+@@ -44,4 +88,6 @@ GtkWidget      *ev_properties_view_new			(EvDocument           *document);
+ void		ev_properties_view_set_info		(EvPropertiesView     *properties,
+ 							 const EvDocumentInfo *info);
+ 
++char *		ev_regular_paper_size			(const EvDocumentInfo *info);
++
+ G_END_DECLS
+-- 
+GitLab

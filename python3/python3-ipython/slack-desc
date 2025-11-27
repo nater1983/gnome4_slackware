@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+python3-ipython: python3-ipython ( An enhanced interactive Python shell )
+python3-ipython:
+python3-ipython: IPython provides a replacement for the interactive Python 
+python3-ipython: interpreter with extra functionality.
+python3-ipython: * Comprehensive object introspection.
+python3-ipython: * Input history, persistent across sessions.
+python3-ipython: * Session logging and reloading.
+python3-ipython: * Extensible syntax processing for special purpose situations.
+python3-ipython: * Access to the system shell with user-extensible alias system.
+python3-ipython: * Easily embeddable in other Python programs.
+python3-ipython: Homepage: https://github.com/ipython/ipython

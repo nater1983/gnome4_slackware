@@ -1,0 +1,25 @@
+From 31aa1fea4ddd276a172466df33eb30f83b5a11fc Mon Sep 17 00:00:00 2001
+From: Christian Hergert <chergert@redhat.com>
+Date: Thu, 9 May 2024 16:08:07 -0700
+Subject: [PATCH] spellcheck: fix missing include for private API
+
+---
+ src/editor-text-buffer-spell-adapter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/editor-text-buffer-spell-adapter.c b/src/editor-text-buffer-spell-adapter.c
+index d87292f..d14505c 100644
+--- a/src/editor-text-buffer-spell-adapter.c
++++ b/src/editor-text-buffer-spell-adapter.c
+@@ -22,7 +22,7 @@
+ 
+ #include "cjhtextregionprivate.h"
+ 
+-#include "editor-document.h"
++#include "editor-document-private.h"
+ #include "editor-spell-checker.h"
+ #include "editor-spell-cursor.h"
+ #include "editor-spell-language.h"
+-- 
+GitLab
+

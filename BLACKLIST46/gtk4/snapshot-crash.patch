@@ -1,0 +1,34 @@
+From 3080e2974da2d30ba413e442b0dc83ab4a137235 Mon Sep 17 00:00:00 2001
+From: Benjamin Otte <otte@redhat.com>
+Date: Fri, 22 Mar 2024 16:18:41 +0100
+Subject: [PATCH] gpu: ceil() offscreen size before generating offscreen
+
+The goal is to generate an offscreen at 1x scale.
+When not ceil()ing the numbers the offscreen code would do it *and*
+adjust the scale accordingly, so we'd end up with something like a
+1.01x scale.
+
+And that would cause the code to reenter this codepath with the goal to
+generate an offscreen at 1x scale.
+And indeed, this would lead to infinite recursion.
+
+Tests included.
+
+Fixes #6553
+---
+ gsk/gpu/gskgpunodeprocessor.c                     |   2 ++
+ 1 files changed, 2 insertions(+)
+
+diff --git a/gsk/gpu/gskgpunodeprocessor.c b/gsk/gpu/gskgpunodeprocessor.c
+index 03308e15004..5c3125a2a4b 100644
+--- a/gsk/gpu/gskgpunodeprocessor.c
++++ b/gsk/gpu/gskgpunodeprocessor.c
+@@ -2077,6 +2077,8 @@ gsk_gpu_node_processor_add_texture_scale_node (GskGpuNodeProcessor *self,
+       /* now intersect with actual node bounds */
+       if (!gsk_rect_intersection (&clip_bounds, &node->bounds, &clip_bounds))
+         return;
++      clip_bounds.size.width = ceilf (clip_bounds.size.width);
++      clip_bounds.size.height = ceilf (clip_bounds.size.height);
+       offscreen = gsk_gpu_node_processor_create_offscreen (self->frame,
+                                                            graphene_vec2_one (),
+                                                            &clip_bounds,

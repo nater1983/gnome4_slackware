@@ -1,0 +1,3 @@
+All packages stored here will be back in their build order place in future.
+When we dont need a package because stock slackware version is ok, then we only have to remove its .sh extension from the order folder.
+This way when (if) we need it again in higher version than stock, we simple add back .sh extension in order folder and it will be back in building list... 

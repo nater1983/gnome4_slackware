@@ -1,0 +1,75 @@
+From 66aea36411477f284fa8a379b3bde282385d281c Mon Sep 17 00:00:00 2001
+From: Jan Tojnar <jtojnar@gmail.com>
+Date: Wed, 8 Apr 2020 16:41:32 +0200
+Subject: [PATCH] Remove forgotten libcanberra include
+
+---
+ src/gcm-viewer.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/gcm-viewer.c b/src/gcm-viewer.c
+index 77463af5..d778877d 100644
+--- a/src/gcm-viewer.c
++++ b/src/gcm-viewer.c
+@@ -12,7 +12,6 @@
+ #include <gdk/gdkx.h>
+ #include <glib/gstdio.h>
+ #include <locale.h>
+-#include <canberra-gtk.h>
+ #include <colord.h>
+ #include <math.h>
+ 
+-- 
+2.20.1
+
+From affc398b4e45d3c55d7df4b0735ae31ecdbd7ddb Mon Sep 17 00:00:00 2001
+From: Jake Dane <3689-jakedane@users.noreply.gitlab.gnome.org>
+Date: Sun, 11 Sep 2022 06:28:02 +0000
+Subject: [PATCH] desktop: Remove obsolete Bugzilla entries
+
+The X-GNOME-Bugzilla-* entries were for use by bug-buddy, a GNOME 2
+technology that's been gone for over a decade. These entries are
+obsolete and can be removed.
+---
+ data/gcm-picker.desktop.in | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/data/gcm-picker.desktop.in b/data/gcm-picker.desktop.in
+index fbc5a31f..15ebedbe 100644
+--- a/data/gcm-picker.desktop.in
++++ b/data/gcm-picker.desktop.in
+@@ -9,6 +9,3 @@ Type=Application
+ Categories=GNOME;GTK;System;
+ StartupNotify=true
+ NoDisplay=true
+-X-GNOME-Bugzilla-Bugzilla=GNOME
+-X-GNOME-Bugzilla-Product=gnome-color-manager
+-X-GNOME-Bugzilla-Component=gnome-color-manager
+-- 
+GitLab
+
+From 5a82c1a62b16f20119e61ef79b4db4c23cf821e0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Javier=20Jard=C3=B3n?= <jjardon@gnome.org>
+Date: Wed, 28 Jul 2021 19:36:13 +0100
+Subject: [PATCH] meson.build: depends on GTK 3.4
+
+gtk_builder_add_from_resource() was introduced in 3.3.8
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index acdfbaaf..015d3798 100644
+--- a/meson.build
++++ b/meson.build
+@@ -85,7 +85,7 @@ prefixed_datadir = join_paths(get_option('prefix'), get_option('datadir'))
+ prefixed_pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), 'gnome-color-manager')
+ 
+ libgio = dependency('gio-2.0', version : '>= 2.25.9')
+-libgtk = dependency('gtk+-3.0', version : '>= 2.91.0')
++libgtk = dependency('gtk+-3.0', version : '>= 3.4')
+ libcolord = dependency('colord', version : '>= 1.3.1')
+ libm = cc.find_library('m', required: false)
+ liblcms = dependency('lcms2', version : '>= 2.2')
+-- 
+GitLab

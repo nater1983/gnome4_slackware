@@ -1,0 +1,38 @@
+diff --git a/blueprintcompiler/language/values.py b/blueprintcompiler/language/values.py
+--- a/blueprintcompiler/language/values.py	2023-07-19 15:14:28.938999388 +0300
++++ b/blueprintcompiler/language/values.py	2023-07-19 15:26:32.661994016 +0300
+@@ -178,9 +178,12 @@
+         expected_type = self.context[ValueTypeCtx].value_type
+         if isinstance(expected_type, gir.IntType):
+             if not isinstance(self.value, int):
+-                raise CompileError(
+-                    f"Cannot convert {self.group.tokens['value']} to integer"
+-                )
++                try:
++                    int(self.tokens["value"])
++                except:
++                    raise CompileError(
++                         f"Cannot convert {self.group.tokens['value']} to integer"
++                    )
+ 
+         elif isinstance(expected_type, gir.UIntType):
+             if self.value < 0:
+@@ -188,8 +191,19 @@
+                     f"Cannot convert -{self.group.tokens['value']} to unsigned integer"
+                 )
+ 
+-        elif not isinstance(expected_type, gir.FloatType) and expected_type is not None:
+-            raise CompileError(f"Cannot convert number to {expected_type.full_name}")
++        elif isinstance(expected_type, gir.FloatType):
++            if not isinstance(self.value, float):
++                try:
++                    float(self.tokens["value"])
++                except:
++                    raise CompileError(
++            	        f"Cannot convert {self.group.tokens['value']} to float"
++            	    )
++                
++        elif expected_type is not None:
++            raise CompileError(
++                f"Cannot convert number to {expected_type.full_name}"
++            )
