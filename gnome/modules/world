@@ -251,3 +251,5 @@ gnome-console
 # sushi
 evince
 sushi
+# gnome-ssh-askpass
+gnome-ssh-askpass
