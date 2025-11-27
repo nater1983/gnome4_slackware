@@ -1,0 +1,2 @@
+  install -D -m 755 gnome-ssh-askpass4 "${PKG}/usr/lib$LIBDIRSUFFIX/ssh/gnome-ssh-askpass4"
+  install -D -m 755 "${srcdir}/gnome-ssh-askpass4.sh" "${pkgdir}/etc/profile.d/gnome-ssh-askpass4.sh"
