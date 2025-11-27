@@ -1,0 +1,16 @@
+config() {
+  NEW="$1"
+  OLD="$(dirname $NEW)/$(basename $NEW .new)"
+  if [ ! -r $OLD ]; then
+    mv $NEW $OLD
+  elif [ "$(cat $OLD | md5sum)" = "$(cat $NEW | md5sum)" ]; then
+    rm $NEW
+  fi
+}
+
+config etc/appstream.conf.new
+
+# Refresh AppStream cache after installation
+if [ -x usr/bin/appstreamcli ]; then
+  chroot . /usr/bin/appstreamcli refresh-cache --force
+fi

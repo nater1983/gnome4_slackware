@@ -1,2 +1,2 @@
 # Run as nobody:nogroup:
-patch -Np1 -i $CWD/patch/NetworkManager-openvpn-gtk4/openvpn.nobody.nogroup.diff
+patch -Np1 -i $CWD/patch/NetworkManager-openvpn-gtk4/openvpn.nobody.nogroup.diff || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }

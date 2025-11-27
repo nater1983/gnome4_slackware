@@ -1,0 +1,4 @@
+install -vDm 0644 $CWD/post-install/gnome-ssh-askpass/gnome-ssh-askpass.1 -t $PKG/usr/man/man1
+sed -i 's|SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass|SSH_ASKPASS=/usr/libexec/gnome-ssh-askpass4|' ${PKG}/etc/profile.d/gnome-ssh-askpass.sh
+install -vDm 0644 $CWD/post-install/gnome-ssh-askpass/ssh-askpass-gnome.png -t $PKG/usr/share/pixmaps
+install -vDm 0644 $CWD/post-install/gnome-ssh-askpass/gnome-ssh-askpass.desktop -t $PKG/usr/share/applications

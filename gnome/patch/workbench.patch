@@ -1,2 +1,2 @@
-patch -Np1 -R -i $CWD/patch/workbench/2.patch
-patch -Np1 -i $CWD/patch/workbench/1.patch
+patch -Np1 -R -i $CWD/patch/workbench/2.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/workbench/1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }

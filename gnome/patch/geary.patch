@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/geary/1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }

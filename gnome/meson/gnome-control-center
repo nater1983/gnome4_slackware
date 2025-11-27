@@ -9,7 +9,8 @@ cd build
     -Ddark_mode_distributor_logo=/usr/share/pixmaps/slackware_whitelogo_med.png \
     -Dmalcontent=true \
     -Ddefault_library=shared \
-    -Ddocumentation=false
+    -Ddocumentation=false \
+    -Dx11=true
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..

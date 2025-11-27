@@ -248,3 +248,8 @@ loupe
 gnome-terminal
 # gnome-console
 gnome-console
+# sushi
+evince
+sushi
+# gnome-ssh-askpass
+gnome-ssh-askpass

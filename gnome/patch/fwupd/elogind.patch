@@ -20,10 +20,10 @@ Signed-off-by: fossdd <fossdd@pwned.life>
  3 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/meson.build b/meson.build
-index 6a3425f46..bf76fa1e4 100644
+index 3a16333..19db97b 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -523,6 +523,11 @@ if libsystemd.found()
+@@ -712,6 +712,11 @@ if libsystemd.found()
    endif
  endif
  
@@ -34,15 +34,15 @@ index 6a3425f46..bf76fa1e4 100644
 +
  supported_build = get_option('supported_build').disable_auto_if(not tag).allowed()
  if supported_build
-     conf.set('SUPPORTED_BUILD', '1')
-@@ -712,6 +717,7 @@ summary({
-   'dbus_socket_address': get_option('dbus_socket_address'),
-   'vendor_ids_dir': vendor_ids_dir,
-   'docs': build_docs,
-+  'elogind': elogind,
-   'gnutls': gnutls,
-   'introspection': introspection.allowed(),
-   'libblkid': libblkid,
+   conf.set('SUPPORTED_BUILD', '1')
+@@ -923,6 +928,7 @@ summary(
+     'dbus_socket_address': get_option('dbus_socket_address'),
+     'vendor_ids_dir': vendor_ids_dir,
+     'docs': build_docs,
++    'elogind': elogind,
+     'gnutls': gnutls,
+     'introspection': introspection.allowed(),
+     'libblkid': libblkid,
 diff --git a/meson_options.txt b/meson_options.txt
 index 40103c03e..bf8e96433 100644
 --- a/meson_options.txt

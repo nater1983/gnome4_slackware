@@ -1,6 +1,5 @@
 file-roller
 libdex 
-libpanel
 libspelling
 sysprof
 protobuf-c
@@ -59,10 +58,7 @@ python3-liblouis
 pyatspi
 python3-dasbus
 orca
-gtksourceview4
-evince
 evince4
-sushi
 epiphany
 Fragments
 libgedit-gtksourceview

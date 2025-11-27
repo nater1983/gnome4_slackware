@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/http-parser/meson.patch
+patch -Np1 -i $CWD/patch/http-parser/meson.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
