@@ -26,12 +26,13 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-show-desktop
 SRCNAM=Show-Desktop-Button
-VERSION=${VERSION:-48}
+VERSION=${VERSION:-49}
 TAG=_gfs
 BUILD=${BUILD:-1}
-ARCH=noarch
 PKGTYPE=${PKGTYPE:-txz}
-_commit=c422e38f849645b85675f876e3b421cd2756bd1d
+_commit=cfa695a43f17462b6662e36091775289d675f354
+
+ARCH=noarch
 
 if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
   echo "$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE"
@@ -59,7 +60,6 @@ mv $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/schemas $P
 mv $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/locale $PKG/usr/share/
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a README.md $PKG/usr/doc/$PRGNAM-$VERSION
-#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
