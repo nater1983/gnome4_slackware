@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+forge-sparks: forge-sparks (Get Git forges notifications)
+forge-sparks:
+forge-sparks: Simple notifier app with support for Github, Gitea and Forgejo.
+forge-sparks: 
+forge-sparks: 
+forge-sparks: 
+forge-sparks: 
+forge-sparks: 
+forge-sparks: 
+forge-sparks: Source: https://github.com/rafaelmardojai/forge-sparks         
+forge-sparks: 

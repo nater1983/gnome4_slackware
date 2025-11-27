@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+komikku: komikku (a manga reader for GNOME.)
+komikku:
+komikku: With its simple, elegant and adaptive interface, this manga reader
+komikku: allows you to search, sort and read all your favorite manga with ease.
+komikku: * Online reading from dozens of servers
+komikku: * Offline reading of downloaded comics
+komikku: * Support for locally stored comics (in CBZ or CBR formats)
+komikku: * Automatic update of comics
+komikku: * Automatic download of new chapters
+komikku:
+komikku: https://gitlab.com/valos/Komikku

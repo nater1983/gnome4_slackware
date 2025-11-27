@@ -1,0 +1,2412 @@
+30/05/2024-15:57:51
+
+
+SLACKBUILD NAME: AppStream
+SLACKBUILD LOCATION: gnome-45/AppStream
+SLACKBUILD FILES: AppStream.SlackBuild README doinst.sh.gz slack-desc slack-required
+SLACKBUILD VERSION: 0.16.4
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/ximion/appstream/archive/v0.16.4/appstream-0.16.4.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libxmlb
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: AppStream ( A creating app stores across distributions )
+
+SLACKBUILD NAME: BUILDS.TXT
+SLACKBUILD LOCATION: gnome-45/BUILDS.TXT
+SLACKBUILD FILES: gnome-45/BUILDS.TXT
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: LICENSE
+SLACKBUILD LOCATION: gnome-45/LICENSE
+SLACKBUILD FILES: gnome-45/LICENSE
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: NetworkManager-openvpn-gtk4
+SLACKBUILD LOCATION: gnome-45/NetworkManager-openvpn-gtk4
+SLACKBUILD FILES: NetworkManager-openvpn-gtk4.SlackBuild a790374f4c2e9e1657cbb8470357d72d4bd87916.patch openvpn.nobody.nogroup.diff.gz slack-desc
+SLACKBUILD VERSION: 1.10.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/NetworkManager-openvpn/1.10/NetworkManager-openvpn-1.10.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: NetworkManager-openvpn-gtk4 (OpenVPN Support for NetworkManager)
+
+SLACKBUILD NAME: README.md
+SLACKBUILD LOCATION: gnome-45/README.md
+SLACKBUILD FILES: gnome-45/README.md
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: SLACKBUILDS.TXT
+SLACKBUILD LOCATION: gnome-45/SLACKBUILDS.TXT
+SLACKBUILD FILES: gnome-45/SLACKBUILDS.TXT
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _backgrounds
+SLACKBUILD LOCATION: gnome-45/_backgrounds
+SLACKBUILD FILES: f37-backgrounds f38-backgrounds f39-backgrounds gnome-backgrounds-extra kali-community-wallpapers
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _boxes
+SLACKBUILD LOCATION: gnome-45/_boxes
+SLACKBUILD FILES: build-boxes.txt device-tree-compiler gnome-boxes gtk-vnc libcacard libnfs libovf-glib libvirt libvirt-glib libvirt-python numactl phodav qemu snappy spice spice-gtk spice-protocol usbredir vde2 virglrenderer virt-manager yajl
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _core
+SLACKBUILD LOCATION: gnome-45/_core
+SLACKBUILD FILES: adwaita-icon-theme at-spi2-core dconf-editor glib-networking glib2 gobject-introspection gtk4 gvfs ibus libgtop libsoup3 pango xdg-desktop-portal
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _extensions
+SLACKBUILD LOCATION: gnome-45/_extensions
+SLACKBUILD FILES: gnome-shell-extension-appindicator gnome-shell-extension-arc-menu gnome-shell-extension-autohide-battery gnome-shell-extension-coverflow-alt-tab gnome-shell-extension-cpufreq gnome-shell-extension-dash-to-dock gnome-shell-extension-dash-to-panel gnome-shell-extension-desktop-icons-ng gnome-shell-extension-eortologio gnome-shell-extension-show-desktop gnome-shell-extension-tray-icons-reloaded
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _flashback
+SLACKBUILD LOCATION: gnome-45/_flashback
+SLACKBUILD FILES: alacarte gnome-applets gnome-flashback gnome-panel metacity
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _mm
+SLACKBUILD LOCATION: gnome-45/_mm
+SLACKBUILD FILES: mm-common
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _removed
+SLACKBUILD LOCATION: gnome-45/_removed
+SLACKBUILD FILES: amtk avahi cairo cairomm1 cheese clutter clutter-gst clutter-gtk colord dav1d gcr4 gi-docgen gjs glibmm2 gnome-keyring gnome-photos gnome-shell-extension-overview-feature-pack gnome-shell-extension-webfeed gnome-video-effects gspell gtkmm4 gtksourceview4 libdaemon libgnomekbd libgusb libhandy librsvg libwnck3 lua54 lxml mozjs115 pangomm2 python3-build python3-flit_core python3-installer python3-smartypants python3-toml python3-typogrify python3-webencodings python3-wheel upower vala
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: _software
+SLACKBUILD LOCATION: gnome-45/_software
+SLACKBUILD FILES: Authenticator Collision Commit Curtail Endeavour Feeds Flatseal Font-Downloader Fragments Impression Junction Paper-Clip Plots Shortwave Solanum Tangram aisleriot amberol apostrophe atomix biome blanket blueprint-compiler boatswain borgbackup cartridges chess-clock citations clairvoyant cozy crystal-lang decoder deja-dup dialect drawing duplicity eartag elastic emblem extension-manager eyedropper five-or-more forge-sparks four-in-a-row fractal fwupd gaphor geary giara glycin-loaders gnome-2048 gnome-chess gnome-firmware gnome-klotski gnome-mahjongg gnome-mines gnome-nibbles gnome-robots gnome-sudoku gnome-tetravex gnumeric goffice graphviz gthumb gtkcsslanguageserver gtranslator health hidapi hitori iagno identity jpegoptim khronos komikku kooha libbacktrace libgda libgnome-games-support libjcat libmanette libmusicbrainz5 librsync libsmbios libspelling lightsoff lorem loupe meld metadata-cleaner metronome mousai news_flash_gtk obfuscate oxipng pika-backup pngquant podcasts polari protobuf-c protobuf3 psiconv pure-protobuf python3-argon2-cffi python3-argon2-cffi-bindings python3-beautifulsoup4 python3-better-exceptions python3-cachetools python3-construct python3-cryptography python3-dateparser python3-dateutil python3-decorator python3-emoji python3-entrypoints python3-exceptiongroup python3-fasteners python3-flit_scm python3-fonttools python3-freetype python3-gaphas python3-generic python3-glm python3-google-api-core python3-google-api-python-client python3-google-auth python3-google-auth-httplib2 python3-google-cloud-core python3-google-cloud-storage python3-google-crc32c python3-google-resumable-media python3-googleapis-common-protos python3-gtts python3-guzzle_sphinx_theme python3-httplib2 python3-jedi python3-keyring python3-lark python3-magic python3-mat2 python3-mistune python3-msgpack python3-mutagen python3-natsort python3-numpy python3-oauth2client python3-opengl python3-parso python3-peewee python3-pep517 python3-piexif python3-pillow python3-poetry-core python3-praw python3-prawcore python3-protobuf python3-pyacoustid python3-pyasn1 python3-pyasn1-modules python3-pycryptodomex python3-pydot python3-pydrive2 python3-pygit2 python3-pykeepass python3-pyopenssl python3-pyotp python3-pypandoc python3-pyproject-hooks python3-rarfile python3-regex python3-rsa python3-scour python3-semantic_version python3-setuptools-rust python3-soupsieve python3-tinycss2 python3-turtle python3-typing_extensions python3-tzlocal python3-unicodedata2 python3-unidecode python3-uritemplate python3-validators python3-websocket-client python3-zxcvbn qqwing raider rclone rome secrets share-preview shotwell snapshot sound-juicer tecla telegraph telepathy-logger text-engine textpieces transmission vala-language-server video-trimmer warp webfont-kit-generator wike workbench zap
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: adobe-source-code-pro-font
+SLACKBUILD LOCATION: gnome-45/adobe-source-code-pro-font
+SLACKBUILD FILES: adobe-source-code-pro-font.SlackBuild doinst.sh.gz slack-desc
+SLACKBUILD VERSION: 2.042
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/adobe-fonts/source-code-pro/releases/download/2.042R-u%2F1.062R-i%2F1.026R-vf/OTF-source-code-pro-2.042R-u_1.062R-i.zip
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: adobe-source-code-pro-font (monospaced font)
+
+SLACKBUILD NAME: appstream-glib
+SLACKBUILD LOCATION: gnome-45/appstream-glib
+SLACKBUILD FILES: appstream-glib.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.8.2
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/hughsie/appstream-glib/archive/appstream_glib_0_8_2/appstream-glib-appstream_glib_0_8_2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: gcab libstemmer
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: appstream-glib (library for reading and writing AppStream metadata)
+
+SLACKBUILD NAME: baobab
+SLACKBUILD LOCATION: gnome-45/baobab
+SLACKBUILD FILES: README baobab.SlackBuild doinst.sh doinst.sh.gz slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/baobab/45/baobab-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: a7d2cf308a6c839ee0b0bf074f8f5fd60d62ae2f064a94b3c610d6560b758e86
+SLACKBUILD REQUIRES: libadwaita
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Baobab (Gnome Disk Usage Analyzer)
+
+SLACKBUILD NAME: blocaled
+SLACKBUILD LOCATION: gnome-45/blocaled
+SLACKBUILD FILES: README README.SBo blocaled.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.5
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/lfs-book/blocaled/releases/download/v0.5/blocaled-0.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libdaemon
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: blocaled (locale settings D-Bus service)
+
+SLACKBUILD NAME: brasero
+SLACKBUILD LOCATION: gnome-45/brasero
+SLACKBUILD FILES: brasero.SlackBuild doinst.sh doinst.sh.gz slack-desc
+SLACKBUILD VERSION: 3.12.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/brasero/3.12/brasero-3.12.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 87749eae33a141207d1b00be233b6d8045982ed3249ed4b98dae1f3a975fea15
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: brasero (CD/DVD burning application)
+
+SLACKBUILD NAME: bubblewrap
+SLACKBUILD LOCATION: gnome-45/bubblewrap
+SLACKBUILD FILES: README bubblewrap.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.8.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/containers/bubblewrap/releases/download/v0.8.0/bubblewrap-0.8.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: bubblewrap (unprivileged sandboxing tool)
+
+SLACKBUILD NAME: build-gnome.txt
+SLACKBUILD LOCATION: gnome-45/build-gnome.txt
+SLACKBUILD FILES: gnome-45/build-gnome.txt
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: callaudiod
+SLACKBUILD LOCATION: gnome-45/callaudiod
+SLACKBUILD FILES: 27.patch README callaudiod.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.1.9
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.com/mobian1/callaudiod/-/archive/0.1.9/callaudiod-0.1.9.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: callaudiod (Call audio routing daemon)
+
+SLACKBUILD NAME: calls
+SLACKBUILD LOCATION: gnome-45/calls
+SLACKBUILD FILES: README calls.SlackBuild doinst.sh doinst.sh.gz slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/calls/45/calls-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b9c8d20e3dac9c4abb0207fa05f9684e486ba869dda227d9eac9d0c54bcd76d7
+SLACKBUILD REQUIRES: libpeas folks callaudiod evolution libhandy feedbackd gom sofia-sip
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: calls (GNOME Calls)
+
+SLACKBUILD NAME: cantarell-fonts
+SLACKBUILD LOCATION: gnome-45/cantarell-fonts
+SLACKBUILD FILES: cantarell-fonts.SlackBuild doinst.sh doinst.sh.gz slack-desc slack-required
+SLACKBUILD VERSION: 0.303.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/cantarell-fonts/0.303/cantarell-fonts-0.303.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: f9463a0659c63e57e381fdd753cf1929225395c5b49135989424761830530411
+SLACKBUILD REQUIRES: gcab appstream-glib
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: cantarell-fonts (The Cantarell typeface family)
+
+SLACKBUILD NAME: cmark
+SLACKBUILD LOCATION: gnome-45/cmark
+SLACKBUILD FILES: README cmark.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.30.2
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/commonmark/cmark/archive/0.30.2/cmark-0.30.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: cmark (C Reference libraries)
+
+SLACKBUILD NAME: cogl
+SLACKBUILD LOCATION: gnome-45/cogl
+SLACKBUILD FILES: README cogl.SlackBuild multi_commit.patch slack-desc slack-required
+SLACKBUILD VERSION: 1.22.9
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/cogl/1.22/cogl-1.22.8.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: cogl (3D graphics API)
+
+SLACKBUILD NAME: colord-gtk
+SLACKBUILD LOCATION: gnome-45/colord-gtk
+SLACKBUILD FILES: README colord-gtk.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.0
+SLACKBUILD DOWNLOAD_x86_64: http://www.freedesktop.org/software/colord/releases/colord-gtk-0.3.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: colord
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: colord-gtk (GTK integration for libcolord)
+
+SLACKBUILD NAME: cups-pk-helper
+SLACKBUILD LOCATION: gnome-45/cups-pk-helper
+SLACKBUILD FILES: cups-pk-helper.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.2.7
+SLACKBUILD DOWNLOAD_x86_64: https://www.freedesktop.org/software/cups-pk-helper/releases/cups-pk-helper-0.2.7.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: cups-pk-helper (cups PolicyKit Helper)
+
+SLACKBUILD NAME: d-spy
+SLACKBUILD LOCATION: gnome-45/d-spy
+SLACKBUILD FILES: 1.patch d-spy.SlackBuild doinst.sh.gz slack-desc
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/d-spy/1.8/d-spy-1.8.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: D-Spy (a D-Bus explorer for GNOME)
+
+SLACKBUILD NAME: devhelp
+SLACKBUILD LOCATION: gnome-45/devhelp
+SLACKBUILD FILES: 41.2-optional-introspection.patch.gz README devhelp.SlackBuild doinst.sh doinst.sh.gz slack-desc
+SLACKBUILD VERSION: 43.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/devhelp/43/devhelp-43.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 63ceeefd05392e02044881ef1ecd724293553da5735b7efc082b2d13fe85dd04
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: devhelp (an API documentation browser for GTK+ and GNOME)
+
+SLACKBUILD NAME: eog
+SLACKBUILD LOCATION: gnome-45/eog
+SLACKBUILD FILES: README doinst.sh.gz eog.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/eog/45/eog-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c17f86704c722b36c01a168f1e51439be0bb279f2c6646f48b66e9d0f3a24cd2
+SLACKBUILD REQUIRES: gnome-desktop libpeas exempi libportal
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: eog (This is the Eye of GNOME)
+
+SLACKBUILD NAME: eog-plugins
+SLACKBUILD LOCATION: gnome-45/eog-plugins
+SLACKBUILD FILES: README doinst.sh.gz eog-plugins.SlackBuild slack-desc
+SLACKBUILD VERSION: 44.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/eog-plugins/44/eog-plugins-44.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: db31cbf7bb9652db0a87113e9b51f4df2586763a261b0cbf04327d82cb38b047
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: eog-plugins (Plugins for Eye of GNOME)
+
+SLACKBUILD NAME: epiphany
+SLACKBUILD LOCATION: gnome-45/epiphany
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz epiphany.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/epiphany/45/epiphany-45.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6c302e9bdd66290cb0e26f62843cd4c435a4955abdbb4f151f07dc80495d6730
+SLACKBUILD REQUIRES: webkit2gtk6.0 libwpe gcab libsoup3 xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap libportal appstream-glib libhandy libdazzle
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: epiphany (Web browser from the GNOME desktop)
+
+SLACKBUILD NAME: evince
+SLACKBUILD LOCATION: gnome-45/evince
+SLACKBUILD FILES: 601.patch README doinst.sh doinst.sh.gz evince.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/evince/45/evince-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d18647d4275cbddf0d32817b1d04e307342a85be914ec4dad2d8082aaf8aa4a8
+SLACKBUILD REQUIRES: libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: evince (Evince Document Viewer)
+
+SLACKBUILD NAME: evolution
+SLACKBUILD LOCATION: gnome-45/evolution
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz evolution.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.50.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/evolution/3.50/evolution-3.50.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: e0f955ca14dfb1b2e1682fcfa1816a03c114b8161998f96cf9d681a6a3842698
+SLACKBUILD REQUIRES: evolution-data-server gnome-autoar gspell ytnef highlight libpst cmark libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap cogl webkit2gtk4.1 rest clutter gnome-online-accounts geocode-glib lua53 clutter-gtk libgdata libgweather4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: evolution (Email and calendaring application)
+
+SLACKBUILD NAME: evolution-data-server
+SLACKBUILD LOCATION: gnome-45/evolution-data-server
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz evolution-data-server-cmake-c99.patch evolution-data-server.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.50.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/evolution-data-server/3.50/evolution-data-server-3.50.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d7edffbe03a0bbcecbee67393214b831c7b18cd895b84c4dbfe1387776e257c5
+SLACKBUILD REQUIRES: gnome-online-accounts libgweather4 libgdata webkit2gtk6.0 libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap rest geocode-glib
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: evolution-data-server (Desktop Information Store)
+
+SLACKBUILD NAME: exempi
+SLACKBUILD LOCATION: gnome-45/exempi
+SLACKBUILD FILES: exempi.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 2.6.4
+SLACKBUILD DOWNLOAD_x86_64: https://libopenraw.freedesktop.org/download/exempi-2.6.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: exempi (an implementation of Adobe's XMP)
+
+SLACKBUILD NAME: fdkaac
+SLACKBUILD LOCATION: gnome-45/fdkaac
+SLACKBUILD FILES: README fdkaac.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.0.5
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/nu774/fdkaac/archive/v1.0.5/fdkaac-1.0.5.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: fdkaac (a command line encoder frontend for libfdk-aac)
+
+SLACKBUILD NAME: feedbackd
+SLACKBUILD LOCATION: gnome-45/feedbackd
+SLACKBUILD FILES: README doinst.sh.gz feedbackd.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.2.1
+SLACKBUILD DOWNLOAD_x86_64: https://source.puri.sm/Librem5/feedbackd/-/archive/v0.2.1/feedbackd-v0.2.1.tar.gz https://gitlab.gnome.org/guidog/gmobile/-/archive/v0.0.4/gmobile-v0.0.4.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: feedbackd (short description of app)
+
+SLACKBUILD NAME: file-roller
+SLACKBUILD LOCATION: gnome-45/file-roller
+SLACKBUILD FILES: doinst.sh doinst.sh.gz file-roller.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 43.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/file-roller/43/file-roller-43.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 84994023997293beb345d9793db8f5f0bbb41faa155c6ffb48328f203957ad08
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: file-roller (a GTK archive manager)
+
+SLACKBUILD NAME: flatpak
+SLACKBUILD LOCATION: gnome-45/flatpak
+SLACKBUILD FILES: README.gz doinst.sh doinst.sh.gz flathub flathub.desktop flathub.png flatpak-autostart.desktop flatpak.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.15.4
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/flatpak/flatpak/releases/download/1.15.4/flatpak-1.15.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: xdg-desktop-portal-gtk gcab appstream-glib libostree bubblewrap AppStream
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: flatpak (sandboxing desktop applications)
+
+SLACKBUILD NAME: flatpak-builder
+SLACKBUILD LOCATION: gnome-45/flatpak-builder
+SLACKBUILD FILES: 491.patch README.gz flatpak-builder.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.2.3
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/flatpak/flatpak-builder/releases/download/1.2.3/flatpak-builder-1.2.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: xdg-desktop-portal-gtk gcab appstream-glib libostree bubblewrap flatpak
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: flatpak-builder (sandboxing desktop application building tool)
+
+SLACKBUILD NAME: folks
+SLACKBUILD LOCATION: gnome-45/folks
+SLACKBUILD FILES: README doinst.sh.gz folks.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.15.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/folks/0.15/folks-0.15.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c866630c553f29ce9be1c7a60267cb4080a6bccf4b8d551dc4c7e6234d840248
+SLACKBUILD REQUIRES: evolution-data-server telepathy-glib libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap webkit2gtk4.1 rest gnome-online-accounts geocode-glib libgdata libgweather4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: folks (Folks contact aggregation library)
+
+SLACKBUILD NAME: font-noto-emoji
+SLACKBUILD LOCATION: gnome-45/font-noto-emoji
+SLACKBUILD FILES: doinst.sh.gz font-noto-emoji.SlackBuild slack-desc
+SLACKBUILD VERSION: 2.038
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/googlei18n/noto-emoji/archive/v2.038/noto-emoji-2.038.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: font-noto-emoji (Noto Emoji fonts)
+
+SLACKBUILD NAME: gcab
+SLACKBUILD LOCATION: gnome-45/gcab
+SLACKBUILD FILES: README gcab.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gcab/1.6/gcab-1.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 2f0c9615577c4126909e251f9de0626c3ee7a152376c15b5544df10fc87e560b
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gcab (A GObject library to create cabinet files)
+
+SLACKBUILD NAME: gdm
+SLACKBUILD LOCATION: gnome-45/gdm
+SLACKBUILD FILES: 0001-Xsession-Don-t-start-ssh-agent-by-default.patch 0003-add-wayland-session-script.patch 0004-fix-Xsession-language-in-gnome.patch README doinst.sh.gz gdm-autologin.pam gdm-launch-environment.pam gdm-password.pam gdm.SlackBuild gdm.wrap org.gnome.login-screen.gschema.override slack-desc slack-required slackware_whitelogo_med.png wayland-session
+SLACKBUILD VERSION: 45.0.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gdm/45/gdm-45.0.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6572578c05e3c6569d6ed269f7de2aaf3a035657654586d8243907bb7a6ffa85
+SLACKBUILD REQUIRES: blocaled gnome-session gnome-shell libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap geocode-glib libgusb webkit2gtk4.1 rest libgweather gnome-desktop colord gnome-online-accounts xvfb-run gnome-settings-daemon cups-pk-helper libhandy gsound gnome-bluetooth colord-gtk libgdata libgweather4 mutter gnome-control-center gnome-autoar evolution-data-server libdaemon
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gdm (GNOME Display Manager)
+
+SLACKBUILD NAME: gdm-settings
+SLACKBUILD LOCATION: gnome-45/gdm-settings
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gdm-settings.SlackBuild slack-desc
+SLACKBUILD VERSION: 4.1
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/realmazharhussain/gdm-settings.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gdm-settings (Login Manager Settings)
+
+SLACKBUILD NAME: gedit
+SLACKBUILD LOCATION: gnome-45/gedit
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gedit.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 46.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gedit/46/gedit-46.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: a1a6e37f041765dff7227a1f5578b6f49faaf016b1e17e869caf5bfb94c6aa4e
+SLACKBUILD REQUIRES: libpeas libgedit-gtksourceview libgedit-amtk
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gedit (GNOME Text Editor)
+
+SLACKBUILD NAME: gedit-plugins
+SLACKBUILD LOCATION: gnome-45/gedit-plugins
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gedit-plugins.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 46.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gedit-plugins/46/gedit-plugins-46.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: db6b4aa72dac0190a8ae497f770f5a4ba66ae3cf1e03ea8b744e6101df09b251
+SLACKBUILD REQUIRES: gedit
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gedit-plugins (GNOME Text Editor Plugins)
+
+SLACKBUILD NAME: geoclue2
+SLACKBUILD LOCATION: gnome-45/geoclue2
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz geoclue2.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 2.7.1
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.freedesktop.org/geoclue/geoclue/-/archive/2.7.1/geoclue-2.7.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: geoclue2 (location information service)
+
+SLACKBUILD NAME: geocode-glib
+SLACKBUILD LOCATION: gnome-45/geocode-glib
+SLACKBUILD FILES: README geocode-glib.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.26.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/geocode-glib/3.26/geocode-glib-3.26.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 2d9a6826d158470449a173871221596da0f83ebdcff98b90c7049089056a37aa
+SLACKBUILD REQUIRES: libsoup3
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: geocode-glib (convenience library for the geocoding)
+
+SLACKBUILD NAME: ghex
+SLACKBUILD LOCATION: gnome-45/ghex
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz ghex.SlackBuild slack-desc
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/ghex/45/ghex-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 7afac656370d2df2cb5f2662f86b52833d49911764b6541e61048b1eba9f0264
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: ghex (hex editor for GNOME)
+
+SLACKBUILD NAME: gitg
+SLACKBUILD LOCATION: gnome-45/gitg
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gitg.SlackBuild multi_commit.patch slack-desc
+SLACKBUILD VERSION: 44
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gitg/44/gitg-44.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 342a31684dab9671cd341bd3e3ce665adcee0460c2a081ddc493cdbc03132530
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gitg (gitg is a GUI client to view git repositories)
+
+SLACKBUILD NAME: gnome-autoar
+SLACKBUILD LOCATION: gnome-45/gnome-autoar
+SLACKBUILD FILES: README gnome-autoar.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.4.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-autoar/0.4/gnome-autoar-0.4.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c0afbe333bcf3cb1441a1f574cc8ec7b1b8197779145d4edeee2896fdacfc3c2
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-autoar (Automatic archives creating and extracting library)
+
+SLACKBUILD NAME: gnome-backgrounds
+SLACKBUILD LOCATION: gnome-45/gnome-backgrounds
+SLACKBUILD FILES: README gnome-backgrounds.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-backgrounds/45/gnome-backgrounds-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: cee0e688fbae5ef7a75f335ada2d10779e08ebca9445f1586de32c5a9b6dee2d
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-backgrounds (GNOME Backgrounds)
+
+SLACKBUILD NAME: gnome-bluetooth
+SLACKBUILD LOCATION: gnome-45/gnome-bluetooth
+SLACKBUILD FILES: README fix_building_gnome-bluetooth-42.2.patch gnome-bluetooth.SlackBuild remove_bluetooth_power_reporting.patch slack-desc slack-required
+SLACKBUILD VERSION: 42.8
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-bluetooth/42/gnome-bluetooth-42.8.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 76c241e8ca2c9b1035364535ca26084f89fc5c0e1829510f8909583115fcc2db
+SLACKBUILD REQUIRES: gsound libadwaita upower gnome-control-center gnome-shell
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-bluetooth (GNOME Bluetooth support)
+
+SLACKBUILD NAME: gnome-browser-connector
+SLACKBUILD LOCATION: gnome-45/gnome-browser-connector
+SLACKBUILD FILES: README.extensions doinst.sh doinst.sh.gz gnome-browser-connector.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 42.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-browser-connector/42/gnome-browser-connector-42.1.tar.xz https://gitlab.gnome.org/GNOME/gnome-browser-extension/-/archive/v11.1/gnome-browser-extension-v11.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64: bd9702ce1c163606ca32b8c13d1f3ba6e82b247cf87aac60610b411df1556212
+SLACKBUILD REQUIRES: p7zip jq
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-browser-connector (GNOME Shell Browser Integration)
+
+SLACKBUILD NAME: gnome-builder
+SLACKBUILD LOCATION: gnome-45/gnome-builder
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-builder.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-builder/45/gnome-builder-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 242da02593293d456ea24108a45934730a1e316d8dc5b18d9df0e864db7ba596
+SLACKBUILD REQUIRES: gtksourceview5 jsonrpc-glib libpeas template-glib webkit2gtk6.0 libdex cmark libgit2-glib python-sphinx sphinx_rtd_theme sysprof vte-gtk4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-builder (Develop software for GNOME)
+
+SLACKBUILD NAME: gnome-calculator
+SLACKBUILD LOCATION: gnome-45/gnome-calculator
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-calculator.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-calculator/45/gnome-calculator-45.0.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 7dcbf32384897171cbe5483ec664d994e5e755e912ae1df911624f03c90867c2
+SLACKBUILD REQUIRES: gtksourceview5 libadwaita
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-calculator (GNOME Calculator)
+
+SLACKBUILD NAME: gnome-calendar
+SLACKBUILD LOCATION: gnome-45/gnome-calendar
+SLACKBUILD FILES: 1.patch README doinst.sh doinst.sh.gz gnome-calendar.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-calendar/45/gnome-calendar-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 7fa8507543865aa7432bb5319830c87158b5447ca09cca45b607dc6796c71008
+SLACKBUILD REQUIRES: evolution-data-server geoclue2 libgweather4 libadwaita gsettings-desktop-schemas gtk4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-calendar (GNOME Calendar)
+
+SLACKBUILD NAME: gnome-characters
+SLACKBUILD LOCATION: gnome-45/gnome-characters
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-characters.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-characters/45/gnome-characters-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3fd54fcc14d291b77fff12deefff00da383e0a6400af507d1605fbcb49b8c741
+SLACKBUILD REQUIRES: xvfb-run
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-characters (Character map application)
+
+SLACKBUILD NAME: gnome-clocks
+SLACKBUILD LOCATION: gnome-45/gnome-clocks
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-clocks.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-clocks/45/gnome-clocks-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: fc8eb4fd9530f1e641dc00ee2086ee7d354a7a00b0a0d1722e305d5c9aab91b5
+SLACKBUILD REQUIRES: gsound libgweather4 gnome-desktop geoclue2 libadwaita geocode-glib libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-clocks (A simple clock application for GNOME)
+
+SLACKBUILD NAME: gnome-color-manager
+SLACKBUILD LOCATION: gnome-45/gnome-color-manager
+SLACKBUILD FILES: 3.36.0-cumulative.patch README doinst.sh doinst.sh.gz gnome-color-manager.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.36.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-color-manager/3.36/gnome-color-manager-3.36.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 9ddb9e6b6472e119801381f90905332ec1d4258981721bba831ca246ceb3ad3b
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-color-manager (GNOME Color Profile Manager)
+
+SLACKBUILD NAME: gnome-commander
+SLACKBUILD LOCATION: gnome-45/gnome-commander
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-commander.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.16.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-commander/1.16/gnome-commander-1.16.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3f1d00c4a650fe7902167648286b32c9ca4ef86e31a5d8ccca0139f12d10d0b3
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-commander
+
+SLACKBUILD NAME: gnome-connections
+SLACKBUILD LOCATION: gnome-45/gnome-connections
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-connections.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-connections/45/gnome-connections-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b9fab525b90a3e27d113c16fb868c2b9c47bf8149310d14db862ea1912c06fb8
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-connections
+
+SLACKBUILD NAME: gnome-console
+SLACKBUILD LOCATION: gnome-45/gnome-console
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-console.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-console/45/gnome-console-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: e7462128d2df2324a1d748062c40429cd0504af09e407067b33f3a9d0c59c8e1
+SLACKBUILD REQUIRES: vte-gtk4 libadwaita gtk4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-console (A minimal terminal for GNOME)
+
+SLACKBUILD NAME: gnome-contacts
+SLACKBUILD LOCATION: gnome-45/gnome-contacts
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-contacts.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-contacts/45/gnome-contacts-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 823f5609eecd90c424dd3e64857287bc1321fb6dfe28924a474ff0e9acf21b75
+SLACKBUILD REQUIRES: folks gnome-online-accounts libadwaita libportal evolution-data-server gtk4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-contacts
+
+SLACKBUILD NAME: gnome-control-center
+SLACKBUILD LOCATION: gnome-45/gnome-control-center
+SLACKBUILD FILES: 0001-keyboard-Use-new-gnome-desktop-api-for-getting-defau.patch 001-sharing.patch README doinst.sh.gz gnome-control-center.SlackBuild slack-desc slack-required slackware_logo_med.png slackware_whitelogo_med.png
+SLACKBUILD VERSION: 45.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-control-center/45/gnome-control-center-45.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b1e949c4e86c0624ec6a6ed0df09c9fae2b22983c1dca60ed86aec8ef0b24004
+SLACKBUILD REQUIRES: colord-gtk gnome-bluetooth gnome-online-accounts gnome-settings-daemon gsound cups-pk-helper rest libnma-gtk4 webp-pixbuf-loader xdg-desktop-portal-gnome libadwaita libwpe geocode-glib libgusb xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap libgweather4 gnome-desktop colord webkit2gtk4.1 libhandy gnome-remote-desktop rygel gnome-user-share gnome-color-manager libgnomekbd
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-control-center (GNOME Control Center)
+
+SLACKBUILD NAME: gnome-control-center-vrr
+SLACKBUILD LOCATION: gnome-45/gnome-control-center-vrr
+SLACKBUILD FILES: 0001-keyboard-Use-new-gnome-desktop-api-for-getting-defau.patch 001-sharing.patch gnome-control-center-vrr.SlackBuild slack-desc slack-required slackware_logo_med.png slackware_whitelogo_med.png vrr.patch
+SLACKBUILD VERSION: 45.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-control-center/45/gnome-control-center-45.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: colord-gtk gnome-bluetooth gnome-online-accounts gnome-settings-daemon gsound cups-pk-helper librest libnma-gtk4 webp-pixbuf-loader xdg-desktop-portal-gnome libadwaita libwpe geocode-glib libgusb xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap libgweather4 gnome-desktop colord webkit2gtk4.1 libhandy gnome-remote-desktop rygel gnome-user-share gnome-color-manager libgnomekbd mutter-vrr
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-control-center-vrr (GNOME Control Center With VRR Support)
+
+SLACKBUILD NAME: gnome-desktop
+SLACKBUILD LOCATION: gnome-45/gnome-desktop
+SLACKBUILD FILES: 0001-meson-Add-python3-to-build-scripts.patch 0002-gnome-languages-Add-function-to-detect-non-latin-lay.patch 0003-meson-Add-codegen-for-localed.patch 0004-languages-Add-functions-for-getting-default-input-so.patch README gnome-desktop.SlackBuild multi_commit.patch slack-desc slack-required
+SLACKBUILD VERSION: 44.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-desktop/44/gnome-desktop-44.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 42c773745d84ba14bc1cf1c4c6f4606148803a5cd337941c63964795f3c59d42
+SLACKBUILD REQUIRES: python3-langtable
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-desktop (libgnome-desktop library)
+
+SLACKBUILD NAME: gnome-dictionary
+SLACKBUILD LOCATION: gnome-45/gnome-dictionary
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-dictionary.SlackBuild slack-desc
+SLACKBUILD VERSION: 41
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/Archive/gnome-dictionary.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-dictionary (GNOME dictionary application)
+
+SLACKBUILD NAME: gnome-disk-utility
+SLACKBUILD LOCATION: gnome-45/gnome-disk-utility
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-disk-utility.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-disk-utility/45/gnome-disk-utility-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 540ff4ec9a6b9630003ff4cd60d624f39fe70f25a9559e5333389603c85b9529
+SLACKBUILD REQUIRES: libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-disk-utility (GNOME Disks)
+
+SLACKBUILD NAME: gnome-font-viewer
+SLACKBUILD LOCATION: gnome-45/gnome-font-viewer
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-font-viewer-c89.patch gnome-font-viewer.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-font-viewer/45/gnome-font-viewer-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 97cb6b68dda60de0ab3038383586f1e4bc1da5a48f44025bd6bbe74ea05c2b08
+SLACKBUILD REQUIRES: gnome-desktop libadwaita
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-font-viewer:
+
+SLACKBUILD NAME: gnome-initial-setup
+SLACKBUILD LOCATION: gnome-45/gnome-initial-setup
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-initial-setup.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.4.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-initial-setup/45/gnome-initial-setup-45.4.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 363e09aa3308e7f4074e066253a0182b322ab60376743de178bbb400e54ba8ee
+SLACKBUILD REQUIRES: libadwaita webkit2gtk6.0
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-initial-setup:
+
+SLACKBUILD NAME: gnome-latex
+SLACKBUILD LOCATION: gnome-45/gnome-latex
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-latex.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.46.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-latex/3.46/gnome-latex-3.46.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d67555639b2a15a8aebd54f335354e44fe3433143ae3cb3cca7a8e26f8112ada
+SLACKBUILD REQUIRES: gtksourceview4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-latex
+
+SLACKBUILD NAME: gnome-maps
+SLACKBUILD LOCATION: gnome-45/gnome-maps
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-maps.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.5
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-maps/45/gnome-maps-45.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 1c20f5e10dce684adefb2961526266a224e6c46c16fa03b954affa0b3a1bb740
+SLACKBUILD REQUIRES: libshumate telepathy-glib folks libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap webkit2gtk4.1 rest cogl gnome-online-accounts geocode-glib clutter libgdata libgweather4 clutter-gtk telepathy-glib evolution-data-server libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-maps (GNOME Maps)
+
+SLACKBUILD NAME: gnome-menus
+SLACKBUILD LOCATION: gnome-45/gnome-menus
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gnome-menus.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.36.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-menus/3.36/gnome-menus-3.36.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d9348f38bde956fc32753b28c1cde19c175bfdbf1f4d5b06003b3aa09153bb1f
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-menus (libgnome-menu library)
+
+SLACKBUILD NAME: gnome-music
+SLACKBUILD LOCATION: gnome-45/gnome-music
+SLACKBUILD FILES: 0001-help-remove.patch README doinst.sh doinst.sh.gz gnome-music.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-music/45/gnome-music-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 95959cdb802444048d50a1a91c42db8b25165a0a68533bc03895eb372c4dde0b
+SLACKBUILD REQUIRES: gnome-online-accounts grilo grilo-plugins libadwaita libmediaart tracker
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-music (simple GNOME music applcation)
+
+SLACKBUILD NAME: gnome-nettool
+SLACKBUILD LOCATION: gnome-45/gnome-nettool
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-nettool-42.0-ping_and_netstat_fixes-1.patch gnome-nettool.SlackBuild slack-desc
+SLACKBUILD VERSION: 42.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-nettool/42/gnome-nettool-42.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: a54f29eef2038aee69551c8b19ca4f758e5eb9e2090a4bc6b5633dff0188751f
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: GNOME Nettool
+
+SLACKBUILD NAME: gnome-online-accounts
+SLACKBUILD LOCATION: gnome-45/gnome-online-accounts
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-online-accounts.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.48.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-online-accounts/3.48/gnome-online-accounts-3.48.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3ea0c71084bf595cce5caa37ceff2e853d0ec9644bb01fd4643300adb9517f8a
+SLACKBUILD REQUIRES: rest webkit2gtk4.1 libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Gnome Online Accounts (GOA)
+
+SLACKBUILD NAME: gnome-power-manager
+SLACKBUILD LOCATION: gnome-45/gnome-power-manager
+SLACKBUILD FILES: README doinst.sh.gz gnome-power-manager.SlackBuild slack-desc
+SLACKBUILD VERSION: 43.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-power-manager/43/gnome-power-manager-43.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 7daab48bbddb30e9df2aba650cb60d05e667c9f885ace6a0a1e7950e0cbdd32f
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: GNOME Power Manager
+
+SLACKBUILD NAME: gnome-remote-desktop
+SLACKBUILD LOCATION: gnome-45/gnome-remote-desktop
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-remote-desktop.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-remote-desktop/45/gnome-remote-desktop-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: dcd9c18ac2306695631fcf00a88645c38e370eba05c69df39f540204d4eafd8d
+SLACKBUILD REQUIRES: libei
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: GNOME Remote Desktop
+
+SLACKBUILD NAME: gnome-screenshot
+SLACKBUILD LOCATION: gnome-45/gnome-screenshot
+SLACKBUILD FILES: slack-required
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: gnome-session
+SLACKBUILD LOCATION: gnome-45/gnome-session
+SLACKBUILD FILES: 0001-meson-add-elogind-support.patch 0001-revert-systemd-hard-dep.patch 0002-gnome-session-add-profile-sourcing.patch doinst.sh doinst.sh.gz gnome-session.SlackBuild slack-desc slack-required xinitrc.gnome
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-session/45/gnome-session-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 706d2ffcacac38553a3c0185793f5a2b4aac940bb5e789d953c9808163bef2f1
+SLACKBUILD REQUIRES: gnome-desktop
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-session (GNOME Session Manager)
+
+SLACKBUILD NAME: gnome-settings-daemon
+SLACKBUILD LOCATION: gnome-45/gnome-settings-daemon
+SLACKBUILD FILES: README gnome-settings-daemon.SlackBuild org.gnome.settings-daemon.plugins.power.gschema.override slack-desc slack-required
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-settings-daemon/45/gnome-settings-daemon-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c62bfec9817eee5b83ebe901a9286189a67eb5ff033c5dd41506574f822bf090
+SLACKBUILD REQUIRES: colord geoclue2 gnome-desktop libgweather4 gcr4 geocode-glib libgusb
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-settings-daemon (GNOME Settings Daemon)
+
+SLACKBUILD NAME: gnome-shell
+SLACKBUILD LOCATION: gnome-45/gnome-shell
+SLACKBUILD FILES: 0001-status-keyboard-Add-a-catch-around-reload-call.patch 0002-status-keyboard-Load-keyboard-from-system-settings-i.patch 0003-status-keyboard-Use-gnome-desktop-API-for-getting-de.patch doinst.sh doinst.sh.gz gnome-shell.SlackBuild optional-portal-helper.patch slack-desc slack-required slack-suggests
+SLACKBUILD VERSION: 45.7
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-shell/45/gnome-shell-45.7.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 17b26d5cc84e259337f8653e52181241139d1a702a43f5149c99d73e96f8fdb1
+SLACKBUILD REQUIRES: evolution-data-server gnome-autoar gnome-bluetooth gnome-control-center mutter libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap geocode-glib libgusb webkit2gtk4.1 rest gnome-desktop colord gnome-online-accounts xvfb-run gnome-settings-daemon cups-pk-helper libhandy gsound colord-gtk libgdata libgweather4
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-shell (GNOME Shell)
+
+SLACKBUILD NAME: gnome-shell-extensions
+SLACKBUILD LOCATION: gnome-45/gnome-shell-extensions
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-shell-extensions.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-shell-extensions/45/gnome-shell-extensions-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: ee32f6387a2d18adbff7a956689bc747866b4a8712d73790c002abeae4ccaaaf
+SLACKBUILD REQUIRES: gnome-menus
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-shell-extensions (GNOME Shell Extensions)
+
+SLACKBUILD NAME: gnome-software
+SLACKBUILD LOCATION: gnome-45/gnome-software
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gnome-software.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-software/45/gnome-software-45.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d6b9245b22237da7bd1739dd28c23cc8f3835f99fa10c1037d9dd7635335251c
+SLACKBUILD REQUIRES: AppStream flatpak libadwaita
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-software
+
+SLACKBUILD NAME: gnome-system-monitor
+SLACKBUILD LOCATION: gnome-45/gnome-system-monitor
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-system-monitor.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-system-monitor/45/gnome-system-monitor-45.0.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c5e272d90bf9986a3f8613d76e0d27fa42dfacee5c0192e73921bb94b1868a2e
+SLACKBUILD REQUIRES: libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-system-monitor (GNOME System Monitor)
+
+SLACKBUILD NAME: gnome-terminal
+SLACKBUILD LOCATION: gnome-45/gnome-terminal
+SLACKBUILD FILES: 1.patch README gnome-terminal.SlackBuild restore-transparency.patch slack-desc slack-required
+SLACKBUILD VERSION: 3.50.1
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/GNOME/gnome-terminal/-/archive/3.50.1/gnome-terminal-3.50.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: gnome-shell nautilus vte-gtk4 libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap geocode-glib libgusb webkit2gtk4.1 rest gnome-desktop colord gnome-online-accounts xvfb-run gnome-settings-daemon cups-pk-helper libhandy gsound gnome-bluetooth colord-gtk libgdata libgweather4 tracker libportal gnome-autoar mutter gnome-control-center evolution-data-server
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-terminal (GNOME Terminal Emulator)
+
+SLACKBUILD NAME: gnome-text-editor
+SLACKBUILD LOCATION: gnome-45/gnome-text-editor
+SLACKBUILD FILES: 117.patch README doinst.sh doinst.sh.gz gnome-text-editor.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-text-editor/45/gnome-text-editor-45.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: f3ffcb11a92dfd04ba3c3b3d0e667847d4449a21e012ae36f07dda05ac7d3a52
+SLACKBUILD REQUIRES: gtksourceview5 libadwaita libspelling cairo
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-text-editor
+
+SLACKBUILD NAME: gnome-tour
+SLACKBUILD LOCATION: gnome-45/gnome-tour
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-tour.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-tour/45/gnome-tour-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 5be4b8ef4b8f4d5ecaccc31048db6e085a8f7bffadaa0843b8e8a788ff1dadee
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-tour
+
+SLACKBUILD NAME: gnome-tweaks
+SLACKBUILD LOCATION: gnome-45/gnome-tweaks
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-tweaks.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-tweaks/45/gnome-tweaks-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 01bf5e723a1d18b1025401e32b5f64eb29b79e8a17ad010bbbd1e23b137b9069
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-tweaks (GNOME Tweaks)
+
+SLACKBUILD NAME: gnome-usage
+SLACKBUILD LOCATION: gnome-45/gnome-usage
+SLACKBUILD FILES: doinst.sh.gz gnome-usage.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-usage/45/gnome-usage-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: e677c4fe2c01497a84ff1e1157e9131e9f9999f1a78d35234af1d77d8275f294
+SLACKBUILD REQUIRES: gtk4 libadwaita tracker gtop
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-usage ("View information about system resources.")
+
+SLACKBUILD NAME: gnome-user-docs
+SLACKBUILD LOCATION: gnome-45/gnome-user-docs
+SLACKBUILD FILES: README gnome-user-docs.SlackBuild slack-desc
+SLACKBUILD VERSION: 45.5
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-user-docs/45/gnome-user-docs-45.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 74167fcf42a04d9e5d3cc130d27bc203d87b685ce606a84674df24e1ff719e54
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-user-docs (GNOME User Documentation)
+
+SLACKBUILD NAME: gnome-user-share
+SLACKBUILD LOCATION: gnome-45/gnome-user-share
+SLACKBUILD FILES: gnome-user-share.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 43.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-user-share/43/gnome-user-share-43.0.tar.xz httpd=/usr/sbin/httpd \ httpd/modules
+SLACKBUILD SHA256SUM_x86_64: 0df306aa0558313f353ef7f51bfa27c036281adc45677e1cfbfa7c9f861538ce
+SLACKBUILD REQUIRES: nautilus mod_dnssd
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnome-user-share (File sharing application)
+
+SLACKBUILD NAME: gnome-weather
+SLACKBUILD LOCATION: gnome-45/gnome-weather
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gnome-weather.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnome-weather/45/gnome-weather-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 30c0029702883dc8d8160e6de1d6116877cd6c25bc950d4e4902a6ab467b2fa4
+SLACKBUILD REQUIRES: geocode-glib libgweather4 libhandy geoclue2
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: GNOME Weather
+
+SLACKBUILD NAME: gnote
+SLACKBUILD LOCATION: gnome-45/gnote
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gnote.SlackBuild slack-desc
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gnote/45/gnote-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 7dccac3e4b5cd69b3114bd29ad50cb6ddf4298bc73c27c1d151a0455b48fcc26
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gnote (desktop note taking program)
+
+SLACKBUILD NAME: gom
+SLACKBUILD LOCATION: gnome-45/gom
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz gom.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gom/0.4/gom-0.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 68d08006aaa3b58169ce7cf1839498f45686fba8115f09acecb89d77e1018a9d
+SLACKBUILD REQUIRES: gtk-doc
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gom:
+
+SLACKBUILD NAME: grilo
+SLACKBUILD LOCATION: gnome-45/grilo
+SLACKBUILD FILES: README grilo.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.16
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/grilo/0.3/grilo-0.3.16.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 884580e8c5ece280df23aa63ff5234b7d48988a404df7d6bfccd1e77b473bd96
+SLACKBUILD REQUIRES: totem-pl-parser libsoup3
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: grilo (Grilo media discovery framework)
+
+SLACKBUILD NAME: grilo-plugins
+SLACKBUILD LOCATION: gnome-45/grilo-plugins
+SLACKBUILD FILES: 140.patch README grilo-plugins.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.16
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/grilo-plugins/0.3/grilo-plugins-0.3.16.tar.xz
+SLACKBUILD SHA256SUM_x86_64: fe6f4dbe586c6b8ba2406394e202f22d009d642a96eb3a54f32f6a21d084cdcb
+SLACKBUILD REQUIRES: grilo libdmapsharing tracker
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: grilo-plugins (collection of plugins for grilo framework)
+
+SLACKBUILD NAME: gsettings-desktop-schemas
+SLACKBUILD LOCATION: gnome-45/gsettings-desktop-schemas
+SLACKBUILD FILES: doinst.sh.gz gsettings-desktop-schemas.SlackBuild gsettings-desktop-schemas.font.defaults.diff.gz slack-desc
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gsettings-desktop-schemas/45/gsettings-desktop-schemas-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 365c8d04daf79b38c8b3dc9626349a024f9e4befdd31fede74b42f7a9fbe0ae2
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gsettings-desktop-schemas (GSettings schemas)
+
+SLACKBUILD NAME: gsound
+SLACKBUILD LOCATION: gnome-45/gsound
+SLACKBUILD FILES: README gsound.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.0.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gsound/1.0/gsound-1.0.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: ca2d039e1ebd148647017a7f548862350bc9af01986d39f10cfdc8e95f07881a
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gsound (small library for playing system sounds)
+
+SLACKBUILD NAME: gssdp
+SLACKBUILD LOCATION: gnome-45/gssdp
+SLACKBUILD FILES: gssdp.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.6.3
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gssdp/1.6/gssdp-1.6.3.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 2fedb5afdb22cf14d5498a39a773ca89788a250fcf70118783df821e1f3f3446
+SLACKBUILD REQUIRES: libsoup3
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gssdp:
+
+SLACKBUILD NAME: gst-editing-services
+SLACKBUILD LOCATION: gnome-45/gst-editing-services
+SLACKBUILD FILES: gst-editing-services.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.22.5
+SLACKBUILD DOWNLOAD_x86_64: https://gstreamer.freedesktop.org/src/gst-editing-services/gst-editing-services-1.22.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: GStreamer Editing Services (gstreamer plug-in)
+
+SLACKBUILD NAME: gtk-doc
+SLACKBUILD LOCATION: gnome-45/gtk-doc
+SLACKBUILD FILES: gtk-doc.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.33.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gtk-doc/1.33/gtk-doc-1.33.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: cc1b709a20eb030a278a1f9842a362e00402b7f834ae1df4c1998a723152bf43
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gtk-doc (GTK API Documentation)
+
+SLACKBUILD NAME: gtk-internet-radio-locator
+SLACKBUILD LOCATION: gnome-45/gtk-internet-radio-locator
+SLACKBUILD FILES: README gtk-internet-radio-locator.SlackBuild slack-desc
+SLACKBUILD VERSION: 12.5.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gtk-internet-radio-locator/4.8/gtk-internet-radio-locator-4.8.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gtk-internet-radio-locator (locate and listen to Free Radio)
+
+SLACKBUILD NAME: gtk-vnc
+SLACKBUILD LOCATION: gnome-45/gtk-vnc
+SLACKBUILD FILES: doinst.sh gtk-vnc.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.3.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gtk-vnc/1.3/gtk-vnc-1.3.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 512763ac4e0559d0158b6682ca5dd1a3bd633f082f5e4349d7158e6b5f80f1ce
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gtk-vnc ( VNC viewer widget for GTK )
+
+SLACKBUILD NAME: gtksourceview5
+SLACKBUILD LOCATION: gnome-45/gtksourceview5
+SLACKBUILD FILES: README gtksourceview5.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 5.10.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gtksourceview/5.10/gtksourceview-5.10.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gtksourceview5 (a GTK+ framework for source code editing)
+
+SLACKBUILD NAME: gupnp
+SLACKBUILD LOCATION: gnome-45/gupnp
+SLACKBUILD FILES: gupnp.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.6.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gupnp/1.6/gupnp-1.6.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c9dc50e8c78b3792d1b0e6c5c5f52c93e9345d3dae2891e311a993a574f5a04f
+SLACKBUILD REQUIRES: libsoup3 gssdp
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gupnp (Object-oriented UPNP framework)
+
+SLACKBUILD NAME: gupnp-av
+SLACKBUILD LOCATION: gnome-45/gupnp-av
+SLACKBUILD FILES: gupnp-av.SlackBuild slack-desc slack-required use_xmlReadMemory_instead_of_xmlRecoverMemory.patch
+SLACKBUILD VERSION: 0.14.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gupnp-av/0.14/gupnp-av-0.14.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b79ce0cc4b0c66d9c54bc22183a10e5709a0011d2af272025948efcab33a3e4f
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gupnp-av:
+
+SLACKBUILD NAME: gupnp-dlna
+SLACKBUILD LOCATION: gnome-45/gupnp-dlna
+SLACKBUILD FILES: doinst.sh doinst.sh.gz gupnp-dlna.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.12.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/gupnp-dlna/0.12/gupnp-dlna-0.12.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3d53b96f85bc5628d33e367ec9bf2adb38ef2b34d7ad0434a6ba0cf4ad9048e6
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: gupnp-dlna:
+
+SLACKBUILD NAME: highlight
+SLACKBUILD LOCATION: gnome-45/highlight
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz highlight.SlackBuild lua-qt.patch slack-desc slack-required
+SLACKBUILD VERSION: 4.7
+SLACKBUILD DOWNLOAD_x86_64: http://www.andre-simon.de/zip/highlight-4.7.tar.bz2
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: lua53
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: highlight (a universal syntax highlighter)
+
+SLACKBUILD NAME: highscore
+SLACKBUILD LOCATION: gnome-45/highscore
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz highscore.SlackBuild meson.patch slack-desc tracker3.patch
+SLACKBUILD VERSION: 40.0
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/World/highscore.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: highscore (Highscore is a retro gaming application)
+
+SLACKBUILD NAME: http-parser
+SLACKBUILD LOCATION: gnome-45/http-parser
+SLACKBUILD FILES: README http-parser.SlackBuild slack-desc
+SLACKBUILD VERSION: 2.9.4
+SLACKBUILD DOWNLOAD_x86_64: http-parser https://github.com/nodejs/http-parser/archive/v2.9.4/http-parser-2.9.4.tar.gz http-parser
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: http-parser (HTTP request/response parser for c)
+
+SLACKBUILD NAME: ibus-gtk4
+SLACKBUILD LOCATION: gnome-45/ibus-gtk4
+SLACKBUILD FILES: Blocks.txt.gz NamesList.txt.gz doinst.sh.gz emoji-test.txt.gz ibus-gtk4.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.5.29
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/ibus/ibus/archive/1.5.29/ibus-1.5.29.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: ibus-gtk4 (IBus IM module for GTK4)
+
+SLACKBUILD NAME: jq
+SLACKBUILD LOCATION: gnome-45/jq
+SLACKBUILD FILES: README jq.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.7
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/stedolan/jq/releases/download/jq-1.7/jq-1.7.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: jq (command-line JSON processor)
+
+SLACKBUILD NAME: jsonrpc-glib
+SLACKBUILD LOCATION: gnome-45/jsonrpc-glib
+SLACKBUILD FILES: README jsonrpc-glib.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 3.44.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/jsonrpc-glib/3.44/jsonrpc-glib-3.44.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 69406a0250d0cc5175408cae7eca80c0c6bfaefc4ae1830b354c0433bcd5ce06
+SLACKBUILD REQUIRES: gi-docgen
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Jsonrpc-GLib
+
+SLACKBUILD NAME: libaccounts-glib
+SLACKBUILD LOCATION: gnome-45/libaccounts-glib
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz libaccounts-glib.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.26
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.com/accounts-sso/libaccounts-glib/-/archive/1.26/libaccounts-glib-1.26.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libaccounts-glib (short description of app)
+
+SLACKBUILD NAME: libadwaita
+SLACKBUILD LOCATION: gnome-45/libadwaita
+SLACKBUILD FILES: README libadwaita.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.4.5
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libadwaita/1.4/libadwaita-1.4.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64: f748ef877246801e8cd9357183dc9084bc6f266e1b4a47e558065e2bc12689f3
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libadwaita (GTK 4 library implementing the GNOME HIG)
+
+SLACKBUILD NAME: libaom
+SLACKBUILD LOCATION: gnome-45/libaom
+SLACKBUILD FILES: libaom.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.7.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/jbeich/aom/archive/v3.7.0/aom-3.7.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libaom (Open Source Video Codec)
+
+SLACKBUILD NAME: libavif
+SLACKBUILD LOCATION: gnome-45/libavif
+SLACKBUILD FILES: avifdec.1 avifenc.1 libavif.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.0.1
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/AOMediaCodec/libavif/archive/v1.0.1/libavif-1.0.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libavif (AVIF Encoding and Decoding Library)
+
+SLACKBUILD NAME: libcloudproviders
+SLACKBUILD LOCATION: gnome-45/libcloudproviders
+SLACKBUILD FILES: README libcloudproviders.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.5
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libcloudproviders/0.3/libcloudproviders-0.3.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b987456eddaf715ba9d623aa2bc501ab1b697dffeb11aaa783a637275df186da
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libcloudproviders (DBus API for cloud sync clients)
+
+SLACKBUILD NAME: libdazzle
+SLACKBUILD LOCATION: gnome-45/libdazzle
+SLACKBUILD FILES: README libdazzle.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.44.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libdazzle/3.44/libdazzle-3.44.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3cd3e45eb6e2680cb05d52e1e80dd8f9d59d4765212f0e28f78e6c1783d18eae
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libdazzle (A library to delight your users with fancy features)
+
+SLACKBUILD NAME: libdex
+SLACKBUILD LOCATION: gnome-45/libdex
+SLACKBUILD FILES: libdex.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.4.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libdex/0.4/libdex-0.4.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 81b5f5474d164b40395e82867fa706af18207c787f30989b76afb7e7df5b443a
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libdex ("Deferred Execution")
+
+SLACKBUILD NAME: libdmapsharing
+SLACKBUILD LOCATION: gnome-45/libdmapsharing
+SLACKBUILD FILES: README libdmapsharing.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.9.13
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/GNOME/libdmapsharing/-/archive/LIBDMAPSHARING_3_9_13/libdmapsharing-LIBDMAPSHARING_3_9_13.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libdmapsharing (library for the DMAP family of protocols)
+
+SLACKBUILD NAME: libei
+SLACKBUILD LOCATION: gnome-45/libei
+SLACKBUILD FILES: 0001-oeffis-OEFFIS_DEVICE_ALL_DEVICES-should-translate-to.patch libei.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.2.0
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.freedesktop.org/libinput/libei/-/archive/1.2.0/libei-1.2.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: python3-attrs
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libei (library for Emulated Input)
+
+SLACKBUILD NAME: libfdk-aac
+SLACKBUILD LOCATION: gnome-45/libfdk-aac
+SLACKBUILD FILES: README libfdk-aac.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 2.0.2
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/mstorsjo/fdk-aac/archive/v2.0.2/fdk-aac-2.0.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libfdk-aac (Fraunhofer FDK AAC code from Android.)
+
+SLACKBUILD NAME: libgdata
+SLACKBUILD LOCATION: gnome-45/libgdata
+SLACKBUILD FILES: README libgdata.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.18.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libgdata/0.18/libgdata-0.18.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: dd8592eeb6512ad0a8cf5c8be8c72e76f74bfe6b23e4dd93f0756ee0716804c7
+SLACKBUILD REQUIRES: gnome-online-accounts libwpe xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap webkit2gtk4.1 rest
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgdata (online services APIs access)
+
+SLACKBUILD NAME: libgedit-amtk
+SLACKBUILD LOCATION: gnome-45/libgedit-amtk
+SLACKBUILD FILES: README libgedit-amtk.SlackBuild slack-desc
+SLACKBUILD VERSION: 5.8.0
+SLACKBUILD DOWNLOAD_x86_64: https://gedit-technology.net/tarballs/libgedit-amtk/libgedit-amtk-5.8.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgedit-amtk (Actions, Menus and Toolbars Kit for GTK applications)
+
+SLACKBUILD NAME: libgedit-gtksourceview
+SLACKBUILD LOCATION: gnome-45/libgedit-gtksourceview
+SLACKBUILD FILES: doinst.sh doinst.sh.gz libgedit-gtksourceview.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 299.0.4
+SLACKBUILD DOWNLOAD_x86_64: https://gedit-technology.net/tarballs/libgedit-gtksourceview/libgedit-gtksourceview-299.0.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgedit-gtksourceview (Source code editing widget)
+
+SLACKBUILD NAME: libgit2
+SLACKBUILD LOCATION: gnome-45/libgit2
+SLACKBUILD FILES: README libgit2.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.7.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/libgit2/libgit2/archive/v1.7.0/libgit2-1.7.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgit2 (C library for custom Git applications)
+
+SLACKBUILD NAME: libgit2-glib
+SLACKBUILD LOCATION: gnome-45/libgit2-glib
+SLACKBUILD FILES: README libgit2-glib.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.2.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libgit2-glib/1.2/libgit2-glib-1.2.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 1331dada838f4e1f591b26459d44126a325de762dc3cd26153a31afbdfe18190
+SLACKBUILD REQUIRES: libgit2
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgit2-glib (GLIB Wrapper)
+
+SLACKBUILD NAME: libgnome-volume-control
+SLACKBUILD LOCATION: gnome-45/libgnome-volume-control
+SLACKBUILD FILES: libgnome-volume-control.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.0.1
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/GNOME/libgnome-volume-control.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgnome-volume-control (library for gvc)
+
+SLACKBUILD NAME: libgrss
+SLACKBUILD LOCATION: gnome-45/libgrss
+SLACKBUILD FILES: README libgrss-0.7.0-bugfixes-2.patch libgrss.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.7.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libgrss/0.7/libgrss-0.7.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6709c0f630a915ea7d5f1ac88ac173ef974d8d7406f43bd4be70d3e71fd554d9
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgrss ( Library to manipulate RSS and Atom feeds )
+
+SLACKBUILD NAME: libgweather4
+SLACKBUILD LOCATION: gnome-45/libgweather4
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz libgweather4.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 4.4.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libgweather/4.4/libgweather-4.4.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: geocode-glib
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgweather4 (weather library for GNOME)
+
+SLACKBUILD NAME: libgxps
+SLACKBUILD LOCATION: gnome-45/libgxps
+SLACKBUILD FILES: libgxps.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libgxps/0.3/libgxps-0.3.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6d27867256a35ccf9b69253eb2a88a32baca3b97d5f4ef7f82e3667fa435251c
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libgxps (library for handling and rendering XPS documents)
+
+SLACKBUILD NAME: libheif
+SLACKBUILD LOCATION: gnome-45/libheif
+SLACKBUILD FILES: doinst.sh.gz libheif.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.16.2
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/strukturag/libheif/releases/download/v1.16.2/libheif-1.16.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libheif (HEIF and AVIF file format decoder and encoder)
+
+SLACKBUILD NAME: libiptcdata
+SLACKBUILD LOCATION: gnome-45/libiptcdata
+SLACKBUILD FILES: README libiptcdata.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.0.5
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/ianw/libiptcdata/releases/download/release_1_0_5/libiptcdata-1.0.5.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libiptcdata (library to manipulate iptc image metadata)
+
+SLACKBUILD NAME: liblouis
+SLACKBUILD LOCATION: gnome-45/liblouis
+SLACKBUILD FILES: README liblouis.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.24.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/liblouis/liblouis/releases/download/v3.24.0/liblouis-3.24.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: liblouis (Braille translator)
+
+SLACKBUILD NAME: libmediaart
+SLACKBUILD LOCATION: gnome-45/libmediaart
+SLACKBUILD FILES: README libmediaart.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.9.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libmediaart/1.9/libmediaart-1.9.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c3bc5025d7db380587f9c8eb800c611f6b5a16d6b4b78fcff93f62876a677f17
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libmediaart (managing, extracting & handling media art caches)
+
+SLACKBUILD NAME: libnma-gtk4
+SLACKBUILD LOCATION: gnome-45/libnma-gtk4
+SLACKBUILD FILES: doinst.sh.gz libnma-gtk4.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.10.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libnma/1.10/libnma-1.10.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libnma-gtk4 (NetworkManager GTK4 GUI Client Library)
+
+SLACKBUILD NAME: liboauth
+SLACKBUILD LOCATION: gnome-45/liboauth
+SLACKBUILD FILES: README liboauth-1.0.3-openssl-1.1.0-2.patch liboauth.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.0.3
+SLACKBUILD DOWNLOAD_x86_64: http://sourceforge.net/projects/liboauth/files/liboauth-1.0.3.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: liboauth (C library implementing OAuth Core RFC 5849)
+
+SLACKBUILD NAME: libosinfo
+SLACKBUILD LOCATION: gnome-45/libosinfo
+SLACKBUILD FILES: 0001-osinfo-Make-xmlError-struct-constant.patch README libosinfo.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.10.0
+SLACKBUILD DOWNLOAD_x86_64: https://releases.pagure.org/libosinfo/libosinfo-1.10.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libosinfo osinfo-db-tools osinfo-db
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libosinfo (operating systems library)
+
+SLACKBUILD NAME: libostree
+SLACKBUILD LOCATION: gnome-45/libostree
+SLACKBUILD FILES: 0001-Revert-fetcher-Always-open-tmpfiles-in-repo-location.patch libostree.SlackBuild slack-desc
+SLACKBUILD VERSION: 2023.4
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/ostreedev/ostree/releases/download/v2023.4/libostree-2023.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libostree (tool for immutable filesystem trees)
+
+SLACKBUILD NAME: libpanel
+SLACKBUILD LOCATION: gnome-45/libpanel
+SLACKBUILD FILES: README libpanel.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.4.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libpanel/1.4/libpanel-1.4.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 80f143d900e8ced8ff84fa86fe34eb6b48323cb610bcfb6858ea65d8b98f152c
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libpanel (A dock/panel library for GTK4)
+
+SLACKBUILD NAME: libpeas
+SLACKBUILD LOCATION: gnome-45/libpeas
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz libpeas.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.36.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libpeas/1.36/libpeas-1.36.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 297cb9c2cccd8e8617623d1a3e8415b4530b8e5a893e3527bbfd1edd13237b4c
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libpeas (GObject Plugin System)
+
+SLACKBUILD NAME: libpeas2
+SLACKBUILD LOCATION: gnome-45/libpeas2
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz libpeas2.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 2.0.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libpeas/2.0/libpeas-2.0.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: mozjs115
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libpeas2 (GObject Plugin System)
+
+SLACKBUILD NAME: libportal
+SLACKBUILD LOCATION: gnome-45/libportal
+SLACKBUILD FILES: README libportal.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.7.1
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/flatpak/libportal/releases/download/0.7.1/libportal-0.7.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libportal (Flatpak portal library)
+
+SLACKBUILD NAME: libpst
+SLACKBUILD LOCATION: gnome-45/libpst
+SLACKBUILD FILES: README libpst.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.6.76
+SLACKBUILD DOWNLOAD_x86_64: https://www.five-ten-sg.com/libpst/packages/libpst-0.6.76.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libpst (MS Outlook Personal Folders converter)
+
+SLACKBUILD NAME: librest
+SLACKBUILD LOCATION: gnome-45/librest
+SLACKBUILD FILES: 0001-rest_proxy_call_sync-bail-out-if-no-payload.patch.gz 0002-Handle-some-potential-problems-in-parsing-oauth2-acc.patch.gz 01_disable-network-tests.patch README librest.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.9.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/rest/0.9/rest-0.9.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: gtksourceview5
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: librest (RESTful Library)
+
+SLACKBUILD NAME: libshumate
+SLACKBUILD LOCATION: gnome-45/libshumate
+SLACKBUILD FILES: README libshumate.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.1.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/libshumate/1.1/libshumate-1.1.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 574c242f89cda4e8395afd89382806a9ea017a2b0d9cfd89d1bb97fa389edf1e
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libshumate (GTK4 Widget for Displaying Maps)
+
+SLACKBUILD NAME: libsmbios
+SLACKBUILD LOCATION: gnome-45/libsmbios
+SLACKBUILD FILES: slack-required
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: libstemmer
+SLACKBUILD LOCATION: gnome-45/libstemmer
+SLACKBUILD FILES: libstemmer.SlackBuild libstemmer_c-shared-library.patch.gz slack-desc
+SLACKBUILD VERSION: 20140325
+SLACKBUILD DOWNLOAD_x86_64: https://dev.gentoo.org/~graaff/libstemmer_c-20140325.tgz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libstemmer (C stemming algorithm library)
+
+SLACKBUILD NAME: libwpe
+SLACKBUILD LOCATION: gnome-45/libwpe
+SLACKBUILD FILES: README libwpe.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.15.1
+SLACKBUILD DOWNLOAD_x86_64: https://wpewebkit.org/releases/libwpe-1.15.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libwpe (General-purpose library for WPE WebKit)
+
+SLACKBUILD NAME: libxmlb
+SLACKBUILD LOCATION: gnome-45/libxmlb
+SLACKBUILD FILES: libxmlb.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.3.14
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/hughsie/libxmlb/archive/0.3.14/libxmlb-0.3.14.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libxmlb (XML)
+
+SLACKBUILD NAME: libyuv
+SLACKBUILD LOCATION: gnome-45/libyuv
+SLACKBUILD FILES: libyuv.SlackBuild slack-desc
+SLACKBUILD VERSION: 20230619
+SLACKBUILD DOWNLOAD_x86_64: https://salsa.debian.org/debian/libyuv/-/archive/c0031cfd95e131c7b11be41d0272455cc63f10f4/libyuv-c0031cfd95e131c7b11be41d0272455cc63f10f4.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: libyuv (YUV Scaling Library)
+
+SLACKBUILD NAME: lua53
+SLACKBUILD LOCATION: gnome-45/lua53
+SLACKBUILD FILES: README lua.pc.in lua53.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 5.3.6
+SLACKBUILD DOWNLOAD_x86_64: http://www.lua.org/ftp/lua-5.3.6.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: lua53 (powerful, fast, light-weight, embeddable scripting language)
+
+SLACKBUILD NAME: malcontent
+SLACKBUILD LOCATION: gnome-45/malcontent
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz malcontent.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.11.1
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.freedesktop.org/pwithnall/malcontent/-/archive/0.11.1/malcontent-0.11.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: malcontent (short description of app)
+
+SLACKBUILD NAME: mod_dnssd
+SLACKBUILD LOCATION: gnome-45/mod_dnssd
+SLACKBUILD FILES: doinst.sh.gz mod_dnssd.SlackBuild mod_dnssd.conf slack-desc use-ap_unixd_setup_child.patch
+SLACKBUILD VERSION: 0.6
+SLACKBUILD DOWNLOAD_x86_64: http://0pointer.de/lennart/projects/mod_dnssd/mod_dnssd-0.6.tar.gz httpd/modules httpd/modules httpd/modules/mod_dnssd.so httpd/extra httpd/extra/mod_dnssd.conf.new
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: mod_dnssd (dns-sd/zeroconf/avahi module for httpd)
+
+SLACKBUILD NAME: mutter
+SLACKBUILD LOCATION: gnome-45/mutter
+SLACKBUILD FILES: 0001-Revert-x11-Use-input-region-from-frame-window-for-de.patch 0001-gschema-Enable-scale-monitor-framebuffer-experimenta.patch 0001-meson-Update-the-syprof-wrap-to-45.alpha-and-sysprof.patch 0001-window-actor-Special-case-shaped-Java-windows.patch 3329.patch doinst.sh doinst.sh.gz mutter-42.alpha-disable-tegra.patch mutter.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.7
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/mutter/45/mutter-45.7.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 5fa01a100c468efa1ddc232cb3c91865d092760946e3e3c61b2b6cd31f000968
+SLACKBUILD REQUIRES: gnome-settings-daemon xvfb-run gnome-shell geocode-glib libgusb libgweather4 gnome-desktop geoclue2 colord libei
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: mutter (GNOME Display Server and Window Manager)
+
+SLACKBUILD NAME: mutter-vrr
+SLACKBUILD LOCATION: gnome-45/mutter-vrr
+SLACKBUILD FILES: 0001-Revert-build-Do-not-provide-built-sources-as-libmutt.patch 0001-Revert-x11-Use-input-region-from-frame-window-for-de.patch 0001-meson-Update-the-syprof-wrap-to-45.alpha-and-sysprof.patch 0001-window-actor-Special-case-shaped-Java-windows.patch 3329.patch README.SBo doinst.sh.gz mutter-42.alpha-disable-tegra.patch mutter-vrr.SlackBuild slack-desc slack-required vrr.patch
+SLACKBUILD VERSION: 45.7
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/mutter/45/mutter-45.7.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: gnome-settings-daemon xvfb-run gnome-shell
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: mutter-vrr (GNOME Display Server and Window Manager with VRR Support)
+
+SLACKBUILD NAME: nautilus
+SLACKBUILD LOCATION: gnome-45/nautilus
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz nautilus.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.2.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/nautilus/45/nautilus-45.2.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: ba5d53df39a155562df971ef5e31e827074905d0c48eab1eb2421a10284b990d
+SLACKBUILD REQUIRES: gnome-autoar gnome-desktop libportal tracker libcloudproviders libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: nautilus (GNOME Files Application)
+
+SLACKBUILD NAME: nautilus-code
+SLACKBUILD LOCATION: gnome-45/nautilus-code
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz nautilus-code.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.5
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/realmazharhussain/nautilus-code.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: nautilus-python
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: nautilus-code (An extension for Nautilus)
+
+SLACKBUILD NAME: nautilus-python
+SLACKBUILD LOCATION: gnome-45/nautilus-python
+SLACKBUILD FILES: README nautilus-python.SlackBuild slack-desc
+SLACKBUILD VERSION: 4.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/nautilus-python/4.0/nautilus-python-4.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 17243d62eb7d7d839a9461ab8d0701688805c7161a6705e61413a58ec268281a
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: nautilus-python (extension for Nautilus )
+
+SLACKBUILD NAME: nautilus-sendto
+SLACKBUILD LOCATION: gnome-45/nautilus-sendto
+SLACKBUILD FILES: doinst.sh doinst.sh.gz meson.build.patch nautilus-sendto.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.8.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/nautilus-sendto/3.8/nautilus-sendto-3.8.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 164d7c6e8bae29c4579bcc67a7bf50d783662b1545b62f3008e7ea3c0410e04d
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: nautilus-sendto (Sendto Extension for Nautilus)
+
+SLACKBUILD NAME: nautilus-share
+SLACKBUILD LOCATION: gnome-45/nautilus-share
+SLACKBUILD FILES: doinst.sh.gz nautilus-share.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.7.5
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/naterussell83/nautilus-share/-/archive/0.7.5/nautilus-share-0.7.5.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: nautilus-share (Share Extension for Nautilus)
+
+SLACKBUILD NAME: network-manager-applet
+SLACKBUILD LOCATION: gnome-45/network-manager-applet
+SLACKBUILD FILES: doinst.sh doinst.sh.gz network-manager-applet.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.30.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/network-manager-applet/1.30/network-manager-applet-1.30.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 9516b84e9d9f100db89a0c67cbfe57cedb0562310d45caafb6332e27bbeb5cd3
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: network-manager-applet
+
+SLACKBUILD NAME: nv-codec-headers
+SLACKBUILD LOCATION: gnome-45/nv-codec-headers
+SLACKBUILD FILES: README nv-codec-headers.SlackBuild nv-codec-prefix.patch slack-desc slack-required
+SLACKBUILD VERSION: 12.0.16.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/FFmpeg/nv-codec-headers/releases/download/n12.0.16.0/nv-codec-headers-12.0.16.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Nv-codec-headers
+
+SLACKBUILD NAME: orca
+SLACKBUILD LOCATION: gnome-45/orca
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz orca.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/orca/45/orca-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: f0f2c579a5beedfe5653bc7fe24481c4d6aac5dd1f71c1e7a208595f3c78ef76
+SLACKBUILD REQUIRES: liblouis pyatspi
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: orca (flexible, and extensible screen reader)
+
+SLACKBUILD NAME: osinfo-db
+SLACKBUILD LOCATION: gnome-45/osinfo-db
+SLACKBUILD FILES: osinfo-db.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 20230719
+SLACKBUILD DOWNLOAD_x86_64: https://releases.pagure.org/libosinfo/osinfo-db-20230719.tar.xz https://harrier.slackbuilds.org/misc/osinfo-db-slackware-20220214.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: osinfo-db-tools
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: osinfo-db (operating systems database)
+
+SLACKBUILD NAME: osinfo-db-tools
+SLACKBUILD LOCATION: gnome-45/osinfo-db-tools
+SLACKBUILD FILES: README osinfo-db-tools.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 1.10.0
+SLACKBUILD DOWNLOAD_x86_64: https://releases.pagure.org/libosinfo/osinfo-db-tools-1.10.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: osinfo-db-tools (operating systems database tools)
+
+SLACKBUILD NAME: p7zip
+SLACKBUILD LOCATION: gnome-45/p7zip
+SLACKBUILD FILES: slack-required
+SLACKBUILD VERSION:
+SLACKBUILD DOWNLOAD_x86_64:
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: phodav
+SLACKBUILD LOCATION: gnome-45/phodav
+SLACKBUILD FILES: phodav.SlackBuild slack-desc udev-and-attr-fix.patch
+SLACKBUILD VERSION: 3.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/phodav/3.0/phodav-3.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 392ec2d06d50300dcff1ef269a2a985304e29bce3520002fca29f2edc1d138d1
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: phodav (soup dav server)
+
+SLACKBUILD NAME: power-profiles-daemon
+SLACKBUILD LOCATION: gnome-45/power-profiles-daemon
+SLACKBUILD FILES: 1.patch power-profiles-daemon.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.13
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.freedesktop.org/hadess/power-profiles-daemon/-/archive/0.13/power-profiles-daemon-0.13.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: power-profiles-daemon
+
+SLACKBUILD NAME: pyatspi
+SLACKBUILD LOCATION: gnome-45/pyatspi
+SLACKBUILD FILES: pyatspi.SlackBuild slack-desc
+SLACKBUILD VERSION: 2.46.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/pyatspi/2.46/pyatspi-2.46.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: d45489cf3d47aa150b1a35e8949b3b31035f8c2075e588d26b6efc625970c62e
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: pyatspi (Python Client Library for AT-SPI)
+
+SLACKBUILD NAME: python3-attrs
+SLACKBUILD LOCATION: gnome-45/python3-attrs
+SLACKBUILD FILES: python3-attrs.SlackBuild slack-desc
+SLACKBUILD VERSION: 21.4.0
+SLACKBUILD DOWNLOAD_x86_64: https://files.pythonhosted.org/packages/source/a/attrs/attrs-21.4.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: python3-attrs (Classes Without Boilerplate)
+
+SLACKBUILD NAME: python3-langtable
+SLACKBUILD LOCATION: gnome-45/python3-langtable
+SLACKBUILD FILES: python3-langtable.SlackBuild slack-desc
+SLACKBUILD VERSION: 0.0.64
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/mike-fabian/langtable/releases/download/0.0.64/langtable-0.0.64.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: python3-langtable (Python module to query data from langtable-data.)
+
+SLACKBUILD NAME: retro-gtk
+SLACKBUILD LOCATION: gnome-45/retro-gtk
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz meson.patch retro-gtk.SlackBuild slack-desc
+SLACKBUILD VERSION: 1.0.2
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/GNOME/retro-gtk.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: retro-gtk
+
+SLACKBUILD NAME: rhythmbox
+SLACKBUILD LOCATION: gnome-45/rhythmbox
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz rhythmbox.SlackBuild slack-desc
+SLACKBUILD VERSION: 3.4.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/rhythmbox/3.4/rhythmbox-3.4.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: f9568210ce55e411e929c8fb95e111a211dbd19cc47f578f291c5d319b5eb034
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION:
+
+SLACKBUILD NAME: rhythmbox-tray-icon
+SLACKBUILD LOCATION: gnome-45/rhythmbox-tray-icon
+SLACKBUILD FILES: rhythmbox-tray-icon.SlackBuild slack-desc
+SLACKBUILD VERSION: 2022.04.19
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/vantu5z/rhythmbox-tray-icon.git
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: rhythmbox-tray-icon (Tray Icon)
+
+SLACKBUILD NAME: rygel
+SLACKBUILD LOCATION: gnome-45/rygel
+SLACKBUILD FILES: doinst.sh doinst.sh.gz rygel.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 0.42.4
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/rygel/0.42/rygel-0.42.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6310dfaa2d332b66119b9b020fad6a4bd27d9bc61faf780ca5ca0b62813303f7
+SLACKBUILD REQUIRES: gst-editing-services gssdp gupnp-av gupnp-dlna gupnp
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: rygel (UPnP AV MediaServer)
+
+SLACKBUILD NAME: seahorse
+SLACKBUILD LOCATION: gnome-45/seahorse
+SLACKBUILD FILES: 9260c74779be3d7a378db0671af862ffa3573d42.patch README doinst.sh doinst.sh.gz seahorse.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 43.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/seahorse/43/seahorse-43.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 5b1d1bfba74f3658227f3c82e296f330dd0fcd1ef4636b6a218228fee5ea832d
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: seahorse (encryption made easy)
+
+SLACKBUILD NAME: secrets
+SLACKBUILD LOCATION: gnome-45/secrets
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz secrets.SlackBuild slack-desc
+SLACKBUILD VERSION: 7.0
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.gnome.org/World/secrets/-/archive/7.0/secrets-7.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Secrets - Manage your passwords
+
+SLACKBUILD NAME: simple-scan
+SLACKBUILD LOCATION: gnome-45/simple-scan
+SLACKBUILD FILES: doinst.sh doinst.sh.gz simple-scan.SlackBuild slack-desc slack-required
+SLACKBUILD VERSION: 44.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/simple-scan/44/simple-scan-44.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 39b870fd46f447f747eaecc2df26049ef773185099f0e13c675656264dd98e95
+SLACKBUILD REQUIRES: libgusb
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: simple-scan:
+
+SLACKBUILD NAME: sofia-sip
+SLACKBUILD LOCATION: gnome-45/sofia-sip
+SLACKBUILD FILES: README slack-desc sofia-sip.SlackBuild
+SLACKBUILD VERSION: 1.13.16
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/freeswitch/sofia-sip/archive/v1.13.16/sofia-sip-1.13.16.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: sofia-sip (SIP User-Agent Library)
+
+SLACKBUILD NAME: sphinx_rtd_theme
+SLACKBUILD LOCATION: gnome-45/sphinx_rtd_theme
+SLACKBUILD FILES: README slack-desc sphinx_rtd_theme.SlackBuild
+SLACKBUILD VERSION: 2.0.0
+SLACKBUILD DOWNLOAD_x86_64: https://files.pythonhosted.org/packages/fe/33/2a35a9cdbfda9086bda11457bcc872173ab3565b16b6d7f6b3efaa6dc3d6/sphinx_rtd_theme-2.0.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: sphinx_rtd_theme (sphinx theme for readthedocs.org)
+
+SLACKBUILD NAME: sushi
+SLACKBUILD LOCATION: gnome-45/sushi
+SLACKBUILD FILES: doinst.sh doinst.sh.gz slack-desc slack-required sushi.SlackBuild webkit-optional.patch
+SLACKBUILD VERSION: 45.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/sushi/45/sushi-45.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 6a5f14b05a3471fe43853cc2b0e1ae5484d7f9f86f7ea376179829b9bf4ac1dd
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: sushi:
+
+SLACKBUILD NAME: svt-av1
+SLACKBUILD LOCATION: gnome-45/svt-av1
+SLACKBUILD FILES: slack-desc svt-av1.SlackBuild
+SLACKBUILD VERSION: 1.6.0
+SLACKBUILD DOWNLOAD_x86_64: https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v1.6.0/SVT-AV1-v1.6.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: svt-av1 (SVT-AV1 Encoder and Decoder)
+
+SLACKBUILD NAME: sysprof
+SLACKBUILD LOCATION: gnome-45/sysprof
+SLACKBUILD FILES: README slack-desc slack-required sysprof.SlackBuild
+SLACKBUILD VERSION: 45.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/sysprof/45/sysprof-45.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 29e0dc15eac46da09146f9c9f11cbd05f230403f9a01e9164eeb0907c4420c8d
+SLACKBUILD REQUIRES: libdex
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: sysprof (a sampling profiler that generates stacktraces)
+
+SLACKBUILD NAME: telepathy-glib
+SLACKBUILD LOCATION: gnome-45/telepathy-glib
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz slack-desc slack-required telepathy-glib.SlackBuild
+SLACKBUILD VERSION: 0.24.2
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/TelepathyIM/telepathy-glib/archive/refs/tags/telepathy-glib-0.24.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: telepathy-glib (C library using GLib for use in Telepathy clients)
+
+SLACKBUILD NAME: telepathy-idle
+SLACKBUILD LOCATION: gnome-45/telepathy-idle
+SLACKBUILD FILES: README slack-desc telepathy-idle.SlackBuild
+SLACKBUILD VERSION: 0.2.2
+SLACKBUILD DOWNLOAD_x86_64: http://telepathy.freedesktop.org/releases/telepathy-idle/telepathy-idle-0.2.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: telepathy-idle
+
+SLACKBUILD NAME: telepathy-mission-control
+SLACKBUILD LOCATION: gnome-45/telepathy-mission-control
+SLACKBUILD FILES: README slack-desc telepathy-mission-control.SlackBuild
+SLACKBUILD VERSION: 5.16.6
+SLACKBUILD DOWNLOAD_x86_64: http://telepathy.freedesktop.org/releases/telepathy-mission-control/telepathy-mission-control-5.16.6.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: Telepathy Mission Control
+
+SLACKBUILD NAME: template-glib
+SLACKBUILD LOCATION: gnome-45/template-glib
+SLACKBUILD FILES: README slack-desc template-glib.SlackBuild
+SLACKBUILD VERSION: 3.36.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/template-glib/3.36/template-glib-3.36.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3b167a17385ad745afbe20fadf8106c66d30c5bd746d5aa1d9bdb7e803f6a503
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: template-glib ()
+
+SLACKBUILD NAME: tepl
+SLACKBUILD LOCATION: gnome-45/tepl
+SLACKBUILD FILES: README slack-desc slack-required tepl.SlackBuild
+SLACKBUILD VERSION: 6.8.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/tepl/6.8/tepl-6.8.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 46e6e5f1bfdbc52e5956f06add575e9c7697c673d53d3803dfe768f490b560f0
+SLACKBUILD REQUIRES: libgedit-gtksourceview libgedit-amtk
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: tepl:
+
+SLACKBUILD NAME: totem
+SLACKBUILD LOCATION: gnome-45/totem
+SLACKBUILD FILES: doinst.sh doinst.sh.gz slack-desc totem.SlackBuild
+SLACKBUILD VERSION: 43.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/totem/43/totem-43.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: b36d3655928b5896462a4d39f83b6ad66d37dbc9c99dceb02ea8a2e37394a41e
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: totem (GNOME Videos)
+
+SLACKBUILD NAME: totem-pl-parser
+SLACKBUILD LOCATION: gnome-45/totem-pl-parser
+SLACKBUILD FILES: slack-desc slack-required totem-pl-parser.SlackBuild
+SLACKBUILD VERSION: 3.26.6
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/totem-pl-parser/3.26/totem-pl-parser-3.26.6.tar.xz
+SLACKBUILD SHA256SUM_x86_64: c0df0f68d5cf9d7da43c81c7f13f11158358368f98c22d47722f3bd04bd3ac1c
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: totem-pl-parser (totem playlist parser)
+
+SLACKBUILD NAME: tpm2-tss
+SLACKBUILD LOCATION: gnome-45/tpm2-tss
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz slack-desc slack-required tpm2-tss.SlackBuild tss2-tcti-libtpms.map
+SLACKBUILD VERSION: 4.0.1
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/tpm2-software/tpm2-tss/releases/download/4.0.1/tpm2-tss-4.0.1.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: tpm2-tss ( TSS2 Software Stack)
+
+SLACKBUILD NAME: tracker
+SLACKBUILD LOCATION: gnome-45/tracker
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz slack-desc slack-required tracker.SlackBuild
+SLACKBUILD VERSION: 3.6.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/tracker/3.6/tracker-3.6.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 52592cfe19baffd16dbe47475be7da750dbd0b6333fd7acb60faa9da5bc40df2
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: tracker (semantic data storage search engine)
+
+SLACKBUILD NAME: tracker-miners
+SLACKBUILD LOCATION: gnome-45/tracker-miners
+SLACKBUILD FILES: README doinst.sh.gz slack-desc slack-required tracker-miners.SlackBuild
+SLACKBUILD VERSION: 3.6.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/tracker-miners/3.6/tracker-miners-3.6.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 0ad722f3d532c21d757cf488f942960679ea8f457925efa97656ed4c9e9ba4ff
+SLACKBUILD REQUIRES: exempi libgxps libiptcdata libosinfo totem-pl-parser tracker upower
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: tracker-miners
+
+SLACKBUILD NAME: transmission
+SLACKBUILD LOCATION: gnome-45/transmission
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz slack-desc transmission.SlackBuild
+SLACKBUILD VERSION: 3.00
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/transmission/transmission-releases/raw/master/transmission-3.00.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: transmission (bittorrent client)
+
+SLACKBUILD NAME: unifdef
+SLACKBUILD LOCATION: gnome-45/unifdef
+SLACKBUILD FILES: slack-desc unifdef.SlackBuild
+SLACKBUILD VERSION: 2.12
+SLACKBUILD DOWNLOAD_x86_64: http://www.wtfpl.net/txt/copying/ for details. https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: unifdef (selectively processes C conditional compilation)
+
+SLACKBUILD NAME: vinagre
+SLACKBUILD LOCATION: gnome-45/vinagre
+SLACKBUILD FILES: README doinst.sh doinst.sh.gz slack-desc vinagre.SlackBuild
+SLACKBUILD VERSION: 3.22.0
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/vinagre/3.22/vinagre-3.22.0.tar.xz
+SLACKBUILD SHA256SUM_x86_64: cd1cdbacca25c8d1debf847455155ee798c3e67a20903df8b228d4ece5505e82
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: vinagre (Remote Desktop Viewer)
+
+SLACKBUILD NAME: vte-gtk4
+SLACKBUILD LOCATION: gnome-45/vte-gtk4
+SLACKBUILD FILES: slack-desc slack-required vte-gtk4.SlackBuild
+SLACKBUILD VERSION: 0.74.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/vte/0.74/vte-0.74.1.tar.xz https://gitlab.gnome.org/GNOME/vte/-/archive/0.74.2/vte-0.74.2.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: vte-gtk4 (gtk4 terminal emulator widget)
+
+SLACKBUILD NAME: webkit2gtk4.1
+SLACKBUILD LOCATION: gnome-45/webkit2gtk4.1
+SLACKBUILD FILES: 20741.patch README slack-desc slack-required unhide-deprecated-api.patch webkit2gtk4.1.SlackBuild
+SLACKBUILD VERSION: 2.40.4
+SLACKBUILD DOWNLOAD_x86_64: https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: bubblewrap geoclue2 wpebackend-fdo xdg-dbus-proxy libaom dav1d libavif libyuv
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: webkit2gtk4.1 (Web content rendering)
+
+SLACKBUILD NAME: webkit2gtk6.0
+SLACKBUILD LOCATION: gnome-45/webkit2gtk6.0
+SLACKBUILD FILES: 20741.patch README slack-desc slack-required unhide-deprecated-api.patch webkit2gtk6.0.SlackBuild
+SLACKBUILD VERSION: 2.42.1
+SLACKBUILD DOWNLOAD_x86_64: https://webkitgtk.org/releases/webkitgtk-2.42.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libwpe libsoup3 xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap libaom dav1d libavif libyuv
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: webkit2gtk6.0 (Web content rendering - GTK4 version)
+
+SLACKBUILD NAME: webp-pixbuf-loader
+SLACKBUILD LOCATION: gnome-45/webp-pixbuf-loader
+SLACKBUILD FILES: README.gz doinst.sh doinst.sh.gz git2tarxz.sh slack-desc slack-required webp-pixbuf-loader.SlackBuild
+SLACKBUILD VERSION: 0.2.4
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/aruiz/webp-pixbuf-loader/archive/0.2.4/webp-pixbuf-loader-0.2.4.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: webp-pixbuf-loader (WEBP loader for gdk-pixbuf2)
+
+SLACKBUILD NAME: wpebackend-fdo
+SLACKBUILD LOCATION: gnome-45/wpebackend-fdo
+SLACKBUILD FILES: README slack-desc slack-required wpebackend-fdo.SlackBuild
+SLACKBUILD VERSION: 1.14.2
+SLACKBUILD DOWNLOAD_x86_64: https://wpewebkit.org/releases/wpebackend-fdo-1.14.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES: libwpe
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: wpebackend-fdo (freedesktop.org backend for WPE WebKit)
+
+SLACKBUILD NAME: xdg-dbus-proxy
+SLACKBUILD LOCATION: gnome-45/xdg-dbus-proxy
+SLACKBUILD FILES: README slack-desc slack-required xdg-dbus-proxy.SlackBuild
+SLACKBUILD VERSION: 0.1.5
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.5/xdg-dbus-proxy-0.1.5.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: xdg-dbus-proxy (D-Bus proxy)
+
+SLACKBUILD NAME: xdg-desktop-portal-gnome
+SLACKBUILD LOCATION: gnome-45/xdg-desktop-portal-gnome
+SLACKBUILD FILES: 0001-xdg-desktop-portal.patch README doinst.sh doinst.sh.gz slack-desc slack-required xdg-desktop-portal-gnome.SlackBuild xdg-desktop-portal-gnome.desktop
+SLACKBUILD VERSION: 45.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/xdg-desktop-portal-gnome/45/xdg-desktop-portal-gnome-45.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3e9ca821044005fb37bd68ebe4ad196fc3d072835581467a22a4879dac7b5fdd
+SLACKBUILD REQUIRES: xdg-desktop-portal-gtk
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: xdg-desktop-portal-gnome (GNOME portal backend xdg-desktop service)
+
+SLACKBUILD NAME: xdg-desktop-portal-gtk
+SLACKBUILD LOCATION: gnome-45/xdg-desktop-portal-gtk
+SLACKBUILD FILES: 458.patch README.gz doinst.sh.gz slack-desc slack-required xdg-desktop-portal-gtk.SlackBuild xdg-desktop-portal-gtk.desktop
+SLACKBUILD VERSION: 1.15.1
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/flatpak/xdg-desktop-portal-gtk/releases/download/1.15.1/xdg-desktop-portal-gtk-1.15.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: xdg-desktop-portal-gtk (gtk sandboxing desktop APIs)
+
+SLACKBUILD NAME: xdg-user-dirs-gtk
+SLACKBUILD LOCATION: gnome-45/xdg-user-dirs-gtk
+SLACKBUILD FILES: doinst.sh.gz slack-desc xdg-user-dirs-gtk.SlackBuild
+SLACKBUILD VERSION: 0.11
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/xdg-user-dirs-gtk/0.11/xdg-user-dirs-gtk-0.11.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 534bd563d3c0e3f8dcbf3578cb8ab0e49d3ba41c966d477c8af9438364121e7d
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: xdg-user-dirs-gtk (xdg-user-dirs GTK integration)
+
+SLACKBUILD NAME: xvfb-run
+SLACKBUILD LOCATION: gnome-45/xvfb-run
+SLACKBUILD FILES: slack-desc slack-required xvfb-run.SlackBuild
+SLACKBUILD VERSION: 21.1.7
+SLACKBUILD DOWNLOAD_x86_64: http://ftp.us.debian.org/debian/pool/main/x/xorg-server/xvfb_21.1.7-3_i386.deb
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: xvfb-run (Run a command in a virtual X server environment)
+
+SLACKBUILD NAME: yelp
+SLACKBUILD LOCATION: gnome-45/yelp
+SLACKBUILD FILES: doinst.sh doinst.sh.gz slack-desc slack-required yelp.SlackBuild
+SLACKBUILD VERSION: 42.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/yelp/42/yelp-42.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: a2c5fd0787a9089c722cc66bd0f85cdf7088d870e7b6cc85799f8e5bff9eac4b
+SLACKBUILD REQUIRES: yelp-tools webkit2gtk4.1 python-toml python2-setuptools-scm functools-lru-cache python3-webencodings python2-soupsieve python3-soupsieve html5lib python2-BeautifulSoup4 BeautifulSoup4 libwpe lxml xdg-dbus-proxy wpebackend-fdo geoclue2 bubblewrap yelp-xsl libhandy
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: yelp (Yelp Help Browser)
+
+SLACKBUILD NAME: yelp-tools
+SLACKBUILD LOCATION: gnome-45/yelp-tools
+SLACKBUILD FILES: slack-desc slack-required yelp-tools.SlackBuild
+SLACKBUILD VERSION: 42.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/yelp-tools/42/yelp-tools-42.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 3e496a4020d4145b99fd508a25fa09336a503a4e8900028421e72c6a4b11f905
+SLACKBUILD REQUIRES: yelp-xsl
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: yelp-tools (documentation checker)
+
+SLACKBUILD NAME: yelp-xsl
+SLACKBUILD LOCATION: gnome-45/yelp-xsl
+SLACKBUILD FILES: README slack-desc slack-required yelp-xsl.SlackBuild
+SLACKBUILD VERSION: 42.1
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/yelp-xsl/42/yelp-xsl-42.1.tar.xz
+SLACKBUILD SHA256SUM_x86_64: 238be150b1653080ce139971330fd36d3a26595e0d6a040a2c030bf3d2005bcd
+SLACKBUILD REQUIRES: lxml
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: yelp-xsl (stylesheet for Yelp)
+
+SLACKBUILD NAME: ytnef
+SLACKBUILD LOCATION: gnome-45/ytnef
+SLACKBUILD FILES: README slack-desc slack-required ytnef.SlackBuild
+SLACKBUILD VERSION: 2.0
+SLACKBUILD DOWNLOAD_x86_64: https://github.com/Yeraze/ytnef/archive/v2.0/ytnef-2.0.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: ytnef (Yerase's TNEF Stream Reader)
+
+SLACKBUILD NAME: zbar
+SLACKBUILD LOCATION: gnome-45/zbar
+SLACKBUILD FILES: slack-desc zbar.SlackBuild
+SLACKBUILD VERSION: 0.23.93
+SLACKBUILD DOWNLOAD_x86_64: https://linuxtv.org/downloads/zbar/zbar-0.23.93.tar.gz
+SLACKBUILD SHA256SUM_x86_64:
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: zbar (bar code reader)
+
+SLACKBUILD NAME: zenity
+SLACKBUILD LOCATION: gnome-45/zenity
+SLACKBUILD FILES: README slack-desc slack-required zenity.SlackBuild
+SLACKBUILD VERSION: 3.99.2
+SLACKBUILD DOWNLOAD_x86_64: https://download-fallback.gnome.org/sources/zenity/3.99/zenity-3.99.2.tar.xz
+SLACKBUILD SHA256SUM_x86_64: a19478906b988b4f367e5ea63a5921e4f98cb8255bba05eb5cad8b5a18a4168f
+SLACKBUILD REQUIRES:
+PACKAGE CONFLICTS:
+PACKAGE SUGGESTS:
+SLACKBUILD SHORT DESCRIPTION: zenity (display gtk dialog boxes from cli)
+

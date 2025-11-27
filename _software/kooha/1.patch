@@ -1,0 +1,134 @@
+From 1c6e65a56c23a31d23e07948755dd2a7e1603a73 Mon Sep 17 00:00:00 2001
+From: Dave Patrick Caberto <davecruz48@gmail.com>
+Date: Sun, 24 Sep 2023 09:51:08 +0800
+Subject: [PATCH] refactor: use async version of select_folder
+
+---
+ src/preferences_window.rs | 21 ++++++++++++--
+ src/settings.rs           | 60 +++++++++++++--------------------------
+ 2 files changed, 38 insertions(+), 43 deletions(-)
+
+diff --git a/src/preferences_window.rs b/src/preferences_window.rs
+index fdcfa9e2..58ecee6f 100644
+--- a/src/preferences_window.rs
++++ b/src/preferences_window.rs
+@@ -46,9 +46,24 @@ mod imp {
+         fn class_init(klass: &mut Self::Class) {
+             klass.bind_template();
+ 
+-            klass.install_action("preferences.select-saving-location", None, |obj, _, _| {
+-                obj.settings().select_saving_location(obj);
+-            });
++            klass.install_action_async(
++                "preferences.select-saving-location",
++                None,
++                |obj, _, _| async move {
++                    if let Err(err) = obj.settings().select_saving_location(&obj).await {
++                        tracing::error!("Failed to select saving location: {:?}", err);
++                        let dialog = adw::MessageDialog::builder()
++                            .heading(gettext("Failed to select saving location"))
++                            .body(err.to_string())
++                            .default_response("ok")
++                            .modal(true)
++                            .build();
++                        dialog.add_response("ok", &gettext("Ok"));
++                        dialog.set_transient_for(Some(&obj));
++                        dialog.present();
++                    }
++                },
++            );
+         }
+ 
+         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
+diff --git a/src/settings.rs b/src/settings.rs
+index 034a5544..4d134e7d 100644
+--- a/src/settings.rs
++++ b/src/settings.rs
+@@ -1,10 +1,8 @@
+ use adw::prelude::*;
++use anyhow::{anyhow, Result};
+ use gettextrs::gettext;
+ use gsettings_macro::gen_settings;
+-use gtk::{
+-    gio,
+-    glib::{self, clone},
+-};
++use gtk::{gio, glib};
+ 
+ use std::{fs, path::PathBuf, time::Duration};
+ 
+@@ -30,37 +28,31 @@ impl Settings {
+ 
+     /// Opens a `FileDialog` to select a folder and updates
+     /// the settings with the selected folder.
+-    pub fn select_saving_location(&self, transient_for: &impl IsA<gtk::Window>) {
++    pub async fn select_saving_location(
++        &self,
++        transient_for: &impl IsA<gtk::Window>,
++    ) -> Result<()> {
+         let dialog = gtk::FileDialog::builder()
+             .modal(true)
+             .title(gettext("Select Recordings Folder"))
+             .initial_folder(&gio::File::for_path(self.saving_location()))
+             .build();
+ 
+-        let transient_for = transient_for.upcast_ref::<gtk::Window>();
+-        let inner = &self.0;
+-        dialog.select_folder(
+-            Some(transient_for),
+-            gio::Cancellable::NONE,
+-            clone!(@weak inner, @weak transient_for => move |response| {
+-                match response {
+-                    Ok(folder) => {
+-                        inner.set("saving-location", folder.path().unwrap()).unwrap();
+-                    }
+-                    Err(err) => {
+-                        if err.matches(gtk::DialogError::Dismissed) || err.matches(gtk::DialogError::Cancelled) {
+-                            return;
+-                        }
+-
+-                        present_message(
+-                            &gettext("Failed to select folder"),
+-                            &err.to_string(),
+-                            Some(&transient_for),
+-                        );
+-                    }
++        match dialog.select_folder_future(Some(transient_for)).await {
++            Ok(folder) => {
++                let path = folder
++                    .path()
++                    .ok_or_else(|| anyhow!("Folder does not have a path"))?;
++                self.0.set("saving-location", path).unwrap();
++            }
++            Err(err) => {
++                if !err.matches(gtk::DialogError::Dismissed) {
++                    return Err(err.into());
+                 }
+-            }),
+-        );
++            }
++        }
++
++        Ok(())
+     }
+ 
+     pub fn saving_location(&self) -> PathBuf {
+@@ -156,18 +148,6 @@ impl Settings {
+     }
+ }
+ 
+-fn present_message(heading: &str, body: &str, transient_for: Option<&impl IsA<gtk::Window>>) {
+-    let dialog = adw::MessageDialog::builder()
+-        .heading(heading)
+-        .body(body)
+-        .default_response("ok")
+-        .modal(true)
+-        .build();
+-    dialog.add_response("ok", &gettext("Ok"));
+-    dialog.set_transient_for(transient_for);
+-    dialog.present();
+-}
+-
+ #[cfg(test)]
+ mod tests {
+     use super::*;

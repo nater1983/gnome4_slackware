@@ -1,0 +1,19 @@
+commit 55558d3c23e68aada59c5deb59a664aea263f075
+Author: Milan Crha <mcrha@redhat.com>
+Date:   Fri Dec 1 09:52:57 2023 +0100
+
+    build: Correct incompatible type warning from check for I_CAL_EMAIL_PARAMETER
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e7d376add97ef493..6173c0fc39d7688f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -963,7 +963,7 @@ set(CMAKE_REQUIRED_LIBRARIES ${CALENDAR_LDFLAGS})
+ CHECK_C_SOURCE_COMPILES("#define LIBICAL_GLIB_UNSTABLE_API 1
+ 			#include <libical-glib/libical-glib.h>
+ 			int main(void) {
+-				icalparameter *param;
++				ICalParameter *param;
+ 				param = i_cal_property_get_first_parameter (NULL, I_CAL_EMAIL_PARAMETER);
+ 				i_cal_parameter_get_email (param);
+ 				i_cal_parameter_new_email (NULL);

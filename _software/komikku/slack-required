@@ -1,0 +1,16 @@
+libadwaita
+pure-protobuf
+python3-beautifulsoup4
+python3-dateparser
+python3-dateutil
+python3-emoji
+python3-entrypoints
+python3-keyring
+python3-magic
+python3-natsort
+python3-piexif
+python3-rarfile
+python3-regex
+python3-soupsieve
+python3-tzlocal
+python3-unidecode

@@ -1,0 +1,80 @@
+From 895f8ddd37f7866cad873bb70ce22e37b1eae9ac Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 22 Oct 2023 04:20:13 +0000
+Subject: [PATCH] Update helpers.js
+
+Convert to use Textdecoder instead of array.toString() on a Uint8Array instance
+---
+ eortologio@danchris.github.io/helpers.js | 45 ++++++++++++------------
+ 1 file changed, 23 insertions(+), 22 deletions(-)
+
+diff --git a/eortologio@danchris.github.io/helpers.js b/eortologio@danchris.github.io/helpers.js
+index 92dce37..aa223e0 100644
+--- a/eortologio@danchris.github.io/helpers.js
++++ b/eortologio@danchris.github.io/helpers.js
+@@ -17,14 +17,15 @@ export function getRecurringNameDays(date, subdir){
+ 
+     let recurringNameDays = [];
+     if (contents) {
+-        const namedaysFile = contents.toString();
++        const decoder = new TextDecoder();
++        const namedaysFile = decoder.decode(contents);
+         const jsonData = JSON.parse(namedaysFile);
+-    jsonData.data.forEach(function(element) {
+-        if (element.date === date) {
+-            recurringNameDays = recurringNameDays.concat(element.names);
+-        }
+-    });
+-}
++        jsonData.data.forEach(function(element) {
++            if (element.date === date) {
++                recurringNameDays = recurringNameDays.concat(element.names);
++            }
++        });
++    }
+     return recurringNameDays;
+ }
+ 
+@@ -38,22 +39,23 @@ export function getRelativeToEasterNameDays(easterDay, easterMonth, easterYear,
+     let tmpDateTime;
+ 
+     if (contents) {
+-        const namedaysFile = contents.toString();
++        const decoder = new TextDecoder();
++        const namedaysFile = decoder.decode(contents);
+         const jsonData = JSON.parse(namedaysFile);
+ 
+-    // Assuming easterDateTime and currentDateTime are properly defined
+-    jsonData.special.forEach(function (element) {
+-        tmpDateTime = easterDateTime.add_days(parseInt(element.toEaster));
+-
+-        if (
+-            tmpDateTime.get_day_of_month() === currentDateTime.get_day_of_month() &&
+-            tmpDateTime.get_month() === currentDateTime.get_month() &&
+-            tmpDateTime.get_year() === currentDateTime.get_year()
+-        ) {
+-            relativeNameDays = relativeNameDays.concat(element.main, element.variations);
+-        }
+-    });
+-}
++        // Assuming easterDateTime and currentDateTime are properly defined
++        jsonData.special.forEach(function (element) {
++            tmpDateTime = easterDateTime.add_days(parseInt(element.toEaster));
++
++            if (
++                tmpDateTime.get_day_of_month() === currentDateTime.get_day_of_month() &&
++                tmpDateTime.get_month() === currentDateTime.get_month() &&
++                tmpDateTime.get_year() === currentDateTime.get_year()
++            ) {
++                relativeNameDays = relativeNameDays.concat(element.main, element.variations);
++            }
++        });
++    }
+     return relativeNameDays;
+ }
+ 
+@@ -109,4 +111,3 @@ export function calcOrthEaster(year) {
+ 
+     return [day, month, year];
+ }
+-

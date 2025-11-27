@@ -1,0 +1,1175 @@
+From f84e9944258d216ea2df91f320cb27520635cc3e Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 17:03:40 -0400
+Subject: [PATCH 01/11] Part 1 of refactoring enchant to libspelling: remove
+ enchant
+
+---
+ .gitlab-ci.yml                              |    2 -
+ README.md                                   |    2 +-
+ build-aux/win32/build-mingw.sh              |    2 -
+ meson.build                                 |    3 +-
+ meson_options.txt                           |    2 +-
+ src/editor-application-actions.c            |   11 -
+ src/editor-spell-provider.c                 |    8 -
+ src/enchant/editor-enchant-spell-language.c |  306 --
+ src/enchant/editor-enchant-spell-language.h |   35 -
+ src/enchant/editor-enchant-spell-provider.c |  203 -
+ src/enchant/editor-enchant-spell-provider.h |   33 -
+ src/enchant/meson.build                     |   15 -
+ src/main.c                                  |    8 -
+ src/meson.build                             |    1 -
+ subprojects/libspelling.wrap                |   10 +
+ 63 files changed, 5915 insertions(+), 8998 deletions(-)
+ delete mode 100644 src/enchant/editor-enchant-spell-language.c
+ delete mode 100644 src/enchant/editor-enchant-spell-language.h
+ delete mode 100644 src/enchant/editor-enchant-spell-provider.c
+ delete mode 100644 src/enchant/editor-enchant-spell-provider.h
+ delete mode 100644 src/enchant/meson.build
+ create mode 100644 subprojects/libspelling.wrap
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index a44c69a8..fdabdefd 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -42,7 +42,6 @@ fedora:
+     script:
+         - sudo dnf -y install
+                 desktop-file-utils
+-                enchant2-devel
+                 expat-devel
+                 git
+                 itstool
+@@ -116,7 +115,6 @@ msys2-mingw64:
+ #        - mkdir -p pfx/
+ #        - meson --prefix=${PWD}/pfx
+ #                -Dcpp_std=c++11
+-#                -Denchant=disabled
+ #                -Dglib:tests=false
+ #                -Dglib:werror=false
+ #                -Dgtk:broadway-backend=false
+diff --git a/README.md b/README.md
+index 2868516a..78d0e698 100644
+--- a/README.md
++++ b/README.md
+@@ -26,7 +26,7 @@ You can come back to your work even if you've never saved it to a file.
+  * GtkSourceView 5.6 or newer
+  * Libadwaita 1.3 or newer
+  * libeditorconfig for .editorconfig support
+- * enchant-2 for spellcheck support
++ * libspelling for spellcheck support
+  * icu (for language code ids)
+ 
+ Refer to the [org.gnome.TextEditor.Devel.json](https://gitlab.gnome.org/GNOME/gnome-text-editor/tree/master/org.gnome.TextEditor.Devel.json) Flatpak manifest for additional details.
+diff --git a/build-aux/win32/build-mingw.sh b/build-aux/win32/build-mingw.sh
+index 4798b8bb..36d85433 100644
+--- a/build-aux/win32/build-mingw.sh
++++ b/build-aux/win32/build-mingw.sh
+@@ -5,7 +5,6 @@ pacman -S --noconfirm mingw-w64-x86_64-pkg-config \
+             mingw-w64-x86_64-libadwaita \
+             mingw-w64-x86_64-gobject-introspection \
+             mingw-w64-x86_64-python-gobject \
+-            mingw-w64-x86_64-enchant \
+             mingw-w64-x86_64-editorconfig-core-c \
+             mingw-w64-x86_64-meson \
+             itstool \
+@@ -55,7 +54,6 @@ cp -R /mingw64/bin/libcairo-script-interpreter-2.dll builddir
+ cp -R /mingw64/bin/libdatrie-1.dll builddir
+ cp -R /mingw64/bin/libdeflate.dll builddir
+ cp -R /mingw64/bin/libeditorconfig.dll builddir
+-cp -R /mingw64/bin/libenchant-2.dll builddir 
+ cp -R /mingw64/bin/libepoxy-0.dll builddir
+ cp -R /mingw64/bin/libexpat-1.dll builddir
+ cp -R /mingw64/bin/libffi-8.dll builddir
+diff --git a/meson.build b/meson.build
+index abe7f3be..e33c7725 100644
+--- a/meson.build
++++ b/meson.build
+@@ -33,12 +33,10 @@ endif
+ glib_req_version = '2.73'
+ gtk_req_version = '4.7'
+ gtksourceview_req_version = '5.5.0'
+-enchant_req_version = '2.2.0'
+ 
+ glib_req = '>= @0@'.format(glib_req_version)
+ gtk_req = '>= @0@'.format(gtk_req_version)
+ gtksourceview_req = '>= @0@'.format(gtksourceview_req_version)
+-enchant_req = '>= @0@'.format(enchant_req_version)
+ 
+ libglib_dep = dependency('gio-2.0', version: glib_req)
+ libgtk_dep = dependency('gtk4', version: gtk_req)
+@@ -46,6 +44,7 @@ libgtksourceview_dep = dependency('gtksourceview-5', version: gtksourceview_req)
+ libadwaita_dep = dependency('libadwaita-1', version: '>= 1.4.alpha')
+ libeditorconfig_dep = dependency('editorconfig')
+ libcairo_dep = dependency('cairo')
++libspelling_dep = dependency('libspelling-1')
+ 
+ # Specify minimum library versions
+ glib_major = glib_req_version.split('.')[0].to_int()
+diff --git a/meson_options.txt b/meson_options.txt
+index 94b42d1c..7cab35e1 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -1,3 +1,3 @@
+ option('development', type: 'boolean', value: false, description: 'If this is a development build')
+-option('enchant', type: 'feature', value: 'enabled', description: 'Use enchant for spellchecking')
++option('spelling', type: 'feature', value: 'enabled', description: 'Use libspelling for spellchecking')
+ option('bugreport_url', type: 'string', value: 'https://gitlab.gnome.org/GNOME/gnome-text-editor/issues', description: 'URL to report issues. Distributions packaging Text Editor are encouraged to set this to their bugtracker.')
+diff --git a/src/editor-application-actions.c b/src/editor-application-actions.c
+index cb42edf4..67d6fafc 100644
+--- a/src/editor-application-actions.c
++++ b/src/editor-application-actions.c
+@@ -23,10 +23,6 @@
+ #include "build-ident.h"
+ #include "config.h"
+ 
+-#ifdef HAVE_ENCHANT
+-# include <enchant.h>
+-#endif
+-
+ #include <glib/gi18n.h>
+ 
+ #include "editor-application-private.h"
+@@ -116,13 +112,6 @@ get_system_information (void)
+                           ADW_MAJOR_VERSION,
+                           ADW_MINOR_VERSION,
+                           ADW_MICRO_VERSION);
+-  g_string_append_printf (str,
+-                          "Enchant2: %s\n",
+-#ifdef HAVE_ENCHANT
+-                          enchant_get_version ());
+-#else
+-                          "Unavailable");
+-#endif
+ 
+   g_string_append (str, "\n");
+   g_string_append_printf (str, "gtk-theme-name: %s\n", theme_name);
+diff --git a/src/editor-spell-provider.c b/src/editor-spell-provider.c
+index d80e2612..2461ffb6 100644
+--- a/src/editor-spell-provider.c
++++ b/src/editor-spell-provider.c
+@@ -23,10 +23,6 @@
+ #include "editor-empty-spell-provider-private.h"
+ #include "editor-spell-provider.h"
+ 
+-#ifdef HAVE_ENCHANT
+-# include "enchant/editor-enchant-spell-provider.h"
+-#endif
+-
+ typedef struct
+ {
+   char *display_name;
+@@ -141,10 +137,6 @@ editor_spell_provider_get_default (void)
+ 
+   if (instance == NULL)
+     {
+-#ifdef HAVE_ENCHANT
+-      instance = editor_enchant_spell_provider_new ();
+-#endif
+-
+       if (instance == NULL)
+         instance = editor_empty_spell_provider_new ();
+ 
+diff --git a/src/enchant/editor-enchant-spell-language.c b/src/enchant/editor-enchant-spell-language.c
+deleted file mode 100644
+index 1717cbbd..00000000
+--- a/src/enchant/editor-enchant-spell-language.c
++++ /dev/null
+@@ -1,306 +0,0 @@
+-/* editor-enchant-spell-language.c
+- *
+- * Copyright 2021 Christian Hergert <chergert@redhat.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+- * SPDX-License-Identifier: GPL-3.0-or-later
+- */
+-
+-#include "config.h"
+-
+-#include <enchant.h>
+-
+-#include "editor-enchant-spell-language.h"
+-
+-struct _EditorEnchantSpellLanguage
+-{
+-  EditorSpellLanguage parent_instance;
+-  PangoLanguage *language;
+-  EnchantDict *native;
+-  char *extra_word_chars;
+-};
+-
+-G_DEFINE_TYPE (EditorEnchantSpellLanguage, editor_enchant_spell_language, EDITOR_TYPE_SPELL_LANGUAGE)
+-
+-enum {
+-  PROP_0,
+-  PROP_NATIVE,
+-  N_PROPS
+-};
+-
+-static GParamSpec *properties [N_PROPS];
+-
+-/**
+- * editor_enchant_spell_language_new:
+- *
+- * Create a new #EditorEnchantSpellLanguage.
+- *
+- * Returns: (transfer full): a newly created #EditorEnchantSpellLanguage
+- */
+-EditorSpellLanguage *
+-editor_enchant_spell_language_new (const char *code,
+-                                   gpointer    native)
+-{
+-  return g_object_new (EDITOR_TYPE_ENCHANT_SPELL_LANGUAGE,
+-                       "code", code,
+-                       "native", native,
+-                       NULL);
+-}
+-
+-static gboolean
+-editor_enchant_spell_language_contains_word (EditorSpellLanguage *language,
+-                                             const char          *word,
+-                                             gssize               word_len)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)language;
+-
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self));
+-  g_assert (word != NULL);
+-  g_assert (word_len > 0);
+-
+-  return enchant_dict_check (self->native, word, word_len) == 0;
+-}
+-
+-static char **
+-editor_enchant_spell_language_list_corrections (EditorSpellLanguage *language,
+-                                                const char          *word,
+-                                                gssize               word_len)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)language;
+-  size_t count = 0;
+-  char **tmp;
+-  char **ret = NULL;
+-
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self));
+-  g_assert (word != NULL);
+-  g_assert (word_len > 0);
+-
+-  if ((tmp = enchant_dict_suggest (self->native, word, word_len, &count)) && count > 0)
+-    {
+-      ret = g_strdupv (tmp);
+-      enchant_dict_free_string_list (self->native, tmp);
+-    }
+-
+-  return g_steal_pointer (&ret);
+-}
+-
+-static char **
+-editor_enchant_spell_language_split (EditorEnchantSpellLanguage *self,
+-                                     const char                 *words)
+-{
+-  PangoLogAttr *attrs;
+-  GArray *ar;
+-  gsize n_chars;
+-
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self));
+-
+-  if (words == NULL || self->language == NULL)
+-    return NULL;
+-
+-  /* We don't care about splitting obnoxious stuff */
+-  if ((n_chars = g_utf8_strlen (words, -1)) > 1024)
+-    return NULL;
+-
+-  attrs = g_newa (PangoLogAttr, n_chars + 1);
+-  pango_get_log_attrs (words, -1, -1, self->language, attrs, n_chars + 1);
+-
+-  ar = g_array_new (TRUE, FALSE, sizeof (char*));
+-
+-  for (gsize i = 0; i < n_chars + 1; i++)
+-    {
+-      if (attrs[i].is_word_start)
+-        {
+-          for (gsize j = i + 1; j < n_chars + 1; j++)
+-            {
+-              if (attrs[j].is_word_end)
+-                {
+-                  char *substr = g_utf8_substring (words, i, j);
+-                  g_array_append_val (ar, substr);
+-                  i = j;
+-                  break;
+-                }
+-            }
+-        }
+-    }
+-
+-  return (char **)(gpointer)g_array_free (ar, FALSE);
+-}
+-
+-static void
+-editor_enchant_spell_language_add_all_to_session (EditorEnchantSpellLanguage *self,
+-                                                  const char * const         *words)
+-{
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self));
+-
+-  if (words == NULL || words[0] == NULL)
+-    return;
+-
+-  for (guint i = 0; words[i]; i++)
+-    enchant_dict_add_to_session (self->native, words[i], -1);
+-}
+-
+-static void
+-editor_enchant_spell_language_add_word (EditorSpellLanguage *language,
+-                                        const char          *word)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)language;
+-
+-  g_assert (EDITOR_IS_SPELL_LANGUAGE (language));
+-  g_assert (word != NULL);
+-
+-  enchant_dict_add (self->native, word, -1);
+-}
+-
+-static void
+-editor_enchant_spell_language_ignore_word (EditorSpellLanguage *language,
+-                                           const char          *word)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)language;
+-
+-  g_assert (EDITOR_IS_SPELL_LANGUAGE (language));
+-  g_assert (word != NULL);
+-
+-  enchant_dict_add_to_session (self->native, word, -1);
+-}
+-
+-static const char *
+-editor_enchant_spell_language_get_extra_word_chars (EditorSpellLanguage *language)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)language;
+-
+-  g_assert (EDITOR_IS_SPELL_LANGUAGE (language));
+-
+-  return self->extra_word_chars;
+-}
+-
+-static void
+-editor_enchant_spell_language_constructed (GObject *object)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)object;
+-  g_auto(GStrv) split = NULL;
+-  const char *extra_word_chars;
+-  const char *code;
+-
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self));
+-
+-  G_OBJECT_CLASS (editor_enchant_spell_language_parent_class)->constructed (object);
+-
+-  code = editor_spell_language_get_code (EDITOR_SPELL_LANGUAGE (self));
+-  self->language = pango_language_from_string (code);
+-
+-  if ((split = editor_enchant_spell_language_split (self, g_get_real_name ())))
+-    editor_enchant_spell_language_add_all_to_session (self, (const char * const *)split);
+-
+-  if ((extra_word_chars = enchant_dict_get_extra_word_characters (self->native)))
+-    {
+-      const char *end_pos = NULL;
+-
+-      /* Sometimes we get invalid UTF-8 from enchant, so handle that directly.
+-       * In particular, the data seems corrupted from Fedora.
+-       */
+-      if (g_utf8_validate (extra_word_chars, -1, &end_pos))
+-        self->extra_word_chars = g_strdup (extra_word_chars);
+-      else
+-        self->extra_word_chars = g_strndup (extra_word_chars, end_pos - extra_word_chars);
+-    }
+-}
+-
+-static void
+-editor_enchant_spell_language_finalize (GObject *object)
+-{
+-  EditorEnchantSpellLanguage *self = (EditorEnchantSpellLanguage *)object;
+-
+-  /* Owned by provider */
+-  self->native = NULL;
+-
+-  G_OBJECT_CLASS (editor_enchant_spell_language_parent_class)->finalize (object);
+-}
+-
+-static void
+-editor_enchant_spell_language_get_property (GObject    *object,
+-                                            guint       prop_id,
+-                                            GValue     *value,
+-                                            GParamSpec *pspec)
+-{
+-  EditorEnchantSpellLanguage *self = EDITOR_ENCHANT_SPELL_LANGUAGE (object);
+-
+-  switch (prop_id)
+-    {
+-    case PROP_NATIVE:
+-      g_value_set_pointer (value, self->native);
+-      break;
+-
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-    }
+-}
+-
+-static void
+-editor_enchant_spell_language_set_property (GObject      *object,
+-                                            guint         prop_id,
+-                                            const GValue *value,
+-                                            GParamSpec   *pspec)
+-{
+-  EditorEnchantSpellLanguage *self = EDITOR_ENCHANT_SPELL_LANGUAGE (object);
+-
+-  switch (prop_id)
+-    {
+-    case PROP_NATIVE:
+-      self->native = g_value_get_pointer (value);
+-      break;
+-
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-    }
+-}
+-
+-static void
+-editor_enchant_spell_language_class_init (EditorEnchantSpellLanguageClass *klass)
+-{
+-  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+-  EditorSpellLanguageClass *spell_language_class = EDITOR_SPELL_LANGUAGE_CLASS (klass);
+-
+-  object_class->constructed = editor_enchant_spell_language_constructed;
+-  object_class->finalize = editor_enchant_spell_language_finalize;
+-  object_class->get_property = editor_enchant_spell_language_get_property;
+-  object_class->set_property = editor_enchant_spell_language_set_property;
+-
+-  spell_language_class->contains_word = editor_enchant_spell_language_contains_word;
+-  spell_language_class->list_corrections = editor_enchant_spell_language_list_corrections;
+-  spell_language_class->add_word = editor_enchant_spell_language_add_word;
+-  spell_language_class->ignore_word = editor_enchant_spell_language_ignore_word;
+-  spell_language_class->get_extra_word_chars = editor_enchant_spell_language_get_extra_word_chars;
+-
+-  properties [PROP_NATIVE] =
+-    g_param_spec_pointer ("native",
+-                          "Native",
+-                          "The native enchant dictionary",
+-                          (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
+-
+-  g_object_class_install_properties (object_class, N_PROPS, properties);
+-}
+-
+-static void
+-editor_enchant_spell_language_init (EditorEnchantSpellLanguage *self)
+-{
+-}
+-
+-gpointer
+-editor_enchant_spell_language_get_native (EditorEnchantSpellLanguage *self)
+-{
+-  g_return_val_if_fail (EDITOR_IS_ENCHANT_SPELL_LANGUAGE (self), NULL);
+-
+-  return self->native;
+-}
+diff --git a/src/enchant/editor-enchant-spell-language.h b/src/enchant/editor-enchant-spell-language.h
+deleted file mode 100644
+index 4b0d0f62..00000000
+--- a/src/enchant/editor-enchant-spell-language.h
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/* editor-enchant-spell-language.h
+- *
+- * Copyright 2021 Christian Hergert <chergert@redhat.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+- * SPDX-License-Identifier: GPL-3.0-or-later
+- */
+-
+-#pragma once
+-
+-#include "editor-spell-language.h"
+-
+-G_BEGIN_DECLS
+-
+-#define EDITOR_TYPE_ENCHANT_SPELL_LANGUAGE (editor_enchant_spell_language_get_type())
+-
+-G_DECLARE_FINAL_TYPE (EditorEnchantSpellLanguage, editor_enchant_spell_language, EDITOR, ENCHANT_SPELL_LANGUAGE, EditorSpellLanguage)
+-
+-EditorSpellLanguage *editor_enchant_spell_language_new        (const char                 *code,
+-                                                               gpointer                    native);
+-gpointer             editor_enchant_spell_language_get_native (EditorEnchantSpellLanguage *self);
+-
+-G_END_DECLS
+diff --git a/src/enchant/editor-enchant-spell-provider.c b/src/enchant/editor-enchant-spell-provider.c
+deleted file mode 100644
+index 1949013c..00000000
+--- a/src/enchant/editor-enchant-spell-provider.c
++++ /dev/null
+@@ -1,203 +0,0 @@
+-/* editor-enchant-spell-provider.c
+- *
+- * Copyright 2021 Christian Hergert <chergert@redhat.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+- * SPDX-License-Identifier: GPL-3.0-or-later
+- */
+-
+-#include "config.h"
+-
+-#include <glib/gi18n.h>
+-#include <enchant.h>
+-#include <locale.h>
+-#include <unicode/uloc.h>
+-
+-#include "editor-spell-language-info.h"
+-
+-#include "editor-enchant-spell-language.h"
+-#include "editor-enchant-spell-provider.h"
+-
+-struct _EditorEnchantSpellProvider
+-{
+-  EditorSpellProvider parent_instance;
+-};
+-
+-G_DEFINE_TYPE (EditorEnchantSpellProvider, editor_enchant_spell_provider, EDITOR_TYPE_SPELL_PROVIDER)
+-
+-static GHashTable *languages;
+-
+-static EnchantBroker *
+-get_broker (void)
+-{
+-  static EnchantBroker *broker;
+-
+-  if (broker == NULL)
+-    broker = enchant_broker_init ();
+-
+-  return broker;
+-}
+-
+-static char *
+-_icu_uchar_to_char (const UChar *input,
+-                    gsize        max_input_len)
+-{
+-  GString *str;
+-
+-  g_assert (input != NULL);
+-  g_assert (max_input_len > 0);
+-
+-  if (input[0] == 0)
+-    return NULL;
+-
+-  str = g_string_new (NULL);
+-
+-  for (gsize i = 0; i < max_input_len; i++)
+-    {
+-      if (input[i] == 0)
+-        break;
+-
+-      g_string_append_unichar (str, input[i]);
+-    }
+-
+-  return g_string_free (str, FALSE);
+-}
+-
+-static char *
+-get_display_name (const char *code)
+-{
+-  const char * const *names = g_get_language_names ();
+-
+-  for (guint i = 0; names[i]; i++)
+-    {
+-      UChar ret[256];
+-      UErrorCode status = U_ZERO_ERROR;
+-      uloc_getDisplayName (code, names[i], ret, G_N_ELEMENTS (ret), &status);
+-      if (status == U_ZERO_ERROR)
+-        return _icu_uchar_to_char (ret, G_N_ELEMENTS (ret));
+-    }
+-
+-  return NULL;
+-}
+-
+-static char *
+-get_display_language (const char *code)
+-{
+-  const char * const *names = g_get_language_names ();
+-
+-  for (guint i = 0; names[i]; i++)
+-    {
+-      UChar ret[256];
+-      UErrorCode status = U_ZERO_ERROR;
+-      uloc_getDisplayLanguage (code, names[i], ret, G_N_ELEMENTS (ret), &status);
+-      if (status == U_ZERO_ERROR)
+-        return _icu_uchar_to_char (ret, G_N_ELEMENTS (ret));
+-    }
+-
+-  return NULL;
+-}
+-
+-/**
+- * editor_enchant_spell_provider_new:
+- *
+- * Create a new #EditorEnchantSpellProvider.
+- *
+- * Returns: (transfer full): a newly created #EditorEnchantSpellProvider
+- */
+-EditorSpellProvider *
+-editor_enchant_spell_provider_new (void)
+-{
+-  return g_object_new (EDITOR_TYPE_ENCHANT_SPELL_PROVIDER,
+-                       "display-name", _("Enchant 2"),
+-                       NULL);
+-}
+-
+-static gboolean
+-editor_enchant_spell_provider_supports_language (EditorSpellProvider *provider,
+-                                                 const char          *language)
+-{
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_PROVIDER (provider));
+-  g_assert (language != NULL);
+-
+-  return enchant_broker_dict_exists (get_broker (), language);
+-}
+-
+-static void
+-list_languages_cb (const char * const  lang_tag,
+-                   const char * const  provider_name,
+-                   const char * const  provider_desc,
+-                   const char * const  provider_file,
+-                   void               *user_data)
+-{
+-  GPtrArray *ar = user_data;
+-  char *name = get_display_name (lang_tag);
+-  char *group = get_display_language (lang_tag);
+-
+-  if (name != NULL)
+-    g_ptr_array_add (ar, editor_spell_language_info_new (name, lang_tag, group));
+-
+-  g_free (name);
+-  g_free (group);
+-}
+-
+-static GPtrArray *
+-editor_enchant_spell_provider_list_languages (EditorSpellProvider *provider)
+-{
+-  EnchantBroker *broker = get_broker ();
+-  GPtrArray *ar = g_ptr_array_new_with_free_func (g_object_unref);
+-  enchant_broker_list_dicts (broker, list_languages_cb, ar);
+-  return ar;
+-}
+-
+-static EditorSpellLanguage *
+-editor_enchant_spell_provider_get_language (EditorSpellProvider *provider,
+-                                            const char          *language)
+-{
+-  EditorSpellLanguage *ret;
+-
+-  g_assert (EDITOR_IS_ENCHANT_SPELL_PROVIDER (provider));
+-  g_assert (language != NULL);
+-
+-  if (languages == NULL)
+-    languages = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_object_unref);
+-
+-  if (!(ret = g_hash_table_lookup (languages, language)))
+-    {
+-      EnchantDict *dict = enchant_broker_request_dict (get_broker (), language);
+-
+-      if (dict == NULL)
+-        return NULL;
+-
+-      ret = editor_enchant_spell_language_new (language, dict);
+-      g_hash_table_insert (languages, (char *)g_intern_string (language), ret);
+-    }
+-
+-  return ret ? g_object_ref (ret) : NULL;
+-}
+-
+-static void
+-editor_enchant_spell_provider_class_init (EditorEnchantSpellProviderClass *klass)
+-{
+-  EditorSpellProviderClass *spell_provider_class = EDITOR_SPELL_PROVIDER_CLASS (klass);
+-
+-  spell_provider_class->supports_language = editor_enchant_spell_provider_supports_language;
+-  spell_provider_class->list_languages = editor_enchant_spell_provider_list_languages;
+-  spell_provider_class->get_language = editor_enchant_spell_provider_get_language;
+-}
+-
+-static void
+-editor_enchant_spell_provider_init (EditorEnchantSpellProvider *self)
+-{
+-}
+diff --git a/src/enchant/editor-enchant-spell-provider.h b/src/enchant/editor-enchant-spell-provider.h
+deleted file mode 100644
+index 8ae6c63e..00000000
+--- a/src/enchant/editor-enchant-spell-provider.h
++++ /dev/null
+@@ -1,33 +0,0 @@
+-/* editor-enchant-spell-provider.h
+- *
+- * Copyright 2021 Christian Hergert <chergert@redhat.com>
+- *
+- * This program is free software: you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation, either version 3 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- *
+- * SPDX-License-Identifier: GPL-3.0-or-later
+- */
+-
+-#pragma once
+-
+-#include "editor-spell-provider.h"
+-
+-G_BEGIN_DECLS
+-
+-#define EDITOR_TYPE_ENCHANT_SPELL_PROVIDER (editor_enchant_spell_provider_get_type())
+-
+-G_DECLARE_FINAL_TYPE (EditorEnchantSpellProvider, editor_enchant_spell_provider, EDITOR, ENCHANT_SPELL_PROVIDER, EditorSpellProvider)
+-
+-EditorSpellProvider *editor_enchant_spell_provider_new (void);
+-
+-G_END_DECLS
+diff --git a/src/enchant/meson.build b/src/enchant/meson.build
+deleted file mode 100644
+index da75eb99..00000000
+--- a/src/enchant/meson.build
++++ /dev/null
+@@ -1,15 +0,0 @@
+-if get_option('enchant').enabled()
+-
+-libenchant_dep = dependency('enchant-2', version: enchant_req)
+-libicu_dep = dependency('icu-uc')
+-
+-editor_deps += [libenchant_dep, libicu_dep]
+-
+-editor_sources += files([
+-  'editor-enchant-spell-language.c',
+-  'editor-enchant-spell-provider.c',
+-])
+-
+-editor_c_args += ['-DHAVE_ENCHANT']
+-
+-endif
+diff --git a/src/main.c b/src/main.c
+index 46208988..20f07b76 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -25,10 +25,6 @@
+ #include <gtk/gtk.h>
+ #include <gtksourceview/gtksource.h>
+ 
+-#ifdef HAVE_ENCHANT
+-# include <enchant.h>
+-#endif
+-
+ #include "build-ident.h"
+ #include "editor-application-private.h"
+ 
+@@ -64,10 +60,6 @@ check_early_opts (int        *argc,
+                   gtk_source_get_major_version (), gtk_source_get_minor_version (), gtk_source_get_micro_version (),
+                   GTK_SOURCE_MAJOR_VERSION, GTK_SOURCE_MINOR_VERSION, GTK_SOURCE_MICRO_VERSION);
+ 
+-#ifdef HAVE_ENCHANT
+-      g_print ("        Enchant: %s\n", enchant_get_version ());
+-#endif
+-
+       g_print ("\n\
+ Copyright 2020-2022 Christian Hergert, et al.\n\
+ This is free software; see the source for copying conditions. There is NO\n\
+diff --git a/src/meson.build b/src/meson.build
+index 7eb816a7..cbc86900 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -89,7 +89,6 @@ build_ident_h = vcs_tag(
+ 
+ editor_c_args = []
+ 
+-subdir('enchant')
+ subdir('defaults')
+ subdir('modelines')
+ subdir('editorconfig')
+diff --git a/subprojects/libspelling.wrap b/subprojects/libspelling.wrap
+new file mode 100644
+index 00000000..ec278390
+--- /dev/null
++++ b/subprojects/libspelling.wrap
+@@ -0,0 +1,10 @@
++[wrap-git]
++directory=libspelling
++url=https://gitlab.gnome.org/chergert/libspelling.git
++push-url=ssh://git@ssh.gitlab.gnome.org:chergert/libspelling.git
++revision=main
++depth=1
++
++[provide]
++libspelling-1 = libspelling_dep
++dependency_names = libspelling-1
+-- 
+GitLab
+
+
+From 36b52c0acbcee8eab1ce13a6ae8b687ac428b8e8 Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 17:39:32 -0400
+Subject: [PATCH 02/11] Update .gitignore
+
+---
+ subprojects/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/subprojects/.gitignore b/subprojects/.gitignore
+index 62f5eed5..4d22d883 100644
+--- a/subprojects/.gitignore
++++ b/subprojects/.gitignore
+@@ -5,6 +5,7 @@ gtksourceview/
+ libadwaita/
+ libsass.wrap
+ libsass/
++libspelling/
+ sassc.wrap
+ sassc/
+ wayland.wrap
+-- 
+GitLab
+
+
+From 79ea9660290658000c7a2effdd3a8887390edeac Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:04:20 -0400
+Subject: [PATCH 03/11] Fix build with libspelling
+
+---
+ org.gnome.TextEditor.Devel.json | 11 +++++++++++
+ subprojects/libspelling.wrap    | 10 ----------
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+ delete mode 100644 subprojects/libspelling.wrap
+
+diff --git a/org.gnome.TextEditor.Devel.json b/org.gnome.TextEditor.Devel.json
+index 5f50f8e5..0056020d 100644
+--- a/org.gnome.TextEditor.Devel.json
++++ b/org.gnome.TextEditor.Devel.json
+@@ -42,6 +42,17 @@
+                 }
+             ]
+         },
++        {
++            "name" : "libspelling",
++            "builddir" : true,
++            "buildsystem" : "meson",
++            "sources" : [
++                {
++                    "type" : "git",
++                    "url" : "https://gitlab.gnome.org/chergert/libspelling.git"
++                }
++            ]
++        },
+         {
+             "name" : "gnome-text-editor",
+             "builddir" : true,
+diff --git a/subprojects/libspelling.wrap b/subprojects/libspelling.wrap
+deleted file mode 100644
+index ec278390..00000000
+--- a/subprojects/libspelling.wrap
++++ /dev/null
+@@ -1,10 +0,0 @@
+-[wrap-git]
+-directory=libspelling
+-url=https://gitlab.gnome.org/chergert/libspelling.git
+-push-url=ssh://git@ssh.gitlab.gnome.org:chergert/libspelling.git
+-revision=main
+-depth=1
+-
+-[provide]
+-libspelling-1 = libspelling_dep
+-dependency_names = libspelling-1
+-- 
+GitLab
+
+
+From 9269e38ccdcfaf7a8e523cb5f0123e50c737d05e Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:15:09 -0400
+Subject: [PATCH 04/11] Add branch name to libspelling
+
+---
+ org.gnome.TextEditor.Devel.json | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/org.gnome.TextEditor.Devel.json b/org.gnome.TextEditor.Devel.json
+index 0056020d..daa16b0e 100644
+--- a/org.gnome.TextEditor.Devel.json
++++ b/org.gnome.TextEditor.Devel.json
+@@ -46,10 +46,12 @@
+             "name" : "libspelling",
+             "builddir" : true,
+             "buildsystem" : "meson",
++            "config-opts": ["-Ddocs=false"],
+             "sources" : [
+                 {
+                     "type" : "git",
+-                    "url" : "https://gitlab.gnome.org/chergert/libspelling.git"
++                    "url" : "https://gitlab.gnome.org/chergert/libspelling.git",
++                    "branch": "main"
+                 }
+             ]
+         },
+-- 
+GitLab
+
+
+From 739258d0f7cec89fc279f15108d7bcb8bde14a78 Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:30:30 -0400
+Subject: [PATCH 05/11] Turn off werror in libspelling
+
+---
+ .gitlab-ci.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index fdabdefd..cac40a62 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -65,6 +65,7 @@ fedora:
+                 -Dgtksourceview:vapi=false
+                 -Dgtksourceview:werror=false
+                 -Dicu:werror=false
++                -Dlibspelling:werror=false
+                 -Dlibadwaita:examples=false
+                 -Dlibadwaita:gtk_doc=false
+                 -Dlibadwaita:introspection=disabled
+-- 
+GitLab
+
+
+From 103afef1cd8dadc98c8f9e26b9e58cd8a2cb3700 Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:41:53 -0400
+Subject: [PATCH 06/11] Turn off werror in libspelling again
+
+---
+ org.gnome.TextEditor.Devel.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/org.gnome.TextEditor.Devel.json b/org.gnome.TextEditor.Devel.json
+index daa16b0e..468e8ef0 100644
+--- a/org.gnome.TextEditor.Devel.json
++++ b/org.gnome.TextEditor.Devel.json
+@@ -46,7 +46,7 @@
+             "name" : "libspelling",
+             "builddir" : true,
+             "buildsystem" : "meson",
+-            "config-opts": ["-Ddocs=false"],
++            "config-opts": [ "-Ddocs=false", "-Dwerror=false" ],
+             "sources" : [
+                 {
+                     "type" : "git",
+-- 
+GitLab
+
+
+From 53f3d8ee2def03b1290e2b3ff1e48c2d87f6bff5 Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:52:39 -0400
+Subject: [PATCH 07/11] Turn off werror in gnome-text-editor
+
+---
+ .gitlab-ci.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index cac40a62..ea6c9bde 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -52,7 +52,7 @@ fedora:
+                 editorconfig-devel
+         - mkdir -p pfx/
+         - meson --prefix=${PWD}/pfx
+-                -Dwerror=true
++                -Dwerror=false
+                 -Dglib:werror=false
+                 -Dgtk:broadway-backend=false
+                 -Dgtk:build-examples=false
+-- 
+GitLab
+
+
+From 45662c856ef4685c8298f31cac5500396fbfc5f4 Mon Sep 17 00:00:00 2001
+From: Harold Knowlden <haroldknowlden@gmail.com>
+Date: Wed, 12 Jul 2023 18:59:59 -0400
+Subject: [PATCH 08/11] Remove builddir in libspelling
+
+---
+ org.gnome.TextEditor.Devel.json | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/org.gnome.TextEditor.Devel.json b/org.gnome.TextEditor.Devel.json
+index 468e8ef0..04c28067 100644
+--- a/org.gnome.TextEditor.Devel.json
++++ b/org.gnome.TextEditor.Devel.json
+@@ -44,9 +44,8 @@
+         },
+         {
+             "name" : "libspelling",
+-            "builddir" : true,
+             "buildsystem" : "meson",
+-            "config-opts": [ "-Ddocs=false", "-Dwerror=false" ],
++            "config-opts" : [ "-Ddocs=false", "-Dwerror=false" ],
+             "sources" : [
+                 {
+                     "type" : "git",
+-- 
+GitLab
+
+
+From e06a72282d385ea382ecc70b2a1ea68f1be3475e Mon Sep 17 00:00:00 2001
+From: HaroldKnowlden <haroldknowlden@gmail.com>
+Date: Mon, 17 Jul 2023 21:01:18 -0400
+Subject: [PATCH 09/11] readd enchant on windows
+
+---
+ build-aux/win32/build-mingw.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/build-aux/win32/build-mingw.sh b/build-aux/win32/build-mingw.sh
+index 36d85433..139c5408 100644
+--- a/build-aux/win32/build-mingw.sh
++++ b/build-aux/win32/build-mingw.sh
+@@ -5,6 +5,7 @@ pacman -S --noconfirm mingw-w64-x86_64-pkg-config \
+             mingw-w64-x86_64-libadwaita \
+             mingw-w64-x86_64-gobject-introspection \
+             mingw-w64-x86_64-python-gobject \
++            mingw-w64-x86_64-enchant \
+             mingw-w64-x86_64-editorconfig-core-c \
+             mingw-w64-x86_64-meson \
+             itstool \
+-- 
+GitLab
+
+
+From 6b9d280738ad9a1c4f48371b6a56af26ff2603bb Mon Sep 17 00:00:00 2001
+From: HaroldKnowlden <haroldknowlden@gmail.com>
+Date: Mon, 17 Jul 2023 21:05:05 -0400
+Subject: [PATCH 10/11] Add enchant DLL
+
+---
+ build-aux/win32/build-mingw.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/build-aux/win32/build-mingw.sh b/build-aux/win32/build-mingw.sh
+index 139c5408..c95c5210 100644
+--- a/build-aux/win32/build-mingw.sh
++++ b/build-aux/win32/build-mingw.sh
+@@ -55,6 +55,7 @@ cp -R /mingw64/bin/libcairo-script-interpreter-2.dll builddir
+ cp -R /mingw64/bin/libdatrie-1.dll builddir
+ cp -R /mingw64/bin/libdeflate.dll builddir
+ cp -R /mingw64/bin/libeditorconfig.dll builddir
++cp -R /mingw64/bin/libenchant-2.dll builddir
+ cp -R /mingw64/bin/libepoxy-0.dll builddir
+ cp -R /mingw64/bin/libexpat-1.dll builddir
+ cp -R /mingw64/bin/libffi-8.dll builddir
+-- 
+GitLab
+
+
+From e41e6133d27cf725896b0deb6ec5423cbc6a3eb8 Mon Sep 17 00:00:00 2001
+From: HaroldKnowlden <haroldknowlden@gmail.com>
+Date: Mon, 17 Jul 2023 21:14:36 -0400
+Subject: [PATCH 11/11] Add libspelling again
+
+---
+ .gitlab-ci.yml               |  4 ++--
+ subprojects/libspelling.wrap | 10 ++++++++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+ create mode 100644 subprojects/libspelling.wrap
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index ea6c9bde..fd4ce8d7 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -42,6 +42,7 @@ fedora:
+     script:
+         - sudo dnf -y install
+                 desktop-file-utils
++                enchant2-devel
+                 expat-devel
+                 git
+                 itstool
+@@ -52,7 +53,7 @@ fedora:
+                 editorconfig-devel
+         - mkdir -p pfx/
+         - meson --prefix=${PWD}/pfx
+-                -Dwerror=false
++                -Dwerror=true
+                 -Dglib:werror=false
+                 -Dgtk:broadway-backend=false
+                 -Dgtk:build-examples=false
+@@ -65,7 +66,6 @@ fedora:
+                 -Dgtksourceview:vapi=false
+                 -Dgtksourceview:werror=false
+                 -Dicu:werror=false
+-                -Dlibspelling:werror=false
+                 -Dlibadwaita:examples=false
+                 -Dlibadwaita:gtk_doc=false
+                 -Dlibadwaita:introspection=disabled
+diff --git a/subprojects/libspelling.wrap b/subprojects/libspelling.wrap
+new file mode 100644
+index 00000000..ec278390
+--- /dev/null
++++ b/subprojects/libspelling.wrap
+@@ -0,0 +1,10 @@
++[wrap-git]
++directory=libspelling
++url=https://gitlab.gnome.org/chergert/libspelling.git
++push-url=ssh://git@ssh.gitlab.gnome.org:chergert/libspelling.git
++revision=main
++depth=1
++
++[provide]
++libspelling-1 = libspelling_dep
++dependency_names = libspelling-1
+-- 
+GitLab
+

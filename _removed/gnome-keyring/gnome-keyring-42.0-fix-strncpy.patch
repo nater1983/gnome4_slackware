@@ -1,0 +1,78 @@
+From f532e3de2bd77465c976abc913e3f0a5cd09a5d2 Mon Sep 17 00:00:00 2001
+From: Matt Turner <mattst88@gmail.com>
+Date: Sun, 22 May 2022 13:00:46 -0400
+Subject: [PATCH] pkcs11: Don't use strncpy when copying paths
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Using strncpy produces the following warning, which indicates that the
+destination string could be left unterminated.
+
+  CC       daemon/control/gkd-control-server.lo
+  CCLD     libgkd-control.la
+  CC       pkcs11/rpc-layer/libgkm_rpc_layer_la-gkm-rpc-dispatch.lo
+In file included from /usr/include/string.h:519,
+                 from /usr/include/glib-2.0/glib/galloca.h:33,
+                 from /usr/include/glib-2.0/glib.h:30,
+                 from ./egg/egg-error.h:24,
+                 from pkcs11/rpc-layer/gkm-rpc-dispatch.c:31:
+In function ‘strncpy’,
+    inlined from ‘gkm_rpc_layer_startup’ at pkcs11/rpc-layer/gkm-rpc-dispatch.c:2382:2:
+/usr/include/bits/string_fortified.h:95:10: warning: ‘__builtin_strncpy’ specified bound 108 equals destination size [-Wstringop-truncation]
+   95 |   return __builtin___strncpy_chk (__dest, __src, __len,
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   96 |                                   __glibc_objsize (__dest));
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+---
+ pkcs11/rpc-layer/gkm-rpc-dispatch.c | 4 +++-
+ pkcs11/rpc-layer/gkm-rpc-module.c   | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/pkcs11/rpc-layer/gkm-rpc-dispatch.c b/pkcs11/rpc-layer/gkm-rpc-dispatch.c
+index 72d2ced1..dbedb355 100644
+--- a/pkcs11/rpc-layer/gkm-rpc-dispatch.c
++++ b/pkcs11/rpc-layer/gkm-rpc-dispatch.c
+@@ -31,6 +31,8 @@
+ #include "egg/egg-error.h"
+ #include "egg/egg-unix-credentials.h"
+ 
++#include <glib.h>
++
+ #include <sys/types.h>
+ #include <sys/param.h>
+ #include <sys/socket.h>
+@@ -2379,7 +2381,7 @@ gkm_rpc_layer_startup (const char *prefix)
+ 	memset(&addr, 0, sizeof(addr));
+ 	addr.sun_family = AF_UNIX;
+ 	unlink (pkcs11_socket_path);
+-	strncpy (addr.sun_path, pkcs11_socket_path, sizeof (addr.sun_path));
++	g_strlcpy (addr.sun_path, pkcs11_socket_path, sizeof (addr.sun_path));
+ 	if (bind (sock, (struct sockaddr*)&addr, sizeof (addr)) < 0) {
+ 		gkm_rpc_warn ("couldn't bind to pkcs11 socket: %s: %s",
+ 		                  pkcs11_socket_path, strerror (errno));
+diff --git a/pkcs11/rpc-layer/gkm-rpc-module.c b/pkcs11/rpc-layer/gkm-rpc-module.c
+index 24457ce1..515b18a4 100644
+--- a/pkcs11/rpc-layer/gkm-rpc-module.c
++++ b/pkcs11/rpc-layer/gkm-rpc-module.c
+@@ -29,6 +29,8 @@
+ 
+ #include "egg/egg-unix-credentials.h"
+ 
++#include <glib.h>
++
+ #include <sys/types.h>
+ #include <sys/param.h>
+ #include <sys/socket.h>
+@@ -233,7 +235,7 @@ call_connect (CallState *cs)
+ 	debug (("connecting to: %s", pkcs11_socket_path));
+ 
+ 	addr.sun_family = AF_UNIX;
+-	strncpy (addr.sun_path, pkcs11_socket_path, sizeof (addr.sun_path));
++	g_strlcpy (addr.sun_path, pkcs11_socket_path, sizeof (addr.sun_path));
+ 
+ 	sock = socket (AF_UNIX, SOCK_STREAM, 0);
+ 	if (sock < 0) {
+-- 
+GitLab
+

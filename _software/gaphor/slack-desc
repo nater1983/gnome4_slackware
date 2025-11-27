@@ -1,0 +1,18 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+      |-----handy-ruler------------------------------------------------------|
+gaphor: gaphor (Simple UML and SysML modeling tool)
+gaphor:
+gaphor: Gaphor is a UML, SysML, RAAML, and C4 modeling application. It is 
+gaphor: designed to be easy to use, while still being powerful. Gaphor 
+gaphor: implements a fully-compliant UML 2 data model, so it is much more 
+gaphor: than a picture drawing tool. You can use Gaphor to quickly visualize 
+gaphor: different aspects of a system as well as create complete, highly 
+gaphor: complex models. Gaphor provides four modeling languages: UML, SysML, 
+gaphor: RAAML and C4 and makes them accessible to beginners.
+gaphor: https://github.com/gaphor/gaphor

@@ -1,5 +1,0 @@
-make libstemmer.so stemwords
-
-mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}
-mv libstemmer.so* $PKG/usr/lib${LIBDIRSUFFIX}
-mv include $PKG/usr

@@ -1,0 +1,27 @@
+From b7f24540fd8e47493053a2fc236ce1dc93dc04c6 Mon Sep 17 00:00:00 2001
+From: ZhaoQiang <zhaoqiang@gnome.org>
+Date: Sat, 6 Mar 2021 00:11:19 +0800
+Subject: [PATCH] When system is using ibus, it will register all engines with
+ the "default" layout, gkbd couldn't draw it and crash, so change the
+ condition of layout drawing.
+
+---
+ libgnomekbd/gkbd-keyboard-display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libgnomekbd/gkbd-keyboard-display.c b/libgnomekbd/gkbd-keyboard-display.c
+index 5b1476c..96ecd46 100644
+--- a/libgnomekbd/gkbd-keyboard-display.c
++++ b/libgnomekbd/gkbd-keyboard-display.c
+@@ -82,7 +82,7 @@ main (int argc, char **argv)
+ 	dlg = gkbd_keyboard_drawing_dialog_new ();
+ 	registry = xkl_config_registry_get_instance (engine);
+ 	xkl_config_registry_load (registry, TRUE);
+-	if (layout != NULL) {
++	if (layout != NULL && strcmp(layout, "default")) {
+ 		gkbd_keyboard_drawing_dialog_set_layout (dlg, registry,
+ 							 layout);
+ 	} else
+-- 
+GitLab
+

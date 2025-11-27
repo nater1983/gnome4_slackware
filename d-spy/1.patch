@@ -1,0 +1,26 @@
+From 4979f52398c1cb4d49d5adfc941642fc8a863b77 Mon Sep 17 00:00:00 2001
+From: Christian Hergert <chergert@redhat.com>
+Date: Thu, 21 Sep 2023 16:32:45 -0700
+Subject: [PATCH] build: fix symbolic version number
+
+Fixes #16
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 0880423..4f14c36 100644
+--- a/meson.build
++++ b/meson.build
+@@ -3,7 +3,7 @@ project('d-spy', 'c',
+   meson_version: '>= 0.59.0',
+ )
+ 
+-symbolic_version = '44.0'
++symbolic_version = '45.0'
+ 
+ version_split = meson.project_version().split('.')
+ version_major = version_split[0]
+-- 
+GitLab
+

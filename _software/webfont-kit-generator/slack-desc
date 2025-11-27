@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                     |-----handy-ruler------------------------------------------------------|
+webfont-kit-generator: webfont-kit-generator (Create @font-face kits easily)
+webfont-kit-generator:
+webfont-kit-generator: Webfont Kit Generator is a simple utility that allows you to generate 
+webfont-kit-generator: woff, woff2 and the necessary CSS boilerplate from non-web font 
+webfont-kit-generator: formats (otf and ttf).
+webfont-kit-generator: Webfont Kit Generator also includes a tool to Download fonts from 
+webfont-kit-generator: Google Fonts for self-hosting.
+webfont-kit-generator: 
+webfont-kit-generator: 
+webfont-kit-generator: https://github.com/rafaelmardojai/webfont-kit-generator
+webfont-kit-generator: 

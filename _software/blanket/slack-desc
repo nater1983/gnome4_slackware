@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+blanket: blanket (listen to different sounds)
+blanket:
+blanket: Improve focus and increase your productivity by listening to 
+blanket: different sounds. Or allows you to fall asleep in a noisy  
+blanket: environment.
+blanket: 
+blanket: 
+blanket: 
+blanket: 
+blanket: https://github.com/rafaelmardojai/blanket
+blanket:

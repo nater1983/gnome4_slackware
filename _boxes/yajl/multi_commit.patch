@@ -1,0 +1,299 @@
+From a319e9c853d787a9033e14436a5a80381e954a26 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Mon, 10 Jul 2023 13:42:30 +0100
+Subject: [PATCH 1/8] pkg-config file should be in lib dir, not shared data dir
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Daniel P. BerrangĂ© <berrange@redhat.com>
+---
+ src/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 99cf9e9..789ddf9 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -30,7 +30,7 @@ ADD_DEFINITIONS(-DYAJL_BUILD)
+ # set up some paths
+ SET (libDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ SET (incDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include/yajl)
+-SET (shareDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/share/pkgconfig)
++SET (pkgconfigDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib/pkgconfig)
+ 
+ # set the output path for libraries
+ SET(LIBRARY_OUTPUT_PATH ${libDir})
+@@ -61,7 +61,7 @@ FILE(MAKE_DIRECTORY ${incDir})
+ # generate build-time source
+ SET(dollar $)
+ CONFIGURE_FILE(api/yajl_version.h.cmake ${incDir}/yajl_version.h)
+-CONFIGURE_FILE(yajl.pc.cmake ${shareDir}/yajl.pc)
++CONFIGURE_FILE(yajl.pc.cmake ${pkgconfigDir}/yajl.pc)
+ 
+ # copy public headers to output directory
+ FOREACH (header ${PUB_HDRS})
+@@ -84,4 +84,4 @@ INSTALL(TARGETS yajl
+ INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+-INSTALL(FILES ${shareDir}/yajl.pc DESTINATION share/pkgconfig)
++INSTALL(FILES ${pkgconfigDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+-- 
+2.41.0
+
+From 0eaa8db35c9e580f27ba0c90d11b173cb1d96687 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Mon, 10 Jul 2023 13:43:25 +0100
+Subject: [PATCH 2/8] pkg-config include dir should not have the 'yajl' suffix
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Apps use '#include <yajl/yajl.h>' for includes historically.
+
+Signed-off-by: Daniel P. BerrangĂ© <berrange@redhat.com>
+---
+ src/yajl.pc.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/yajl.pc.cmake b/src/yajl.pc.cmake
+index 6eaca14..485ded9 100644
+--- a/src/yajl.pc.cmake
++++ b/src/yajl.pc.cmake
+@@ -1,6 +1,6 @@
+ prefix=${CMAKE_INSTALL_PREFIX}
+ libdir=${dollar}{prefix}/lib${LIB_SUFFIX}
+-includedir=${dollar}{prefix}/include/yajl
++includedir=${dollar}{prefix}/include
+ 
+ Name: Yet Another JSON Library
+ Description: A Portable JSON parsing and serialization library in ANSI C
+-- 
+2.41.0
+
+From 39b9c104275a5eac498f5d2a92b462d10381a9eb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Mon, 10 Jul 2023 13:44:26 +0100
+Subject: [PATCH 3/8] fix patch to test files to take account of vpath
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Daniel P. BerrangĂ© <berrange@redhat.com>
+---
+ test/api/run_tests.sh     | 2 +-
+ test/parsing/run_tests.sh | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/api/run_tests.sh b/test/api/run_tests.sh
+index 6655152..88e43fb 100755
+--- a/test/api/run_tests.sh
++++ b/test/api/run_tests.sh
+@@ -5,7 +5,7 @@ echo Running api tests:
+ tests=0
+ passed=0
+ 
+-for file in `ls`; do
++for file in `ls ../../build/test/api`; do
+     [ ! -x $file -o -d $file ] && continue
+     tests=`expr 1 + $tests`
+     printf " test(%s): " $file
+diff --git a/test/parsing/run_tests.sh b/test/parsing/run_tests.sh
+index b37e4dd..ceb2e7a 100755
+--- a/test/parsing/run_tests.sh
++++ b/test/parsing/run_tests.sh
+@@ -16,11 +16,11 @@ fi
+ # find test binary on both platforms.  allow the caller to force a
+ # particular test binary (useful for non-cmake build systems).
+ if [ -z "$testBin" ]; then
+-    testBin="../build/test/parsing/Release/yajl_test.exe"
++    testBin="../../build/test/parsing/Release/yajl_test.exe"
+     if [ ! -x $testBin ] ; then
+-        testBin="../build/test/parsing/Debug/yajl_test.exe"
++        testBin="../../build/test/parsing/Debug/yajl_test.exe"
+         if [ ! -x $testBin ] ; then
+-            testBin="../build/test/parsing/yajl_test"
++            testBin="../../build/test/parsing/yajl_test"
+             if [  ! -x $testBin ] ; then
+                 ${ECHO} "cannot execute test binary: '$testBin'"
+                 exit 1;
+-- 
+2.41.0
+
+From c98c00d6957601b95f3982f3d9460868469a299e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Mon, 10 Jul 2023 13:45:36 +0100
+Subject: [PATCH 4/8] drop bogus '_s' suffix from yajl dynamic library
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Daniel P. BerrangĂ© <berrange@redhat.com>
+---
+ reformatter/CMakeLists.txt | 2 +-
+ verify/CMakeLists.txt      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/reformatter/CMakeLists.txt b/reformatter/CMakeLists.txt
+index 52a9bee..4b7b3fa 100644
+--- a/reformatter/CMakeLists.txt
++++ b/reformatter/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_reformat ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_reformat yajl_s)
++TARGET_LINK_LIBRARIES(json_reformat yajl)
+ 
+ # In some environments, we must explicitly link libm (like qnx,
+ # thanks @shahbag)
+diff --git a/verify/CMakeLists.txt b/verify/CMakeLists.txt
+index 967fca1..2bceb26 100644
+--- a/verify/CMakeLists.txt
++++ b/verify/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_verify ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_verify yajl_s)
++TARGET_LINK_LIBRARIES(json_verify yajl)
+ 
+ # copy in the binary
+ GET_TARGET_PROPERTY(binPath json_verify LOCATION)
+-- 
+2.41.0
+
+From 0b5e73c4321de0ba1d495fdc0967054b2a77931c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Daniel=20P=2E=20Berrang=C3=A9?= <berrange@redhat.com>
+Date: Mon, 10 Jul 2023 13:36:10 +0100
+Subject: [PATCH 5/8] Fix for CVE-2017-16516
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Description: Fix for CVE-2017-16516
+ Potential buffer overread: A JSON file can cause denial of service.
+Origin: https://github.com/brianmario/yajl-ruby/commit/a8ca8f476655adaa187eedc60bdc770fff3c51ce
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1040036
+Bug: https://github.com/lloyd/yajl/issues/248
+
+Patch taken from Debian package source
+
+NB, Fedora code can't trigger the reported aborts since it passes the
+-DNDEBUG flag, but pulling the fix for robustness in case a future
+change enables the assert()s.
+
+Signed-off-by: Daniel P. BerrangĂ© <berrange@redhat.com>
+---
+ src/yajl_encode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/yajl_encode.c b/src/yajl_encode.c
+index fd08258..0d97cc5 100644
+--- a/src/yajl_encode.c
++++ b/src/yajl_encode.c
+@@ -139,8 +139,8 @@ void yajl_string_decode(yajl_buf buf, const unsigned char * str,
+                     end+=3;
+                     /* check if this is a surrogate */
+                     if ((codepoint & 0xFC00) == 0xD800) {
+-                        end++;
+-                        if (str[end] == '\\' && str[end + 1] == 'u') {
++                        if (end + 2 < len && str[end + 1] == '\\' && str[end + 2] == 'u') {
++                            end++;
+                             unsigned int surrogate = 0;
+                             hexToDigit(&surrogate, str + end + 2);
+                             codepoint =
+-- 
+2.41.0
+
+From 17de4d15687aa30c49660dc4b792b1fb4d38b569 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Thu, 7 Apr 2022 17:29:54 +0200
+Subject: [PATCH 6/8] Fix CVE-2022-24795
+
+There was an integer overflow in yajl_buf_ensure_available() leading
+to allocating less memory than requested. Then data were written past
+the allocated heap buffer in yajl_buf_append(), the only caller of
+yajl_buf_ensure_available(). Another result of the overflow was an
+infinite loop without a return from yajl_buf_ensure_available().
+
+yajl-ruby project, which bundles yajl, fixed it
+<https://github.com/brianmario/yajl-ruby/pull/211> by checking for the
+integer overflow, fortifying buffer allocations, and report the
+failures to a caller. But then the caller yajl_buf_append() skips
+a memory write if yajl_buf_ensure_available() failed leading to a data
+corruption.
+
+A yajl fork mainter recommended calling memory allocation callbacks with
+the large memory request and let them to handle it. But that has the
+problem that it's not possible pass the overely large size to the
+callbacks.
+
+This patch catches the integer overflow and terminates the process
+with abort().
+
+https://github.com/lloyd/yajl/issues/239
+https://github.com/brianmario/yajl-ruby/security/advisories/GHSA-jj47-x69x-mxrm
+(cherry picked from commit 23cea2d7677e396efed78bbf1bf153961fab6bad
+ in https://github.com/ppisar/yajl)
+---
+ src/yajl_buf.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/src/yajl_buf.c b/src/yajl_buf.c
+index 1aeafde..55c11ad 100644
+--- a/src/yajl_buf.c
++++ b/src/yajl_buf.c
+@@ -45,7 +45,17 @@ void yajl_buf_ensure_available(yajl_buf buf, size_t want)
+ 
+     need = buf->len;
+ 
+-    while (want >= (need - buf->used)) need <<= 1;
++    if (((buf->used > want) ? buf->used : want) > (size_t)(buf->used + want)) {
++        /* We cannot allocate more memory than SIZE_MAX. */
++        abort();
++    }
++    while (want >= (need - buf->used)) {
++        if (need >= (size_t)((size_t)(-1)<<1)>>1) {
++            /* need would overflow. */
++            abort();
++        }
++        need <<= 1;
++    }
+ 
+     if (need != buf->len) {
+         buf->data = (unsigned char *) YA_REALLOC(buf->alloc, buf->data, need);
+-- 
+2.41.0
+
+From 9cb871049261eeda844b8943d15580763a0ac3d3 Mon Sep 17 00:00:00 2001
+From: "zhang.jiujiu" <282627424@qq.com>
+Date: Tue, 7 Dec 2021 22:37:02 +0800
+Subject: [PATCH 8/8] fix memory leaks
+
+(cherry picked from commit 23a122eddaa28165a6c219000adcc31ff9a8a698
+ in https://github.com/openEuler-BaseService)
+
+Fixes: https://github.com/lloyd/yajl/issues/250  (CVE-2023-33460)
+---
+ src/yajl_tree.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/yajl_tree.c b/src/yajl_tree.c
+index 4b3cf2b..56c7012 100644
+--- a/src/yajl_tree.c
++++ b/src/yajl_tree.c
+@@ -449,6 +449,9 @@ yajl_val yajl_tree_parse (const char *input,
+              yajl_tree_free(v);
+         }
+         yajl_free (handle);
++	//If the requested memory is not released in time, it will cause memory leakage
++	if(ctx.root)
++	     yajl_tree_free(ctx.root);
+         return NULL;
+     }
+ 
+-- 
+2.41.0
+

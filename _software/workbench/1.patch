@@ -1,0 +1,120 @@
+From 4ecb8951a18e0cbc8623e2d1cec8f5fbee9ffd45 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Wed, 4 Oct 2023 03:03:52 +0000
+Subject: [PATCH 1/5] Update meson.build
+
+---
+ src/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/meson.build b/src/meson.build
+index 029736f3..f1d56511 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -9,7 +9,7 @@ bin_conf.set('pkgdatadir', pkgdatadir)
+ bin_conf.set('sourcedir', meson.project_source_root())
+ 
+ blueprint_compiler = find_program(
+-  '/app/bin/blueprint-compiler',
++  '/usr/bin/blueprint-compiler',
+ )
+ 
+ install_subdir('Library/demos', install_dir : join_paths(pkgdatadir, 'Library'))
+
+From 300641336f6d7b59e409a38e7a181b1a82e698b8 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Wed, 4 Oct 2023 03:04:15 +0000
+Subject: [PATCH 2/5] Update bin.js
+
+---
+ src/bin.js | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/bin.js b/src/bin.js
+index ae9005e3..6dedf901 100755
+--- a/src/bin.js
++++ b/src/bin.js
+@@ -20,7 +20,6 @@ if (!Xdp.Portal.running_under_flatpak()) {
+   console.error(
+     "Flatpak required\nWorkbench is only meant to be run sandboxed in a specific target environment.\nBypassing this will exposes users to arbitrary code execution and breakage.",
+   );
+-  exit(1);
+ }
+ 
+ globalThis.__DEV__ = pkg.name.endsWith(".Devel");
+
+From a022dc6831793eb9e5bca9f2668d3e97e441d24d Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Wed, 4 Oct 2023 03:05:05 +0000
+Subject: [PATCH 3/5] Update blueprint.js
+
+---
+ src/langs/blueprint/blueprint.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/langs/blueprint/blueprint.js b/src/langs/blueprint/blueprint.js
+index 22a88686..47942876 100644
+--- a/src/langs/blueprint/blueprint.js
++++ b/src/langs/blueprint/blueprint.js
+@@ -60,7 +60,7 @@ export function logBlueprintInfo(info) {
+ }
+ 
+ function createLSPClient({ code_view, file }) {
+-  const bin = "/app/bin/blueprint-compiler";
++  const bin = "/usr/bin/blueprint-compiler";
+   const uri = file.get_uri();
+   // const bin = GLib.build_filenamev([
+   //   pkg.sourcedir,
+
+From d6c62af891b99a37a3a40495076954196c6a7153 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Wed, 4 Oct 2023 03:06:09 +0000
+Subject: [PATCH 4/5] Update actions.js
+
+---
+ src/actions.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/actions.js b/src/actions.js
+index c8cdb71f..485d5882 100644
+--- a/src/actions.js
++++ b/src/actions.js
+@@ -79,7 +79,7 @@ export default function Actions({ application }) {
+     }
+ 
+     try {
+-      GLib.spawn_command_line_async(`sh -c "/bin/${name} > /dev/null 2>&1"`);
++      GLib.spawn_command_line_async(`sh -c "/usr/bin/${name} > /dev/null 2>&1"`);
+     } catch (err) {
+       console.error(err);
+     }
+
+From 5f0bf7b5fdee5520c70898ee353caacb34109ced Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Wed, 4 Oct 2023 03:06:50 +0000
+Subject: [PATCH 5/5] Update about.js
+
+---
+ src/about.js | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/about.js b/src/about.js
+index dfb3a49a..d171e21c 100644
+--- a/src/about.js
++++ b/src/about.js
+@@ -11,7 +11,6 @@ import {
+ import { getFlatpakInfo } from "./util.js";
+ 
+ export default function About({ application }) {
+-  const flatpak_info = getFlatpakInfo();
+ 
+   const debug_info = `
+ ${pkg.name} ${pkg.version}
+@@ -21,7 +20,6 @@ GJS ${getGjsVersion()}
+ Adw ${getGIRepositoryVersion(Adw)}
+ GTK ${getGIRepositoryVersion(Gtk)}
+ GLib ${getGLibVersion()}
+-Flatpak ${flatpak_info.get_string("Instance", "flatpak-version")}
+ ${getValaVersion()}
+ ${getBlueprintVersion()}
+ `.trim();

@@ -1,0 +1,105 @@
+#!/bin/sh
+
+# Copyright 2022 Nathaniel Russell <naterussell83@gmail.com> Gnome for Slackware
+# All rights reserved.
+#
+# Build script for Gnome Boxes
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+INST=1
+
+TMP=${TMP:-/tmp/gfs}
+OUTPUT=${OUTPUT:-/tmp}
+
+ROOT=$(pwd)
+
+# Check for duplicate sources (default: OFF)
+CHECKDUPLICATE=0
+
+
+src=(
+#osinfo-db-tools -Already built
+#osinfo-db  -Already built
+#libosinfo -Already built
+yajl
+numactl
+libvirt
+libvirt-glib
+libvirt-python
+gtk-vnc
+spice-protocol
+spice
+usbredir
+libcacard
+phodav
+spice-gtk
+device-tree-compiler
+libnfs
+snappy
+vde2
+virglrenderer
+qemu
+virt-manager
+libovf-glib
+gnome-boxes
+)
+
+for dir in ${src[@]}; do
+
+	# get package name
+	package=$(echo $dir)
+
+	# Change to package directory
+  	cd $ROOT/$dir || exit 1
+
+	# Get the version
+  	version=$(cat ${package}.SlackBuild | grep "VERSION:" | head -n1 | cut -d "-" -f2 | rev | cut -c 2- | rev)
+
+	# Get the build
+	build=$(cat ${package}.SlackBuild | grep "BUILD:" | cut -d "-" -f2 | rev | cut -c 2- | rev)
+
+  	if [ $CHECKDUPLICATE -eq 1 ]; then
+    	# Check for duplicate sources
+    	sourcefile="$(ls -l $ROOT/$dir/${package}-*.tar.?z* 2>/dev/null | wc -l)"
+    	if [ $sourcefile -gt 1 ]; then
+          echo "You have following duplicate sources:"
+          ls $ROOT/$dir/${package}-*.tar.?z* | cut -d " " -f1
+          echo "Please delete sources other than ${package}-$version to avoid problems"
+          exit 1
+    	  fi
+  	fi
+
+
+	# The real build starts here
+  	TMP=$TMP OUTPUT=$OUTPUT sh ${package}.SlackBuild || exit 1
+  	if [ "$INST" = "1" ]; then
+    	PACKAGE=$(ls $OUTPUT/${package}-${version}-*-${build}*gfs.txz 2>/dev/null)
+    	if [ -f "$PACKAGE" ]; then
+      	upgradepkg --install-new --reinstall "$PACKAGE"
+    	else
+      	echo "Error:  package to upgrade "$PACKAGE" not found in $OUTPUT"
+      	exit 1
+    	  fi
+  	fi
+
+  	# back to original directory
+  	cd $ROOT
+done
+

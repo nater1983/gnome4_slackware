@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+    |-----handy-ruler------------------------------------------------------|
+warp: warp (Fast and secure file transfer)
+warp:
+warp: Warp allows you to securely send files to each other via the internet
+warp: or local network by exchanging a word-based code. The best transfer 
+warp: method will be determined using the Magic Wormhole protocol which
+warp: includes local network transfer if possible.
+warp: *Every file transfer is encrypted
+warp: *Send files between multiple devices
+warp: *Directly transfer files on the local network if possible
+warp: *An internet connection is required
+warp: Homepage: https://gitlab.gnome.org/World/warp

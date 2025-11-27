@@ -1,0 +1,619 @@
+From a7f798a815f1e451092251e3ab905fdd3482a783 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Fri, 22 Sep 2023 11:44:28 -0300
+Subject: [PATCH] views/month: Use en dash
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/1107
+---
+ src/gui/views/gcal-month-view.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/views/gcal-month-view.c b/src/gui/views/gcal-month-view.c
+index d1dc33c0..e501c584 100644
+--- a/src/gui/views/gcal-month-view.c
++++ b/src/gui/views/gcal-month-view.c
+@@ -206,7 +206,7 @@ update_header_labels (GcalMonthView *self)
+     }
+   else
+     {
+-      month_string = g_strdup_printf("%s - %s ",
++      month_string = g_strdup_printf("%s–%s",
+                                      gcal_get_month_name (g_date_time_get_month (first_visible_date) -1),
+                                      gcal_get_month_name (g_date_time_get_month (last_visible_date) - 1));
+     }
+@@ -217,7 +217,7 @@ update_header_labels (GcalMonthView *self)
+     }
+   else
+     {
+-      year_string = g_strdup_printf ("%d - %d",
++      year_string = g_strdup_printf ("%d–%d",
+                                     g_date_time_get_year (first_visible_date),
+                                     g_date_time_get_year (last_visible_date));
+     }
+From c8543aa822e8d24215fd4af4f50dc5860c45af27 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Fri, 22 Sep 2023 11:47:47 -0300
+Subject: [PATCH] views/week/header: Use en dash
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/1107
+---
+ src/gui/views/gcal-week-header.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/views/gcal-week-header.c b/src/gui/views/gcal-week-header.c
+index 7aee269f..d95c618c 100644
+--- a/src/gui/views/gcal-week-header.c
++++ b/src/gui/views/gcal-week-header.c
+@@ -987,7 +987,7 @@ update_title (GcalWeekHeader *self)
+     }
+   else
+     {
+-      month_label = g_strdup_printf("%s - %s ",
++      month_label = g_strdup_printf("%s–%s ",
+                                     gcal_get_month_name (g_date_time_get_month (week_start) -1),
+                                     gcal_get_month_name (g_date_time_get_month (week_end) - 1));
+     }
+@@ -998,7 +998,7 @@ update_title (GcalWeekHeader *self)
+     }
+   else
+     {
+-      year_label = g_strdup_printf ("%d - %d",
++      year_label = g_strdup_printf ("%d–%d",
+                                     g_date_time_get_year (week_start),
+                                     g_date_time_get_year (week_end));
+     }
+From 38108ffa7a23170de4dbeda3f3fa870607f03db2 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Sat, 23 Sep 2023 02:39:07 -0300
+Subject: [PATCH] event-widget: Fetch 24h setting from context
+
+Instead of using the auxiliary function.
+---
+ src/gui/gcal-event-widget.c | 32 +++++++++++++++-----------------
+ 1 file changed, 15 insertions(+), 17 deletions(-)
+
+diff --git a/src/gui/gcal-event-widget.c b/src/gui/gcal-event-widget.c
+index 7aaf1d4c..e20995b7 100644
+--- a/src/gui/gcal-event-widget.c
++++ b/src/gui/gcal-event-widget.c
+@@ -61,7 +61,6 @@ struct _GcalEventWidget
+   GtkWidget          *preview_popover;
+ 
+   /* internal data */
+-  gboolean            clock_format_24h : 1;
+   gboolean            read_only : 1;
+   gchar              *css_class;
+ 
+@@ -269,8 +268,9 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
+ 
+       if (multiday)
+         {
+-          if (self->clock_format_24h)
++          switch (gcal_context_get_time_format (self->context))
+             {
++            case GCAL_TIME_FORMAT_24H:
+               if (is_ltr)
+                 {
+                   start = g_date_time_format (tooltip_start, "%x %R");
+@@ -281,9 +281,9 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
+                   start = g_date_time_format (tooltip_start, "%R %x");
+                   end = g_date_time_format (tooltip_end, "%R %x");
+                 }
+-            }
+-          else
+-            {
++              break;
++
++            case GCAL_TIME_FORMAT_12H:
+               if (is_ltr)
+                 {
+                   start = g_date_time_format (tooltip_start, "%x %I:%M %P");
+@@ -294,12 +294,14 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
+                   start = g_date_time_format (tooltip_start, "%P %M:%I %x");
+                   end = g_date_time_format (tooltip_end, "%P %M:%I %x");
+                 }
++              break;
+             }
+         }
+       else
+         {
+-          if (self->clock_format_24h)
++          switch (gcal_context_get_time_format (self->context))
+             {
++            case GCAL_TIME_FORMAT_24H:
+               if (is_ltr)
+                 {
+                   start = g_date_time_format (tooltip_start, "%x, %R");
+@@ -310,9 +312,9 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
+                   start = g_date_time_format (tooltip_start, "%R ,%x");
+                   end = g_date_time_format (tooltip_end, "%R");
+                 }
+-            }
+-          else
+-            {
++              break;
++
++            case GCAL_TIME_FORMAT_12H:
+               if (is_ltr)
+                 {
+                   start = g_date_time_format (tooltip_start, "%x, %I:%M %P");
+@@ -323,6 +325,7 @@ gcal_event_widget_set_event_tooltip (GcalEventWidget *self,
+                   start = g_date_time_format (tooltip_start, "%P %M:%I ,%x");
+                   end = g_date_time_format (tooltip_end, "%P %M:%I");
+                 }
++              break;
+             }
+         }
+     }
+@@ -398,7 +401,7 @@ gcal_event_widget_update_timestamp (GcalEventWidget *self)
+ 
+       if (gcal_event_get_all_day (self->event) || gcal_event_is_multiday (self->event))
+         timestamp_str = g_date_time_format (time, "%a %B %e");
+-      else if (self->clock_format_24h)
++      else if (gcal_context_get_time_format (self->context) == GCAL_TIME_FORMAT_24H)
+         timestamp_str = g_date_time_format (time, "%R");
+       else
+         timestamp_str = g_date_time_format (time, "%I:%M %P");
+@@ -785,20 +788,15 @@ gcal_event_widget_class_init (GcalEventWidgetClass *klass)
+ static void
+ gcal_event_widget_init (GcalEventWidget *self)
+ {
+-  GtkWidget *widget;
+-
+-  widget = GTK_WIDGET (self);
+-  self->clock_format_24h = is_clock_format_24h ();
+-
+   g_type_ensure (GCAL_TYPE_OVERFLOW_BIN);
+ 
+-  gtk_widget_init_template (widget);
++  gtk_widget_init_template (GTK_WIDGET (self));
+ 
+   gtk_widget_set_cursor_from_name (GTK_WIDGET (self), "pointer");
+ 
+   /* Starts with horizontal */
+   self->orientation = GTK_ORIENTATION_HORIZONTAL;
+-  gtk_widget_add_css_class (widget, "horizontal");
++  gtk_widget_add_css_class (GTK_WIDGET (self), "horizontal");
+ }
+ 
+ GtkWidget*
+From b26f33ea10a430abbdea52e96d8dda820bb719fe Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Sat, 23 Sep 2023 02:39:39 -0300
+Subject: [PATCH] utils: Remove 24h utility function
+
+The last user of this function is gone now.
+---
+ src/utils/gcal-utils.c | 23 -----------------------
+ src/utils/gcal-utils.h |  2 --
+ 2 files changed, 25 deletions(-)
+
+diff --git a/src/utils/gcal-utils.c b/src/utils/gcal-utils.c
+index 06f7d13b..f0eab32c 100644
+--- a/src/utils/gcal-utils.c
++++ b/src/utils/gcal-utils.c
+@@ -559,29 +559,6 @@ icaltime_compare_with_current (const ICalTime *date1,
+   return result;
+ }
+ 
+-/**
+- * is_clock_format_24h:
+- *
+- * Retrieves whether the current clock format is
+- * 12h or 24h based.
+- *
+- * Returns: %TRUE if the clock format is 24h, %FALSE
+- * otherwise.
+- */
+-gboolean
+-is_clock_format_24h (void)
+-{
+-  static GSettings *settings = NULL;
+-  g_autofree gchar *clock_format = NULL;
+-
+-  if (!settings)
+-    settings = g_settings_new ("org.gnome.desktop.interface");
+-
+-  clock_format = g_settings_get_string (settings, "clock-format");
+-
+-  return g_strcmp0 (clock_format, "24h") == 0;
+-}
+-
+ /**
+  * e_strftime_fix_am_pm:
+  *
+diff --git a/src/utils/gcal-utils.h b/src/utils/gcal-utils.h
+index 4090c4df..048053e5 100644
+--- a/src/utils/gcal-utils.h
++++ b/src/utils/gcal-utils.h
+@@ -83,8 +83,6 @@ gint                 icaltime_compare_with_current               (const ICalTime
+                                                                   const ICalTime *date2,
+                                                                   time_t         *current_time_t);
+ 
+-gboolean             is_clock_format_24h                         (void);
+-
+ /* code brought from evolution */
+ gsize                e_strftime_fix_am_pm                        (gchar              *str,
+                                                                   gsize               max,
+From 750c62d4f2f5f40dadd03b82f744498ae7f22eeb Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Sat, 23 Sep 2023 02:40:39 -0300
+Subject: [PATCH] core/context: Use Settings portal for 24h setting
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/1105
+---
+ src/core/gcal-context.c | 102 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 87 insertions(+), 15 deletions(-)
+
+diff --git a/src/core/gcal-context.c b/src/core/gcal-context.c
+index c3c84676..6ff1a2e2 100644
+--- a/src/core/gcal-context.c
++++ b/src/core/gcal-context.c
+@@ -27,7 +27,7 @@ struct _GcalContext
+ {
+   GObject             parent;
+ 
+-  GSettings          *desktop_settings;
++  GDBusProxy         *settings_portal;
+ 
+   GcalClock          *clock;
+   GcalManager        *manager;
+@@ -62,17 +62,23 @@ static GParamSpec *properties [N_PROPS];
+  */
+ 
+ static void
+-load_time_format (GcalContext *self)
++set_time_format_from_variant (GcalContext *self,
++                              GVariant    *variant)
+ {
+-  g_autofree gchar *clock_format = NULL;
+   g_autofree gchar *enum_format = NULL;
++  GcalTimeFormat  time_format;
+ 
+-  clock_format = g_settings_get_string (self->desktop_settings, "clock-format");
++  g_assert (g_variant_type_equal (g_variant_get_type (variant), "s"));
+ 
+-  if (g_strcmp0 (clock_format, "12h") == 0)
+-    self->time_format = GCAL_TIME_FORMAT_12H;
++  if (g_strcmp0 (g_variant_get_string (variant, NULL), "12h") == 0)
++    time_format = GCAL_TIME_FORMAT_12H;
+   else
+-    self->time_format = GCAL_TIME_FORMAT_24H;
++    time_format = GCAL_TIME_FORMAT_24H;
++
++  if (self->time_format == time_format)
++    return;
++
++  self->time_format = time_format;
+ 
+   enum_format = g_enum_to_string (GCAL_TYPE_TIME_FORMAT, self->time_format);
+   g_debug ("Setting time format to %s", enum_format);
+@@ -80,11 +86,63 @@ load_time_format (GcalContext *self)
+   g_object_notify_by_pspec (G_OBJECT (self), properties[PROP_TIME_FORMAT]);
+ }
+ 
++static gboolean
++read_time_format (GcalContext *self)
++{
++  g_autoptr (GVariant) other_child = NULL;
++  g_autoptr (GVariant) child = NULL;
++  g_autoptr (GVariant) ret = NULL;
++  g_autoptr (GError) error = NULL;
++
++  ret = g_dbus_proxy_call_sync (self->settings_portal,
++                                "Read",
++                                g_variant_new ("(ss)", "org.gnome.desktop.interface", "clock-format"),
++                                G_DBUS_CALL_FLAGS_NONE,
++                                G_MAXINT,
++                                NULL,
++                                &error);
++
++  if (error)
++    {
++      return FALSE;
++    }
++
++  g_variant_get (ret, "(v)", &child);
++  g_variant_get (child, "v", &other_child);
++
++  set_time_format_from_variant (self, other_child);
++
++  return TRUE;
++}
++
+ 
+ /*
+  * Callbacks
+  */
+ 
++static void
++on_portal_proxy_signal_cb (GDBusProxy  *proxy,
++                           const gchar *sender_name,
++                           const gchar *signal_name,
++                           GVariant    *parameters,
++                           GcalContext *self)
++{
++  g_autoptr (GVariant) value = NULL;
++  const char *namespace;
++  const char *name;
++
++  if (g_strcmp0 (signal_name, "SettingChanged") != 0)
++    return;
++
++  g_variant_get (parameters, "(&s&sv)", &namespace, &name, &value);
++
++  if (g_strcmp0 (namespace, "org.gnome.desktop.interface") == 0 &&
++      g_strcmp0 (name, "clock-format") == 0)
++    {
++      set_time_format_from_variant (self, value);
++    }
++}
++
+ static void
+ on_timezone_changed_cb (GcalTimeZoneMonitor *timezone_monitor,
+                         GParamSpec          *pspec,
+@@ -117,7 +175,7 @@ gcal_context_finalize (GObject *object)
+   gcal_weather_service_stop (self->weather_service);
+ 
+   g_clear_object (&self->clock);
+-  g_clear_object (&self->desktop_settings);
++  g_clear_object (&self->settings_portal);
+   g_clear_object (&self->manager);
+   g_clear_object (&self->timezone_monitor);
+   g_clear_object (&self->weather_service);
+@@ -247,6 +305,8 @@ gcal_context_class_init (GcalContextClass *klass)
+ static void
+ gcal_context_init (GcalContext *self)
+ {
++  g_autoptr (GError) error = NULL;
++
+   self->clock = gcal_clock_new ();
+   self->settings = g_settings_new ("org.gnome.calendar");
+   self->weather_service = gcal_weather_service_new ();
+@@ -259,13 +319,25 @@ gcal_context_init (GcalContext *self)
+                            0);
+ 
+   /* Time format */
+-  self->desktop_settings = g_settings_new ("org.gnome.desktop.interface");
+-  g_signal_connect_object (self->desktop_settings,
+-                           "changed::clock-format",
+-                           G_CALLBACK (load_time_format),
+-                           self,
+-                           G_CONNECT_SWAPPED);
+-  load_time_format (self);
++  self->settings_portal = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION,
++                                                         G_DBUS_PROXY_FLAGS_NONE,
++                                                         NULL,
++                                                         "org.freedesktop.portal.Desktop",
++                                                         "/org/freedesktop/portal/desktop",
++                                                         "org.freedesktop.portal.Settings",
++                                                         NULL,
++                                                         &error);
++
++  if (error)
++    g_error ("Failed to load portals: %s. Aborting...", error->message);
++
++  if (read_time_format (self))
++    {
++      g_signal_connect (self->settings_portal,
++                        "g-signal",
++                        G_CALLBACK (on_portal_proxy_signal_cb),
++                        self);
++    }
+ }
+ 
+ /**
+From 9a665a94c773835bfe1706886afc1cd2aa672640 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Tue, 26 Sep 2023 12:17:14 -0300
+Subject: [PATCH] application: Add message when running as a service
+
+---
+ src/gui/gcal-application.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/gui/gcal-application.c b/src/gui/gcal-application.c
+index eae16ba6..96af2cae 100644
+--- a/src/gui/gcal-application.c
++++ b/src/gui/gcal-application.c
+@@ -327,7 +327,10 @@ gcal_application_startup (GApplication *app)
+ 
+   /* We're assuming the application is called as a service only by the shell search system */
+   if ((g_application_get_flags (app) & G_APPLICATION_IS_SERVICE) != 0)
+-    g_application_set_inactivity_timeout (app, 3 * 60 * 1000);
++    {
++      g_message ("Running Calendar as a service");
++      g_application_set_inactivity_timeout (app, 3 * 60 * 1000);
++    }
+ 
+   /* Startup the manager */
+   gcal_context_startup (self->context);
+From 27ee81b072a3ca5009be2e466254821e2dbb3bd3 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 11:25:27 -0300
+Subject: [PATCH] views/month: Only diff when current range exists
+
+Right after bring created, the current date - and consequently
+the range - is NULL. We shouldn't diff in this case.
+---
+ src/gui/views/gcal-month-view.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/gui/views/gcal-month-view.c b/src/gui/views/gcal-month-view.c
+index e501c584..eca75a36 100644
+--- a/src/gui/views/gcal-month-view.c
++++ b/src/gui/views/gcal-month-view.c
+@@ -414,12 +414,13 @@ update_week_ranges (GcalMonthView *self,
+    */
+   n_weeks_before = N_ROWS_PER_PAGE * (N_PAGES - 1) / 2;
+ 
+-  current_range = gcal_timeline_subscriber_get_range (GCAL_TIMELINE_SUBSCRIBER (self));
+   current_date = g_steal_pointer (&self->date);
++  if (current_date)
++    current_range = gcal_timeline_subscriber_get_range (GCAL_TIMELINE_SUBSCRIBER (self));
+ 
+   gcal_set_date_time (&self->date, new_date);
+ 
+-  if (gcal_range_contains_datetime (current_range, new_date))
++  if (current_range && gcal_range_contains_datetime (current_range, new_date))
+     {
+       g_autoptr (GcalRange) row_range = NULL;
+       GcalMonthViewRow *row;
+From 96625ec595fb2ed0ef8162163c67759e98fe692c Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 11:33:02 -0300
+Subject: [PATCH] core/calendar-monitor: Protect against NULL range
+
+---
+ src/core/gcal-calendar-monitor.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/core/gcal-calendar-monitor.c b/src/core/gcal-calendar-monitor.c
+index efe70290..ffafeae5 100644
+--- a/src/core/gcal-calendar-monitor.c
++++ b/src/core/gcal-calendar-monitor.c
+@@ -992,6 +992,7 @@ remove_events_outside_range (GcalCalendarMonitor *self,
+   GcalEvent *event;
+ 
+   g_assert (GCAL_IS_MAIN_THREAD ());
++  g_assert (range != NULL);
+ 
+   GCAL_TRACE_MSG ("Removing events outside range from monitor");
+ 
+@@ -1412,7 +1413,11 @@ gcal_calendar_monitor_set_range (GcalCalendarMonitor *self,
+   g_clear_pointer (&writer_locker, g_rw_lock_writer_locker_free);
+ 
+   maybe_spawn_view_thread (self);
+-  remove_events_outside_range (self, range);
++
++  if (range)
++    remove_events_outside_range (self, range);
++  else
++    remove_all_events (self);
+ 
+   g_cancellable_cancel (self->cancellable);
+ 
+From 80a258c7053f52062cf8e882ae2150a4e6e8c2a0 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 11:33:30 -0300
+Subject: [PATCH] core/timeline: Use g_clear_handle_id
+
+Saves us a few lines of code.
+---
+ src/core/gcal-timeline.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/src/core/gcal-timeline.c b/src/core/gcal-timeline.c
+index 51c936ec..1713b707 100644
+--- a/src/core/gcal-timeline.c
++++ b/src/core/gcal-timeline.c
+@@ -63,7 +63,7 @@ struct _GcalTimeline
+ {
+   GObject             parent_instance;
+ 
+-  gulong              update_range_idle_id;
++  guint               update_range_idle_id;
+   GcalRange          *range;
+ 
+   GcalRangeTree      *events;
+@@ -806,11 +806,7 @@ gcal_timeline_finalize (GObject *object)
+   g_cancellable_cancel (self->cancellable);
+   g_clear_object (&self->cancellable);
+ 
+-  if (self->update_range_idle_id > 0)
+-    {
+-      g_source_remove (self->update_range_idle_id);
+-      self->update_range_idle_id = 0;
+-    }
++  g_clear_handle_id (&self->update_range_idle_id, g_source_remove);
+ 
+   g_clear_pointer (&self->events, gcal_range_tree_unref);
+   g_clear_pointer (&self->calendars, g_hash_table_destroy);
+From e9ab7effad7e8989fb93fe26dd63f913e8a2baea Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 11:52:11 -0300
+Subject: [PATCH] calendar-management/edit: Remove unnecessary binding
+
+This is handled by the C code now.
+---
+ src/gui/calendar-management/gcal-edit-calendar-page.ui | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/gui/calendar-management/gcal-edit-calendar-page.ui b/src/gui/calendar-management/gcal-edit-calendar-page.ui
+index 62fc18bb..845e78be 100644
+--- a/src/gui/calendar-management/gcal-edit-calendar-page.ui
++++ b/src/gui/calendar-management/gcal-edit-calendar-page.ui
+@@ -52,7 +52,6 @@
+                   <object class="AdwActionRow" id="calendar_url_row">
+                     <property name="title" translatable="yes">Location</property>
+                     <property name="subtitle-lines">1</property>
+-                    <property name="visible" bind-source="calendar_url_row" bind-property="visible" bind-flags="default" />
+                     <style>
+                       <class name="property"/>
+                     </style>
+From 3ff57f71e49db86f220af6fca30a23b524d5bd79 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 11:52:40 -0300
+Subject: [PATCH] views/month: Dispose overflow popover
+
+---
+ src/gui/views/gcal-month-view.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/gui/views/gcal-month-view.c b/src/gui/views/gcal-month-view.c
+index eca75a36..a7fcb4bb 100644
+--- a/src/gui/views/gcal-month-view.c
++++ b/src/gui/views/gcal-month-view.c
+@@ -1520,6 +1520,7 @@ gcal_month_view_dispose (GObject *object)
+   g_clear_object (&self->kinetic_scroll_animation);
+   g_clear_object (&self->row_offset_animation);
+ 
++  g_clear_pointer (&self->overflow.popover, gtk_widget_unparent);
+   g_clear_pointer (&self->header, gtk_widget_unparent);
+   g_clear_pointer (&self->week_rows, g_ptr_array_unref);
+ 
+From ddaf0e17a462782c66c631dab12ba3d7bdd18827 Mon Sep 17 00:00:00 2001
+From: Georges Basile Stavracas Neto <georges.stavracas@gmail.com>
+Date: Thu, 28 Sep 2023 13:21:30 -0300
+Subject: [PATCH] views/month: Create timed ranges
+
+This allows proper range comparisons.
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-calendar/-/issues/1106
+---
+ src/gui/views/gcal-month-view.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/gui/views/gcal-month-view.c b/src/gui/views/gcal-month-view.c
+index a7fcb4bb..de2a8f9a 100644
+--- a/src/gui/views/gcal-month-view.c
++++ b/src/gui/views/gcal-month-view.c
+@@ -330,7 +330,7 @@ move_bottom_row_to_top (GcalMonthView *self)
+ 
+   new_range = gcal_range_new_take (g_date_time_add_weeks (first_row_range_start, -1),
+                                    g_date_time_ref (first_row_range_start),
+-                                   GCAL_RANGE_DATE_ONLY);
++                                   GCAL_RANGE_DEFAULT);
+ 
+ #ifdef GCAL_ENABLE_TRACE
+     {
+@@ -364,7 +364,7 @@ move_top_row_to_bottom (GcalMonthView *self)
+ 
+   new_range = gcal_range_new_take (g_date_time_ref (last_row_range_end),
+                                    g_date_time_add_weeks (last_row_range_end, 1),
+-                                   GCAL_RANGE_DATE_ONLY);
++                                   GCAL_RANGE_DEFAULT);
+ 
+ #ifdef GCAL_ENABLE_TRACE
+     {
+@@ -455,8 +455,8 @@ update_week_ranges (GcalMonthView *self,
+ 
+           date = g_date_time_add_weeks (self->date, i - n_weeks_before);
+           week_start = gcal_date_time_get_start_of_week (date);
+-          week_end = gcal_date_time_get_end_of_week (date);
+-          range = gcal_range_new (week_start, week_end, GCAL_RANGE_DATE_ONLY);
++          week_end = g_date_time_add_weeks (week_start, 1);
++          range = gcal_range_new (week_start, week_end, GCAL_RANGE_DEFAULT);
+ 
+           row = g_ptr_array_index (self->week_rows, i);
+           gcal_month_view_row_set_range (row, range);

@@ -1,0 +1,146 @@
+#!/bin/bash
+
+# Copyright 2017  Heinz Wiesinger, Amsterdam, The Netherlands
+# Copyright 2017, 2020, 2022  Patrick J. Volkerding, Sebeka, MN, USA
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+wget -c https://github.com/ibus/ibus/archive/1.5.29/ibus-1.5.29.tar.gz
+
+cd $(dirname $0) ; CWD=$(pwd)
+
+PKGNAM=ibus
+VERSION=${VERSION:-1.5.29}
+BUILD=${BUILD:-1}
+TAG=${TAG:-}
+PKGTYPE=${PKGTYPE:-txz}
+
+MARCH=$( uname -m )
+if [ -z "$ARCH" ]; then
+  case "$MARCH" in
+    i?86)    export ARCH=i586 ;;
+    armv7hl) export ARCH=$MARCH ;;
+    arm*)    export ARCH=arm ;;
+    *)       export ARCH=$MARCH ;;
+  esac
+fi
+
+if [ "$ARCH" = "i586" ]; then
+  SLKCFLAGS="-O2 -march=i586 -mtune=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+  SLKCFLAGS="-O2 -march=i686"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "s390" ]; then
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
+elif [ "$ARCH" = "armv7hl" ]; then
+  SLKCFLAGS="-O3 -march=armv7-a -mfpu=vfpv3-d16"
+  LIBDIRSUFFIX=""
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
+fi
+
+if [ ! -z "${PRINT_PACKAGE_NAME}" ]; then
+  echo "$PRGNAM-$VERSION-$ARCH-$BUILD.txz"
+  exit 0
+fi
+
+TMP=${TMP:-/tmp/gfs}
+PKG=$TMP/package-${PRGNAM}
+OUTPUT=${OUTPUT:-/tmp}
+
+rm -rf $PKG
+mkdir -p $TMP $PKG
+cd $TMP
+rm -rf ibus-$VERSION
+tar xvf $CWD/ibus-$VERSION.tar.?z || exit 1
+cd ibus-$VERSION || exit 1
+
+chown -R root:root .
+find . \
+  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
+  -exec chmod 755 {} \+ -o \
+  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
+  -exec chmod 644 {} \+
+
+zcat $CWD/emoji-test.txt.gz > emoji-test.txt
+zcat $CWD/NamesList.txt.gz > NamesList.txt
+zcat $CWD/Blocks.txt.gz > Blocks.txt
+
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+# fix libdir
+sed -i "s|/lib/python|/lib$LIBDIRSUFFIX/python|g" ./configure
+
+CFLAGS="$SLKCFLAGS" \
+./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --libdir=/usr/lib${LIBDIRSUFFIX} \
+  --localstatedir=/var/lib \
+  --mandir=/usr/man \
+  --enable-python-library \
+  --with-python=python3 \
+  --with-unicode-emoji-dir=$TMP/ibus-$VERSION \
+  --with-ucd-dir=$TMP/ibus-$VERSION \
+  --disable-systemd-services \
+  --build=$ARCH-slackware-linux || exit 1
+
+make
+make install DESTDIR=$PKG
+
+mkdir -p $PKG/etc/xdg/autostart
+install -m 644 $CWD/ibus-autostart.desktop $PKG/etc/xdg/autostart/
+install -m 644 $CWD/ibus-autostart-plasma.desktop $PKG/etc/xdg/autostart/
+install -m 755 $CWD/ibus-autostart $PKG/usr/bin/
+sed -i "s|LIBDIRSUFFIX|$LIBDIRSUFFIX|" $PKG/usr/bin/ibus-autostart
+
+# cleanup temporary files
+rm -rf $PKG/usr/lib$LIBDIRSUFFIX/python2.7/site-packages/gi
+
+# Don't ship .la files:
+rm -f $PKG/{,usr/}lib${LIBDIRSUFFIX}/*.la
+
+if [ -d $PKG/usr/man ]; then
+find $PKG/usr/man -type f -exec gzip -9 {} \;
+for i in $( find $PKG/usr/man -type l ) ; do ln -s $( readlink $i ).gz $i.gz ; rm $i ; done
+fi
+
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a AUTHORS ChangeLog COPYING* INSTALL NEWS README \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+cat $CWD/$PKGNAM.SlackBuild > $PKG/usr/doc/$PKGNAM-$VERSION/$PKGNAM.SlackBuild
+
+mkdir -p $PKG/install
+zcat $CWD/doinst.sh.gz > $PKG/install/doinst.sh
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.$PKGTYPE

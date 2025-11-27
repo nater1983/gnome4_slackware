@@ -1,0 +1,141 @@
+From a7322f90defc31abeee242ad984d5b3debb86f68 Mon Sep 17 00:00:00 2001
+From: Ray Strode <rstrode@redhat.com>
+Date: Fri, 25 Aug 2023 09:47:47 -0400
+Subject: [PATCH 1/4] meson: Add python3 to build scripts
+
+We're going to need to use python3 in a future commit to
+query langtable for a list of non-latin input sources.
+
+As prep work for that, add the basic goo needed to get
+python3 available from the build system.
+---
+ .gitlab-ci.yml | 2 +-
+ meson.build    | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 6d6c7bbc..56962b1c 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -1,49 +1,49 @@
+ # You can override the included template(s) by including variable overrides
+ # SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+ # Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+ # Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+ # Note that environment variables can be set in several places
+ # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+ include:
+ - template: Security/SAST.gitlab-ci.yml
+ - template: Security/Secret-Detection.gitlab-ci.yml
+ 
+ image: fedora:latest
+ 
+ variables:
+   LAST_ABI_BREAK: 0da1fcac914ad4c67f016bda7864c4b153cbfbaa
+   DEPENDENCIES: gtk3-devel gtk4-devel gsettings-desktop-schemas-devel gettext
+                 gtk-doc libxkbcommon-devel xkeyboard-config-devel itstool
+                 gobject-introspection-devel systemd-devel iso-codes-devel
+                 libseccomp-devel gcc gcc-c++ glibc-devel
+-                meson redhat-rpm-config
++                meson redhat-rpm-config python3-langtable
+   TEST_DEPENDENCIES: gnome-desktop-testing xorg-x11-server-Xvfb glibc-langpack-en glibc-langpack-he glibc-langpack-ja abattis-cantarell-fonts libabigail git
+ 
+ build_stable:
+   before_script:
+     # Undo delangification present in the Fedora Docker images
+     - rm -f /etc/rpm/macros.image-language-conf
+     - echo "reinstall glib2" >> translist.txt
+     # Work-around https://bugzilla.redhat.com/show_bug.cgi?id=1607172#c4
+     - echo "update dnf gdbm" >> translist.txt
+     - echo "remove python3-modulemd" >> translist.txt
+     - dnf shell -y --nogpgcheck translist.txt
+     - dnf update -y --nogpgcheck
+     - dnf install -y --nogpgcheck $DEPENDENCIES
+     - dnf install -y --nogpgcheck $TEST_DEPENDENCIES
+   script:
+     - meson --prefix=/usr -Dinstalled_tests=true build
+     - pushd build
+     - ninja
+     - ninja install
+     - ninja dist
+     - G_MESSAGES_DEBUG=all xvfb-run -a -s "-screen 0 1024x768x24" ninja test
+     - G_MESSAGES_DEBUG=all xvfb-run -a -s "-screen 0 1024x768x24"
+                      gnome-desktop-testing-runner --report-directory=test-results gnome-desktop
+     - popd
+     - .ci/check-abi ${LAST_ABI_BREAK} $(git rev-parse HEAD)
+   artifacts:
+     paths:
+       - build/meson-logs/
+       - build/test-results/
+     when: on_failure
+diff --git a/meson.build b/meson.build
+index 51a59e33..0419aa3c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -9,60 +9,63 @@ project('gnome-desktop', 'c',
+ 
+ # Before making a release, the libversion string should be modified.
+ #
+ #  * Bump the first component if binary compatibility has been broken; or
+ #  * Bump the second component if new APIs are added; or
+ #  * Bump the third component otherwise.
+ #
+ # When bumping the first component version, set the second and third components
+ # to 0. When bumping the second version, set the third one to zero.
+ #
+ # A lot easier than libtool, right?
+ libversion = '2.1.0'
+ soversion = libversion.split('.')[0]
+ 
+ # Compatibility versions for libgnome-desktop-3
+ compat_libversion = '20.0.0'
+ compat_soversion = compat_libversion.split('.')[0]
+ 
+ gdk_pixbuf_req = '>= 2.36.5'
+ gtk3_req = '>= 3.3.6'
+ gtk4_req = '>= 4.4.0'
+ glib_req = '>= 2.53.0'
+ xrandr_req = '>= 1.3'
+ schemas_req = '>= 3.27.0'
+ xext_req = '>= 1.1'
+ 
+ gnome = import('gnome')
+ i18n = import('i18n')
+ pkg = import('pkgconfig')
+ 
++python = import('python')
++python3 = python.find_installation('python3', modules : ['langtable'])
++
+ prefix = get_option('prefix')
+ 
+ datadir = prefix / get_option('datadir')
+ libexecdir = prefix / get_option('libexecdir')
+ 
+ liblocaledir = get_option('prefix') / 'lib/locale'
+ localedir = datadir / 'locale'
+ test_metadir = datadir / 'installed-tests' / meson.project_name()
+ test_execdir = libexecdir / 'installed-tests' / meson.project_name()
+ versiondir = datadir / 'gnome'
+ 
+ gdk_pixbuf_dep = dependency('gdk-pixbuf-2.0', version: gdk_pixbuf_req)
+ gtk3_dep = dependency('gtk+-3.0', version: gtk3_req, required: get_option('legacy_library'))
+ gtk4_dep = dependency('gtk4', version: gtk4_req, required: get_option('build_gtk4'))
+ glib_dep = dependency('glib-2.0', version: glib_req)
+ gio_dep = dependency('gio-2.0', version: glib_req)
+ gio_unix_dep = dependency('gio-unix-2.0', version: glib_req)
+ schemas_dep = dependency('gsettings-desktop-schemas', version: schemas_req)
+ fontconfig_dep = dependency('fontconfig')
+ xkb_config_dep = dependency('xkeyboard-config')
+ xkbregistry_dep = dependency('xkbregistry', required: false)
+ iso_codes_dep = dependency('iso-codes')
+ libsystemd_dep = dependency('libsystemd', required: get_option('systemd'))
+ udev_dep = dependency('libudev', required: get_option('udev'))
+ 
+ # Check for bubblewrap compatible platform
+ host_os = host_machine.system()
+ host_cpu = host_machine.cpu()
+ supported_os = ['linux']
+ unsupported_cpus = ['alpha', 'ia64', 'm68k', 'sh4', 'sparc', 'sparc64']
+-- 
+2.41.0
+

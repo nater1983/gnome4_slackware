@@ -1,0 +1,10 @@
+gnome-settings-daemon
+xvfb-run
+gnome-shell
+geocode-glib
+libgusb
+libgweather4
+gnome-desktop
+geoclue2
+colord
+libei

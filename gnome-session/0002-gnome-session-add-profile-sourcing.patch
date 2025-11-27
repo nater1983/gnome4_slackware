@@ -1,0 +1,30 @@
+From 473e5a9aea88b5ea59d1d2ed0ee8fd3e28d7e469 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Thu, 14 Sep 2023 16:59:06 +0000
+Subject: [PATCH] Update gnome-session.in
+
+---
+ gnome-session/gnome-session.in | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/gnome-session/gnome-session.in b/gnome-session/gnome-session.in
+index b43ebaac..5182910e 100755
+--- a/gnome-session/gnome-session.in
++++ b/gnome-session/gnome-session.in
+@@ -13,6 +13,16 @@ if [ "x$XDG_SESSION_TYPE" = "xwayland" ] &&
+   fi
+ fi
+ 
++# Force blocaled to update LANG according to /etc/profile.d/lang.sh:
++if [ -f /etc/profile.d/lang.sh ]; then
++  (
++  source /etc/profile.d/lang.sh
++  busctl call org.freedesktop.locale1 /org/freedesktop/locale1 org.freedesktop.locale1 SetLocale "asb" 1 "LANG=$LANG" 0
++  )
++  # If we are GDM then source /etc/profile.d/lang.sh for real:
++  [ "x$XDG_SESSION_CLASS" = "xgreeter" ] && source /etc/profile.d/lang.sh
++fi
++
+ SETTING=$(G_MESSAGES_DEBUG='' gsettings get org.gnome.system.locale region)
+ REGION=${SETTING#\'}
+ REGION=${REGION%\'}

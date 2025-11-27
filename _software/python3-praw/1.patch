@@ -1,0 +1,53 @@
+From 2ae7af586a6f7c930f41f807b3271526363815aa Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 10 Dec 2023 22:37:41 -0600
+Subject: [PATCH] Update config.py
+
+---
+ praw/config.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/praw/config.py b/praw/config.py
+index a89f66d1c..8042ca7a8 100644
+--- a/praw/config.py
++++ b/praw/config.py
+@@ -20,6 +20,9 @@ def __bool__(self) -> bool:
+     def __str__(self) -> str:
+         return "NotSet"
+ 
++    def lower(self) -> str:
++        # Implementing a dummy lower method for compatibility
++        return "notset"
+ 
+ class Config:
+     """A class containing the configuration for a Reddit site."""
+@@ -134,17 +134,18 @@ def _initialize_attributes(self):
+         self.warn_additional_fetch_params = self._config_boolean(
+             self._fetch_default("warn_additional_fetch_params", default=True)
+         )
+-        self.kinds = {
+-            x: self._fetch(f"{x}_kind")
+-            for x in [
+-                "comment",
+-                "message",
+-                "redditor",
+-                "submission",
+-                "subreddit",
+-                "trophy",
+-            ]
+-        }
++        self.kinds = {
++            x: self._fetch_default(f"{x}_kind", default='default_comment_kind')
++            for x in [
++                "comment",
++                "message",
++                "redditor",
++                "submission",
++                "subreddit",
++                "trophy",
++            ]
++        }
++
+ 
+         for attribute in (
+             "client_id",

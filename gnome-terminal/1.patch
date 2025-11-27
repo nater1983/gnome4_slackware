@@ -1,0 +1,25 @@
+From 3f6e05e8c324f7338f632cd8580275e2ee8da436 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sun, 19 Nov 2023 05:06:06 +0000
+Subject: [PATCH] Update meson.build
+
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 2043d3eb9..e7c00316f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -412,10 +412,10 @@ xsltproc = find_program('xsltproc')
+ subdir('src')
+ subdir('po')
+ subdir('data')
++subdir('man')
+ 
+ if get_option('docs')
+   subdir('help')
+-  subdir('man')
+ endif
+ 
+ # Dist

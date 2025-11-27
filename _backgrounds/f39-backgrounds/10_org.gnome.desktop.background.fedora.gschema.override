@@ -1,0 +1,3 @@
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/f37/default/f37-01-day.png'
+picture-uri-dark='file:///usr/share/backgrounds/f37/default/f37-02-night.png'

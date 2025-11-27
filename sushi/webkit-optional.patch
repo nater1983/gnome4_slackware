@@ -1,0 +1,84 @@
+From 2d3fbd0eec2806b15533b04edf8620f4f5c389d4 Mon Sep 17 00:00:00 2001
+From: Yaakov Selkowitz <yselkowi@redhat.com>
+Date: Thu, 30 Nov 2023 18:26:51 -0500
+Subject: [PATCH] main: make WebKit2 optional
+
+webkitgtk is being removed from the core desktop dependencies, so it
+should not be presumed available.
+---
+ meson.build         |  1 -
+ src/ui/main.js      |  1 -
+ src/viewers/html.js | 25 +++++++++++++++++++------
+ 3 files changed, 19 insertions(+), 8 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index c7c4428..5994e21 100644
+--- a/meson.build
++++ b/meson.build
+@@ -21,7 +21,6 @@ gtk_x11_dep = dependency('gtk+-x11-3.0', required: get_option('X11'))
+ gtk_wayland_dep = dependency('gtk+-wayland-3.0', version: '>= 3.21.5', required: get_option('wayland'))
+ gtksourceview_dep = dependency('gtksourceview-4', version: '>=4.0.3')
+ harfbuzz_dep = dependency('harfbuzz', version: '>=0.9.9')
+-webkit_dep = dependency('webkit2gtk-4.1')
+ 
+ bindir = join_paths(get_option('prefix'), get_option('bindir'))
+ datadir = join_paths(get_option('prefix'), get_option('datadir'))
+diff --git a/src/ui/main.js b/src/ui/main.js
+index 2dd6124..9f8638a 100644
+--- a/src/ui/main.js
++++ b/src/ui/main.js
+@@ -39,7 +39,6 @@ pkg.require({
+     Pango: '1.0',
+     Soup: '3.0',
+     Sushi: '1.0',
+-    WebKit2: '4.1',
+ });
+ 
+ const {Gio, GLib} = imports.gi;
+diff --git a/src/viewers/html.js b/src/viewers/html.js
+index 985d957..01bd59f 100644
+--- a/src/viewers/html.js
++++ b/src/viewers/html.js
+@@ -23,11 +23,22 @@
+  *
+  */
+ 
+-const {Gtk, GLib, GObject, Sushi, WebKit2} = imports.gi;
++const {Gtk, GLib, GObject, Sushi} = imports.gi;
++
++var WebKit2;
++try {
++    imports.gi.versions.WebKit2 = '4.1';
++    WebKit2 = imports.gi.WebKit2;
++} catch(e) {
++}
++
++var isAvailable = function() {
++    return WebKit2 !== undefined;
++}
+ 
+ const Renderer = imports.ui.renderer;
+ 
+-var Klass = GObject.registerClass({
++var Klass = isAvailable() ? GObject.registerClass({
+     Implements: [Renderer.Renderer],
+     Properties: {
+         fullscreen: GObject.ParamSpec.boolean('fullscreen', '', '',
+@@ -67,8 +78,10 @@ var Klass = GObject.registerClass({
+     get moveOnClick() {
+         return false;
+     }
+-});
++}) : undefined;
+ 
+-var mimeTypes = [
+-    'text/html'
+-];
++var mimeTypes = [];
++if (isAvailable())
++    mimeTypes = [
++        'text/html'
++    ];
+-- 
+2.43.0
+

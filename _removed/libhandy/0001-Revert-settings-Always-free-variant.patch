@@ -1,0 +1,26 @@
+From 7e8a8529c4d79119d0f0acd81b1f1dbbd558978f Mon Sep 17 00:00:00 2001
+From: Alice Mikhaylenko <alexm@gnome.org>
+Date: Thu, 11 May 2023 21:32:15 +0000
+Subject: [PATCH] Revert "settings: Always free variant"
+
+This reverts commit 314b81a0e3b6bbef7bb22a622ceb86cb068acf51
+---
+ src/hdy-settings.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/hdy-settings.c b/src/hdy-settings.c
+index b7ab2f33ce..4f655158f8 100644
+--- a/src/hdy-settings.c
++++ b/src/hdy-settings.c
+@@ -262,8 +262,6 @@ settings_portal_changed_cb (GDBusProxy  *proxy,
+ 
+     return;
+   }
+-
+-  g_variant_unref (value);
+ }
+ 
+ static void
+-- 
+2.43.0
+

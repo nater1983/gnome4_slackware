@@ -1,0 +1,28 @@
+From 698e03e640ef360b9a7b07608ebcb8fb54cd4828 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Mon, 1 Jan 2024 17:35:16 -0600
+Subject: [PATCH] Update xdg-desktop-portal-gnome.service.in
+
+---
+ data/xdg-desktop-portal-gnome.service.in | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/data/xdg-desktop-portal-gnome.service.in b/data/xdg-desktop-portal-gnome.service.in
+index ac146cd..f1377ff 100644
+--- a/data/xdg-desktop-portal-gnome.service.in
++++ b/data/xdg-desktop-portal-gnome.service.in
+@@ -1,10 +1,4 @@
+-[Unit]
+-Description=Portal service (GNOME implementation)
+-After=graphical-session.target
+-Requisite=graphical-session.target
+-PartOf=graphical-session.target
+-
+-[Service]
+-Type=dbus
+-BusName=org.freedesktop.impl.portal.desktop.gnome
+-ExecStart=@libexecdir@/xdg-desktop-portal-gnome
++[D-BUS Service]
++Name=org.freedesktop.impl.portal.desktop.gnome
++Exec=@libexecdir@/xdg-desktop-portal-gnome
++SystemdService=xdg-desktop-portal-gnome.service

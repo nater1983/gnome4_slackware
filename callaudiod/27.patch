@@ -1,0 +1,98 @@
+From 54640dece3b93905b0e8be2a4e60764176d6ba73 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Pablo=20Correa=20G=C3=B3mez?= <ablocorrea@hotmail.com>
+Date: Sat, 3 Jun 2023 20:23:00 +0200
+Subject: [PATCH] libcallaudio: add async call_audio_init version
+
+Relates #29
+---
+ libcallaudio/libcallaudio.c | 56 +++++++++++++++++++++++++++++++++++++
+ libcallaudio/libcallaudio.h |  7 +++--
+ 2 files changed, 60 insertions(+), 3 deletions(-)
+
+diff --git a/libcallaudio/libcallaudio.c b/libcallaudio/libcallaudio.c
+index 6f89493..55f3e48 100644
+--- a/libcallaudio/libcallaudio.c
++++ b/libcallaudio/libcallaudio.c
+@@ -70,6 +70,62 @@ gboolean call_audio_init(GError **error)
+     return TRUE;
+ }
+ 
++static void call_audio_init_done(GObject      *object,
++                                 GAsyncResult *result,
++                                 gpointer      data)
++{
++    GError *error = NULL;
++    CallAudioAsyncData *async_data = data;
++    gboolean success = FALSE;
++
++    _proxy = call_audio_dbus_call_audio_proxy_new_for_bus_finish (result, &error);
++
++    if (_proxy) {
++        g_object_add_weak_pointer(G_OBJECT(_proxy), (gpointer *)&_proxy);
++        _initted = TRUE;
++        success = TRUE;
++    }
++
++
++    if (async_data && async_data->cb)
++        async_data->cb(success, error, async_data->user_data);
++    g_free(async_data);
++}
++
++/**
++ * call_audio_init_async:
++ * @cb: Function to be called when operation completes
++ * @data: User data to be passed to the callback function after completion. This
++ *        data is owned by the caller, which is responsible for freeing it.
++ *
++ * Asynchronously initialize libcallaudio. This must be called before any other
++ * functions.
++ *
++ */
++void call_audio_init_async(CallAudioCallback cb,
++                           gpointer          data)
++{
++    CallAudioAsyncData *async_data;
++
++    if (_initted)
++        return;
++
++    async_data = g_new0(CallAudioAsyncData, 1);
++    if (!async_data)
++        return;
++
++    async_data->cb = cb;
++    async_data->user_data = data;
++
++    call_audio_dbus_call_audio_proxy_new_for_bus(CALLAUDIO_DBUS_TYPE,
++                                                 G_DBUS_PROXY_FLAGS_NONE,
++                                                 CALLAUDIO_DBUS_NAME,
++                                                 CALLAUDIO_DBUS_PATH,
++                                                 NULL,
++                                                 call_audio_init_done,
++                                                 async_data);
++}
++
+ /**
+  * call_audio_is_inited:
+  *
+diff --git a/libcallaudio/libcallaudio.h b/libcallaudio/libcallaudio.h
+index f621b9e..9dec455 100644
+--- a/libcallaudio/libcallaudio.h
++++ b/libcallaudio/libcallaudio.h
+@@ -58,9 +58,10 @@ typedef void (*CallAudioCallback)(gboolean success,
+                                   GError *error,
+                                   gpointer data);
+ 
+-gboolean call_audio_init     (GError **error);
+-gboolean call_audio_is_inited(void);
+-void     call_audio_deinit   (void);
++gboolean call_audio_init      (GError **error);
++void     call_audio_init_async(CallAudioCallback cb, gpointer data);
++gboolean call_audio_is_inited (void);
++void     call_audio_deinit    (void);
+ 
+ gboolean call_audio_select_mode      (CallAudioMode mode, GError **error);
+ gboolean call_audio_select_mode_async(CallAudioMode     mode,
+-- 
+GitLab

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+five-or-more: five-or-more (make color lines of five or more length)
+five-or-more:
+five-or-more: This is a GNOME port of the once popular â€œColor Linesâ€ game. The
+five-or-more: game's objective is to align as often as possible five or more
+five-or-more: objects of the same color and shape causing them to disappear.
+five-or-more:
+five-or-more: Homepage: https://wiki.gnome.org/Apps/Five%20or%20more
+five-or-more:
+five-or-more:
+five-or-more:
+five-or-more:

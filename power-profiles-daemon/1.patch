@@ -1,0 +1,24 @@
+From 47bfeacaece4722f1b19a77e29fb5b443a427b46 Mon Sep 17 00:00:00 2001
+From: nater1983 <naterussell83@gmail.com>
+Date: Tue, 2 Jan 2024 01:35:22 +0000
+Subject: [PATCH] Update net.hadess.PowerProfiles.service
+
+---
+ data/net.hadess.PowerProfiles.service | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/data/net.hadess.PowerProfiles.service b/data/net.hadess.PowerProfiles.service
+index 724f631..5a758b8 100644
+--- a/data/net.hadess.PowerProfiles.service
++++ b/data/net.hadess.PowerProfiles.service
+@@ -6,6 +6,5 @@
+ 
+ [D-BUS Service]
+ Name=net.hadess.PowerProfiles
+-Exec=/bin/false
++Exec=/usr/libexec/power-profiles-daemon &
+ User=root
+-SystemdService=power-profiles-daemon.service
+-- 
+GitLab
+

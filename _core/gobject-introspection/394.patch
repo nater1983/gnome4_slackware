@@ -1,0 +1,172 @@
+From 0d97d1ae612b22ee2120823c870935702042067b Mon Sep 17 00:00:00 2001
+From: Emmanuele Bassi <ebassi@gnome.org>
+Date: Mon, 20 Mar 2023 18:47:37 +0000
+Subject: [PATCH 1/3] build: Reset GLib version check
+
+We overtook GLib, once again.
+---
+ meson.build | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index f617f7659..20c0791cc 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,5 +1,5 @@
+ project('gobject-introspection', 'c',
+-  version: '1.76.0',
++  version: '1.76.1',
+   meson_version: '>= 0.60.0',
+   default_options: [
+     'c_std=gnu99',
+@@ -124,7 +124,7 @@ else
+ endif
+ 
+ # Reset to 0 if g-i micro version exceeds GLib's
+-glib_micro_version = gi_versions[2]
++glib_micro_version = 0  # gi_versions[2]
+ glib_version = '>=2.@0@.@1@'.format(gi_versions[1], glib_micro_version)
+ 
+ glib_dep = dependency('glib-2.0', version: glib_version,
+-- 
+GitLab
+
+
+From 3e813a4c015f3f20d214380b79ae33865ef684a4 Mon Sep 17 00:00:00 2001
+From: Emmanuele Bassi <ebassi@gnome.org>
+Date: Mon, 20 Mar 2023 18:49:40 +0000
+Subject: [PATCH 2/3] Protect ourselves against properties with no default
+ value
+
+If the GParamSpec does not have a default value, we should not try to
+turn it into a string.
+---
+ girepository/gdump.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/girepository/gdump.c b/girepository/gdump.c
+index e68c4d14a..a4ff42aae 100644
+--- a/girepository/gdump.c
++++ b/girepository/gdump.c
+@@ -125,6 +125,9 @@ invoke_error_quark (GModule *self, const char *symbol, GError **error)
+ static char *
+ value_to_string (const GValue *value)
+ {
++  if (value == NULL)
++    return NULL;
++
+   if (G_VALUE_HOLDS_STRING (value))
+     {
+       const char *s = g_value_get_string (value);
+@@ -186,7 +189,7 @@ dump_properties (GType type, GOutputStream *out)
+       const GValue *v = g_param_spec_get_default_value (prop);
+       char *default_value = value_to_string (v);
+ 
+-      if (default_value != NULL)
++      if (v != NULL && default_value != NULL)
+         {
+           escaped_printf (out, "    <property name=\"%s\" type=\"%s\" flags=\"%d\" default-value=\"%s\"/>\n",
+                           prop->name,
+-- 
+GitLab
+
+
+From be84e12ca593537ebd4644cd4aa5368a60b1f0b7 Mon Sep 17 00:00:00 2001
+From: Emmanuele Bassi <ebassi@gnome.org>
+Date: Mon, 20 Mar 2023 21:56:57 +0000
+Subject: [PATCH 3/3] Special-case pointer-sized value types
+
+GValues containing pointer-sized things can hold a NULL value, and
+various transformation functions in the wild are not NULL safe.
+
+Fixes: #457
+
+See also: https://gitlab.gnome.org/GNOME/mutter/-/issues/2625
+---
+ girepository/gdump.c | 57 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 44 insertions(+), 13 deletions(-)
+
+diff --git a/girepository/gdump.c b/girepository/gdump.c
+index a4ff42aae..055a8b8c1 100644
+--- a/girepository/gdump.c
++++ b/girepository/gdump.c
+@@ -119,6 +119,27 @@ invoke_error_quark (GModule *self, const char *symbol, GError **error)
+   return sym ();
+ }
+ 
++static char *
++value_transform_to_string (const GValue *value)
++{
++  GValue tmp = G_VALUE_INIT;
++  char *s = NULL;
++
++  g_value_init (&tmp, G_TYPE_STRING);
++
++  if (g_value_transform (value, &tmp))
++    {
++      const char *str = g_value_get_string (&tmp);
++
++      if (str != NULL)
++        s = g_strescape (str, NULL);
++    }
++
++  g_value_unset (&tmp);
++
++  return s;
++}
++
+ /* A simpler version of g_strdup_value_contents(), but with stable
+  * output and less complex semantics
+  */
+@@ -137,25 +158,35 @@ value_to_string (const GValue *value)
+ 
+       return g_strescape (s, NULL);
+     }
+-  else if (g_value_type_transformable (G_VALUE_TYPE (value), G_TYPE_STRING))
++  else
+     {
+-      GValue tmp = G_VALUE_INIT;
+-      char *s = NULL;
++      GType value_type = G_VALUE_TYPE (value);
+ 
+-      g_value_init (&tmp, G_TYPE_STRING);
++      switch (G_TYPE_FUNDAMENTAL (value_type))
++        {
++        case G_TYPE_BOXED:
++          if (g_value_get_boxed (value) == NULL)
++            return NULL;
++          else
++            return value_transform_to_string (value);
++          break;
+ 
+-      if (g_value_transform (value, &tmp))
+-        s = g_strescape (g_value_get_string (&tmp), NULL);
++        case G_TYPE_OBJECT:
++          if (g_value_get_object (value) == NULL)
++            return NULL;
++          else
++            return value_transform_to_string (value);
++          break;
+ 
+-      g_value_unset (&tmp);
++        case G_TYPE_POINTER:
++          return NULL;
+ 
+-      if (s == NULL)
+-        return NULL;
+-
+-      return s;
++        default:
++          return value_transform_to_string (value);
++        }
+     }
+-  else
+-    return NULL;
++
++  return NULL;
+ }
+ 
+ static void
+-- 
+GitLab
+
