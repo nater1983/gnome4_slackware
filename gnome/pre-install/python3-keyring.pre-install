@@ -1,0 +1,1 @@
+sed -i '/coherent\.licensed/d' pyproject.toml
