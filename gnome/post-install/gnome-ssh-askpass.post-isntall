@@ -1,3 +1,1 @@
-mkdir -p $PKG/{usr/lib$LIBDIRSUFFIX/ssh,etc/profile.d/}
-install -D -m 755 gnome-ssh-askpass4 "${PKG}/usr/lib$LIBDIRSUFFIX/ssh/gnome-ssh-askpass4"
-install -D -m 755 redhat/gnome-ssh-askpass.sh "${PKG}/etc/profile.d/gnome-ssh-askpass.sh"
+install -vDm 0644 $CWD/post-install/gnome-ssh-askpass/gnome-ssh-askpass.1 -t $PKG/usr/man/man1
