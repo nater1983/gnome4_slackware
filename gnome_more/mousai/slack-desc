@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+      |-----handy-ruler------------------------------------------------------|
+mousai: mousai (Identify songs in seconds)
+mousai:
+mousai: Discover songs you are aching to know with an easy-to-use interface.
+mousai: Mousai is a simple application that can recognize songs similar to 
+mousai: Shazam. Just click the listen button, and then wait a few seconds. 
+mousai: It will magically return the title and artist of that song!
+mousai: Note: This uses the API of audd.io, so it is necessary to log in to 
+mousai: their site to get more trials.
+mousai: https://github.com/SeaDve/Mousai
+mousai:
+mousai:

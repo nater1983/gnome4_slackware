@@ -1,0 +1,912 @@
+From dcd2750a04667c15d00ecbaf03037876e2a2b1fc Mon Sep 17 00:00:00 2001
+From: Sdrkun <shanzhikun@gmail.com>
+Date: Thu, 10 Dec 2020 01:22:54 +0800
+Subject: [PATCH 01/16] Update to 2.0.4 release
+
+https://bugzilla.redhat.com/show_bug.cgi?id=845777
+---
+ src/CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 99cf9e95..789ddf99 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -30,7 +30,7 @@ ADD_DEFINITIONS(-DYAJL_BUILD)
+ # set up some paths
+ SET (libDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ SET (incDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/include/yajl)
+-SET (shareDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/share/pkgconfig)
++SET (pkgconfigDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib/pkgconfig)
+ 
+ # set the output path for libraries
+ SET(LIBRARY_OUTPUT_PATH ${libDir})
+@@ -61,7 +61,7 @@ FILE(MAKE_DIRECTORY ${incDir})
+ # generate build-time source
+ SET(dollar $)
+ CONFIGURE_FILE(api/yajl_version.h.cmake ${incDir}/yajl_version.h)
+-CONFIGURE_FILE(yajl.pc.cmake ${shareDir}/yajl.pc)
++CONFIGURE_FILE(yajl.pc.cmake ${pkgconfigDir}/yajl.pc)
+ 
+ # copy public headers to output directory
+ FOREACH (header ${PUB_HDRS})
+@@ -84,4 +84,4 @@ INSTALL(TARGETS yajl
+ INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+-INSTALL(FILES ${shareDir}/yajl.pc DESTINATION share/pkgconfig)
++INSTALL(FILES ${pkgconfigDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+
+From 349e55e657024e5ded864601a370f8051d19628c Mon Sep 17 00:00:00 2001
+From: Sdrkun <shanzhikun@gmail.com>
+Date: Thu, 10 Dec 2020 01:23:54 +0800
+Subject: [PATCH 02/16] Update to 2.0.4 release
+
+https://bugzilla.redhat.com/show_bug.cgi?id=845777
+---
+ src/yajl.pc.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/yajl.pc.cmake b/src/yajl.pc.cmake
+index 6eaca146..485ded91 100644
+--- a/src/yajl.pc.cmake
++++ b/src/yajl.pc.cmake
+@@ -1,6 +1,6 @@
+ prefix=${CMAKE_INSTALL_PREFIX}
+ libdir=${dollar}{prefix}/lib${LIB_SUFFIX}
+-includedir=${dollar}{prefix}/include/yajl
++includedir=${dollar}{prefix}/include
+ 
+ Name: Yet Another JSON Library
+ Description: A Portable JSON parsing and serialization library in ANSI C
+
+From f508b02cab482c3c5ec7b5f5054ba2957a567c12 Mon Sep 17 00:00:00 2001
+From: Sdrkun <shanzhikun@gmail.com>
+Date: Thu, 10 Dec 2020 01:27:57 +0800
+Subject: [PATCH 03/16] Update to 2.1.0 release
+
+https://bugzilla.redhat.com/show_bug.cgi?id=1080935
+---
+ test/api/run_tests.sh     | 2 +-
+ test/parsing/run_tests.sh | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/api/run_tests.sh b/test/api/run_tests.sh
+index 66551529..88e43fba 100755
+--- a/test/api/run_tests.sh
++++ b/test/api/run_tests.sh
+@@ -5,7 +5,7 @@ echo Running api tests:
+ tests=0
+ passed=0
+ 
+-for file in `ls`; do
++for file in `ls ../../build/test/api`; do
+     [ ! -x $file -o -d $file ] && continue
+     tests=`expr 1 + $tests`
+     printf " test(%s): " $file
+diff --git a/test/parsing/run_tests.sh b/test/parsing/run_tests.sh
+index b37e4dd5..ceb2e7a7 100755
+--- a/test/parsing/run_tests.sh
++++ b/test/parsing/run_tests.sh
+@@ -16,11 +16,11 @@ fi
+ # find test binary on both platforms.  allow the caller to force a
+ # particular test binary (useful for non-cmake build systems).
+ if [ -z "$testBin" ]; then
+-    testBin="../build/test/parsing/Release/yajl_test.exe"
++    testBin="../../build/test/parsing/Release/yajl_test.exe"
+     if [ ! -x $testBin ] ; then
+-        testBin="../build/test/parsing/Debug/yajl_test.exe"
++        testBin="../../build/test/parsing/Debug/yajl_test.exe"
+         if [ ! -x $testBin ] ; then
+-            testBin="../build/test/parsing/yajl_test"
++            testBin="../../build/test/parsing/yajl_test"
+             if [  ! -x $testBin ] ; then
+                 ${ECHO} "cannot execute test binary: '$testBin'"
+                 exit 1;
+
+From 63450c15a10143a369abe9be84e09737d71bcf48 Mon Sep 17 00:00:00 2001
+From: Sdrkun <shanzhikun@gmail.com>
+Date: Thu, 10 Dec 2020 01:28:32 +0800
+Subject: [PATCH 04/16] Update to 2.1.0 release
+
+https://bugzilla.redhat.com/show_bug.cgi?id=1080935
+---
+ reformatter/CMakeLists.txt | 2 +-
+ verify/CMakeLists.txt      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/reformatter/CMakeLists.txt b/reformatter/CMakeLists.txt
+index 52a9bee8..4b7b3fa4 100644
+--- a/reformatter/CMakeLists.txt
++++ b/reformatter/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_reformat ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_reformat yajl_s)
++TARGET_LINK_LIBRARIES(json_reformat yajl)
+ 
+ # In some environments, we must explicitly link libm (like qnx,
+ # thanks @shahbag)
+diff --git a/verify/CMakeLists.txt b/verify/CMakeLists.txt
+index 967fca16..2bceb265 100644
+--- a/verify/CMakeLists.txt
++++ b/verify/CMakeLists.txt
+@@ -26,7 +26,7 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(json_verify ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(json_verify yajl_s)
++TARGET_LINK_LIBRARIES(json_verify yajl)
+ 
+ # copy in the binary
+ GET_TARGET_PROPERTY(binPath json_verify LOCATION)
+
+From 3d65cb0c6db4d433e5e42ee7d91d8a04e21337cf Mon Sep 17 00:00:00 2001
+From: wujing <wujing50@huawei.com>
+Date: Thu, 14 Feb 2019 03:12:30 +0800
+Subject: [PATCH 05/16] yajl: fix memory leak problem
+
+reason: fix memory leak problem
+---
+ src/yajl_tree.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/yajl_tree.c b/src/yajl_tree.c
+index 3d357a32..4b3cf2b1 100644
+--- a/src/yajl_tree.c
++++ b/src/yajl_tree.c
+@@ -143,7 +143,7 @@ static yajl_val context_pop(context_t *ctx)
+     ctx->stack = stack->next;
+ 
+     v = stack->value;
+-
++    free (stack->key);
+     free (stack);
+ 
+     return (v);
+@@ -444,6 +444,10 @@ yajl_val yajl_tree_parse (const char *input,
+              snprintf(error_buffer, error_buffer_size, "%s", internal_err_str);
+              YA_FREE(&(handle->alloc), internal_err_str);
+         }
++        while(ctx.stack != NULL) {
++             yajl_val v = context_pop(&ctx);
++             yajl_tree_free(v);
++        }
+         yajl_free (handle);
+         return NULL;
+     }
+
+From fa9939c40fcbe116ec1506c4fbc6f7553d893cd0 Mon Sep 17 00:00:00 2001
+From: Liquor <1692257904@qq.com>
+Date: Fri, 15 Jan 2021 15:41:16 +0800
+Subject: [PATCH 06/16] fix simple typo
+
+reference:https://github.com/lloyd/yajl/pull/231/
+---
+ src/api/yajl_parse.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/api/yajl_parse.h b/src/api/yajl_parse.h
+index 1c25a60d..fd5b9a06 100644
+--- a/src/api/yajl_parse.h
++++ b/src/api/yajl_parse.h
+@@ -35,7 +35,7 @@ extern "C" {
+         yajl_status_ok,
+         /** a client callback returned zero, stopping the parse */
+         yajl_status_client_canceled,
+-        /** An error occured during the parse.  Call yajl_get_error for
++        /** An error occurred during the parse.  Call yajl_get_error for
+          *  more information about the encountered error */
+         yajl_status_error
+     } yajl_status;
+@@ -192,7 +192,7 @@ extern "C" {
+      *  parse.
+      *
+      *  If verbose is non-zero, the message will include the JSON
+-     *  text where the error occured, along with an arrow pointing to
++     *  text where the error occurred, along with an arrow pointing to
+      *  the specific char.
+      *
+      *  \returns A dynamically allocated string will be returned which should
+@@ -211,7 +211,7 @@ extern "C" {
+      *
+      * In the event an error is encountered during parsing, this function
+      * affords the client a way to get the offset into the most recent
+-     * chunk where the error occured.  0 will be returned if no error
++     * chunk where the error occurred.  0 will be returned if no error
+      * was encountered.
+      */
+     YAJL_API size_t yajl_get_bytes_consumed(yajl_handle hand);
+
+From 36c4abbaf267481dbdc80c4860b36cef207ef408 Mon Sep 17 00:00:00 2001
+From: Liquor <1692257904@qq.com>
+Date: Fri, 29 Jan 2021 14:43:10 +0800
+Subject: [PATCH 07/16] fix gcc warning implicit-fallthrough
+
+---
+ src/yajl_parser.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/yajl_parser.c b/src/yajl_parser.c
+index 1a528a64..a52f345d 100644
+--- a/src/yajl_parser.c
++++ b/src/yajl_parser.c
+@@ -343,6 +343,7 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         goto around_again;
+                     }
+                     /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 }
+                 case yajl_tok_colon:
+                 case yajl_tok_comma:
+@@ -394,6 +395,7 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         bufLen = yajl_buf_len(hand->decodeBuf);
+                     }
+                     /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 case yajl_tok_string:
+                     if (hand->callbacks && hand->callbacks->yajl_map_key) {
+                         _CC_CHK(hand->callbacks->yajl_map_key(hand->ctx, buf,
+
+From 729cebe6fc4f962cb2527fcce258d866fd31970f Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Sat, 27 Feb 2021 22:01:17 +0100
+Subject: [PATCH 08/16] build: compile yajl statically with autotools
+
+it helps integrating it with libocispec
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ .gitignore                   | 26 ++++++++++++++++++++++++++
+ BUILDING                     |  2 +-
+ Makefile.am                  | 21 +++++++++++++++++++++
+ autogen.sh                   | 21 +++++++++++++++++++++
+ configure => configure-cmake |  0
+ configure.ac                 | 32 ++++++++++++++++++++++++++++++++
+ src/headers/yajl             |  1 +
+ 7 files changed, 102 insertions(+), 1 deletion(-)
+ create mode 100644 Makefile.am
+ create mode 100755 autogen.sh
+ rename configure => configure-cmake (100%)
+ create mode 100644 configure.ac
+ create mode 120000 src/headers/yajl
+
+diff --git a/.gitignore b/.gitignore
+index b0aff9af..9a7d61a4 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,3 +1,29 @@
+ .DS_Store
+ Makefile
+ /build/
++src/*.o
++src/.dirstamp
++src/.deps
++Makefile.in
++aclocal.m4
++autom4te.cache/
++autoscan.log
++compile
++config.h
++config.h.in
++config.h.in~
++config.log
++config.status
++configure
++depcomp
++install-sh
++libyajl.a
++missing
++stamp-h1
++.libs/
++config.guess
++config.sub
++libtool
++libyajl.la
++ltmain.sh
++src/*.lo
+diff --git a/BUILDING b/BUILDING
+index 8460ed4b..6e78e101 100644
+--- a/BUILDING
++++ b/BUILDING
+@@ -1,6 +1,6 @@
+ Short story (If you already have ruby and cmake):
+ 
+-./configure && make install
++./configure-cmake && make install
+ 
+ When things go wrong:
+ 
+diff --git a/Makefile.am b/Makefile.am
+new file mode 100644
+index 00000000..a2af4e12
+--- /dev/null
++++ b/Makefile.am
+@@ -0,0 +1,21 @@
++noinst_LTLIBRARIES = libyajl.la
++
++EXTRA_DIST = src/headers src/api autogen.sh
++
++libyajl_la_CPPFLAGS = -DNDEBUG
++libyajl_la_CFLAGS = -I $(abs_srcdir)/src/headers
++libyajl_la_SOURCES = \
++	src/yajl_alloc.h \
++	src/yajl_bytestack.h \
++	src/yajl_lex.h \
++	src/yajl_buf.h \
++	src/yajl_encode.h \
++	src/yajl_parser.h \
++	src/yajl_alloc.c \
++	src/yajl.c \
++	src/yajl_gen.c \
++	src/yajl_parser.c \
++	src/yajl_buf.c \
++	src/yajl_encode.c \
++	src/yajl_lex.c \
++	src/yajl_tree.c
+diff --git a/autogen.sh b/autogen.sh
+new file mode 100755
+index 00000000..7c25e77a
+--- /dev/null
++++ b/autogen.sh
+@@ -0,0 +1,21 @@
++#!/bin/sh
++
++git submodule update --init --recursive
++
++test -n "$srcdir" || srcdir=`dirname "$0"`
++test -n "$srcdir" || srcdir=.
++
++olddir=`pwd`
++cd $srcdir
++
++if ! (autoreconf --version >/dev/null 2>&1); then
++        echo "*** No autoreconf found, please install it ***"
++        exit 1
++fi
++
++mkdir -p m4
++
++autoreconf --force --install --verbose
++
++cd $olddir
++test -n "$NOCONFIGURE" || "$srcdir/configure" "$@"
+diff --git a/configure b/configure-cmake
+similarity index 100%
+rename from configure
+rename to configure-cmake
+diff --git a/configure.ac b/configure.ac
+new file mode 100644
+index 00000000..9ad48c7d
+--- /dev/null
++++ b/configure.ac
+@@ -0,0 +1,32 @@
++AC_PREREQ([2.69])
++AC_INIT([yajl], [2.1.0], [me@lloyd.io])
++AC_CONFIG_SRCDIR([src/yajl.c])
++AC_CONFIG_HEADERS([config.h])
++
++# Checks for programs.
++AC_PROG_CC
++AM_INIT_AUTOMAKE([1.11 -Wno-portability foreign tar-ustar no-dist-gzip dist-xz subdir-objects])
++AM_MAINTAINER_MODE([enable])
++AM_SILENT_RULES([yes])
++LT_INIT([disable-shared])
++
++# Checks for libraries.
++
++# Checks for header files.
++AC_CHECK_HEADERS([float.h limits.h stddef.h stdlib.h string.h sys/time.h])
++
++# Checks for typedefs, structures, and compiler characteristics.
++AC_C_INLINE
++AC_TYPE_SIZE_T
++
++# Checks for library functions.
++AC_FUNC_MALLOC
++AC_FUNC_REALLOC
++AC_FUNC_STRTOD
++AC_CHECK_FUNCS([gettimeofday memset strspn])
++
++AC_CONFIG_FILES([
++Makefile
++])
++
++AC_OUTPUT
+diff --git a/src/headers/yajl b/src/headers/yajl
+new file mode 120000
+index 00000000..8edbb42d
+--- /dev/null
++++ b/src/headers/yajl
+@@ -0,0 +1 @@
++../api
+\ No newline at end of file
+
+From 102a8b8ac8303a299be371fe3edbb95f2853ff0c Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 1 Mar 2021 14:49:18 +0100
+Subject: [PATCH 09/16] build: build json_verify
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ .gitignore  | 4 ++++
+ Makefile.am | 6 ++++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index 9a7d61a4..ad83668d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -27,3 +27,7 @@ libtool
+ libyajl.la
+ ltmain.sh
+ src/*.lo
++verify/.deps/
++verify/.dirstamp
++verify/json_verify
++verify/json_verify-json_verify.o
+diff --git a/Makefile.am b/Makefile.am
+index a2af4e12..b8cf12e9 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -19,3 +19,9 @@ libyajl_la_SOURCES = \
+ 	src/yajl_encode.c \
+ 	src/yajl_lex.c \
+ 	src/yajl_tree.c
++
++noinst_PROGRAMS = verify/json_verify
++
++verify_json_verify_SOURCES = verify/json_verify.c
++verify_json_verify_CFLAGS = -I $(srcdir)/src/headers
++verify_json_verify_LDADD = libyajl.la
+
+From c2763214f52895806b5e025659e88cb4407f4e23 Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 1 Mar 2021 15:05:30 +0100
+Subject: [PATCH 10/16] build: support fuzzing
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ contrib/hfuzz.sh     |  5 +++++
+ verify/json_verify.c | 47 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
+ create mode 100755 contrib/hfuzz.sh
+
+diff --git a/contrib/hfuzz.sh b/contrib/hfuzz.sh
+new file mode 100755
+index 00000000..da1df980
+--- /dev/null
++++ b/contrib/hfuzz.sh
+@@ -0,0 +1,5 @@
++#!/bin/sh
++
++./configure CC=hfuzz-clang  CPPFLAGS='-D FUZZER' CFLAGS="-ggdb3"
++make
++VALIDATE_FUZZ=1 honggfuzz --linux_perf_instr --threads 4  -i ./test/parsing/cases/ -- verify/json_verify
+diff --git a/verify/json_verify.c b/verify/json_verify.c
+index 01849e03..353e8ce6 100644
+--- a/verify/json_verify.c
++++ b/verify/json_verify.c
+@@ -15,10 +15,43 @@
+  */
+ 
+ #include <yajl/yajl_parse.h>
++#include <yajl/yajl_tree.h>
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <inttypes.h>
++
++#ifdef FUZZER
++int
++LLVMFuzzerInitialize(int *argc, char ***argv)
++{
++  return 0;
++}
++
++int
++LLVMFuzzerTestOneInput(uint8_t *buf, size_t len)
++{
++  yajl_val tree;
++  yajl_handle hand;
++  char err[1024];
++  char *str = malloc(len+1);
++
++  memcpy(str, buf, len);
++  str[len] = '\0';
++
++  hand = yajl_alloc(NULL, NULL, NULL);
++  yajl_parse(hand, buf, len);
++  yajl_free(hand);
++
++  /* make sure it is NUL terminated.  */
++  tree = yajl_tree_parse(str, err, sizeof(err));
++  if (tree)
++    yajl_tree_free(tree);
++  free(str);
++  return 0;
++}
++#endif
+ 
+ static void
+ usage(const char * progname)
+@@ -44,6 +77,20 @@ main(int argc, char ** argv)
+     int retval = 0;
+     int a = 1;
+ 
++#ifdef FUZZER
++  if (getenv("VALIDATE_FUZZ")) {
++    extern void HF_ITER(uint8_t** buf, size_t* len);
++    for (;;) {
++      size_t len;
++      uint8_t *buf;
++
++      HF_ITER(&buf, &len);
++  
++      LLVMFuzzerTestOneInput(buf, len);
++    }
++  }
++#endif
++
+     /* allocate a parser */
+     hand = yajl_alloc(NULL, NULL, NULL);
+ 
+
+From 86b74827b3977944f43dbe8f152cd80a0189252f Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 1 Mar 2021 16:31:56 +0100
+Subject: [PATCH 11/16] src: fix other memleaks
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ src/yajl_tree.c | 48 +++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 39 insertions(+), 9 deletions(-)
+
+diff --git a/src/yajl_tree.c b/src/yajl_tree.c
+index 4b3cf2b1..d3e76512 100644
+--- a/src/yajl_tree.c
++++ b/src/yajl_tree.c
+@@ -250,10 +250,14 @@ static int context_add_value (context_t *ctx, yajl_val v)
+         else /* if (ctx->key != NULL) */
+         {
+             char * key;
++            int ret;
+ 
+             key = ctx->stack->key;
+             ctx->stack->key = NULL;
+-            return (object_add_keyval (ctx, ctx->stack->value, key, v));
++            ret = object_add_keyval (ctx, ctx->stack->value, key, v);
++            if (ret)
++                ctx->stack->key = key;
++            return ret;
+         }
+     }
+     else if (YAJL_IS_ARRAY (ctx->stack->value))
+@@ -286,7 +290,10 @@ static int handle_string (void *ctx,
+     memcpy(v->u.string, string, string_length);
+     v->u.string[string_length] = 0;
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_number (void *ctx, const char *string, size_t string_length)
+@@ -321,7 +328,10 @@ static int handle_number (void *ctx, const char *string, size_t string_length)
+     if ((errno == 0) && (endptr != NULL) && (*endptr == 0))
+         v->u.number.flags |= YAJL_NUMBER_DOUBLE_VALID;
+ 
+-    return ((context_add_value(ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_start_map (void *ctx)
+@@ -336,7 +346,11 @@ static int handle_start_map (void *ctx)
+     v->u.object.values = NULL;
+     v->u.object.len = 0;
+ 
+-    return ((context_push (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_push (ctx, v) == 0))
++        return STATUS_CONTINUE;
++
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_end_map (void *ctx)
+@@ -347,7 +361,10 @@ static int handle_end_map (void *ctx)
+     if (v == NULL)
+         return (STATUS_ABORT);
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_start_array (void *ctx)
+@@ -361,7 +378,10 @@ static int handle_start_array (void *ctx)
+     v->u.array.values = NULL;
+     v->u.array.len = 0;
+ 
+-    return ((context_push (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_push (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_end_array (void *ctx)
+@@ -372,7 +392,10 @@ static int handle_end_array (void *ctx)
+     if (v == NULL)
+         return (STATUS_ABORT);
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_boolean (void *ctx, int boolean_value)
+@@ -383,7 +406,10 @@ static int handle_boolean (void *ctx, int boolean_value)
+     if (v == NULL)
+         RETURN_ERROR ((context_t *) ctx, STATUS_ABORT, "Out of memory");
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ static int handle_null (void *ctx)
+@@ -394,7 +420,10 @@ static int handle_null (void *ctx)
+     if (v == NULL)
+         RETURN_ERROR ((context_t *) ctx, STATUS_ABORT, "Out of memory");
+ 
+-    return ((context_add_value (ctx, v) == 0) ? STATUS_CONTINUE : STATUS_ABORT);
++    if ((context_add_value (ctx, v) == 0))
++        return STATUS_CONTINUE;
++    yajl_tree_free (v);
++    return STATUS_ABORT;
+ }
+ 
+ /*
+@@ -448,6 +477,7 @@ yajl_val yajl_tree_parse (const char *input,
+              yajl_val v = context_pop(&ctx);
+              yajl_tree_free(v);
+         }
++        yajl_tree_free(ctx.root);
+         yajl_free (handle);
+         return NULL;
+     }
+
+From 30768d304348f4f93b284ca586f60f9c9ace3543 Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 1 Mar 2021 20:27:41 +0100
+Subject: [PATCH 12/16] build: fix gcc warning
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ src/yajl_parser.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/yajl_parser.c b/src/yajl_parser.c
+index a52f345d..20c047d3 100644
+--- a/src/yajl_parser.c
++++ b/src/yajl_parser.c
+@@ -413,6 +413,8 @@ yajl_do_parse(yajl_handle hand, const unsigned char * jsonText,
+                         yajl_bs_pop(hand->stateStack);
+                         goto around_again;
+                     }
++                    /* intentional fall-through */
++                    __attribute__((fallthrough));
+                 default:
+                     yajl_bs_set(hand->stateStack, yajl_state_parse_error);
+                     hand->parseError =
+
+From 02f6df4f5ad190195f80884022ad206270a5515b Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 12 Apr 2021 17:44:26 +0200
+Subject: [PATCH 13/16] .gitignore: update
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ .gitignore | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index ad83668d..739ed894 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -31,3 +31,14 @@ verify/.deps/
+ verify/.dirstamp
+ verify/json_verify
+ verify/json_verify-json_verify.o
++build-aux/compile
++build-aux/config.guess
++build-aux/config.sub
++build-aux/depcomp
++build-aux/install-sh
++build-aux/ltmain.sh
++build-aux/missing
++build-aux/test-driver
++build-aux/config.guess~
++build-aux/config.sub~
++configure~
+
+From f344d21280c3e4094919fd318bc5ce75da91fc06 Mon Sep 17 00:00:00 2001
+From: Giuseppe Scrivano <gscrivan@redhat.com>
+Date: Mon, 12 Apr 2021 18:15:30 +0200
+Subject: [PATCH 14/16] .gitignore: update
+
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+---
+ .gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index 739ed894..c2442a8c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -41,4 +41,6 @@ build-aux/missing
+ build-aux/test-driver
+ build-aux/config.guess~
+ build-aux/config.sub~
++config.guess~
++config.sub~
+ configure~
+
+From 49923ccb2143e36850bcdeb781e2bcdf5ce22f15 Mon Sep 17 00:00:00 2001
+From: John Hawthorn <john@hawthorn.email>
+Date: Wed, 2 Mar 2022 14:17:59 -0800
+Subject: [PATCH 15/16] Check need < buf->used
+
+We're guaranteed a power of 2 so that this becomes 0, but we might as
+well use a check for overflow that works in more cases.
+
+Unsigned integer overflow is defined behaviour, so this should be safe.
+
+(cherry picked from commit 36410d536b676e836637bb20574a56ebc920eb83)
+---
+ src/yajl_buf.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/yajl_buf.c b/src/yajl_buf.c
+index 1aeafde0..8bd1bea7 100644
+--- a/src/yajl_buf.c
++++ b/src/yajl_buf.c
+@@ -30,7 +30,7 @@ struct yajl_buf_t {
+ };
+ 
+ static
+-void yajl_buf_ensure_available(yajl_buf buf, size_t want)
++int yajl_buf_ensure_available(yajl_buf buf, size_t want)
+ {
+     size_t need;
+     
+@@ -46,11 +46,15 @@ void yajl_buf_ensure_available(yajl_buf buf, size_t want)
+     need = buf->len;
+ 
+     while (want >= (need - buf->used)) need <<= 1;
++    if (need < buf->used) {
++         return -1;
++    }
+ 
+     if (need != buf->len) {
+         buf->data = (unsigned char *) YA_REALLOC(buf->alloc, buf->data, need);
+         buf->len = need;
+     }
++    return 0;
+ }
+ 
+ yajl_buf yajl_buf_alloc(yajl_alloc_funcs * alloc)
+@@ -70,7 +74,8 @@ void yajl_buf_free(yajl_buf buf)
+ 
+ void yajl_buf_append(yajl_buf buf, const void * data, size_t len)
+ {
+-    yajl_buf_ensure_available(buf, len);
++    if (yajl_buf_ensure_available(buf, len))
++        return;
+     if (len > 0) {
+         assert(data != NULL);
+         memcpy(buf->data + buf->used, data, len);
+
+From 768be8b9f98e30a8bd2d51576be9dfcf2cb838ea Mon Sep 17 00:00:00 2001
+From: Kiskae <Kiskae@users.noreply.github.com>
+Date: Tue, 26 Sep 2023 20:53:00 +0200
+Subject: [PATCH 16/16] simplify compilation of static/shared with cmake
+
+Signed-off-by: Kiskae <Kiskae@users.noreply.github.com>
+---
+ CMakeLists.txt              | 2 ++
+ example/CMakeLists.txt      | 2 +-
+ perf/CMakeLists.txt         | 2 +-
+ src/CMakeLists.txt          | 7 ++-----
+ test/parsing/CMakeLists.txt | 2 +-
+ 5 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 471eee13..9af25203 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,6 +16,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+ 
+ PROJECT(YetAnotherJSONParser C)
+ 
++option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
++
+ SET (YAJL_MAJOR 2)
+ SET (YAJL_MINOR 1)
+ SET (YAJL_MICRO 1)
+diff --git a/example/CMakeLists.txt b/example/CMakeLists.txt
+index 0a7f6220..62ddf14c 100644
+--- a/example/CMakeLists.txt
++++ b/example/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(parse_config ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(parse_config yajl_s)
++TARGET_LINK_LIBRARIES(parse_config yajl)
+diff --git a/perf/CMakeLists.txt b/perf/CMakeLists.txt
+index b438d7a1..924a2681 100644
+--- a/perf/CMakeLists.txt
++++ b/perf/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(perftest ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(perftest yajl_s)
++TARGET_LINK_LIBRARIES(perftest yajl)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 789ddf99..78875032 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -35,9 +35,7 @@ SET (pkgconfigDir ${CMAKE_CURRENT_BINARY_DIR}/../${YAJL_DIST_NAME}/lib/pkgconfig
+ # set the output path for libraries
+ SET(LIBRARY_OUTPUT_PATH ${libDir})
+ 
+-ADD_LIBRARY(yajl_s STATIC ${SRCS} ${HDRS} ${PUB_HDRS})
+-
+-ADD_LIBRARY(yajl SHARED ${SRCS} ${HDRS} ${PUB_HDRS})
++ADD_LIBRARY(yajl ${SRCS} ${HDRS} ${PUB_HDRS})
+ 
+ #### setup shared library version number
+ SET_TARGET_PROPERTIES(yajl PROPERTIES
+@@ -69,7 +67,7 @@ FOREACH (header ${PUB_HDRS})
+ 
+   EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different ${header} ${incDir})
+ 
+-  ADD_CUSTOM_COMMAND(TARGET yajl_s POST_BUILD
++  ADD_CUSTOM_COMMAND(TARGET yajl POST_BUILD
+       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${header} ${incDir})
+ ENDFOREACH (header ${PUB_HDRS})
+ 
+@@ -81,7 +79,6 @@ INSTALL(TARGETS yajl
+         RUNTIME DESTINATION lib${LIB_SUFFIX}
+         LIBRARY DESTINATION lib${LIB_SUFFIX}
+         ARCHIVE DESTINATION lib${LIB_SUFFIX})
+-INSTALL(TARGETS yajl_s ARCHIVE DESTINATION lib${LIB_SUFFIX})
+ INSTALL(FILES ${PUB_HDRS} DESTINATION include/yajl)
+ INSTALL(FILES ${incDir}/yajl_version.h DESTINATION include/yajl)
+ INSTALL(FILES ${pkgconfigDir}/yajl.pc DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+diff --git a/test/parsing/CMakeLists.txt b/test/parsing/CMakeLists.txt
+index c22a3887..f445920d 100644
+--- a/test/parsing/CMakeLists.txt
++++ b/test/parsing/CMakeLists.txt
+@@ -20,4 +20,4 @@ LINK_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/../../${YAJL_DIST_NAME}/lib)
+ 
+ ADD_EXECUTABLE(yajl_test ${SRCS})
+ 
+-TARGET_LINK_LIBRARIES(yajl_test yajl_s)
++TARGET_LINK_LIBRARIES(yajl_test yajl)

@@ -1,0 +1,27 @@
+From aa4ab4aef34d4adf8875fe0d43d00dfd47dbb099 Mon Sep 17 00:00:00 2001
+From: David King <amigadave@amigadave.com>
+Date: Mon, 26 Feb 2024 11:55:29 +0000
+Subject: [PATCH] weather-service: Fix incompatible pointer types
+
+---
+ src/weather/gcal-weather-service.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/weather/gcal-weather-service.c b/src/weather/gcal-weather-service.c
+index f4017c9e..e6189326 100644
+--- a/src/weather/gcal-weather-service.c
++++ b/src/weather/gcal-weather-service.c
+@@ -486,8 +486,8 @@ preprocess_gweather_reports (GcalWeatherService *self,
+   GSList *iter = NULL;    /* unowned */
+   GDate cur_gdate;
+   glong first_tomorrow_dtime = -1;
+-  glong today_unix;
+-  glong unix_now;
++  gint64 today_unix;
++  gint64 unix_now;
+   guint i;
+ 
+   /*
+-- 
+2.43.2
+

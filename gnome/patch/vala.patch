@@ -1,8 +1,0 @@
-# Don't use graphviz if it's not on the system.
-if ! /bin/ls /usr/man/man7/graphviz.7.gz 1> /dev/null 2> /dev/null ; then
-  patch -Np1 -i $CWD/patch/vala/disable-graphviz.patch
-  # The last one doesn't quite do it for 0.42.3.
-  patch -Np1 -i $CWD/patch/vala/no.gvc-compat.c.diff
-  GRAPHVIZ_SUPPORT="--disable-graphviz"
-  autoreconf -vif || exit 1
-fi

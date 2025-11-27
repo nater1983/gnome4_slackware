@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description. Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in. You must
+# make exactly 11 lines for the formatting to be correct. It's also
+# customary to leave one space after the ':'.
+
+         |-----handy-ruler------------------------------------------------------|
+enter-tex: enter-tex (Enter TeX - A TeX/LaTeX text editor)
+enter-tex:
+enter-tex: Enter TeX is a TeX/LaTeX text editor. The application was previously
+enter-tex: named LaTeXila and then GNOME LaTeX. Enter-tex is a TeX / LaTeX editor
+enter-tex: for for Linux making use of the GTK library with the features to edit
+enter-tex: TeX / LaTeX source code and produce PDF documents and more.
+enter-tex: 
+enter-tex:
+enter-tex: Homepage: https://gitlab.gnome.org/swilmet/enter-tex
+enter-tex:
+enter-tex:

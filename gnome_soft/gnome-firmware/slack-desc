@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+              |-----handy-ruler------------------------------------------------------|
+gnome-firmware: gnome-firmware (Install firmware on devices)
+gnome-firmware: 
+gnome-firmware: Upgrade, Downgrade, & Reinstall firmware on devices supported by
+gnome-firmware: fwupd Unlock locked fwupd devices
+gnome-firmware: Verify firmware on supported devices
+gnome-firmware: Display all releases for a fwupd device
+gnome-firmware:
+gnome-firmware: https://gitlab.gnome.org/World/gnome-firmware/
+gnome-firmware:
+gnome-firmware:
+gnome-firmware:

@@ -1,0 +1,577 @@
+Sat Aug  3 11:49:39 EEST 2024
+
+EXIST
+===================================
+File gnome-latex.SlackBuild exists in gnome-47
+File komikku.SlackBuild exists in gnome-47
+File meld.SlackBuild exists in gnome-47
+File obfuscate.SlackBuild exists in gnome-47
+File rygel.SlackBuild exists in gnome-47
+File gthumb.SlackBuild exists in gnome-47
+File rome.SlackBuild exists in gnome-47
+File sound-juicer.SlackBuild exists in gnome-47
+File telepathy-idle.SlackBuild exists in gnome-47
+File warp.SlackBuild exists in gnome-47
+File gnome-commander.SlackBuild exists in gnome-47
+File rhythmbox.SlackBuild exists in gnome-47
+File video-trimmer.SlackBuild exists in gnome-47
+File polari.SlackBuild exists in gnome-47
+File gupnp-dlna.SlackBuild exists in gnome-47
+File raider.SlackBuild exists in gnome-47
+File metadata-cleaner.SlackBuild exists in gnome-47
+File lightsoff.SlackBuild exists in gnome-47
+File share-preview.SlackBuild exists in gnome-47
+File news_flash_gtk.SlackBuild exists in gnome-47
+File libgnome-volume-control.SlackBuild exists in gnome-47
+File goffice.SlackBuild exists in gnome-47
+File xdg-user-dirs-gtk.SlackBuild exists in gnome-47
+File workbench.SlackBuild exists in gnome-47
+File gaphor.SlackBuild exists in gnome-47
+File gnome-flashback.SlackBuild exists in gnome-47
+File rhythmbox-tray-icon.SlackBuild exists in gnome-47
+File emblem.SlackBuild exists in gnome-47
+File cozy.SlackBuild exists in gnome-47
+File khronos.SlackBuild exists in gnome-47
+File mousai.SlackBuild exists in gnome-47
+File libmusicbrainz5.SlackBuild exists in gnome-47
+File exiftool.SlackBuild does not exist in gnome-47
+File gtk-internet-radio-locator.SlackBuild exists in gnome-47
+File telepathy-logger.SlackBuild exists in gnome-47
+File telepathy-mission-control.SlackBuild exists in gnome-47
+File gnote.SlackBuild exists in gnome-47
+File gupnp-av.SlackBuild exists in gnome-47
+File zap.SlackBuild exists in gnome-47
+File gupnp.SlackBuild exists in gnome-47
+File font-noto-emoji.SlackBuild exists in gnome-47
+File lorem.SlackBuild exists in gnome-47
+File psiconv.SlackBuild exists in gnome-47
+File elastic.SlackBuild exists in gnome-47
+File webfont-kit-generator.SlackBuild exists in gnome-47
+File gnumeric.SlackBuild exists in gnome-47
+File eyedropper.SlackBuild exists in gnome-47
+File textpieces.SlackBuild exists in gnome-47
+File health.SlackBuild exists in gnome-47
+File wike.SlackBuild exists in gnome-47
+File identity.SlackBuild exists in gnome-47
+File metronome.SlackBuild exists in gnome-47
+File shotwell.SlackBuild exists in gnome-47
+File hitori.SlackBuild exists in gnome-47
+File vala-language-server.SlackBuild exists in gnome-47
+File telegraph.SlackBuild exists in gnome-47
+File GFS-tracker.SlackBuild does not exist in gnome-47
+File openrc-settingsd.SlackBuild exists in gnome-47
+File python3-pillow.SlackBuild exists in gnome-47
+File package-template.SlackBuild exists in gnome-47
+File package-template2.SlackBuild exists in gnome-47
+File eog-plugins.SlackBuild exists in gnome-47
+File gnome-connections.SlackBuild exists in gnome-47
+File gstreamer-vaapi.SlackBuild does not exist in gnome-47
+File gnome-dictionary.SlackBuild exists in gnome-47
+File libaccounts-glib.SlackBuild exists in gnome-47
+File fwupd.SlackBuild exists in gnome-47
+File jpegoptim.SlackBuild exists in gnome-47
+File libspelling.SlackBuild exists in gnome-47
+File oxipng.SlackBuild exists in gnome-47
+File apostrophe.SlackBuild exists in gnome-47
+File amberol.SlackBuild exists in gnome-47
+File Feeds.SlackBuild exists in gnome-47
+File gnome-applets.SlackBuild exists in gnome-47
+File drawing.SlackBuild exists in gnome-47
+File gst-rtsp-server.SlackBuild exists in gnome-47
+File gnome-photos.SlackBuild exists in gnome-47
+File libgit2.SlackBuild exists in gnome-47
+File network-manager-applet.SlackBuild exists in gnome-47
+File rclone.SlackBuild exists in gnome-47
+File cogl.SlackBuild exists in gnome-47
+File geary.SlackBuild exists in gnome-47
+File gtk-doc.SlackBuild exists in gnome-47
+File gpaste.SlackBuild does not exist in gnome-47
+File gnome-color-manager.SlackBuild exists in gnome-47
+File pure-protobuf.SlackBuild exists in gnome-47
+File eog.SlackBuild exists in gnome-47
+File collector.SlackBuild does not exist in gnome-47
+File aisleriot.SlackBuild exists in gnome-47
+File mod_dnssd.SlackBuild exists in gnome-47
+File boatswain.SlackBuild exists in gnome-47
+File gcab.SlackBuild exists in gnome-47
+File gom.SlackBuild exists in gnome-47
+File Fragments.SlackBuild exists in gnome-47
+File Shortwave.SlackBuild exists in gnome-47
+File ghex.SlackBuild exists in gnome-47
+File gtksourceview4.SlackBuild exists in gnome-47
+File fractal.SlackBuild exists in gnome-47
+File secrets.SlackBuild exists in gnome-47
+File gtk-vnc.SlackBuild exists in gnome-47
+File Flatseal.SlackBuild exists in gnome-47
+File libsmbios.SlackBuild exists in gnome-47
+File callaudiod.SlackBuild exists in gnome-47
+File Collision.SlackBuild exists in gnome-47
+File deja-dup.SlackBuild exists in gnome-47
+File gnome-network-displays.SlackBuild exists in gnome-47
+File vinagre.SlackBuild exists in gnome-47
+File alacarte.SlackBuild exists in gnome-47
+File protobuf3.SlackBuild exists in gnome-47
+File text-engine.SlackBuild exists in gnome-47
+File calls.SlackBuild exists in gnome-47
+File blueprint-compiler.SlackBuild exists in gnome-47
+File zbar.SlackBuild exists in gnome-47
+File libbacktrace.SlackBuild exists in gnome-47
+File http-parser.SlackBuild exists in gnome-47
+File nautilus-code.SlackBuild exists in gnome-47
+File NetworkManager-openvpn-gtk4.SlackBuild exists in gnome-47
+File hidapi.SlackBuild exists in gnome-47
+File Junction.SlackBuild exists in gnome-47
+File gnome-browser-connector.SlackBuild exists in gnome-47
+File protobuf-c.SlackBuild exists in gnome-47
+File gedit-plugins.SlackBuild exists in gnome-47
+File gst-plugins-ugly.SlackBuild does not exist in gnome-47
+File blanket.SlackBuild exists in gnome-47
+File gnome-nettool.SlackBuild exists in gnome-47
+File podcasts.SlackBuild exists in gnome-47
+File gnome-user-share.SlackBuild exists in gnome-47
+File librsync.SlackBuild exists in gnome-47
+File Tangram.SlackBuild exists in gnome-47
+File gdm-settings.SlackBuild exists in gnome-47
+File gitg.SlackBuild exists in gnome-47
+File gedit-latex.SlackBuild does not exist in gnome-47
+File Font-Downloader.SlackBuild exists in gnome-47
+File totem.SlackBuild exists in gnome-47
+File gnome-initial-setup.SlackBuild exists in gnome-47
+File gnome-music.SlackBuild exists in gnome-47
+File Plots.SlackBuild exists in gnome-47
+File feedbackd.SlackBuild exists in gnome-47
+File libgit2-glib.SlackBuild exists in gnome-47
+File gst-editing-services.SlackBuild exists in gnome-47
+File p7zip.SlackBuild exists in gnome-47
+File Curtail.SlackBuild exists in gnome-47
+File Solanum.SlackBuild exists in gnome-47
+File libjcat.SlackBuild exists in gnome-47
+File gnome-contacts.SlackBuild exists in gnome-47
+File duplicity.SlackBuild exists in gnome-47
+File kooha.SlackBuild exists in gnome-47
+File Authenticator.SlackBuild exists in gnome-47
+File accerciser.SlackBuild does not exist in gnome-47
+File transmission.SlackBuild exists in gnome-47
+File cantarell-fonts.SlackBuild exists in gnome-47
+File adobe-source-code-pro-font.SlackBuild exists in gnome-47
+File nautilus-python.SlackBuild exists in gnome-47
+File crystal-lang.SlackBuild exists in gnome-47
+File gnome-text-editor.SlackBuild exists in gnome-47
+File pngquant.SlackBuild exists in gnome-47
+File nautilus-sendto.SlackBuild exists in gnome-47
+File libmanette.SlackBuild exists in gnome-47
+File gssdp.SlackBuild exists in gnome-47
+File giara.SlackBuild exists in gnome-47
+File ibus-gtk4.SlackBuild exists in gnome-47
+File ptyxis.SlackBuild exists in gnome-47
+File sofia-sip.SlackBuild exists in gnome-47
+File Endeavour.SlackBuild exists in gnome-47
+File cups-pk-helper.SlackBuild exists in gnome-47
+File iagno.SlackBuild exists in gnome-47
+File gnome-software.SlackBuild exists in gnome-47
+File dialect.SlackBuild exists in gnome-47
+File papers.SlackBuild exists in gnome-47
+File extension-manager.SlackBuild exists in gnome-47
+File gnome-firmware.SlackBuild exists in gnome-47
+File Commit.SlackBuild exists in gnome-47
+File gnome-tour.SlackBuild exists in gnome-47
+File decoder.SlackBuild exists in gnome-47
+File sushi.SlackBuild exists in gnome-47
+File gnome-backgrounds-extra.SlackBuild exists in gnome-47
+File libgnome-games-support2.SlackBuild exists in gnome-47
+File qqwing.SlackBuild exists in gnome-47
+File highscore.SlackBuild exists in gnome-47
+File retro-gtk.SlackBuild exists in gnome-47
+File libgnome-games-support.SlackBuild exists in gnome-47
+File swell-foop.SlackBuild exists in gnome-47
+File lightsoff.SlackBuild exists in gnome-47
+File four-in-a-row.SlackBuild exists in gnome-47
+File gnome-nibbles.SlackBuild exists in gnome-47
+File gnome-chess.SlackBuild exists in gnome-47
+File gnome-mines.SlackBuild exists in gnome-47
+File clairvoyant.SlackBuild exists in gnome-47
+File five-or-more.SlackBuild exists in gnome-47
+File gnome-2048.SlackBuild exists in gnome-47
+File gnome-mahjongg.SlackBuild exists in gnome-47
+File chess-clock.SlackBuild exists in gnome-47
+File gnome-klotski.SlackBuild exists in gnome-47
+File gnome-tetravex.SlackBuild exists in gnome-47
+File gnome-sudoku.SlackBuild exists in gnome-47
+File gnome-robots.SlackBuild exists in gnome-47
+File atomix.SlackBuild exists in gnome-47
+File libgda.SlackBuild exists in gnome-47
+File gtranslator.SlackBuild exists in gnome-47
+File pika-backup.SlackBuild exists in gnome-47
+File borgbackup.SlackBuild exists in gnome-47
+File libslirp.SlackBuild exists in gnome-47
+File libvirt-python.SlackBuild exists in gnome-47
+File numactl.SlackBuild exists in gnome-47
+File snappy.SlackBuild exists in gnome-47
+File device-tree-compiler.SlackBuild exists in gnome-47
+File libovf-glib.SlackBuild exists in gnome-47
+File gnome-boxes.SlackBuild exists in gnome-47
+File libmks.SlackBuild exists in gnome-47
+File vde2.SlackBuild exists in gnome-47
+File libvirt-glib.SlackBuild exists in gnome-47
+File yajl.SlackBuild exists in gnome-47
+File qemu.SlackBuild exists in gnome-47
+File virt-manager.SlackBuild exists in gnome-47
+File spice-protocol.SlackBuild exists in gnome-47
+File libcacard.SlackBuild exists in gnome-47
+File phodav.SlackBuild exists in gnome-47
+File virglrenderer.SlackBuild exists in gnome-47
+File spice.SlackBuild exists in gnome-47
+File spice-gtk.SlackBuild exists in gnome-47
+File usbredir.SlackBuild exists in gnome-47
+File libvirt.SlackBuild exists in gnome-47
+File libnfs.SlackBuild exists in gnome-47
+File gnome-shell-extension-autohide-battery.SlackBuild exists in gnome-47
+File gnome-shell-extension-arc-menu.SlackBuild exists in gnome-47
+File gnome-shell-extension-cpufreq.SlackBuild exists in gnome-47
+File gnome-shell-extension-eortologio.SlackBuild exists in gnome-47
+File gnome-shell-extension-coverflow-alt-tab.SlackBuild exists in gnome-47
+File gnome-shell-extension-dash-to-panel.SlackBuild exists in gnome-47
+File gnome-shell-extension-tray-icons-reloaded.SlackBuild exists in gnome-47
+File gnome-shell-extension-desktop-icons-ng.SlackBuild exists in gnome-47
+File gnome-shell-extension-appindicator.SlackBuild exists in gnome-47
+File gnome-shell-extension-show-desktop.SlackBuild exists in gnome-47
+File gnome-shell-extension-dash-to-dock.SlackBuild exists in gnome-47
+File vte-gtk4.SlackBuild exists in gnome-47
+File mutter.SlackBuild exists in gnome-47
+File bubblewrap.SlackBuild exists in gnome-47
+File librest.SlackBuild exists in gnome-47
+File libxmlb.SlackBuild exists in gnome-47
+File xdg-dbus-proxy.SlackBuild exists in gnome-47
+File evolution-data-server.SlackBuild exists in gnome-47
+File appstream-glib.SlackBuild exists in gnome-47
+File libdex.SlackBuild exists in gnome-47
+File gnome-settings-daemon.SlackBuild exists in gnome-47
+File gnome-tweaks.SlackBuild exists in gnome-47
+File geocode-glib.SlackBuild exists in gnome-47
+File yelp.SlackBuild exists in gnome-47
+File libnma-gtk4.SlackBuild exists in gnome-47
+File tecla.SlackBuild exists in gnome-47
+File libgdata.SlackBuild exists in gnome-47
+File gdm.SlackBuild exists in gnome-47
+File webkit2gtk4.1.SlackBuild exists in gnome-47
+File gnome-panel.SlackBuild exists in gnome-47
+File webkit2gtk6.0.SlackBuild exists in gnome-47
+File tracker.SlackBuild does not exist in gnome-47
+File unifdef.SlackBuild exists in gnome-47
+File gtksourceview5.SlackBuild exists in gnome-47
+File AppStream.SlackBuild exists in gnome-47
+File gsound.SlackBuild exists in gnome-47
+File blocaled.SlackBuild does not exist in gnome-47
+File xvfb-run.SlackBuild exists in gnome-47
+File gnome-session.SlackBuild exists in gnome-47
+File yelp-xsl.SlackBuild exists in gnome-47
+File python3-langtable.SlackBuild exists in gnome-47
+File gnome-backgrounds.SlackBuild exists in gnome-47
+File python3-attrs.SlackBuild exists in gnome-47
+File rtkit.SlackBuild exists in gnome-47
+File python3-hatch_vcs.SlackBuild exists in gnome-47
+File python3-hatch_fancy_pypi_readme.SlackBuild exists in gnome-47
+File sysprof.SlackBuild exists in gnome-47
+File gnome-online-accounts.SlackBuild exists in gnome-47
+File gnome-console.SlackBuild exists in gnome-47
+File yelp-tools.SlackBuild exists in gnome-47
+File gnome-terminal.SlackBuild exists in gnome-47
+File libjxl.SlackBuild exists in gnome-47
+File libostree.SlackBuild exists in gnome-47
+File gnome-autoar.SlackBuild exists in gnome-47
+File libstemmer.SlackBuild exists in gnome-47
+File gnome-bluetooth.SlackBuild exists in gnome-47
+File libdaemon.SlackBuild exists in gnome-47
+File flatpak.SlackBuild exists in gnome-47
+File libadwaita.SlackBuild exists in gnome-47
+File gnome-disk-utility.SlackBuild exists in gnome-47
+File colord-gtk.SlackBuild exists in gnome-47
+File snapshot.SlackBuild exists in gnome-47
+File gnome-shell-extensions.SlackBuild exists in gnome-47
+File gnome-weather.SlackBuild exists in gnome-47
+File libwpe.SlackBuild exists in gnome-47
+File libavif.SlackBuild exists in gnome-47
+File gnome-desktop.SlackBuild exists in gnome-47
+File libyuv.SlackBuild exists in gnome-47
+File jq.SlackBuild exists in gnome-47
+File gflags.SlackBuild exists in gnome-47
+File wpebackend-fdo.SlackBuild exists in gnome-47
+File webp-pixbuf-loader.SlackBuild exists in gnome-47
+File gnome-shell.SlackBuild exists in gnome-47
+File gnome-menus.SlackBuild exists in gnome-47
+File malcontent.SlackBuild exists in gnome-47
+File gnome-control-center.SlackBuild exists in gnome-47
+File highway.SlackBuild exists in gnome-47
+File libgweather4.SlackBuild exists in gnome-47
+File nautilus.SlackBuild exists in gnome-47
+File svt-av1.SlackBuild exists in gnome-47
+File libei.SlackBuild exists in gnome-47
+File sysprof.SlackBuild exists in gnome-47
+File libcloudproviders.SlackBuild exists in gnome-47
+File gperftools.SlackBuild exists in gnome-47
+File python3-pyacoustid.SlackBuild exists in gnome-47
+File python3-google-api-python-client.SlackBuild exists in gnome-47
+File python3-unidecode.SlackBuild exists in gnome-47
+File python3-setuptools-rust.SlackBuild exists in gnome-47
+File python3-pyopenssl.SlackBuild exists in gnome-47
+File python3-prawcore.SlackBuild exists in gnome-47
+File python3-glm.SlackBuild exists in gnome-47
+File python3-pam.SlackBuild does not exist in gnome-47
+File python3-fonttools.SlackBuild exists in gnome-47
+File python3-piexif.SlackBuild exists in gnome-47
+File python3-pyotp.SlackBuild exists in gnome-47
+File python3-natsort.SlackBuild exists in gnome-47
+File python3-googleapis-common-protos.SlackBuild exists in gnome-47
+File python3-typing_extensions.SlackBuild exists in gnome-47
+File python3-uritemplate.SlackBuild exists in gnome-47
+File python3-decorator.SlackBuild exists in gnome-47
+File python3-msgpack.SlackBuild exists in gnome-47
+File python3-pefile.SlackBuild exists in gnome-47
+File python3-oauth2client.SlackBuild exists in gnome-47
+File python3-jupyter-console.SlackBuild does not exist in gnome-47
+File python3-gaphas.SlackBuild exists in gnome-47
+File python3-traitlets.SlackBuild does not exist in gnome-47
+File python3-argon2-cffi.SlackBuild exists in gnome-47
+File python3-emoji.SlackBuild exists in gnome-47
+File python3-colorthief.SlackBuild exists in gnome-47
+File python3-entrypoints.SlackBuild exists in gnome-47
+File python3-beautifulsoup4.SlackBuild exists in gnome-47
+File python3-ipython.SlackBuild does not exist in gnome-47
+File python3-parso.SlackBuild exists in gnome-47
+File python3-poetry-dynamic-versioning.SlackBuild exists in gnome-47
+File python3-google-resumable-media.SlackBuild exists in gnome-47
+File python3-protobuf.SlackBuild exists in gnome-47
+File python3-pep517.SlackBuild exists in gnome-47
+File python3-tomlkit.SlackBuild exists in gnome-47
+File python3-google-cloud-core.SlackBuild exists in gnome-47
+File python3-tinycss2.SlackBuild exists in gnome-47
+File python3-peewee.SlackBuild exists in gnome-47
+File python3-fasteners.SlackBuild exists in gnome-47
+File python3-numpy.SlackBuild exists in gnome-47
+File python3-pykeepass.SlackBuild exists in gnome-47
+File python3-liblouis.SlackBuild exists in gnome-47
+File python3-tzlocal.SlackBuild exists in gnome-47
+File python3-gtts.SlackBuild exists in gnome-47
+File python3-jedi.SlackBuild exists in gnome-47
+File python3-google-crc32c.SlackBuild exists in gnome-47
+File python3-httplib2.SlackBuild exists in gnome-47
+File python3-magic.SlackBuild exists in gnome-47
+File python3-argon2-cffi-bindings.SlackBuild exists in gnome-47
+File python3-flit_core.SlackBuild exists in gnome-47
+File python3-pyasn1-modules.SlackBuild exists in gnome-47
+File python3-exceptiongroup.SlackBuild exists in gnome-47
+File python3-poetry-core.SlackBuild exists in gnome-47
+File python3-pyproject-hooks.SlackBuild exists in gnome-47
+File python3-cachetools.SlackBuild exists in gnome-47
+File python3-validators.SlackBuild exists in gnome-47
+File python3-regex.SlackBuild exists in gnome-47
+File python3-more-itertools.SlackBuild exists in gnome-47
+File python3-unicodedata2.SlackBuild exists in gnome-47
+File python3-lark.SlackBuild exists in gnome-47
+File python3-semantic_version.SlackBuild exists in gnome-47
+File python3-generic.SlackBuild exists in gnome-47
+File python3-opengl.SlackBuild exists in gnome-47
+File python3-mistune.SlackBuild exists in gnome-47
+File python3-guzzle_sphinx_theme.SlackBuild exists in gnome-47
+File python3-zxcvbn.SlackBuild exists in gnome-47
+File python3-dateparser.SlackBuild exists in gnome-47
+File python3-google-auth-httplib2.SlackBuild exists in gnome-47
+File python3-better-exceptions.SlackBuild exists in gnome-47
+File python3-mat2.SlackBuild exists in gnome-47
+File python3-pyasn1.SlackBuild exists in gnome-47
+File python3-cryptography.SlackBuild exists in gnome-47
+File python3-keyring.SlackBuild exists in gnome-47
+File python3-jaraco.functools.SlackBuild exists in gnome-47
+File python3-dateutil.SlackBuild exists in gnome-47
+File python3-mutagen.SlackBuild exists in gnome-47
+File python3-pypandoc.SlackBuild exists in gnome-47
+File python3-websocket-client.SlackBuild exists in gnome-47
+File python3-pydot.SlackBuild exists in gnome-47
+File python3-google-api-core.SlackBuild exists in gnome-47
+File python3-construct.SlackBuild exists in gnome-47
+File python3-freetype.SlackBuild exists in gnome-47
+File python3-flit_scm.SlackBuild exists in gnome-47
+File python3-pycryptodomex.SlackBuild exists in gnome-47
+File python3-soupsieve.SlackBuild exists in gnome-47
+File python3-turtle.SlackBuild exists in gnome-47
+File python3-google-auth.SlackBuild exists in gnome-47
+File python3-rarfile.SlackBuild exists in gnome-47
+File python3-click.SlackBuild exists in gnome-47
+File python3-scour.SlackBuild exists in gnome-47
+File python3-rsa.SlackBuild exists in gnome-47
+File python3-praw.SlackBuild exists in gnome-47
+File python3-pydrive2.SlackBuild exists in gnome-47
+File python3-google-cloud-storage.SlackBuild exists in gnome-47
+File python3-pygit2.SlackBuild exists in gnome-47
+File python3-curl_cffi.SlackBuild exists in gnome-47
+File python3-dunamai.SlackBuild exists in gnome-47
+File grilo.SlackBuild exists in gnome-47
+File gnome-calculator.SlackBuild exists in gnome-47
+File gnome-clocks.SlackBuild exists in gnome-47
+File grilo-plugins.SlackBuild exists in gnome-47
+File osinfo-db.SlackBuild exists in gnome-47
+File libpeas2.SlackBuild exists in gnome-47
+File libdazzle.SlackBuild exists in gnome-47
+File libgxps.SlackBuild exists in gnome-47
+File pyatspi.SlackBuild exists in gnome-47
+File cmark.SlackBuild exists in gnome-47
+File xdg-desktop-portal-gtk.SlackBuild exists in gnome-47
+File libgrss.SlackBuild exists in gnome-47
+File liboauth.SlackBuild exists in gnome-47
+File gnome-remote-desktop.SlackBuild exists in gnome-47
+File libosinfo.SlackBuild exists in gnome-47
+File tracker-miners.SlackBuild does not exist in gnome-47
+File gom.SlackBuild exists in gnome-47
+File tepl.SlackBuild exists in gnome-47
+File seahorse.SlackBuild exists in gnome-47
+File libmediaart.SlackBuild exists in gnome-47
+File gnome-usage.SlackBuild exists in gnome-47
+File gnome-power-manager.SlackBuild exists in gnome-47
+File fdkaac.SlackBuild exists in gnome-47
+File libgedit-gtksourceview.SlackBuild exists in gnome-47
+File simple-scan.SlackBuild exists in gnome-47
+File folks.SlackBuild exists in gnome-47
+File xdg-desktop-portal-gnome.SlackBuild exists in gnome-47
+File libiptcdata.SlackBuild exists in gnome-47
+File gnome-calendar.SlackBuild exists in gnome-47
+File osinfo-db-tools.SlackBuild exists in gnome-47
+File libpst.SlackBuild exists in gnome-47
+File zenity.SlackBuild exists in gnome-47
+File glycin-loaders.SlackBuild exists in gnome-47
+File lua53.SlackBuild exists in gnome-47
+File highlight.SlackBuild exists in gnome-47
+File file-roller.SlackBuild exists in gnome-47
+File libpeas.SlackBuild exists in gnome-47
+File libgedit-amtk.SlackBuild exists in gnome-47
+File evince.SlackBuild exists in gnome-47
+File totem-pl-parser.SlackBuild exists in gnome-47
+File telepathy-glib.SlackBuild exists in gnome-47
+File gnome-font-viewer.SlackBuild exists in gnome-47
+File gnome-user-docs.SlackBuild exists in gnome-47
+File gedit.SlackBuild exists in gnome-47
+File brasero.SlackBuild exists in gnome-47
+File gspell.SlackBuild exists in gnome-47
+File baobab.SlackBuild exists in gnome-47
+File power-profiles-daemon.SlackBuild exists in gnome-47
+File loupe.SlackBuild exists in gnome-47
+File adwaita-icon-theme-legacy.SlackBuild exists in gnome-47
+File libshumate.SlackBuild exists in gnome-47
+File libfdk-aac.SlackBuild exists in gnome-47
+File exempi.SlackBuild exists in gnome-47
+File orca.SlackBuild exists in gnome-47
+File gnome-maps.SlackBuild exists in gnome-47
+File gnome-characters.SlackBuild exists in gnome-47
+File freerdp3.SlackBuild exists in gnome-47
+File ytnef.SlackBuild exists in gnome-47
+File evolution.SlackBuild exists in gnome-47
+File epiphany.SlackBuild exists in gnome-47
+File tpm2-tss.SlackBuild exists in gnome-47
+File gnome-system-monitor.SlackBuild exists in gnome-47
+File libdmapsharing.SlackBuild exists in gnome-47
+File libheif.SlackBuild exists in gnome-47
+File nv-codec-headers.SlackBuild exists in gnome-47
+File clutter-gst.SlackBuild does not exist in gnome-47
+File python3-lxml.SlackBuild exists in gnome-47
+File cheese.SlackBuild does not exist in gnome-47
+File amtk.SlackBuild does not exist in gnome-47
+File avahi.SlackBuild exists in gnome-47
+File lua54.SlackBuild does not exist in gnome-47
+File gnome-shell-extension-overview-feature-pack.SlackBuild does not exist in gnome-47
+File gnome-video-effects.SlackBuild does not exist in gnome-47
+File upower.SlackBuild exists in gnome-47
+File gnome-control-center-vrr.SlackBuild does not exist in gnome-47
+File mutter-vrr.SlackBuild does not exist in gnome-47
+File python3-wheel.SlackBuild exists in gnome-47
+File python3-build.SlackBuild exists in gnome-47
+File python3-webencodings.SlackBuild exists in gnome-47
+File vala.SlackBuild exists in gnome-47
+File python3-installer.SlackBuild exists in gnome-47
+File clutter-gtk.SlackBuild does not exist in gnome-47
+File libhandy.SlackBuild does not exist in gnome-47
+File clutter.SlackBuild does not exist in gnome-47
+File libwnck3.SlackBuild does not exist in gnome-47
+File python3-hatchling.SlackBuild exists in gnome-47
+File gi-docgen.SlackBuild exists in gnome-47
+File sphinx_rtd_theme.SlackBuild does not exist in gnome-47
+File libgnomekbd.SlackBuild does not exist in gnome-47
+File gnome-shell-extension-webfeed.SlackBuild does not exist in gnome-47
+File cairo.SlackBuild exists in gnome-47
+File dconf-editor.SlackBuild exists in gnome-47
+File libgusb.SlackBuild exists in gnome-47
+File libaom.SlackBuild exists in gnome-47
+File cairomm1.SlackBuild exists in gnome-47
+File vte.SlackBuild exists in gnome-47
+File gnome-keyring.SlackBuild exists in gnome-47
+File librsvg.SlackBuild exists in gnome-47
+File libsoup3.SlackBuild exists in gnome-47
+File python3-smartypants.SlackBuild exists in gnome-47
+File adwaita-icon-theme.SlackBuild exists in gnome-47
+File xdg-desktop-portal.SlackBuild exists in gnome-47
+File pango.SlackBuild exists in gnome-47
+File libgtop.SlackBuild exists in gnome-47
+File mozjs115.SlackBuild exists in gnome-47
+File dav1d.SlackBuild exists in gnome-47
+File python3-toml.SlackBuild exists in gnome-47
+File python3-pillow.SlackBuild exists in gnome-47
+File gtkmm4.SlackBuild exists in gnome-47
+File gjs.SlackBuild exists in gnome-47
+File graphviz.SlackBuild exists in gnome-47
+File pangomm2.SlackBuild exists in gnome-47
+File ibus.SlackBuild exists in gnome-47
+File geoclue2.SlackBuild exists in gnome-47
+File python3-docutils.SlackBuild exists in gnome-47
+File glibmm2.SlackBuild exists in gnome-47
+File libportal.SlackBuild exists in gnome-47
+File mm-common.SlackBuild exists in gnome-47
+File colord.SlackBuild exists in gnome-47
+File accountsservice.SlackBuild exists in gnome-47
+File gsettings-desktop-schemas.SlackBuild exists in gnome-47
+File gobject-introspection.SlackBuild exists in gnome-47
+File at-spi2-core.SlackBuild exists in gnome-47
+File gvfs.SlackBuild exists in gnome-47
+File gtk4.SlackBuild exists in gnome-47
+File glib-networking.SlackBuild exists in gnome-47
+File glib2.SlackBuild exists in gnome-47
+File python3-typogrify.SlackBuild exists in gnome-47
+File gcr4.SlackBuild exists in gnome-47
+File pygobject3.SlackBuild exists in gnome-47
+File devhelp.SlackBuild exists in gnome-47
+File libpanel.SlackBuild exists in gnome-47
+File template-glib.SlackBuild exists in gnome-47
+File d-spy.SlackBuild exists in gnome-47
+File gnome-builder.SlackBuild exists in gnome-47
+File flatpak-builder.SlackBuild exists in gnome-47
+File jsonrpc-glib.SlackBuild exists in gnome-47
+
+NOT EXIST
+=====================================
+File exiftool.SlackBuild does not exist in gnome-47
+File GFS-tracker.SlackBuild does not exist in gnome-47
+File gstreamer-vaapi.SlackBuild does not exist in gnome-47
+File gpaste.SlackBuild does not exist in gnome-47
+File collector.SlackBuild does not exist in gnome-47
+File gst-plugins-ugly.SlackBuild does not exist in gnome-47
+File gedit-latex.SlackBuild does not exist in gnome-47
+File accerciser.SlackBuild does not exist in gnome-47
+File tracker.SlackBuild does not exist in gnome-47
+File blocaled.SlackBuild does not exist in gnome-47
+File python3-pam.SlackBuild does not exist in gnome-47
+File python3-jupyter-console.SlackBuild does not exist in gnome-47
+File python3-traitlets.SlackBuild does not exist in gnome-47
+File python3-ipython.SlackBuild does not exist in gnome-47
+File tracker-miners.SlackBuild does not exist in gnome-47
+File clutter-gst.SlackBuild does not exist in gnome-47
+File cheese.SlackBuild does not exist in gnome-47
+File amtk.SlackBuild does not exist in gnome-47
+File lua54.SlackBuild does not exist in gnome-47
+File gnome-shell-extension-overview-feature-pack.SlackBuild does not exist in gnome-47
+File gnome-video-effects.SlackBuild does not exist in gnome-47
+File gnome-control-center-vrr.SlackBuild does not exist in gnome-47
+File mutter-vrr.SlackBuild does not exist in gnome-47
+File clutter-gtk.SlackBuild does not exist in gnome-47
+File libhandy.SlackBuild does not exist in gnome-47
+File clutter.SlackBuild does not exist in gnome-47
+File libwnck3.SlackBuild does not exist in gnome-47
+File sphinx_rtd_theme.SlackBuild does not exist in gnome-47
+File libgnomekbd.SlackBuild does not exist in gnome-47
+File gnome-shell-extension-webfeed.SlackBuild does not exist in gnome-47

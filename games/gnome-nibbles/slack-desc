@@ -1,0 +1,18 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+             |-----handy-ruler------------------------------------------------------|
+gnome-nibbles: gnome-nibbles (Guide a worm around a maze)
+gnome-nibbles:
+gnome-nibbles: Control a worm in its quest to eat bonuses and become longer. 
+gnome-nibbles: Outmaneuver enemy worms while eating doughnuts and ice cream to
+gnome-nibbles: increase your length.Each worm has ten lives and loses one by running
+gnome-nibbles: into a wall, another worm, or itself. The enemy worms are after the
+gnome-nibbles: same bonuses that you are, so be careful: if they become too large,
+gnome-nibbles: you won’t have much room for movement.
+gnome-nibbles:
+gnome-nibbles: Homepage: https://wiki.gnome.org/Apps/Nibbles
+gnome-nibbles:

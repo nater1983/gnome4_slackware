@@ -1,0 +1,192 @@
+These are dependencies for a Slackware-current system, assume full installation.
+Following Slackware tradition, all preinstalled dependencies from full installation skipped...
+Circular dependencies found:
+
+adwaita-icon-theme-legacy REQUIRES: adwaita-icon-theme
+gi-docgen REQUIRES: python3-toml, python3-typogrify, python3-smartypants
+libportal REQUIRES: python3-pytest
+librsvg REQUIRES: cargo-c
+python3-lxml REQUIRES: python3-soupsieve, python3-webencodings
+python3-typogrify REQUIRES: python3-smartypants
+gnome-shell-extension-appindicator REQUIRES: gnome-shell-extensions
+gnome-shell-extension-arc-menu REQUIRES: gnome-shell-extensions, gnome-menus
+gnome-shell-extension-autohide-battery REQUIRES: gnome-shell-extensions
+gnome-shell-extension-coverflow-alt-tab REQUIRES: gnome-shell-extensions
+gnome-shell-extension-cpufreq REQUIRES: gnome-shell-extensions
+gnome-shell-extension-dash-to-dock REQUIRES: gnome-shell-extensions
+gnome-shell-extension-dash-to-panel REQUIRES: gnome-shell-extensions
+gnome-shell-extension-desktop-icons-ng REQUIRES: gnome-shell-extensions
+gnome-shell-extension-eortologio REQUIRES: gnome-shell-extensions
+gnome-shell-extension-show-desktop REQUIRES: gnome-shell-extensions
+gnome-shell-extension-tray-icons-reloaded REQUIRES: gnome-shell-extensions
+gnome-boxes REQUIRES: libosinfo, tinysparql, gtk-vnc, webkit2gtk4.1, libvirt-glib, spice-gtk, gtksourceview5
+libvirt REQUIRES: yajl, openwsman
+libvirt-glib REQUIRES: libvirt
+libvirt-python REQUIRES: libvirt
+spice REQUIRES: spice-protocol
+spice-gtk REQUIRES: spice
+gtranslator REQUIRES: libgda, libspelling
+pika-backup REQUIRES: python3-typing_extensions, python3-semantic_version, libadwaita, python3-httplib2, python3-google-api-python-client, python3-google-cloud-core, python3-google-resumable-media, python3-rsa, python3-pyasn1, python3-google-api-core, python3-googleapis-common-protos, python3-google-auth-httplib2, python3-pyopenssl, python3-google-cloud-storage, python3-pydrive2, python3-cachetools, python3-google-auth, python3-protobuf, python3-google-crc32c, python3-pyasn1-modules, python3-msgpack, borgbackup, python3-oauth2client, python3-setuptools-rust, python3-cryptography, python3-uritemplate, python3-guzzle_sphinx_theme
+atomix REQUIRES: libgnome-games-support
+clairvoyant REQUIRES: libadwaita
+gnome-klotski REQUIRES: libgnome-games-support
+gnome-nibbles REQUIRES: libgnome-games-support2
+gnome-robots REQUIRES: libadwaita
+swell-foop REQUIRES: libgnome-games-support2
+Impression REQUIRES: libadwaita
+baobab REQUIRES: libadwaita
+cargo-c REQUIRES: libgit2
+epiphany REQUIRES: wpebackend-fdo, webkit2gtk6.0, libwpe, gcab, xdg-dbus-proxy, libdazzle, libportal, bubblewrap, geoclue2, appstream-glib
+evolution REQUIRES: evolution-data-server, wpebackend-fdo, ytnef, gnome-autoar, libpst, geocode-glib, cmark, libwpe, lua53, librest, bubblewrap, libgweather4, libgdata, xdg-dbus-proxy, gnome-online-accounts, highlight, cogl, webkit2gtk4.1, geoclue2
+file-roller REQUIRES: libportal, nautilus, libadwaita
+folks REQUIRES: evolution-data-server, telepathy-glib
+gedit REQUIRES: libgedit-amtk, libgedit-gtksourceview, libpeas
+glycin-loaders REQUIRES: libheif, libjxl, libadwaita
+gnome-calculator REQUIRES: libadwaita, gtksourceview5
+gnome-calendar REQUIRES: evolution-data-server, wpebackend-fdo, gnome-online-accounts, librest, libwpe, xdg-dbus-proxy, geocode-glib, libdazzle, bubblewrap, libgweather4, webkit2gtk4.1, geoclue2, libgdata
+gnome-clocks REQUIRES: gnome-desktop, geocode-glib, libgweather4, geoclue2, libadwaita, gsound
+gnome-font-viewer REQUIRES: gnome-desktop, libadwaita
+gnome-maps REQUIRES: librest, libshumate, libgweather4, geoclue2, libadwaita
+gnome-remote-desktop REQUIRES: libei, libfdk-aac, freerdp3
+gnome-system-monitor REQUIRES: libadwaita
+gnome-usage REQUIRES: libadwaita
+grilo REQUIRES: totem-pl-parser, liboauth
+grilo-plugins REQUIRES: grilo, libmediaart, libdmapsharing, liboauth
+libgedit-tepl REQUIRES: libgedit-amtk, libgedit-gfls, libgedit-gtksourceview
+libheif REQUIRES: x265, svt-av1, rav1e, libde265
+libosinfo REQUIRES: osinfo-db
+libshumate REQUIRES: protobuf-c
+localsearch REQUIRES: libosinfo, tinysparql, totem-pl-parser, libgxps, exempi, libiptcdata
+loupe REQUIRES: libheif, geocode-glib, libgweather4, glycin-loaders, libadwaita
+orca REQUIRES: python3-liblouis, pyatspi
+osinfo-db REQUIRES: osinfo-db-tools
+simple-scan REQUIRES: libadwaita
+tepl REQUIRES: libgedit-amtk, libgedit-gtksourceview
+xdg-desktop-portal-gnome REQUIRES: xdg-desktop-portal-gtk
+flatpak-builder REQUIRES: flatpak, gcab, xdg-desktop-portal-gtk, libostree, bubblewrap, appstream-glib
+gnome-builder REQUIRES: webkit2gtk6.0, libdex, sysprof, libpeas2, libportal, libgit2-glib, jsonrpc-glib, template-glib, libpanel, cmark, gtksourceview5
+cozy REQUIRES: python3-mutagen, libdazzle, gst-plugins-ugly, python3-peewee
+elastic REQUIRES: libadwaita
+emblem REQUIRES: libadwaita
+enter-tex REQUIRES: libgedit-tepl
+eyedropper REQUIRES: libadwaita
+gaphor REQUIRES: python3-exceptiongroup, python3-poetry-core, python3-pydot, graphviz, python3-better-exceptions, python3-tinycss2, python3-generic, python3-flit_scm, python3-gaphas, python3-installer, python3-parso, python3-pyproject-hooks, python3-jedi, python3-build, libadwaita, python3-webencodings
+gnome-recipes REQUIRES: gnome-autoar
+gnote REQUIRES: libadwaita, appstream-glib
+gnumeric REQUIRES: psiconv
+gthumb REQUIRES: libheif
+gupnp REQUIRES: gssdp
+health REQUIRES: appstream-glib, libadwaita, blueprint-compiler
+identity REQUIRES: libadwaita
+khronos REQUIRES: libadwaita
+komikku REQUIRES: python3-piexif, python3-dateparser, python3-entrypoints, python3-keyring, python3-natsort, python3-tzlocal, pure-protobuf, libadwaita, python3-dateutil, python3-regex, python3-pillow_heif, python3-magic, python3-curl_cffi, python3-emoji, python3-rarfile, python3-soupsieve, python3-pytz, python3-colorthief, python3-beautifulsoup4, python3-more-itertools, python3-jaraco.functools, python3-unidecode
+lorem REQUIRES: libadwaita
+meld REQUIRES: gtksourceview4
+metadata-cleaner REQUIRES: python3-mutagen, python3-mat2, libadwaita, python3-pyproject-hooks
+metronome REQUIRES: libadwaita
+mousai REQUIRES: libadwaita
+news_flash_gtk REQUIRES: libadwaita
+polari REQUIRES: telepathy-logger
+raider REQUIRES: libadwaita
+rygel REQUIRES: gst-editing-services, gupnp, gupnp-av, gupnp-dlna, gssdp
+share-preview REQUIRES: libadwaita
+sound-juicer REQUIRES: libmusicbrainz5
+telegraph REQUIRES: libadwaita
+telepathy-mission-control REQUIRES: telepathy-glib
+textpieces REQUIRES: libadwaita
+video-trimmer REQUIRES: libadwaita
+warp REQUIRES: libadwaita
+webfont-kit-generator REQUIRES: libadwaita
+wike REQUIRES: webkit2gtk6.0, libadwaita, appstream-glib
+workbench REQUIRES: blueprint-compiler, rome, libadwaita, vala-language-server
+zap REQUIRES: libadwaita
+Authenticator REQUIRES: zbar
+Collision REQUIRES: crystal-lang, libadwaita
+Commit REQUIRES: blueprint-compiler
+Curtail REQUIRES: jpegoptim, oxipng, pngquant, python3-scour, libadwaita
+Endeavour REQUIRES: evolution, evolution-data-server, gnome-online-accounts, libstemmer, libadwaita
+Font-Downloader REQUIRES: libadwaita
+Junction REQUIRES: libadwaita
+Plots REQUIRES: python3-lark, python3-numpy, python3-opengl, python3-glm, python3-freetype
+Shortwave REQUIRES: libadwaita
+Solanum REQUIRES: libadwaita
+Tangram REQUIRES: libadwaita
+apostrophe REQUIRES: python3-pypandoc
+blanket REQUIRES: pygobject3, libadwaita
+boatswain REQUIRES: libportal, libadwaita, hidapi, libpeas
+calls REQUIRES: libpeas2
+cantarell-fonts REQUIRES: gcab, appstream-glib
+decoder REQUIRES: libadwaita
+deja-dup REQUIRES: librsync, python3-fasteners, liboauth, duplicity, rclone, libadwaita
+dialect REQUIRES: python3-gtts, libadwaita
+eog REQUIRES: exempi, libportal, gnome-desktop, libpeas
+extension-manager REQUIRES: blueprint-compiler, http-parser, libbacktrace, text-engine, libadwaita, appstream-glib
+feedbackd REQUIRES: umockdev
+font-manager REQUIRES: yelp, nautilus, libadwaita
+fractal REQUIRES: gtksourceview5, libadwaita, libshumate
+fwupd REQUIRES: python3-pefile, gcab, libxmlb, protobuf-c, libsmbios, libjcat
+geary REQUIRES: libpeas, libstemmer, ytnef, folks, webkit2gtk4.1, appstream-glib
+gedit-plugins REQUIRES: gedit
+ghex REQUIRES: libadwaita
+giara REQUIRES: python3-dateutil, python3-praw, blueprint-compiler, python3-mistune, python3-websocket-client, python3-beautifulsoup4, python3-prawcore
+gnome-browser-connector REQUIRES: p7zip, jq
+gnome-connections REQUIRES: freerdp3
+gnome-contacts REQUIRES: gnome-online-accounts, folks, libportal, libadwaita
+gnome-firmware REQUIRES: libadwaita, fwupd
+gnome-initial-setup REQUIRES: malcontent, webkit2gtk6.0, gnome-desktop, geocode-glib, libnma-gtk4, gdm, gsettings-desktop-schemas, libgweather4, geoclue2, libadwaita
+gnome-music REQUIRES: localsearch, gnome-online-accounts, grilo-plugins, grilo, libmediaart, libadwaita
+gnome-network-displays REQUIRES: gst-rtsp-server, protobuf-c
+gnome-photos REQUIRES: wpebackend-fdo, xdg-dbus-proxy, gnome-online-accounts, librest, libwpe, totem-pl-parser, geocode-glib, grilo, libdazzle, libportal, bubblewrap, webkit2gtk4.1, geoclue2, libgdata
+gnome-software REQUIRES: flatpak, AppStream, libadwaita
+gnome-text-editor REQUIRES: libspelling, libadwaita, gtksourceview5
+gnome-user-share REQUIRES: nautilus
+gpaste REQUIRES: libadwaita
+iagno REQUIRES: gsound
+ibus-gtk4 REQUIRES: ibus
+kooha REQUIRES: libadwaita, appstream-glib
+libgit2-glib REQUIRES: libgit2
+libspelling REQUIRES: gtksourceview5
+nautilus-code REQUIRES: nautilus-python
+papers REQUIRES: exempi, nautilus, libadwaita
+podcasts REQUIRES: libadwaita, appstream-glib
+ptyxis REQUIRES: libportal, libadwaita
+pure-protobuf REQUIRES: python3-poetry-dynamic-versioning, python3-tomlkit, python3-poetry-core, python3-dunamai
+secrets REQUIRES: python3-dateutil, python3-construct, python3-argon2-cffi, python3-pep517, python3-argon2-cffi-bindings, python3-pykeepass, python3-pyotp, python3-installer, python3-validators, python3-decorator, python3-build, python3-pycryptodomex
+sushi REQUIRES: gtksourceview4
+totem REQUIRES: totem-pl-parser
+AppStream REQUIRES: libxmlb
+appstream-glib REQUIRES: libstemmer, gcab
+evolution-data-server REQUIRES: wpebackend-fdo, webkit2gtk6.0, gnome-online-accounts, librest, libwpe, xdg-dbus-proxy, geocode-glib, bubblewrap, libgweather4, geoclue2, libgdata
+flatpak REQUIRES: xdg-dbus-proxy, AppStream, xdg-desktop-portal-gtk, libostree, bubblewrap, appstream-glib
+gdm REQUIRES: evolution-data-server, wpebackend-fdo, gnome-session, gnome-autoar, gnome-settings-daemon, openrc-settingsd, gnome-control-center, geocode-glib, xvfb-run, mutter, gsound, cups-pk-helper, libwpe, librest, gnome-desktop, gnome-shell, gnome-bluetooth, bubblewrap, libgweather4, libgdata, libdaemon, gnome-online-accounts, xdg-dbus-proxy, webkit2gtk4.1, geoclue2
+gnome-bluetooth REQUIRES: gsound, gnome-shell, libadwaita, gnome-control-center
+gnome-console REQUIRES: libadwaita
+gnome-control-center REQUIRES: wpebackend-fdo, freerdp3, tecla, webp-pixbuf-loader, gnome-settings-daemon, libadwaita, geocode-glib, gnome-color-manager, libnma-gtk4, gsound, cups-pk-helper, libwpe, librest, gnome-desktop, gnome-user-share, gnome-bluetooth, gnome-remote-desktop, bubblewrap, libgweather4, rygel, xdg-dbus-proxy, gnome-online-accounts, webkit2gtk4.1, geoclue2
+gnome-online-accounts REQUIRES: wpebackend-fdo, xdg-dbus-proxy, libwpe, librest, bubblewrap, webkit2gtk4.1, geoclue2
+gnome-session REQUIRES: gnome-desktop
+gnome-settings-daemon REQUIRES: geoclue2, libgweather4, gnome-desktop, geocode-glib
+gnome-shell REQUIRES: evolution-data-server, wpebackend-fdo, gnome-autoar, gnome-settings-daemon, gnome-control-center, AppStream, geocode-glib, xvfb-run, mutter, gsound, cups-pk-helper, libwpe, librest, gnome-desktop, gnome-bluetooth, bubblewrap, libgweather4, libgdata, xdg-dbus-proxy, gnome-online-accounts, webkit2gtk4.1, geoclue2
+gnome-shell-extensions REQUIRES: gnome-menus
+gnome-terminal REQUIRES: evolution-data-server, wpebackend-fdo, gnome-autoar, gnome-settings-daemon, gnome-control-center, geocode-glib, xvfb-run, mutter, nautilus, gsound, cups-pk-helper, libwpe, librest, gnome-desktop, gnome-shell, libportal, gnome-bluetooth, bubblewrap, libgweather4, libgdata, xdg-dbus-proxy, gnome-online-accounts, webkit2gtk4.1, geoclue2
+gnome-tweaks REQUIRES: gsettings-desktop-schemas
+gnome-weather REQUIRES: geoclue2, libgweather4, geocode-glib
+libei REQUIRES: python3-attrs
+libgdata REQUIRES: wpebackend-fdo, xdg-dbus-proxy, gnome-online-accounts, librest, libwpe, bubblewrap, webkit2gtk4.1, geoclue2
+libgweather4 REQUIRES: geocode-glib
+libjxl REQUIRES: highway, gperftools, gflags
+librest REQUIRES: gtksourceview5
+mutter REQUIRES: libei, gnome-desktop, gnome-shell, geocode-glib, xvfb-run, gnome-settings-daemon, libgweather4, geoclue2
+nautilus REQUIRES: libcloudproviders, libportal, gnome-desktop, gnome-autoar
+python3-attrs REQUIRES: python3-hatch_fancy_pypi_readme
+tecla REQUIRES: libadwaita
+webkit2gtk4.1 REQUIRES: wpebackend-fdo, xdg-dbus-proxy, sysprof, bubblewrap, geoclue2
+webkit2gtk6.0 REQUIRES: wpebackend-fdo, libavif, libjxl, libwpe, xdg-dbus-proxy, highway, bubblewrap, geoclue2, libyuv
+wpebackend-fdo REQUIRES: libwpe
+yelp REQUIRES: wpebackend-fdo, xdg-dbus-proxy, libwpe, python3-soupsieve, yelp-tools, bubblewrap, webkit2gtk4.1, geoclue2, yelp-xsl, python3-webencodings
+yelp-tools REQUIRES: yelp-xsl
+python3-cryptography REQUIRES: python3-semantic_version, python3-setuptools-rust, python3-maturin
+python3-flit_scm REQUIRES: python3-flit_scm
+python3-gaphas REQUIRES: python3-exceptiongroup, python3-poetry-core, libadwaita
+python3-gtts REQUIRES: python3-click
+python3-numpy REQUIRES: python3-mesonpy, python3-pyproject-metadata
+python3-turtle REQUIRES: python3-pygit2

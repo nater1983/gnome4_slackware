@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                   |-----handy-ruler------------------------------------------------------|
+rhythmbox-tray-icon: rhythmbox-tray-icon (Tray Icon) 
+rhythmbox-tray-icon:
+rhythmbox-tray-icon: Rhythmbox tray icon plugin.
+rhythmbox-tray-icon:
+rhythmbox-tray-icon: A tray icon to control basic Rhythmbox features. Requires Rhythmbox
+rhythmbox-tray-icon: 2.9+. You can rate the track, play/pause, go previous, go next, or
+rhythmbox-tray-icon: quit.
+rhythmbox-tray-icon:
+rhythmbox-tray-icon:
+rhythmbox-tray-icon: https://github.com/linuxmint/rhythmbox-tray-icon 
+rhythmbox-tray-icon:

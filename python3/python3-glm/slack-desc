@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+python3-glm: python3-glm (Fast OpenGL Mathematics (GLM) for Python )
+python3-glm:
+python3-glm: GLM is a Python library for doing mathematics operations required in
+python3-glm: many OpenGL based applications. Its interface has been designed to
+python3-glm: resemble the built-in matrix and vector types of the OpenGL shading
+python3-glm: language.
+python3-glm:
+python3-glm:
+python3-glm: https://github.com/Zuzu-Typ/PyGLM
+python3-glm:
+python3-glm:

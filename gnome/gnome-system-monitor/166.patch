@@ -1,0 +1,38 @@
+From 714faa9fad2a41f6353a242d48e5cb59b6ecdaac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ball=C3=B3=20Gy=C3=B6rgy?= <ballogyor@gmail.com>
+Date: Tue, 5 Nov 2024 02:40:32 +0100
+Subject: [PATCH] interface: Fix resuming from suspended state
+
+The second parameter of the callback function is a GParamSpec, not a boolean.
+
+Fixes: 82d5ce7921d76df1dc43626fb2ec4e3dd1a6dede
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-system-monitor/-/issues/304
+---
+ src/interface.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/interface.cpp b/src/interface.cpp
+index 4808372c9..f7be973e2 100644
+--- a/src/interface.cpp
++++ b/src/interface.cpp
+@@ -754,13 +754,13 @@ cb_main_window_delete (GtkWindow*,
+ }
+ 
+ static void
+-cb_main_window_suspended (GtkWindow*,
+-                          gboolean        suspended,
++cb_main_window_suspended (GtkWindow      *window,
++                          GParamSpec     *pspec,
+                           GsmApplication *app)
+ {
+   auto current_page = app->config.current_tab;
+ 
+-  if (suspended)
++  if (gtk_window_is_suspended (window))
+     {
+       if (current_page == "processes")
+         {
+-- 
+GitLab
+

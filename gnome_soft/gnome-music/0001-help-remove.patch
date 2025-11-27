@@ -1,0 +1,30 @@
+diff -Naur gnome-music-44.rc.orig/meson.build gnome-music-44.rc/meson.build
+--- gnome-music-44.rc.orig/meson.build	2023-03-05 17:04:13.000000000 -0600
++++ gnome-music-44.rc/meson.build	2023-03-05 23:25:19.976961222 -0600
+@@ -69,9 +69,12 @@
+ dependency('grilo-plugins-0.3', version: '>= 0.3.12', fallback: ['grilo-plugins', 'grilo_plugins_dep'])
+ 
+ subdir('data')
+-subdir('help')
+ subdir('po')
+ 
++if get_option('help')
++subdir('help')
++endif
++
+ install_subdir(
+     'gnomemusic',
+     install_dir: py_installation.get_install_dir()
+diff -Naur gnome-music-44.rc.orig/meson_options.txt gnome-music-44.rc/meson_options.txt
+--- gnome-music-44.rc.orig/meson_options.txt	2023-03-05 17:04:13.000000000 -0600
++++ gnome-music-44.rc/meson_options.txt	2023-03-05 23:27:06.407957624 -0600
+@@ -7,3 +7,9 @@
+   ],
+   value: 'default'
+ )
++
++option('help',
++  type: 'boolean',
++  value: true,
++  description: 'Build API reference'
++)

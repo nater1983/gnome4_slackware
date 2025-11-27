@@ -1,0 +1,2094 @@
+From fe6bebd38eb17aa81e761cf7efd21caaf1b8050e Mon Sep 17 00:00:00 2001
+From: Niels De Graef <nielsdegraef@gmail.com>
+Date: Wed, 7 Apr 2021 18:25:58 +0200
+Subject: [PATCH] Add support for the Meson build system
+
+See the [Meson website] for a full reference. To build, test and/or
+install the folks library, you essentially need the following commands:
+
+```
+$ meson --prefix=/usr --sysconfdir=/etc _build
+$ meson compile -C _build
+$ meson test -C _build
+$ meson install -C _build
+```
+
+[Meson website]: http://mesonbuild.com/
+---
+ bindings/meson.build                 |   7 +
+ bindings/pygobject/meson.build       |  25 +++
+ bindings/vala/meson.build            |  66 ++++++
+ bus/meson.build                      | 102 +++++++++
+ client/gtk2/meson.build              |  18 ++
+ client/gtk3/meson.build              |  23 +++
+ client/gtk4/meson.build              |  23 +++
+ client/meson.build                   |  19 ++
+ client/wayland/meson.build           |  20 ++
+ client/x11/meson.build               |  25 +++
+ conf/dconf/meson.build               |  35 ++++
+ conf/memconf/meson.build             |  34 +++
+ conf/meson.build                     |   7 +
+ data/dconf/make-dconf-override-db.sh |  18 +-
+ data/dconf/meson.build               |  35 ++++
+ data/icons/meson.build               |  15 ++
+ data/its/meson.build                 |   3 +
+ data/keymaps/meson.build             |  12 ++
+ data/meson.build                     |   7 +
+ docs/meson.build                     |   1 +
+ docs/reference/ibus/meson.build      |  34 +++
+ docs/reference/meson.build           |   1 +
+ engine/meson.build                   |  39 ++++
+ ibus/meson.build                     |  29 +++
+ meson.build                          | 230 +++++++++++++++++++++
+ meson_options.txt                    | 140 +++++++++++++
+ po/meson.build                       |   3 +
+ portal/meson.build                   |  42 ++++
+ setup/meson.build                    |  50 +++++
+ src/emoji-parser.c                   |   2 -
+ src/get_system_langs.py              |  21 ++
+ src/libibus.map                      |   6 +
+ src/meson.build                      | 299 +++++++++++++++++++++++++++
+ src/tests/meson.build                |  59 ++++++
+ tools/meson.build                    |  48 +++++
+ ui/gtk3/meson.build                  | 179 ++++++++++++++++
+ ui/gtk3/xml-to-c.py                  |  25 +++
+ ui/meson.build                       |   3 +
+ util/IMdkit/meson.build              |  29 +++
+ util/meson.build                     |   3 +
+ 40 files changed, 1733 insertions(+), 4 deletions(-)
+ create mode 100644 bindings/meson.build
+ create mode 100644 bindings/pygobject/meson.build
+ create mode 100644 bindings/vala/meson.build
+ create mode 100644 bus/meson.build
+ create mode 100644 client/gtk2/meson.build
+ create mode 100644 client/gtk3/meson.build
+ create mode 100644 client/gtk4/meson.build
+ create mode 100644 client/meson.build
+ create mode 100644 client/wayland/meson.build
+ create mode 100644 client/x11/meson.build
+ create mode 100644 conf/dconf/meson.build
+ create mode 100644 conf/memconf/meson.build
+ create mode 100644 conf/meson.build
+ create mode 100644 data/dconf/meson.build
+ create mode 100644 data/icons/meson.build
+ create mode 100644 data/its/meson.build
+ create mode 100644 data/keymaps/meson.build
+ create mode 100644 data/meson.build
+ create mode 100644 docs/meson.build
+ create mode 100644 docs/reference/ibus/meson.build
+ create mode 100644 docs/reference/meson.build
+ create mode 100644 engine/meson.build
+ create mode 100644 ibus/meson.build
+ create mode 100644 meson.build
+ create mode 100644 meson_options.txt
+ create mode 100644 po/meson.build
+ create mode 100644 portal/meson.build
+ create mode 100644 setup/meson.build
+ create mode 100755 src/get_system_langs.py
+ create mode 100644 src/libibus.map
+ create mode 100644 src/meson.build
+ create mode 100644 src/tests/meson.build
+ create mode 100644 tools/meson.build
+ create mode 100644 ui/gtk3/meson.build
+ create mode 100644 ui/gtk3/xml-to-c.py
+ create mode 100644 ui/meson.build
+ create mode 100644 util/IMdkit/meson.build
+ create mode 100644 util/meson.build
+
+diff --git a/bindings/meson.build b/bindings/meson.build
+new file mode 100644
+index 000000000..1ddc89db5
+--- /dev/null
++++ b/bindings/meson.build
+@@ -0,0 +1,7 @@
++if enable_vapigen
++  subdir('vala')
++endif
++
++if enable_pygobject
++  subdir('pygobject')
++endif
+diff --git a/bindings/pygobject/meson.build b/bindings/pygobject/meson.build
+new file mode 100644
+index 000000000..1077996fb
+--- /dev/null
++++ b/bindings/pygobject/meson.build
+@@ -0,0 +1,25 @@
++get_overridedir = '''
++import os
++import sysconfig
++libdir = sysconfig.get_config_var('SCRIPTDIR')
++if not libdir:
++  libdir = '/usr/lib'
++try:
++  import gi
++  overridedir = gi._overridesdir
++except ImportError:
++  purelibdir = sysconfig.get_path('purelib')
++  overridedir = os.path.join(purelibdir, 'gi', 'overrides')
++if overridedir.startswith(libdir): # Should always be True..
++  overridedir = overridedir[len(libdir) + 1:]
++print(overridedir)
++'''
++
++ret = run_command([python.find_python(), '-c', get_overridedir])
++if ret.returncode() != 0
++  error('Failed to determine pygobject override directory')
++else
++  pygobject_override_dir = join_paths(get_option('libdir'), ret.stdout().strip())
++endif
++
++install_data('gi/overrides/IBus.py', install_dir: pygobject_override_dir)
+diff --git a/bindings/vala/meson.build b/bindings/vala/meson.build
+new file mode 100644
+index 000000000..742cf7379
+--- /dev/null
++++ b/bindings/vala/meson.build
+@@ -0,0 +1,66 @@
++ibus_vapi = gnome.generate_vapi(package_string,
++  sources: [
++    ibus_gir.get(0),
++    'IBus-1.0-custom.vala',
++  ],
++  packages: [ 'gio-2.0' ],
++  install: true,
++)
++
++config_vapi = declare_dependency(
++  dependencies: valac.find_library('config',
++    dirs: meson.current_source_dir(),
++  ),
++  include_directories: config_h_inc,
++)
++
++gdk3_wayland_vapi = valac.find_library('gdk-wayland',
++  dirs: meson.current_source_dir(),
++)
++
++xi_vapi = declare_dependency(
++  dependencies: [
++    valac.find_library('xi',
++      dirs: meson.current_source_dir(),
++    ),
++    cc.find_library('Xi', required: false),
++  ],
++)
++
++if get_option('emoji-dict')
++  # Lordy lordy
++  libibus_emoji_dialog_sources = files(
++    meson.current_source_dir() / '../../ui/gtk3/candidatearea.vala',
++    meson.current_source_dir() / '../../ui/gtk3/emojier.vala',
++    meson.current_source_dir() / '../../ui/gtk3/iconwidget.vala',
++    meson.current_source_dir() / '../../ui/gtk3/pango.vala',
++    meson.current_source_dir() / '../../ui/gtk3/separator.vala',
++  )
++
++  libibus_emoji_dialog_deps = [
++    glib_dep,
++    gio_dep,
++    gtk3_dep,
++    ibus_dep,
++    ibus_vapi,
++    config_vapi,
++  ]
++
++  libibus_emoji_dialog_cflags = [
++    '-DGETTEXT_PACKAGE="@0@"'.format(gettext_package),
++    '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++    '-DPKGDATADIR="@0@"'.format(pkgdatadir),
++  ]
++
++  libibus_emoji_dialog_valaflags = []
++  if get_option('emoji-dict')
++    libibus_emoji_dialog_valaflags += [ '-D', 'EMOJI_DICT' ]
++  endif
++
++  libibus_emoji_dialog = library('ibus-emoji-dialog',
++    libibus_emoji_dialog_sources, # Defined in ui/gtk3/meson.build
++    dependencies: libibus_emoji_dialog_deps,
++    c_args: libibus_emoji_dialog_cflags,
++    vala_args: libibus_emoji_dialog_valaflags,
++  )
++endif
+diff --git a/bus/meson.build b/bus/meson.build
+new file mode 100644
+index 000000000..ed57b5e62
+--- /dev/null
++++ b/bus/meson.build
+@@ -0,0 +1,102 @@
++ibus_daemon_common_sources = files(
++  'component.c',
++  'connection.c',
++  'dbusimpl.c',
++  'engineproxy.c',
++  'factoryproxy.c',
++  'global.c',
++  'ibusimpl.c',
++  'inputcontext.c',
++  'matchrule.c',
++  'panelproxy.c',
++  'server.c',
++)
++
++ibus_daemon_sources = files(
++  'main.c',
++)
++
++ibus_daemon_marshalers = gnome.genmarshal('marshalers',
++  prefix: 'bus_marshal',
++  sources: 'marshalers.list',
++)
++
++ibus_daemon_deps = [
++  glib_dep,
++  gio_dep,
++  ibus_dep,
++]
++
++ibus_daemon_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++  '-DBINDIR="@0@"'.format(get_option('prefix') / get_option('bindir')),
++]
++
++ibus_daemon = executable('ibus-daemon',
++  [ ibus_daemon_common_sources, ibus_daemon_sources, ibus_daemon_marshalers ],
++  dependencies: ibus_daemon_deps,
++  c_args: ibus_daemon_cflags,
++  include_directories: config_h_inc,
++  install: true,
++)
++
++# Tests
++if get_option('tests')
++
++  ibus_daemon_tests = [
++    {
++      'name': 'test-matchrule',
++      'extra_sources': [],
++      'extra_deps': [],
++    },
++    {
++      'name': 'test-stress',
++      'extra_sources': files('test-client.c'),
++      'extra_deps': [ x11_dep ],
++    },
++  ]
++
++  foreach _test: ibus_daemon_tests
++    test_sources = [
++      '@0@.c'.format(_test['name']),
++      _test['extra_sources'],
++      ibus_daemon_common_sources,
++      ibus_daemon_marshalers,
++    ]
++
++    test_bin = executable(_test['name'],
++      test_sources,
++      dependencies: ibus_daemon_deps + _test['extra_deps'],
++      c_args: ibus_daemon_cflags,
++      include_directories: config_h_inc,
++    )
++
++    test(_test['name'], test_bin,
++      suite: 'ibus-daemon',
++    )
++  endforeach
++
++endif
++
++# manpages
++configure_file(
++  input: 'ibus-daemon.1.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++  },
++  install: true,
++  install_dir: get_option('mandir') / 'man1',
++)
++
++# D-Bus service file
++configure_file(
++  input: 'org.freedesktop.IBus.service.in',
++  output: '@BASENAME@',
++  configuration: {
++    'bindir': get_option('prefix') / get_option('bindir'),
++    'xim_cli_arg': enable_xim? '--xim' : '',
++  },
++  install: true,
++  install_dir: get_option('datadir') / 'dbus-1' / 'services',
++)
+diff --git a/client/gtk2/meson.build b/client/gtk2/meson.build
+new file mode 100644
+index 000000000..12618ff68
+--- /dev/null
++++ b/client/gtk2/meson.build
+@@ -0,0 +1,18 @@
++gtk2_im_sources = files(
++  'ibusim.c',
++  'ibusimcontext.c',
++)
++
++gtk2_im_deps = [
++  ibus_dep,
++  gtk2_dep,
++  dbus_dep,
++]
++
++gtk2_im_module = shared_module('im-ibus',
++  gtk2_im_sources,
++  dependencies: gtk2_im_deps,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: gtk2_im_module_dir,
++)
+diff --git a/client/gtk3/meson.build b/client/gtk3/meson.build
+new file mode 100644
+index 000000000..22566bc51
+--- /dev/null
++++ b/client/gtk3/meson.build
+@@ -0,0 +1,23 @@
++gtk3_im_sources = files(
++  'ibusim.c',
++  'ibusimcontext.c',
++)
++
++gtk3_im_deps = [
++  ibus_dep,
++  gtk3_dep,
++  dbus_dep,
++]
++
++gtk3_im_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain)
++]
++
++gtk3_im_module = shared_module('im-ibus',
++  gtk3_im_sources,
++  dependencies: gtk3_im_deps,
++  c_args: gtk3_im_cflags,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: gtk3_im_module_dir,
++)
+diff --git a/client/gtk4/meson.build b/client/gtk4/meson.build
+new file mode 100644
+index 000000000..45105b4c9
+--- /dev/null
++++ b/client/gtk4/meson.build
+@@ -0,0 +1,23 @@
++gtk4_im_sources = files(
++  'ibusim.c',
++  'ibusimcontext.c',
++)
++
++gtk4_im_deps = [
++  ibus_dep,
++  gtk4_dep,
++  dbus_dep,
++]
++
++gtk4_im_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain)
++]
++
++gtk4_im_module = shared_module('im-ibus',
++  gtk4_im_sources,
++  dependencies: gtk4_im_deps,
++  c_args: gtk4_im_cflags,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: gtk4_im_module_dir,
++)
+diff --git a/client/meson.build b/client/meson.build
+new file mode 100644
+index 000000000..714278ee5
+--- /dev/null
++++ b/client/meson.build
+@@ -0,0 +1,19 @@
++if enable_gtk2
++  subdir('gtk2')
++endif
++
++if enable_gtk3
++  subdir('gtk3')
++endif
++
++if enable_gtk4
++  subdir('gtk4')
++endif
++
++if enable_xim
++  subdir('x11')
++endif
++
++if enable_wayland
++  subdir('wayland')
++endif
+diff --git a/client/wayland/meson.build b/client/wayland/meson.build
+new file mode 100644
+index 000000000..b085dedf9
+--- /dev/null
++++ b/client/wayland/meson.build
+@@ -0,0 +1,20 @@
++ibus_wayland_sources = files(
++  # See also README
++  'input-method-unstable-v1-protocol.c',
++  'main.c',
++)
++
++ibus_wayland_deps = [
++  ibus_dep,
++  gio_dep,
++  wayland_dep,
++  xkbcommon_dep,
++]
++
++executable('ibus-wayland',
++  ibus_wayland_sources,
++  dependencies: ibus_wayland_deps,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
+diff --git a/client/x11/meson.build b/client/x11/meson.build
+new file mode 100644
+index 000000000..410682c61
+--- /dev/null
++++ b/client/x11/meson.build
+@@ -0,0 +1,25 @@
++ibus_x11_sources = files(
++  'gdk-private.c',
++  'main.c',
++)
++
++ibus_x11_deps = [
++  ibus_dep,
++  libimdkit_dep,
++  x11_dep,
++  xfixes_dep,
++]
++
++if enable_gtk3
++  ibus_x11_deps += gtk3_dep
++else
++  ibus_x11_deps += gtk2_dep
++endif
++
++ibus_x11_module = executable('ibus-x11',
++  ibus_x11_sources,
++  dependencies: ibus_x11_deps,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
+diff --git a/conf/dconf/meson.build b/conf/dconf/meson.build
+new file mode 100644
+index 000000000..e64c3d5b6
+--- /dev/null
++++ b/conf/dconf/meson.build
+@@ -0,0 +1,35 @@
++ibus_dconf_sources = files(
++  'config.c',
++  'main.c',
++)
++
++ibus_dconf_deps = [
++  glib_dep,
++  gio_dep,
++  ibus_dep,
++  dconf_dep,
++]
++
++ibus_dconf_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++]
++
++ibus_dconf_bin = executable('ibus-dconf',
++  ibus_dconf_sources,
++  dependencies: ibus_dconf_deps,
++  c_args: ibus_dconf_cflags,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
++
++configure_file(
++  input: 'dconf.xml.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++    'libexecdir': get_option('prefix') / get_option('libexecdir'),
++  },
++  install: true,
++  install_dir: pkgdatadir / 'component',
++)
+diff --git a/conf/memconf/meson.build b/conf/memconf/meson.build
+new file mode 100644
+index 000000000..cf6f0697e
+--- /dev/null
++++ b/conf/memconf/meson.build
+@@ -0,0 +1,34 @@
++ibus_memconf_sources = files(
++  'config.c',
++  'main.c',
++)
++
++ibus_memconf_deps = [
++  glib_dep,
++  gio_dep,
++  ibus_dep,
++]
++
++ibus_memconf_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++]
++
++ibus_memconf_bin = executable('ibus-memconf',
++  ibus_memconf_sources,
++  dependencies: ibus_memconf_deps,
++  c_args: ibus_memconf_cflags,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
++
++configure_file(
++  input: 'memconf.xml.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++    'libexecdir': get_option('prefix') / get_option('libexecdir'),
++  },
++  install: true,
++  install_dir: pkgdatadir / 'component',
++)
+diff --git a/conf/meson.build b/conf/meson.build
+new file mode 100644
+index 000000000..d63a96a5d
+--- /dev/null
++++ b/conf/meson.build
+@@ -0,0 +1,7 @@
++if get_option('memconf')
++  subdir('memconf')
++endif
++
++if enable_dconf
++  subdir('dconf')
++endif
+diff --git a/data/dconf/make-dconf-override-db.sh b/data/dconf/make-dconf-override-db.sh
+index 601c1c3fa..89d005a10 100755
+--- a/data/dconf/make-dconf-override-db.sh
++++ b/data/dconf/make-dconf-override-db.sh
+@@ -2,12 +2,23 @@
+ 
+ set -e
+ 
++if [ ! -z $1 ]; then
++  BUILDDIR="$1"
++else
++  BUILDDIR="$PWD"
++fi
++
++if [ ! -z $2 ]; then
++  SRCDIR="$2"
++else
++  SRCDIR="$PWD"
++fi
++
+ # gnome-continuous doesn't have a machine-id set, which
+ # breaks dbus-launch.  There's dbus-run-session which is
+ # better, but not everyone has it yet.
+ export DBUS_FATAL_WARNINGS=0
+-export TMPDIR=$(mktemp -d -p "$PWD")
+-export XDG_CONFIG_HOME="$TMPDIR/config"
++export TMPDIR=$(mktemp -d --tmpdir="$BUILDDIR")export XDG_CONFIG_HOME="$TMPDIR/config"
+ export XDG_CACHE_HOME="$TMPDIR/cache"
+ export GSETTINGS_SCHEMA_DIR="$TMPDIR/schemas"
+ mkdir -p $XDG_CONFIG_HOME $XDG_CACHE_HOME $GSETTINGS_SCHEMA_DIR
+@@ -22,7 +33,7 @@ cleanup() {
+ }
+ 
+ # in case that schema is not installed on the system
+-glib-compile-schemas --targetdir "$GSETTINGS_SCHEMA_DIR" "$PWD"
++glib-compile-schemas --targetdir "$GSETTINGS_SCHEMA_DIR" "$SRCDIR"
+ 
+ cat <<EOF
+ # This file is a part of the IBus packaging and should not be changed.
+diff --git a/data/dconf/meson.build b/data/dconf/meson.build
+new file mode 100644
+index 000000000..577fa1e7e
+--- /dev/null
++++ b/data/dconf/meson.build
+@@ -0,0 +1,35 @@
++# GSettings
++install_data('org.freedesktop.ibus.gschema.xml',
++  install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
++)
++
++# Dconf
++install_data('profile/ibus',
++  install_dir: get_option('sysconfdir') / 'dconf' / 'profile',
++)
++
++custom_target('00-upstream-settings',
++  output: '00-upstream-settings',
++  command: [
++    find_program('make-dconf-override-db.sh'),
++    '@OUTDIR@',
++    '@CURRENT_SOURCE_DIR@',
++  ],
++  capture: true,
++  install: true,
++  install_dir: get_option('sysconfdir') / 'dconf' / 'db' / 'ibus.d',
++)
++
++# Man
++manpages = [ '00-upstream-settings.5.in', 'ibus.5.in' ]
++foreach manpage : manpages
++  configure_file(
++    input: manpage,
++    output: '@BASENAME@',
++    configuration: {
++      'VERSION': meson.project_version(),
++    },
++    install: true,
++    install_dir: get_option('mandir') / 'man5',
++  )
++endforeach
+diff --git a/data/icons/meson.build b/data/icons/meson.build
+new file mode 100644
+index 000000000..b630f01fc
+--- /dev/null
++++ b/data/icons/meson.build
+@@ -0,0 +1,15 @@
++foreach size : [ 16, 22, 24, 32, 48, ]
++  size_str = '@0@x@0@'.format(size)
++
++  install_data(size.to_string() / 'ibus-keyboard.png',
++    install_dir: get_option('datadir') / 'icons' / 'hicolor' / '@0@x@0@'.format(size) / 'apps',
++  )
++endforeach
++
++install_data(
++  'scalable' / 'ibus.svg',
++  'scalable' / 'ibus-setup.svg',
++  'scalable' / 'ibus-engine.svg',
++  'scalable' / 'ibus-keyboard.svg',
++  install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps',
++)
+diff --git a/data/its/meson.build b/data/its/meson.build
+new file mode 100644
+index 000000000..9e3dc170c
+--- /dev/null
++++ b/data/its/meson.build
+@@ -0,0 +1,3 @@
++install_data('ibus.its', 'ibus.loc',
++  install_dir: get_option('datadir') / 'gettext' / 'its',
++)
+diff --git a/data/keymaps/meson.build b/data/keymaps/meson.build
+new file mode 100644
+index 000000000..736ba85bf
+--- /dev/null
++++ b/data/keymaps/meson.build
+@@ -0,0 +1,12 @@
++keymaps = [
++  'common',
++  'modifiers',
++  'us',
++  'jp',
++  'kr',
++  'in',
++]
++
++install_data(keymaps,
++  install_dir: pkgdatadir / 'keymaps',
++)
+diff --git a/data/meson.build b/data/meson.build
+new file mode 100644
+index 000000000..3c6cf24e0
+--- /dev/null
++++ b/data/meson.build
+@@ -0,0 +1,7 @@
++subdir('icons')
++subdir('its')
++subdir('keymaps')
++
++if enable_dconf
++  subdir('dconf')
++endif
+diff --git a/docs/meson.build b/docs/meson.build
+new file mode 100644
+index 000000000..ead14c401
+--- /dev/null
++++ b/docs/meson.build
+@@ -0,0 +1 @@
++subdir('reference')
+diff --git a/docs/reference/ibus/meson.build b/docs/reference/ibus/meson.build
+new file mode 100644
+index 000000000..06f3ed2f6
+--- /dev/null
++++ b/docs/reference/ibus/meson.build
+@@ -0,0 +1,34 @@
++ibus_docs_sgml = configure_file(
++  input: 'ibus-docs.sgml.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++  },
++)
++
++ibus_docs_ignore_headers = [
++  'ibuscomposetable.h',
++  'ibusconfigprivate.h',
++  'ibusinternal.h',
++  'keyname-table.h',
++  'keysymdef.h',
++  'ibusenumtypes.h',
++  'stamp-ibusenumtypes.h',
++  'ibusmarshalers.h',
++  'stamp-ibusmarshalers.h',
++]
++
++gnome.gtkdoc('ibus',
++  # XXX
++  main_sgml: 'ibus-docs.sgml',
++  src_dir: [
++    source_root / 'src',
++  ],
++  ignore_headers: ibus_docs_ignore_headers,
++  dependencies: ibus_dep,
++  gobject_typesfile: 'ibus.types',
++  scan_args: [
++    '--rebuild-sections',
++  ],
++  install: true,
++)
+diff --git a/docs/reference/meson.build b/docs/reference/meson.build
+new file mode 100644
+index 000000000..8ab858968
+--- /dev/null
++++ b/docs/reference/meson.build
+@@ -0,0 +1 @@
++subdir('ibus')
+diff --git a/engine/meson.build b/engine/meson.build
+new file mode 100644
+index 000000000..e874c551c
+--- /dev/null
++++ b/engine/meson.build
+@@ -0,0 +1,39 @@
++# ibus-engine-simple
++ibus_engine_simple_sources = files(
++  'main.vala',
++)
++
++ibus_engine_simple_deps = [
++  glib_dep,
++  gio_dep,
++  ibus_dep,
++  ibus_vapi,
++]
++
++ibus_engine_simple_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++]
++
++ibus_engine_simple = executable('ibus-engine-simple',
++  ibus_engine_simple_sources,
++  dependencies: ibus_engine_simple_deps,
++  c_args: ibus_engine_simple_cflags,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
++
++# simple.xml
++simple_xml = custom_target('simple.xml',
++  output: 'simple.xml',
++  command: [
++    find_program('gensimple.py'),
++    '--input', xkbconfig_base / 'rules' / 'evdev.xml',
++    '--output=@OUTPUT@',
++    '--version', meson.project_version(),
++    '--exec-path', get_option('prefix') / get_option('libexecdir') / 'ibus-engine-simple',
++    '--iso-path', isocodes_prefix / 'share' / 'xml' / 'iso-codes' / 'iso_639.xml',
++    '--first-language',
++  ],
++  install: true,
++  install_dir: pkgdatadir / 'component',
++)
+diff --git a/ibus/meson.build b/ibus/meson.build
+new file mode 100644
+index 000000000..eeab8e03d
+--- /dev/null
++++ b/ibus/meson.build
+@@ -0,0 +1,29 @@
++python.find_installation('python2').install_sources(
++  '__init__.py',
++  '_gtk.py',
++  'application.py',
++  'ascii.py',
++  'attribute.py',
++  'bus.py',
++  'common.py',
++  'component.py',
++  'config.py',
++  'engine.py',
++  'enginedesc.py',
++  'exception.py',
++  'factory.py',
++  'inputcontext.py',
++  'keysyms.py',
++  'lang.py',
++  'lookuptable.py',
++  'modifier.py',
++  'notifications.py',
++  'object.py',
++  'observedpath.py',
++  'panel.py',
++  'property.py',
++  'serializable.py',
++  'text.py',
++  'utility.py',
++  subdir: 'ibus',
++)
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 000000000..cf4068d14
+--- /dev/null
++++ b/meson.build
+@@ -0,0 +1,230 @@
++project('ibus',
++  [ 'c', 'vala' ],
++  version: '1.5.25',
++  meson_version: '>= 0.53',
++)
++
++# Modules
++#-------------------------------------------------
++
++fs = import('fs')
++gnome = import('gnome')
++i18n = import('i18n')
++pkgconfig = import('pkgconfig')
++python = import('python')
++
++# Versioning
++#-------------------------------------------------
++_version_split = meson.project_version().split('.')
++ibus_major_version = _version_split[0].to_int()
++ibus_minor_version = _version_split[1].to_int()
++ibus_micro_version = _version_split[2].to_int()
++
++ibus_api_version = ibus_major_version.to_string() + '.0'
++
++ibus_abi_current = 5
++ibus_abi_age = 0
++ibus_abi_revision = (100 * ibus_minor_version) + ibus_micro_version
++ibus_abi_version = '@0@.@1@.@2@'.format(ibus_abi_current, ibus_abi_age, ibus_abi_revision)
++
++# Some variables
++#-------------------------------------------------
++cc = meson.get_compiler('c')
++valac = meson.get_compiler('vala')
++source_root = meson.current_source_dir()
++build_root = meson.current_build_dir()
++po_dir = source_root / 'po'
++package_string = meson.project_name() + '-' + ibus_api_version
++pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
++ibus_log_domain = 'IBUS'
++gettext_package = 'ibus10'
++
++if get_option('socket-dir') == ''
++  if target_machine.system() == 'linux'
++    ibus_socket_dir = 'unix:tmpdir=$XDG_CACHE_HOME/ibus'
++  else
++    ibus_socket_dir = 'unix:tmpdir=/tmp'
++  endif
++else
++  ibus_socket_dir = get_option('socket-dir')
++endif
++
++if get_option('emoji-dict')
++  if not fs.is_file(get_option('unicode-emoji-dir') / 'emoji-test.txt')
++    error('Couldn\'t find $UNICODE_EMOJI_DIR/emoji-test.txt. You can get the emoji files from http://www.unicode.org/Public/emoji/4.0/')
++  endif
++
++  emoji_annotation_dir = get_option('emoji-annotation-dir')
++  if not fs.is_file(emoji_annotation_dir / 'en.xml')
++    error('Couldn\'t find $EMOJI_ANNOTATION_DIR/en.xml. You can get it from https://github.com/fujiwarat/cldr-emoji-annotation')
++  endif
++endif
++
++if get_option('unicode-dict')
++  if not fs.is_file(get_option('ucd-dir') / 'NamesList.txt')
++    error('Couldn\'t find $UCD_DIR/NamesList.txt. You can get UCD files from https://www.unicode.org/Public/UNIDATA/')
++  endif
++  if not fs.is_file(get_option('ucd-dir') / 'Blocks.txt')
++    error('Couldn\'t find $UCD_DIR/Blocks.txt. You can get UCD files from https://www.unicode.org/Public/UNIDATA/')
++  endif
++endif
++
++# Dependencies
++#-------------------------------------------------
++min_glib_version = '2.46' # Also used for Vala's --target-glib, so no micro version.
++glib_dep = dependency('glib-2.0', version: '>=' + min_glib_version)
++gobject_dep = dependency('gobject-2.0', version: '>=' + min_glib_version)
++gio_dep = dependency('gio-2.0', version: '>=' + min_glib_version)
++gio_unix_dep = dependency('gio-unix-2.0', version: '>=' + min_glib_version)
++dbus_dep = dependency('dbus-1')
++posix_dep = valac.find_library('posix')
++json_glib_dep = dependency('json-glib-1.0', required: false)
++
++# GTK
++gtk2_dep = dependency('gtk+-2.0', required: get_option('gtk2'))
++enable_gtk2 = gtk2_dep.found()
++if enable_gtk2
++  if get_option('gtk2-im-module-dir') != ''
++    gtk2_im_module_dir = get_option('gtk2-im-module-dir')
++  else
++    gtk2_binary_version = gtk2_dep.get_variable(pkgconfig: 'gtk_binary_version')
++    gtk2_im_module_dir = get_option('prefix') / get_option('libdir') / 'gtk-2.0' / gtk2_binary_version / 'immodules'
++  endif
++endif
++
++gtk3_dep = dependency('gtk+-3.0', version: '>= 3.12.0', required: get_option('gtk3'))
++enable_gtk3 = gtk3_dep.found()
++if enable_gtk3
++  gdk3_x11_dep = dependency('gdk-x11-3.0')
++  gdk3_wayland_dep = dependency('gdk-wayland-3.0', required: false)
++
++  if get_option('gtk3-im-module-dir') != ''
++    gtk3_im_module_dir = get_option('gtk3-im-module-dir')
++  else
++    gtk3_binary_version = gtk3_dep.get_variable(pkgconfig: 'gtk_binary_version')
++    gtk3_im_module_dir = get_option('prefix') / get_option('libdir') / 'gtk-3.0' / gtk3_binary_version / 'immodules'
++  endif
++endif
++
++gtk4_dep = dependency('gtk4', required: get_option('gtk4'))
++enable_gtk4 = gtk4_dep.found()
++if enable_gtk4
++  if get_option('gtk4-im-module-dir') != ''
++    gtk4_im_module_dir = get_option('gtk4-im-module-dir')
++  else
++    gtk4_binary_version = gtk4_dep.get_variable(pkgconfig: 'gtk_binary_version')
++    gtk4_im_module_dir = get_option('prefix') / get_option('libdir') / 'gtk-4.0' / gtk4_binary_version / 'immodules'
++  endif
++endif
++
++# X11 / XIM
++xkbcommon_dep = dependency('xkbcommon', required: false)
++x11_dep = dependency('x11', required: get_option('xim'))
++enable_xim = x11_dep.found()
++if enable_xim
++  have_xkblib = cc.has_header('X11/XKBlib.h')
++
++  xfixes_dep = dependency('xfixes', required: false)
++  have_xfixes = xfixes_dep.found()
++
++  xtest_dep = dependency('xtst', required: false)
++  have_xtest = xfixes_dep.found()
++
++  x11_prefix = x11_dep.get_variable(pkgconfig: 'prefix')
++else
++  have_xkblib = false
++  have_xfixes = false
++  have_xtest = false
++  x11_prefix = get_option('prefix')
++endif
++
++xkbconfig = dependency('xkeyboard-config', required: false)
++if xkbconfig.found()
++  xkbconfig_base = xkbconfig.get_variable(pkgconfig: 'xkb_base')
++else
++  xkbconfig_base = get_option('datadir') / 'X11' / 'xkb'
++endif
++
++# Wayland
++wayland_dep = dependency('wayland-client', version: '>= 1.2.0', required: get_option('wayland'))
++enable_wayland = wayland_dep.found() and xkbcommon_dep.found()
++
++# Bindings
++vapigen = find_program('vapigen', required: get_option('vapigen'))
++enable_vapigen = vapigen.found()
++
++pygobject_dep = dependency('pygobject', version: '>= 3.0.0', required: get_option('pygobject'))
++enable_pygobject = pygobject_dep.found()
++
++# DConf
++dconf_dep = dependency('dconf', version: '>= 0.7.5', required: get_option('dconf'))
++enable_dconf = dconf_dep.found()
++
++# iso-codes
++isocodes_prefix = dependency('iso-codes').get_variable(pkgconfig: 'prefix')
++
++# config.h
++#-------------------------------------------------
++conf = configuration_data()
++conf.set_quoted('PACKAGE_NAME', meson.project_name())
++conf.set_quoted('PACKAGE_VERSION', meson.project_version())
++conf.set_quoted('VERSION', meson.project_version())
++conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
++conf.set_quoted('BINDIR', get_option('prefix') / get_option('bindir'))
++conf.set_quoted('LIBEXECDIR', get_option('prefix') / get_option('libexecdir'))
++conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
++conf.set_quoted('PACKAGE_DATADIR', pkgdatadir)
++conf.set10('ENABLE_SNOOPER', get_option('snooper'))
++conf.set_quoted('NO_SNOOPER_APPS', ','.join(get_option('no-snooper-apps')))
++conf.set_quoted('IBUS_SOCKET_DIR', ibus_socket_dir)
++conf.set('HAVE_DAEMON', cc.has_function('daemon'))
++conf.set('HAVE_LOCALE_H', cc.has_header_symbol('locale.h', 'LC_ALL'))
++conf.set('HAVE_SYS_PRCTL_H', cc.has_header_symbol('sys/prctl.h', 'prctl'))
++conf.set('HAVE_JSON_GLIB1', json_glib_dep.found())
++conf.set('HAVE_XFIXES', have_xfixes)
++conf.set('HAVE_X11_XKBLIB_H', have_xkblib)
++conf.set('DCONF_0_13_4', dconf_dep.found() and dconf_dep.version().version_compare('>= 0.13.4'))
++
++configure_file(output: 'config.h', configuration: conf)
++
++config_h_inc = include_directories('.')
++
++add_project_arguments('-DHAVE_CONFIG_H', language: 'c')
++
++# Subdirectories
++#-------------------------------------------------
++subdir('src')
++subdir('bindings')
++subdir('util')
++subdir('conf')
++subdir('client')
++subdir('portal')
++subdir('data')
++subdir('po')
++# XXX
++# subdir('docs')
++if get_option('engine')
++  subdir('engine')
++endif
++if get_option('ui')
++  subdir('ui')
++endif
++subdir('tools')
++subdir('bus')
++if get_option('python2_lib')
++  subdir('ibus')
++endif
++if get_option('setup')
++  subdir('setup')
++endif
++
++# RPM Spec file
++#-------------------------------------------------
++ibus_rpm_spec = configure_file(
++  input: 'ibus.spec.in',
++  output: '@BASENAME@',
++  configuration: {
++    'IBUS_VERSION': meson.project_version(),
++    'DATE_DISPLAY': run_command('date', '+%a %b %d %Y').stdout().strip(),
++  },
++)
+diff --git a/meson_options.txt b/meson_options.txt
+new file mode 100644
+index 000000000..a1375c2b1
+--- /dev/null
++++ b/meson_options.txt
+@@ -0,0 +1,140 @@
++option('tests',
++  type: 'boolean',
++  value: true,
++  description: 'Build tests',
++)
++option('xim',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build XIM server',
++)
++option('wayland',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build wayland support',
++)
++option('appindicator',
++  type: 'boolean',
++  value: true,
++  description: 'Build appindicator support',
++)
++option('engine',
++  type: 'boolean',
++  value: true,
++  description: 'Build ibus simple engine',
++)
++option('ui',
++  type: 'boolean',
++  value: true,
++  description: 'Build ibus default user interface',
++)
++option('socket-dir',
++  type: 'string',
++  value: '',
++  description: 'The socket directory to connect ibus-daemon with D-Bus connections (default: "$XDG_CACHE_HOME/ibus", or "/tmp" on BSD systems.',
++)
++option('setup',
++  type: 'boolean',
++  value: true,
++  description: 'Install the ibus setup UI',
++)
++# Supported GTK versions
++option('gtk2',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build GTK2 IM Module',
++)
++option('gtk2-im-module-dir',
++  type: 'string',
++  value: '',
++  description: 'Path to a custom GTK2 immodule dir (if empty, uses the default)',
++)
++option('gtk3',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build GTK3 IM Module',
++)
++option('gtk3-im-module-dir',
++  type: 'string',
++  value: '',
++  description: 'Path to a custom GTK3 immodule dir (if empty, uses the default)',
++)
++option('gtk4',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build GTK4 IM Module',
++)
++option('gtk4-im-module-dir',
++  type: 'string',
++  value: '',
++  description: 'Path to a custom GTK4 immodule dir (if empty, uses the default)',
++)
++# Configuration
++option('memconf',
++  type: 'boolean',
++  value: false,
++  description: 'Perform configure based on memory',
++)
++option('dconf',
++  type: 'feature',
++  value: 'auto',
++  description: 'Perform configure based on dconf',
++)
++# Emoji / Unicode
++option('emoji-dict',
++  type: 'boolean',
++  value: true,
++  description: 'Build Emoji dict files',
++)
++option('unicode-dict',
++  type: 'boolean',
++  value: true,
++  description: 'Build Unicode dict files',
++)
++option('unicode-emoji-dir',
++  type: 'string',
++  value: '/usr/share/unicode/emoji',
++  description: 'Directory of Unicode Emoji',
++)
++option('ucd-dir',
++  type: 'string',
++  value: '/usr/share/unicode/ucd',
++  description: 'Directory of UCD (Unicode Character Database) files',
++)
++option('emoji-annotation-dir',
++  type: 'string',
++  value: '/usr/share/unicode/cldr/common/annotations',
++  description: 'Directory of CLDR annotation files',
++)
++# Snooper
++option('snooper',
++  type: 'boolean',
++  value: true,
++  description: 'Enable key snooper in GTK IM module',
++)
++option('no-snooper-apps',
++  type: 'array',
++  value: [
++    'firefox.*',
++    '.*chrome.*',
++    '.*chromium.*',
++    'terminator',
++  ],
++  description: 'Disable key snooper in these applications',
++)
++# Bindings
++option('vapigen',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build with vapigen support',
++)
++option('pygobject',
++  type: 'feature',
++  value: 'auto',
++  description: 'Build with pygobject support',
++)
++option('python2_lib',
++  type: 'boolean',
++  value: false,
++  description: 'Build ibus Python 2 library'
++)
+diff --git a/po/meson.build b/po/meson.build
+new file mode 100644
+index 000000000..5fdd891b4
+--- /dev/null
++++ b/po/meson.build
+@@ -0,0 +1,3 @@
++i18n.gettext(meson.project_name(),
++  preset: 'glib',
++)
+diff --git a/portal/meson.build b/portal/meson.build
+new file mode 100644
+index 000000000..2a1d51ccc
+--- /dev/null
++++ b/portal/meson.build
+@@ -0,0 +1,42 @@
++# Portal service
++configure_file(
++  input: 'org.freedesktop.portal.IBus.service.in',
++  output: '@BASENAME@',
++  configuration: {
++    'libexecdir': get_option('libexecdir'),
++  },
++  install: true,
++  install_dir: get_option('datadir') / 'dbus-1' / 'services',
++)
++
++# Portal executable
++ibus_portal_sources = files(
++  'portal.c',
++)
++
++ibus_portal_gdbus_sources = gnome.gdbus_codegen('ibus-portal-dbus',
++  sources: 'org.freedesktop.IBus.Portal.xml',
++  interface_prefix: 'org.freedesktop.IBus.',
++  namespace: 'IBusDbus',
++)
++
++ibus_portal_deps = [
++  gobject_dep,
++  glib_dep,
++  gio_dep,
++  gio_unix_dep,
++  ibus_dep,
++]
++
++ibus_portal_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain)
++]
++
++ibus_portal = executable('ibus-portal',
++  [ ibus_portal_sources, ibus_portal_gdbus_sources ],
++  dependencies: ibus_portal_deps,
++  c_args: ibus_portal_cflags,
++  include_directories: config_h_inc,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
+diff --git a/setup/meson.build b/setup/meson.build
+new file mode 100644
+index 000000000..c6a73a2b9
+--- /dev/null
++++ b/setup/meson.build
+@@ -0,0 +1,50 @@
++ibus_setup = configure_file(
++  input: 'ibus-setup.in',
++  output: '@BASENAME@',
++  configuration: {
++    'prefix': get_option('prefix'),
++    'datarootdir': get_option('prefix') / get_option('datadir'),
++    'localedir': get_option('prefix') / get_option('localedir'),
++    'libexecdir': get_option('prefix') / get_option('libexecdir'),
++    'PYTHON': python.find_installation().path(),
++  },
++  install_dir: get_option('bindir'),
++  install_mode: 'rwxr-xr-x',
++)
++
++ibus_setup_desktop = i18n.merge_file(
++  input: 'ibus-setup.desktop',
++  output: 'org.freedesktop.IBus.Setup.desktop',
++  type: 'desktop',
++  po_dir: po_dir,
++  install: true,
++  install_dir: get_option('datadir') / 'applications'
++)
++
++# Python files
++install_data(
++  'emojilang.py',
++  'engineabout.py',
++  'enginecombobox.py',
++  'enginedialog.py',
++  'enginetreeview.py',
++  'i18n.py',
++  'icon.py',
++  'keyboardshortcut.py',
++  'main.py',
++
++  'setup.ui',
++
++  install_dir: get_option('datadir') / 'ibus' / 'setup',
++)
++
++# manpage
++configure_file(
++  input: 'ibus-setup.1.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++  },
++  install: true,
++  install_dir: get_option('mandir') / 'man1',
++)
+diff --git a/src/emoji-parser.c b/src/emoji-parser.c
+index 36d36e057..2b2ed09ff 100644
+--- a/src/emoji-parser.c
++++ b/src/emoji-parser.c
+@@ -1298,8 +1298,6 @@ main (int argc, char *argv[])
+         category_file_save (output_category, list);
+     if (list)
+         g_slist_free (list);
+-    else
+-        return 99;
+ 
+     return 0;
+ }
+diff --git a/src/get_system_langs.py b/src/get_system_langs.py
+new file mode 100755
+index 000000000..f4d7ce87f
+--- /dev/null
++++ b/src/get_system_langs.py
+@@ -0,0 +1,21 @@
++#!/usr/bin/env python3
++#
++# Little helper script for Meson to get the languages
++# of all installed emoji annotations, since Meson doesn't
++# support globbing
++
++import glob
++import os
++import sys
++
++# Sanity check (in case someone screws up the Meson call)
++if len(sys.argv) != 2:
++    print('Expected 1 argument but got {}', len(sys.argv) - 1)
++    sys.exit(1)
++
++emoji_annotations_dir = sys.argv[1]
++
++paths = glob.glob(emoji_annotations_dir + "/*.xml")
++basenames = [os.path.basename(p) for p in paths]
++langs = sorted([os.path.splitext(b)[0] for b in basenames])
++print('\n'.join(langs), end='')
+diff --git a/src/libibus.map b/src/libibus.map
+new file mode 100644
+index 000000000..b911a9491
+--- /dev/null
++++ b/src/libibus.map
+@@ -0,0 +1,6 @@
++{
++global:
++  ibus_*;
++local:
++  *;
++};
+diff --git a/src/meson.build b/src/meson.build
+new file mode 100644
+index 000000000..1c381b052
+--- /dev/null
++++ b/src/meson.build
+@@ -0,0 +1,299 @@
++ibus_sources = files(
++  'ibusaccelgroup.c',
++  'ibusattribute.c',
++  'ibusattrlist.c',
++  'ibusbus.c',
++  'ibuscomponent.c',
++  'ibusconfig.c',
++  'ibusconfigservice.c',
++  'ibusemoji.c',
++  'ibusengine.c',
++  'ibusenginedesc.c',
++  'ibusenginesimple.c',
++  'ibuserror.c',
++  'ibusfactory.c',
++  'ibushotkey.c',
++  'ibusinputcontext.c',
++  'ibuskeymap.c',
++  'ibuskeynames.c',
++  'ibuskeyuni.c',
++  'ibuslookuptable.c',
++  'ibusobject.c',
++  'ibusobservedpath.c',
++  'ibuspanelservice.c',
++  'ibusproperty.c',
++  'ibusproplist.c',
++  'ibusproxy.c',
++  'ibusregistry.c',
++  'ibusserializable.c',
++  'ibusservice.c',
++  'ibusshare.c',
++  'ibustext.c',
++  'ibusunicode.c',
++  'ibusutil.c',
++  'ibusxevent.c',
++  'ibusxml.c',
++)
++
++ibus_headers = files(
++  'ibus.h',
++  'ibusaccelgroup.h',
++  'ibusattribute.h',
++  'ibusattrlist.h',
++  'ibusbus.h',
++  'ibuscomponent.h',
++  'ibusconfig.h',
++  'ibusconfigservice.h',
++  'ibusdebug.h',
++  'ibusemoji.h',
++  'ibusengine.h',
++  'ibusenginedesc.h',
++  'ibusenginesimple.h',
++  'ibuserror.h',
++  'ibusfactory.h',
++  'ibushotkey.h',
++  'ibusinputcontext.h',
++  'ibuskeymap.h',
++  'ibuskeys.h',
++  'ibuskeysyms-compat.h',
++  'ibuskeysyms.h',
++  'ibuslookuptable.h',
++  'ibusobject.h',
++  'ibusobservedpath.h',
++  'ibuspanelservice.h',
++  'ibusproperty.h',
++  'ibusproplist.h',
++  'ibusproxy.h',
++  'ibusregistry.h',
++  'ibusserializable.h',
++  'ibusservice.h',
++  'ibusshare.h',
++  'ibustext.h',
++  'ibustypes.h',
++  'ibusunicode.h',
++  'ibusutil.h',
++  'ibusxevent.h',
++  'ibusxml.h',
++)
++
++ibus_version_h = configure_file(
++  input: 'ibusversion.h.in',
++  output: '@BASENAME@',
++  configuration: {
++    'IBUS_MAJOR_VERSION': ibus_major_version,
++    'IBUS_MINOR_VERSION': ibus_minor_version,
++    'IBUS_MICRO_VERSION': ibus_micro_version,
++  },
++)
++install_headers(ibus_headers, ibus_version_h,
++  subdir: package_string,
++)
++
++ibus_marshalers = gnome.genmarshal('ibusmarshalers',
++  prefix: '_ibus_marshal',
++  sources: 'ibusmarshalers.list',
++)
++
++ibus_enums = gnome.mkenums('ibusenumtypes',
++  sources: ibus_headers,
++  identifier_prefix: 'IBus',
++  c_template: 'ibusenumtypes.c.template',
++  h_template: 'ibusenumtypes.h.template',
++  install_header: true,
++  install_dir: get_option('includedir') / package_string,
++)
++
++ibus_deps = [
++  glib_dep,
++  gobject_dep,
++  gio_dep,
++  gio_unix_dep,
++]
++
++ibus_cflags = [
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++  '-DIBUS_CACHE_DIR="@0@"'.format(get_option('localstatedir') / 'cache' / 'ibus'),
++  '-DIBUS_DATA_DIR="@0@"'.format(pkgdatadir),
++  '-DIBUS_DISABLE_DEPRECATION_WARNINGS',
++  '-DIBUS_COMPILATION',
++  '-DISOCODES_PREFIX="@0@"'.format(isocodes_prefix),
++  '-DX11_DATA_PREFIX="@0@"'.format(x11_prefix),
++]
++
++ibus_symbolmap = meson.current_source_dir() / 'libibus.map'
++ibus_linkflags = cc.get_supported_link_arguments(
++  '-Wl,--version-script,@0@'.format(ibus_symbolmap),
++)
++
++ibus_lib = library('ibus-@0@'.format(ibus_api_version),
++  [
++    ibus_sources,
++    ibus_version_h,
++    ibus_marshalers,
++    ibus_enums,
++    files('ibuscomposetable.c'),
++  ],
++  dependencies: ibus_deps,
++  c_args: ibus_cflags,
++  link_args: ibus_linkflags,
++  include_directories: config_h_inc,
++  version: ibus_abi_version,
++  install: true,
++)
++
++# Easy-to-reuse dependency
++ibus_dep = declare_dependency(
++  link_with: ibus_lib,
++  sources: [
++    ibus_enums,
++    ibus_marshalers,
++  ],
++  include_directories: include_directories('.'),
++)
++
++# pkgconfig
++pkgconfig.generate(ibus_lib,
++  filebase: 'ibus-@0@'.format(ibus_api_version),
++  name: 'IBus',
++  description: 'IBus Library',
++  requires: [ 'gobject-2.0', 'gio-2.0' ],
++  subdirs: 'ibus-@0@'.format(ibus_api_version),
++  variables: [
++    'exec_prefix=${prefix}',
++    'datadir=${prefix}/share',
++    'pkgdatadir=${prefix}/share/ibus',
++  ],
++)
++
++# GObject Introspection (GIR) file
++ibus_gir = gnome.generate_gir(ibus_lib,
++  sources: [
++    ibus_headers,
++    ibus_sources,
++    ibus_enums,
++    ibus_version_h,
++  ],
++  namespace: 'IBus',
++  nsversion: ibus_api_version,
++  identifier_prefix: 'IBus',
++  symbol_prefix: [
++    'ibus',
++  ],
++  header: 'ibus.h',
++  includes: [ 'GLib-2.0', 'GObject-2.0', 'Gio-2.0', ],
++  extra_args: ibus_cflags,
++  export_packages: 'ibus-1.0',
++  install: true,
++)
++
++if get_option('emoji-dict')
++  emoji_parser_deps = [
++    glib_dep,
++    gobject_dep,
++    ibus_dep,
++  ]
++
++  if json_glib_dep.found()
++    emoji_parser_deps += json_glib_dep
++  endif
++
++  emoji_parser = executable('emoji-parser',
++    'emoji-parser.c',
++    dependencies: emoji_parser_deps,
++    c_args: ibus_cflags,
++    include_directories: config_h_inc,
++  )
++
++  emoji_langs = run_command(
++    find_program('get_system_langs.py'),
++    emoji_annotation_dir,
++    check: true,
++  ).stdout().split('\n')
++  message('Found emoji annotations for @0@'.format(emoji_langs))
++
++  foreach lang : emoji_langs
++    gen_emoji_dict = 'emoji-@0@.dict'.format(lang)
++    emoji_parser_extra_opts = []
++
++    emoji_xml = emoji_annotation_dir / lang + '.xml'
++    derived_xml = emoji_annotation_dir / '..' / 'annotationsDerived' / lang + '.xml'
++    if fs.is_file(derived_xml)
++      emoji_parser_extra_opts += [ '--xml-derived', derived_xml ]
++    endif
++
++    if lang == 'en'
++      emoji_parser_extra_opts += [
++        '--xml-ascii', files(source_root / 'data' / 'annotations' / 'en_ascii.xml'),
++        '--out-category', 'ibusemojigen.h',
++      ]
++    endif
++
++    emoji_parser_gen = custom_target(gen_emoji_dict,
++      input: emoji_xml,
++      output: gen_emoji_dict,
++      command: [
++        emoji_parser,
++        '--unicode-emoji-dir', get_option('unicode-emoji-dir'),
++        '--xml', emoji_xml,
++        '--out', '@OUTPUT@',
++        emoji_parser_extra_opts,
++      ],
++      build_by_default: true,
++    )
++
++    # There are cases where there was no .dict file to output
++    # so don't try to install them (or Meson complains)
++    if fs.exists(meson.current_build_dir() / gen_emoji_dict)
++      install_data(meson.current_build_dir() / gen_emoji_dict,
++        install_dir: pkgdatadir / 'dicts',
++      )
++    endif
++  endforeach
++endif
++
++if get_option('unicode-dict')
++  unicode_parser_deps = [
++    glib_dep,
++    gobject_dep,
++    ibus_dep,
++  ]
++
++  unicode_parser = executable('unicode-parser',
++    'unicode-parser.c',
++    dependencies: unicode_parser_deps,
++    c_args: ibus_cflags,
++    include_directories: config_h_inc,
++  )
++
++  unicode_names_dict = custom_target('unicode-names.dict',
++    input: get_option('ucd-dir') / 'NamesList.txt',
++    output: 'unicode-names.dict',
++    command: [
++      unicode_parser,
++      '--input-names-list', '@INPUT@',
++      '--output-names-list', '@OUTPUT@',
++    ],
++    build_by_default: true,
++    install: true,
++    install_dir: pkgdatadir / 'dicts',
++  )
++
++  unicode_blocks_dict = custom_target('unicode-blocks.dict',
++    input: get_option('ucd-dir') / 'Blocks.txt',
++    output: 'unicode-blocks.dict',
++    command: [
++      unicode_parser,
++      '--input-blocks', '@INPUT@',
++      '--output-blocks-trans', 'ibusunicodegen.h',
++      '--output-blocks', '@OUTPUT@',
++    ],
++    build_by_default: true,
++    install: true,
++    install_dir: pkgdatadir / 'dicts',
++  )
++endif
++
++# Tests
++if get_option('tests')
++  subdir('tests')
++endif
+diff --git a/src/tests/meson.build b/src/tests/meson.build
+new file mode 100644
+index 000000000..b508a4879
+--- /dev/null
++++ b/src/tests/meson.build
+@@ -0,0 +1,59 @@
++ibus_tests = [
++  { 'name': 'ibus-bus' },
++  { 'name': 'ibus-config' },
++  { 'name': 'ibus-configservice' },
++  { 'name': 'ibus-factory' },
++  { 'name': 'ibus-inputcontext' },
++  { 'name': 'ibus-inputcontext-create' },
++  { 'name': 'ibus-keynames' },
++  { 'name': 'ibus-registry' },
++  { 'name': 'ibus-serializable' },
++  {
++    'name': 'ibus-share',
++    'extra_deps': [ dbus_dep ],
++  },
++  { 'name': 'ibus-util' },
++]
++
++if get_option('engine')
++  ibus_tests += { 'name': 'ibus-engine-switch' }
++endif
++
++if enable_gtk3
++  ibus_tests += {
++    'name': 'ibus-compose',
++    'extra_deps': [ gtk3_dep ],
++  }
++
++  ibus_tests += {
++    'name': 'ibus-keypress',
++    'extra_deps': [ gtk3_dep, x11_dep, xtest_dep ],
++  }
++endif
++
++ibus_tests_deps = [
++  ibus_dep,
++  glib_dep,
++  gio_dep,
++]
++
++ibus_tests_cflags = [
++  '-DIBUS_DISABLE_DEPRECATION_WARNINGS',
++  '-DX11_DATA_PREFIX="@0@"'.format(x11_prefix),
++]
++
++# XXX what to do with test runner, maybe make testsuite?
++ibus_tests_env = environment()
++
++foreach _test: ibus_tests
++  test_bin = executable(_test['name'],
++    '@0@.c'.format(_test['name']),
++    dependencies: ibus_tests_deps + _test.get('extra_deps', []),
++    c_args: ibus_tests_cflags,
++  )
++
++  test(_test['name'], test_bin,
++    env: ibus_tests_env,
++    suite: 'ibus',
++  )
++endforeach
+diff --git a/tools/meson.build b/tools/meson.build
+new file mode 100644
+index 000000000..9338252f9
+--- /dev/null
++++ b/tools/meson.build
+@@ -0,0 +1,48 @@
++ibus_bin_sources = files(
++  'main.vala',
++)
++
++ibus_bin_deps = [
++  glib_dep,
++  gio_dep,
++  gobject_dep,
++  ibus_dep,
++  ibus_vapi,
++  posix_dep,
++  config_vapi,
++]
++
++ibus_bin_cflags = [
++  '-DGETTEXT_PACKAGE="@0@"'.format(gettext_package),
++]
++
++ibus_bin_valaflags = [
++]
++
++if get_option('emoji-dict') and get_option('ui')
++  ibus_bin_valaflags += [ '-D', 'EMOJI_DICT' ]
++endif
++
++ibus_bin = executable('ibus',
++  ibus_bin_sources,
++  dependencies: ibus_bin_deps,
++  c_args: ibus_bin_cflags,
++  vala_args: ibus_bin_valaflags,
++  install: true,
++)
++
++# manpage
++configure_file(
++  input: 'ibus.1.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++  },
++  install: true,
++  install_dir: get_option('mandir') / 'man1',
++)
++
++# bash completion
++install_data('ibus.bash',
++  install_dir: get_option('datadir') / 'bash-completion' / 'completions',
++)
+diff --git a/ui/gtk3/meson.build b/ui/gtk3/meson.build
+new file mode 100644
+index 000000000..62db85695
+--- /dev/null
++++ b/ui/gtk3/meson.build
+@@ -0,0 +1,179 @@
++configure_file(
++  input: 'gtkpanel.xml.in',
++  output: '@BASENAME@',
++  configuration: {
++    'VERSION': meson.project_version(),
++    'libexecdir': get_option('prefix') / get_option('libexecdir'),
++  },
++  install: true,
++  install_dir: pkgdatadir / 'component',
++)
++
++ibus_ui_gtk3_xml_files = [
++  'notification-item.xml',
++  'notification-watcher.xml',
++]
++
++ibus_ui_gtk3_xml_sources = []
++foreach xml : ibus_ui_gtk3_xml_files
++  xml_source = custom_target('gen-@0@.c'.format(xml),
++    input: xml,
++    output: 'gen-@0@.c'.format(xml),
++    command: [
++      # Note that we have to use a python script, due to
++      # https://github.com/mesonbuild/meson/issues/1564
++      find_program('xml-to-c.py'),
++      '@INPUT@',
++    ],
++    capture: true,
++  )
++
++  ibus_ui_gtk3_xml_sources += xml_source
++endforeach
++
++ibus_ui_gtk3_sources = files(
++  'application.vala',
++  'bindingcommon.vala',
++  'candidatearea.vala',
++  'candidatepanel.vala',
++  'emojier.vala',
++  'handle.vala',
++  'iconwidget.vala',
++  'indicator.vala',
++  'keybindingmanager.vala',
++  'panel.vala',
++  'pango.vala',
++  'property.vala',
++  'propertypanel.vala',
++  'separator.vala',
++  'switcher.vala',
++  'xkblayout.vala',
++)
++
++ibus_ui_gtk3_deps = [
++  glib_dep,
++  gobject_dep,
++  gio_dep,
++  gtk3_dep,
++  gdk3_x11_dep,
++  posix_dep,
++  x11_dep,
++  xi_vapi,
++  ibus_dep,
++  ibus_vapi,
++  config_vapi,
++]
++
++ibus_ui_gtk3_cflags = [
++  '-DGETTEXT_PACKAGE="@0@"'.format(gettext_package),
++  '-DG_LOG_DOMAIN="@0@"'.format(ibus_log_domain),
++  '-DPKGDATADIR="@0@"'.format(pkgdatadir),
++]
++
++ibus_ui_gtk3_valaflags = []
++
++if get_option('emoji-dict')
++  ibus_ui_gtk3_valaflags += [ '-D', 'EMOJI_DICT' ]
++endif
++
++if gdk3_wayland_dep.found()
++  ibus_ui_gtk3_deps += [ gdk3_wayland_vapi ]
++  ibus_ui_gtk3_valaflags += [ '-D', 'USE_GDK_WAYLAND' ]
++endif
++
++if get_option('appindicator')
++  ibus_ui_gtk3_valaflags += [ '-D', 'INDICATOR' ]
++endif
++
++ibus_ui_gtk3 = executable('ibus-ui-gtk3',
++  [ ibus_ui_gtk3_sources, ibus_ui_gtk3_xml_sources ],
++  dependencies: ibus_ui_gtk3_deps,
++  c_args: ibus_ui_gtk3_cflags,
++  vala_args: ibus_ui_gtk3_valaflags,
++  install: true,
++  install_dir: get_option('libexecdir'),
++)
++
++if get_option('emoji-dict')
++  configure_file(
++    input: 'gtkextension.xml.in',
++    output: '@BASENAME@',
++    configuration: {
++      'VERSION': meson.project_version(),
++      'libexecdir': get_option('prefix') / get_option('libexecdir'),
++    },
++    install: true,
++    install_dir: pkgdatadir / 'component',
++  )
++
++  # ibus-ui-emojier
++  ibus_ui_emojier_sources = files(
++    'emojier.vala',
++    'emojierapp.vala',
++    'iconwidget.vala',
++    'pango.vala',
++    'separator.vala',
++  )
++
++  ibus_ui_emojier = executable('ibus-ui-emojier',
++    ibus_ui_emojier_sources,
++    dependencies: ibus_ui_gtk3_deps,
++    c_args: ibus_ui_gtk3_cflags,
++    vala_args: ibus_ui_gtk3_valaflags,
++    install: true,
++    install_dir: get_option('libexecdir'),
++  )
++
++  # ibus-extension-gtk3
++  ibus_extension_gtk3_sources = files(
++    'bindingcommon.vala',
++    'emojier.vala',
++    'extension.vala',
++    'iconwidget.vala',
++    'keybindingmanager.vala',
++    'panelbinding.vala',
++    'pango.vala',
++  )
++
++  ibus_extension_gtk3 = executable('ibus-extension-emojier',
++    ibus_extension_gtk3_sources,
++    dependencies: ibus_ui_gtk3_deps,
++    c_args: ibus_ui_gtk3_cflags,
++    vala_args: ibus_ui_gtk3_valaflags,
++    install: true,
++    install_dir: get_option('libexecdir'),
++  )
++
++  # manpage
++  configure_file(
++    input: 'ibus-emoji.7.in',
++    output: '@BASENAME@',
++    configuration: {
++      'VERSION': meson.project_version(),
++    },
++    install: true,
++    install_dir: get_option('mandir') / 'man7',
++  )
++
++  # Desktop files
++  desktop_filenames = [
++    [ 'ibus-ui-emojier.desktop.in',     'org.freedesktop.IBus.Panel.Emojier.desktop'        ],
++    [ 'ibus-extension-gtk3.desktop.in', 'org.freedesktop.IBus.Panel.Extension.Gtk3.desktop' ],
++  ]
++  foreach desktop_entry : desktop_filenames
++    i18n.merge_file(
++      input: configure_file(
++        input: desktop_entry[0],
++        output: '@BASENAME@',
++        configuration: {
++          'libexecdir': get_option('libexecdir'),
++        },
++      ),
++      output: desktop_entry[1],
++      type: 'desktop',
++      po_dir: po_dir,
++      install: true,
++      install_dir: get_option('datadir') / 'applications'
++    )
++  endforeach
++endif
+diff --git a/ui/gtk3/xml-to-c.py b/ui/gtk3/xml-to-c.py
+new file mode 100644
+index 000000000..078c60157
+--- /dev/null
++++ b/ui/gtk3/xml-to-c.py
+@@ -0,0 +1,25 @@
++#!/usr/bin/env python3
++#
++# Takes an file as input parameter and outputs it again as a C file with the
++# contents as an escaped string.
++
++import os
++import sys
++
++
++if len(sys.argv) != 2:
++    print('Wrong usage, expected only 1 parameter but got %d' % len(sys.argv - 1), file=sys.stderr)
++    sys.exit(1)
++
++path = sys.argv[1]
++# The variable name is the basename, with underscores
++basename = os.path.basename(path)
++variable = '_' + os.path.splitext(basename)[0].replace('-', '_')
++print('const char *%s =' % variable)
++
++with open(path) as file:
++    for line in file.readlines():
++        # Escape double quotes
++        line_escaped = line.replace('"', '\\"')
++        print('"%s\\n"' % line_escaped.rstrip('\n'))
++print(';')
+diff --git a/ui/meson.build b/ui/meson.build
+new file mode 100644
+index 000000000..e5931869d
+--- /dev/null
++++ b/ui/meson.build
+@@ -0,0 +1,3 @@
++if enable_gtk3
++  subdir('gtk3')
++endif
+diff --git a/util/IMdkit/meson.build b/util/IMdkit/meson.build
+new file mode 100644
+index 000000000..731748114
+--- /dev/null
++++ b/util/IMdkit/meson.build
+@@ -0,0 +1,29 @@
++libimdkit_sources = files(
++  'FrameMgr.c',
++  'IMConn.c',
++  'IMMethod.c',
++  'IMValues.c',
++  'i18nAttr.c',
++  'i18nClbk.c',
++  'i18nIMProto.c',
++  'i18nIc.c',
++  'i18nMethod.c',
++  'i18nOffsetCache.c',
++  'i18nPtHdr.c',
++  'i18nUtil.c',
++  'i18nX.c',
++)
++
++libimdkit_depends = [
++  x11_dep,
++]
++
++libimdkit = static_library('IMdkit',
++  libimdkit_sources,
++  dependencies: libimdkit_depends,
++)
++
++libimdkit_dep = declare_dependency(
++  link_with: libimdkit,
++  include_directories: include_directories('.'),
++)
+diff --git a/util/meson.build b/util/meson.build
+new file mode 100644
+index 000000000..20ab143f4
+--- /dev/null
++++ b/util/meson.build
+@@ -0,0 +1,3 @@
++if enable_xim
++  subdir('IMdkit')
++endif

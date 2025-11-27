@@ -1,0 +1,20 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+    |-----handy-ruler------------------------------------------------------|
+tags: tags (A simple text tagger)
+tags:
+tags: A GNOME text tagger inspired by the TextAnalysisTool.NET tool.The
+tags: main goal is to aid log analysis by tagging lines with user defined
+tags: colors. Tags have a description name, a visibility toggle, a color
+tags: scheme and a hit counter.
+tags:
+tags:
+tags:
+tags:
+tags: https://github.com/phastmike/tags
+

@@ -1,0 +1,22 @@
+From d6e68b48f4581ecbf7fe7ca444b8ec0f13adb6ed Mon Sep 17 00:00:00 2001
+From: Gustavo Peredo <gustavomperedo@protonmail.com>
+Date: Fri, 7 Apr 2023 16:31:40 +0200
+Subject: [PATCH] Update main.py
+
+---
+ src/main.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main.py b/src/main.py
+index e617f06..e245cb9 100755
+--- a/src/main.py
++++ b/src/main.py
+@@ -20,7 +20,7 @@
+ 
+ gi.require_version('Gtk', '3.0')
+ gi.require_version('Handy', '1')
+-gi.require_version('WebKit2', '4.0')
++gi.require_version('WebKit2', '4.1')
+ gi.require_version('Pango', '1.0')
+ 
+ from gi.repository import Gtk, Gio, Handy

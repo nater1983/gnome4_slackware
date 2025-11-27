@@ -1,0 +1,141 @@
+From aa99ca5b5b54f426d9a71bcc9124c98a6833c07a Mon Sep 17 00:00:00 2001
+From: Ray Strode <rstrode@redhat.com>
+Date: Sun, 3 Mar 2024 09:22:31 -0500
+Subject: [PATCH 1/2] system, remote-desktop: Set port row insensitive when
+ appropriate
+
+Right now we set a subtitle of "" when the port is invalid. This
+leads to the "Port" title getting center aligned vertically.
+
+We also keep the port sensitive even when it's empty and there is
+little value in copying it.
+
+This commit changes the subtitle to " " so it serves as a
+placeholder to keep the "Port" title top aligned. This commit
+also makes the port insensitive in that case so the user never
+copies the placeholder space.
+---
+ .../remote-desktop/cc-desktop-sharing-page.c  | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/panels/system/remote-desktop/cc-desktop-sharing-page.c b/panels/system/remote-desktop/cc-desktop-sharing-page.c
+index 771e7af94b..b1c910bfc1 100644
+--- a/panels/system/remote-desktop/cc-desktop-sharing-page.c
++++ b/panels/system/remote-desktop/cc-desktop-sharing-page.c
+@@ -552,13 +552,26 @@ format_port_for_row (GBinding     *binding,
+   int port = g_value_get_int (from_value);
+ 
+   if (port <= 0)
+-    g_value_set_string (to_value, "");
++    g_value_set_string (to_value, " ");
+   else
+     g_value_take_string (to_value, g_strdup_printf ("%u", port));
+ 
+   return TRUE;
+ }
+ 
++static gboolean
++sensitize_row_from_port (GBinding     *binding,
++                         const GValue *from_value,
++                         GValue       *to_value,
++                         gpointer      user_data)
++{
++  int port = g_value_get_int (from_value);
++
++  g_value_set_boolean (to_value, port > 0);
++
++  return TRUE;
++}
++
+ static void
+ on_connected_to_remote_desktop_rdp_server (GObject      *source_object,
+                                            GAsyncResult *result,
+@@ -584,6 +597,13 @@ on_connected_to_remote_desktop_rdp_server (GObject      *source_object,
+                                NULL,
+                                NULL,
+                                NULL);
++  g_object_bind_property_full (self->rdp_server, "port",
++                               self->port_row, "sensitive",
++                               G_BINDING_SYNC_CREATE,
++                               sensitize_row_from_port,
++                               NULL,
++                               NULL,
++                               NULL);
+ }
+ 
+ static void
+-- 
+GitLab
+
+
+From 857265c2500ba691861a217cde284b9e08da6b01 Mon Sep 17 00:00:00 2001
+From: Ray Strode <rstrode@redhat.com>
+Date: Sun, 3 Mar 2024 09:22:31 -0500
+Subject: [PATCH 2/2] system, remote-desktop: Set port row insensitive when
+ appropriate
+
+Right now we set a subtitle of "" when the port is invalid. This
+leads to the "Port" title getting center aligned vertically.
+
+We also keep the port sensitive even when it's empty and there is
+little value in copying it.
+
+This commit changes the subtitle to " " so it serves as a
+placeholder to keep the "Port" title top aligned. This commit
+also makes the port insensitive in that case so the user never
+copies the placeholder space.
+
+Closes: https://gitlab.gnome.org/GNOME/gnome-control-center/-/issues/2934
+---
+ .../remote-desktop/cc-remote-session-page.c   | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/panels/system/remote-desktop/cc-remote-session-page.c b/panels/system/remote-desktop/cc-remote-session-page.c
+index 8408781080..7f1ae36986 100644
+--- a/panels/system/remote-desktop/cc-remote-session-page.c
++++ b/panels/system/remote-desktop/cc-remote-session-page.c
+@@ -405,13 +405,26 @@ format_port_for_row (GBinding     *binding,
+   int port = g_value_get_int (from_value);
+ 
+   if (port <= 0)
+-    g_value_set_string (to_value, "");
++    g_value_set_string (to_value, " ");
+   else
+     g_value_take_string (to_value, g_strdup_printf ("%u", port));
+ 
+   return TRUE;
+ }
+ 
++static gboolean
++sensitize_row_from_port (GBinding     *binding,
++                         const GValue *from_value,
++                         GValue       *to_value,
++                         gpointer      user_data)
++{
++  int port = g_value_get_int (from_value);
++
++  g_value_set_boolean (to_value, port > 0);
++
++  return TRUE;
++}
++
+ static void
+ on_set_rdp_credentials (GsdRemoteDesktopRdpServer *rdp_server,
+                         GAsyncResult              *result,
+@@ -675,6 +688,13 @@ on_connected_to_remote_desktop_rdp_server (GObject      *source_object,
+                                NULL,
+                                NULL,
+                                NULL);
++  g_object_bind_property_full (self->rdp_server, "port",
++                               self->port_row, "sensitive",
++                               G_BINDING_SYNC_CREATE,
++                               sensitize_row_from_port,
++                               NULL,
++                               NULL,
++                               NULL);
+ 
+   if (g_permission_get_allowed (self->permission))
+     fetch_credentials (self);
+-- 
+GitLab
+

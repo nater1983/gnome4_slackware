@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+Curtail: Curtail (Compress your images)
+Curtail:
+Curtail: Curtail (previously ImCompressor) is an useful image compressor, 
+Curtail: supporting PNG, JPEG, WebP and SVG file types. It support both 
+Curtail: lossless and lossy compression modes with an option to whether keep 
+Curtail: or not metadata of images. It is inspired by Trimage and 
+Curtail: Image-Optimizer.
+Curtail: Supported formats : PNG,JPEG,WebP,SVG
+Curtail: 
+Curtail: https://github.com/Huluti/Curtail
+Curtail:

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+     |-----handy-ruler------------------------------------------------------|
+Plots: Plots (A graph plotting app for GNOME )
+Plots:
+Plots: Plots is a graph plotting app for GNOME. Plots makes it easy to
+Plots: visualise mathematical formulae. In addition to basic arithmetic
+Plots: operations, it supports trigonometric, hyperbolic, exponential and
+Plots: logarithmic functions, as well as arbitrary sums and products. It can
+Plots: display polar equations, and both implicit and explicit Cartesian
+Plots: equations.
+Plots:
+Plots: https://github.com/alexhuntley/Plots
+Plots:

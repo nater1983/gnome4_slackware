@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+          |-----handy-ruler------------------------------------------------------|
+eyedropper: eyedropper (Pick and format colors)
+eyedropper:
+eyedropper: Pick any color from your screen and view it in different formats.  
+eyedropper: Change the picked color or go back to a previously picked color from 
+eyedropper: the history list. Generate a list of different shades from the picked 
+eyedropper: color.
+eyedropper: 
+eyedropper: 
+eyedropper: 
+eyedropper: https://github.com/FineFindus/eyedropper
+eyedropper:

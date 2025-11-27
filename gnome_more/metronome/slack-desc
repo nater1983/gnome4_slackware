@@ -1,0 +1,18 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+metronome: metronome (Keep the tempo)
+metronome:
+metronome: Metronome beats the rhythm for you, you simply need to tell it the 
+metronome: required time signature and beats per minutes. You can also tap to 
+metronome: let the application guess the required beats per minute.
+metronome: 
+metronome: 
+metronome: 
+metronome: https://gitlab.gnome.org/World/metronome
+metronome:

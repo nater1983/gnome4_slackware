@@ -1,0 +1,21 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+font-manager: font-manager (Nautilus extension for Font Manager)
+font-manager:
+font-manager: Font Manager is intended to provide a way for average users to easily
+font-manager: manage desktop fonts, without having to resort to command line tools
+font-manager: or editing configuration files by hand. While designed primarily with
+font-manager: the GNOME Desktop Environment in mind, it should work well with other
+font-manager: Gtk+ desktop environments. 
+font-manager:
+font-manager: Homepage: https://github.com/FontManager/font-manager
+font-manager:
+font-manager:
+
+ 

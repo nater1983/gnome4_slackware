@@ -1,4 +1,6 @@
-# GFS ( Gnome For Slackware )
+
+
+# GFS 47
 
 
 > We\'re living the future so

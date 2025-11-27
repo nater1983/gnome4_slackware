@@ -1,1 +1,0 @@
-install -vDm 0644 $CWD/post-install/libavif/{avifdec,avifenc}.1 -t $PKG/usr/man/man1

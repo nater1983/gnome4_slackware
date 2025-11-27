@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Define the directory where you want to search for SlackBuild files
+search_dir="./"
+
+# Use find to locate SlackBuild files and apply sed to replace the text
+find "$search_dir" -type f -name "*.SlackBuild" -exec sed -i 's#/tmp/gfs#./#g' {} \;
+

@@ -1,0 +1,10 @@
+3 RULLES:
+
+1) Every order folder MUST have its build_all.sh file inside. 
+Its the same for all...no edit needed, just to be there.
+2) Every SlackBuild MUST have its own 00-build_package-name.sh in the /order folder also.
+If 00-build_package-name.sh have the .sh extension then Slackbuild will be builded, if not (00-build_package-name) then SlackBuild will not be beuilded.
+
+3) Every SlackBuild (meson,auto-tooles,python,etc) MUST have this:
+TMP=${TMP:-/tmp/gfs}
+OUTPUT=${OUTPUT:-$CWD}

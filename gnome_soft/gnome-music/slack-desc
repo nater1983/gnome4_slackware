@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+gnome-music: gnome-music (simple GNOME music applcation)
+gnome-music:
+gnome-music: Music is the new GNOME music playing application aiming at being a
+gnome-music: simple and elegant replacement for using Files to show the Music
+gnome-music: directory. Objectives includes listening to local and online/cloud
+gnome-music: collections, listen to music on attached devices, listen to music
+gnome-music: shared by friends, listen to audiobooks, a player for DLNA media
+gnome-music: servers, share music, upload music and select favorites. 
+gnome-music:
+gnome-music: Homepage: https://gitlab.gnome.org/GNOME/gnome-music
+gnome-music:

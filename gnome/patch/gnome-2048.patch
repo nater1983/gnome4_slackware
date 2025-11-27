@@ -1,1 +1,0 @@
-patch -Np1 -i $CWD/patch/gnome-2048/0001-meson-drop-unused-argument-for-i18n.merge_file.patch

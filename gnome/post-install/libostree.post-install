@@ -1,1 +1,0 @@
-mv $PKG/usr/lib/dracut/ $PKG/usr/lib64

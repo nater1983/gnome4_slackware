@@ -1,0 +1,129 @@
+From c1c87a1745c4943fc9de3364265caccffab07f6d Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <naterussell83@gmail.com>
+Date: Sun, 22 Sep 2024 12:40:09 +0000
+Subject: [PATCH] Update 4 files
+
+- /data/gnome-remote-desktop-handover.service.in
+- /data/gnome-remote-desktop-headless.service.in
+- /data/gnome-remote-desktop-system.service.in
+- /data/gnome-remote-desktop.service.in
+---
+ data/gnome-remote-desktop-handover.service.in | 21 +++++++++---------
+ data/gnome-remote-desktop-headless.service.in | 22 +++++++++----------
+ data/gnome-remote-desktop-system.service.in   | 22 +++++++++----------
+ data/gnome-remote-desktop.service.in          | 21 +++++++++---------
+ 4 files changed, 40 insertions(+), 46 deletions(-)
+
+diff --git a/data/gnome-remote-desktop-handover.service.in b/data/gnome-remote-desktop-handover.service.in
+index d93828d3b..56cea7119 100644
+--- a/data/gnome-remote-desktop-handover.service.in
++++ b/data/gnome-remote-desktop-handover.service.in
+@@ -1,11 +1,10 @@
+-[Unit]
+-Description=GNOME Remote Desktop Handover
+-
+-[Service]
+-Type=dbus
+-BusName=org.gnome.RemoteDesktop.Handover
+-ExecStart=@libexecdir@/gnome-remote-desktop-daemon --handover
+-Restart=on-failure
+-
+-[Install]
+-WantedBy=gnome-session.target
++#  SPDX-License-Identifier: GPL-3.0-or-later
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 3 as published by
++# the Free Software Foundation.
++ 
++[D-BUS Service]
++Name=org.gnome.RemoteDesktop.Handover
++Exec=@libexecdir@/gnome-remote-desktop-daemon --handover
++User=root
+\ No newline at end of file
+diff --git a/data/gnome-remote-desktop-headless.service.in b/data/gnome-remote-desktop-headless.service.in
+index 06866bc44..1711d16d9 100644
+--- a/data/gnome-remote-desktop-headless.service.in
++++ b/data/gnome-remote-desktop-headless.service.in
+@@ -1,12 +1,10 @@
+-[Unit]
+-Description=GNOME Remote Desktop (headless)
+-Conflicts=gnome-remote-desktop.service
+-
+-[Service]
+-Type=dbus
+-BusName=org.gnome.RemoteDesktop.Headless
+-ExecStart=@libexecdir@/gnome-remote-desktop-daemon --headless
+-Restart=on-failure
+-
+-[Install]
+-WantedBy=gnome-session.target
++#  SPDX-License-Identifier: GPL-3.0-or-later
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 3 as published by
++# the Free Software Foundation.
++ 
++[D-BUS Service]
++Name=org.gnome.RemoteDesktop.Headless
++Exec=@libexecdir@/gnome-remote-desktop-daemon --headless
++User=root
+\ No newline at end of file
+diff --git a/data/gnome-remote-desktop-system.service.in b/data/gnome-remote-desktop-system.service.in
+index 2abf562d6..8d1d0c299 100644
+--- a/data/gnome-remote-desktop-system.service.in
++++ b/data/gnome-remote-desktop-system.service.in
+@@ -1,12 +1,10 @@
+-[Unit]
+-Description=GNOME Remote Desktop
+-
+-[Service]
+-Type=dbus
+-User=@GRD_USERNAME@
+-BusName=org.gnome.RemoteDesktop
+-ExecStart=@libexecdir@/gnome-remote-desktop-daemon --system
+-Restart=on-failure
+-
+-[Install]
+-WantedBy=graphical.target
++#  SPDX-License-Identifier: GPL-3.0-or-later
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 3 as published by
++# the Free Software Foundation.
++ 
++[D-BUS Service]
++Name=org.gnome.RemoteDesktop
++Exec=@libexecdir@/gnome-remote-desktop-daemon --system
++User=root
+\ No newline at end of file
+diff --git a/data/gnome-remote-desktop.service.in b/data/gnome-remote-desktop.service.in
+index e2aadca53..dafd5c140 100644
+--- a/data/gnome-remote-desktop.service.in
++++ b/data/gnome-remote-desktop.service.in
+@@ -1,11 +1,10 @@
+-[Unit]
+-Description=GNOME Remote Desktop
+-
+-[Service]
+-Type=dbus
+-BusName=org.gnome.RemoteDesktop.User
+-ExecStart=@libexecdir@/gnome-remote-desktop-daemon
+-Restart=on-failure
+-
+-[Install]
+-WantedBy=gnome-session.target
++#  SPDX-License-Identifier: GPL-3.0-or-later
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 3 as published by
++# the Free Software Foundation.
++ 
++[D-BUS Service]
++Name=org.gnome.RemoteDesktop.User
++Exec=@libexecdir@/gnome-remote-desktop-daemon
++User=root
+\ No newline at end of file
+-- 
+GitLab
+
