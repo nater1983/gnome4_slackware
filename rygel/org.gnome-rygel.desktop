@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=GNOME Rygel ( Upnp Server )
+Exec=/usr/bin/rygel >/var/log/rygel.log 2>&1
+OnlyShowIn=GNOME;
+NoDisplay=true
+X-GNOME-Autostart-Phase=Initialization
+X-GNOME-Autostart-Notify=false
+X-GNOME-AutoRestart=true
+X-GNOME-HiddenUnderSystemd=false

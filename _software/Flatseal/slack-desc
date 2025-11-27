@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+        |-----handy-ruler------------------------------------------------------|
+Flatseal: Flatseal (Manage Flatpak permissions)
+Flatseal:
+Flatseal: Flatseal is a graphical utility to review and modify permissions from 
+Flatseal: your Flatpak applications
+Flatseal:
+Flatseal: Homepage: https://github.com/tchx84/Flatseal
+Flatseal:
+Flatseal:
+Flatseal:
+Flatseal:
+Flatseal:

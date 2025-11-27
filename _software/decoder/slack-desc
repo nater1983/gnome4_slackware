@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+decoder: decoder (Scan and Generate QR Codes)
+decoder:
+decoder: Fancy yet simple QR Codes scanner and generator. 
+decoder: Features:
+decoder: 	QR Code generation
+decoder: 	Scanning with a camera
+decoder: 	Scanning from a screenshot
+decoder: 	Parses and displays QR code content when possible
+decoder: 
+decoder: https://gitlab.gnome.org/World/decoder
+decoder:

@@ -1,0 +1,101 @@
+From 34712449da3f1d897ae07fc85c0234eb3a02da5c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Florian=20M=C3=BCllner?= <fmuellner@gnome.org>
+Date: Wed, 15 Mar 2023 20:11:39 +0100
+Subject: [PATCH 1/2] endSessionDialog: Catch async errors
+
+Otherwise the actual error is masked by an "unhandled promise
+rejection" error, making it harder to track down the underlying
+cause.
+
+https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/6506
+
+Part-of: <https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2696>
+---
+ js/ui/endSessionDialog.js | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/js/ui/endSessionDialog.js b/js/ui/endSessionDialog.js
+index 66fc2e6f94..3de1085ab0 100644
+--- a/js/ui/endSessionDialog.js
++++ b/js/ui/endSessionDialog.js
+@@ -235,7 +235,7 @@ class EndSessionDialog extends ModalDialog.ModalDialog {
+ 
+         this._loginManager = LoginManager.getLoginManager();
+         this._canRebootToBootLoaderMenu = false;
+-        this._getCanRebootToBootLoaderMenu();
++        this._getCanRebootToBootLoaderMenu().catch(logError);
+ 
+         this._userManager = AccountsService.UserManager.get_default();
+         this._user = this._userManager.get_user(GLib.get_user_name());
+@@ -449,7 +449,7 @@ class EndSessionDialog extends ModalDialog.ModalDialog {
+                 action: () => {
+                     let signalId = this.connect('closed', () => {
+                         this.disconnect(signalId);
+-                        this._confirm(signal);
++                        this._confirm(signal).catch(logError);
+                     });
+                     this.close(true);
+                 },
+@@ -501,7 +501,7 @@ class EndSessionDialog extends ModalDialog.ModalDialog {
+ 
+     _confirmRebootToBootLoaderMenu() {
+         this._loginManager.setRebootToBootLoaderMenu();
+-        this._confirm('ConfirmedReboot');
++        this._confirm('ConfirmedReboot').catch(logError);
+     }
+ 
+     async _confirm(signal) {
+@@ -589,7 +589,7 @@ class EndSessionDialog extends ModalDialog.ModalDialog {
+ 
+             let dialogContent = DialogContent[this._type];
+             let button = dialogContent.confirmButtons[dialogContent.confirmButtons.length - 1];
+-            this._confirm(button.signal);
++            this._confirm(button.signal).catch(logError);
+             this._timerId = 0;
+ 
+             return GLib.SOURCE_REMOVE;
+@@ -759,7 +759,7 @@ class EndSessionDialog extends ModalDialog.ModalDialog {
+         }
+ 
+         if (dialogContent.showOtherSessions)
+-            this._loadSessions();
++            this._loadSessions().catch(logError);
+ 
+         let updatesAllowed = this._updatesPermission && this._updatesPermission.allowed;
+ 
+-- 
+2.39.2
+
+
+From 5766d4111ac065b37417bedcc1b998ab6bee5514 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Florian=20M=C3=BCllner?= <fmuellner@gnome.org>
+Date: Wed, 15 Mar 2023 20:41:48 +0100
+Subject: [PATCH 2/2] modalDialog: Fix fading out dialog
+
+The dialog's state property has been read-only since
+commit 2f6323afc, but the callback at the end of the
+fade transition still tries to set the value directly.
+
+https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/6506
+
+Part-of: <https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2696>
+---
+ js/ui/modalDialog.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/js/ui/modalDialog.js b/js/ui/modalDialog.js
+index 64800a376d..0561b8b155 100644
+--- a/js/ui/modalDialog.js
++++ b/js/ui/modalDialog.js
+@@ -282,7 +282,7 @@ var ModalDialog = GObject.registerClass({
+             opacity: 0,
+             duration: FADE_OUT_DIALOG_TIME,
+             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+-            onComplete: () => (this.state = State.FADED_OUT),
++            onComplete: () => this._setState(State.FADED_OUT),
+         });
+     }
+ });
+-- 
+2.39.2
+

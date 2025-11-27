@@ -1,0 +1,63 @@
+From 8da5e173ebdccbca60387ef2347c629be3c78dff Mon Sep 17 00:00:00 2001
+From: Eli Schwartz <eschwartz93@gmail.com>
+Date: Mon, 27 Jun 2022 01:36:07 -0400
+Subject: [PATCH] fix invalid use of subprojects
+
+The keycodemapdb Meson subproject provides a program and a source input.
+Since it is a subproject, Meson wants to sandbox that and requires it to
+be explicitly exported. But this never happened -- instead, we manually
+poked at files using the actual string path "subprojects/......"
+
+This was always a Meson sandbox violation, but Meson 0.63.0 started
+noticing it and erroring out.
+
+Instead, do the right thing. Update the subproject to a version that has
+a meson.build with actually meaningful contents -- namely, a files
+variable and a found program. Then use these in order to run the needed
+custom_target.
+
+In the process, it is also necessary to correct the argument ordering
+when running keymap-gen.
+---
+ meson.build              | 6 +++---
+ src/meson.build          | 3 ++-
+ subprojects/keycodemapdb | 2 +-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 299113a..bf72f13 100644
+--- a/meson.build
++++ b/meson.build
+@@ -133,10 +133,10 @@ gtk_vnc_version_check_flags = gvnc_version_check_flags + [
+   '-DGDK_VERSION_MAX_ALLOWED=@0@'.format(gtk_min_version_symbol),
+ ]
+ 
+-subproject('keycodemapdb')
++keycodemapdb = subproject('keycodemapdb')
+ 
+-keymapgen = files('subprojects/keycodemapdb/tools/keymap-gen')
+-keymapcsv = files('subprojects/keycodemapdb/data/keymaps.csv')
++keymapgen = find_program('keymap-gen')
++keymapcsv = keycodemapdb.get_variable('keymaps_csv')
+ 
+ 
+ gnome = import('gnome')
+diff --git a/src/meson.build b/src/meson.build
+index 247c597..67fa8b9 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -336,9 +336,10 @@ foreach keymap: keymaps
+   cmd = [
+     python,
+     keymapgen,
++    'code-map',
+     '--lang', 'glib2',
+     '--varname', varname,
+-    'code-map', keymapcsv, keymap, 'qnum'
++    keymapcsv, keymap, 'qnum'
+   ]
+   gtk_vnc_sources += custom_target(
+     target,
+-- 
+GitLab
+

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+      |-----handy-ruler------------------------------------------------------|
+Commit: Commit (Commit message editor)
+Commit:
+Commit: Commit is an editor that helps you write better Git and Mercurial
+Commit: commit messages. Commit will pop up automatically when you make a 
+Commit: commit in one of your projects. To save your commit message, press 
+Commit: the Commit button or the Ctrl+Return shortcut. To abort and dismiss
+Commit: Commit, press the Abort button or the Escape key.
+Commit:
+Commit: 
+Commit: Homepage: https://apps.gnome.org/app/re.sonny.Commit/
+Commit:

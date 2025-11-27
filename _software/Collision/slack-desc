@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+Collision: Collision (Check hashes for your files)
+Collision:
+Collision: Verifying that a file you downloaded or received is actually the one 
+Collision: you were expecting is often overlooked or too time-consuming to do. 
+Collision: At the same time, it has become very easy to get your hands on a file 
+Collision: that has been tampered with, due to the mass increase of malicious 
+Collision: webpages and other actors.
+Collision: Compare and verify MD5, SHA-256, SHA-512 and SHA-1 hashes.
+Collision: 
+Collision: https://github.com/GeopJr/collision
+Collision:

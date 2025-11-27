@@ -1,0 +1,23 @@
+From d0d8f99ba341c880509b1f1534db18225d5997f1 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Sat, 13 May 2023 23:41:05 +0000
+Subject: [PATCH] Update metadata.json
+
+---
+ metadata.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/metadata.json b/metadata.json
+index 416651f..9c6b8ec 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -6,7 +6,8 @@
+   "shell-version": [
+     "41",
+     "42",
+-    "43"
++    "43",
++    "44"
+   ],
+   "url": "https://github.com/G-dH/overview-feature-pack",
+   "uuid": "overview-feature-pack@G-dH.github.com",

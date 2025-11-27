@@ -1,0 +1,92 @@
+From 910447caf0efc3756977d976880e78ae4d6422fd Mon Sep 17 00:00:00 2001
+From: "W. Michael Petullo" <mike@flyn.org>
+Date: Sun, 11 Dec 2022 16:06:59 -0600
+Subject: [PATCH] Remove extraneous #includes
+
+Signed-off-by: W. Michael Petullo <mike@flyn.org>
+---
+ libdmapsharing/dmap-av-share.c      | 4 ----
+ libdmapsharing/dmap-control-share.c | 4 ----
+ libdmapsharing/dmap-image-share.c   | 4 ----
+ libdmapsharing/dmap-share-private.h | 4 ----
+ libdmapsharing/dmap-share.h         | 4 ----
+ 5 files changed, 20 deletions(-)
+
+diff --git a/libdmapsharing/dmap-av-share.c b/libdmapsharing/dmap-av-share.c
+index 013897f..c3464d2 100644
+--- a/libdmapsharing/dmap-av-share.c
++++ b/libdmapsharing/dmap-av-share.c
+@@ -29,10 +29,6 @@
+ #include <glib.h>
+ 
+ #include <libsoup/soup.h>
+-#include <libsoup/soup-address.h>
+-#include <libsoup/soup-message.h>
+-#include <libsoup/soup-uri.h>
+-#include <libsoup/soup-server.h>
+ 
+ #include <libdmapsharing/dmap.h>
+ #include <libdmapsharing/dmap-share-private.h>
+diff --git a/libdmapsharing/dmap-control-share.c b/libdmapsharing/dmap-control-share.c
+index 5ff89c7..9aa7002 100644
+--- a/libdmapsharing/dmap-control-share.c
++++ b/libdmapsharing/dmap-control-share.c
+@@ -32,10 +32,6 @@
+ #endif /* HAVE_GDKPIXBUF */
+ 
+ #include <libsoup/soup.h>
+-#include <libsoup/soup-address.h>
+-#include <libsoup/soup-message.h>
+-#include <libsoup/soup-uri.h>
+-#include <libsoup/soup-server.h>
+ 
+ #include <libdmapsharing/dmap.h>
+ #include <libdmapsharing/dmap-structure.h>
+diff --git a/libdmapsharing/dmap-image-share.c b/libdmapsharing/dmap-image-share.c
+index 7307168..6649bc4 100644
+--- a/libdmapsharing/dmap-image-share.c
++++ b/libdmapsharing/dmap-image-share.c
+@@ -35,10 +35,6 @@
+ #include <fcntl.h>
+ 
+ #include <libsoup/soup.h>
+-#include <libsoup/soup-address.h>
+-#include <libsoup/soup-message.h>
+-#include <libsoup/soup-uri.h>
+-#include <libsoup/soup-server.h>
+ 
+ #include <libdmapsharing/dmap.h>
+ #include <libdmapsharing/dmap-share-private.h>
+diff --git a/libdmapsharing/dmap-share-private.h b/libdmapsharing/dmap-share-private.h
+index cf17bc2..fba4de5 100644
+--- a/libdmapsharing/dmap-share-private.h
++++ b/libdmapsharing/dmap-share-private.h
+@@ -26,10 +26,6 @@
+ #include <glib-object.h>
+ 
+ #include <libsoup/soup.h>
+-#include <libsoup/soup-address.h>
+-#include <libsoup/soup-message.h>
+-#include <libsoup/soup-uri.h>
+-#include <libsoup/soup-server.h>
+ 
+ #include <libdmapsharing/dmap-share.h>
+ #include <libdmapsharing/dmap-mdns-publisher.h>
+diff --git a/libdmapsharing/dmap-share.h b/libdmapsharing/dmap-share.h
+index 23db199..a5a778a 100644
+--- a/libdmapsharing/dmap-share.h
++++ b/libdmapsharing/dmap-share.h
+@@ -26,10 +26,6 @@
+ #include <glib-object.h>
+ 
+ #include <libsoup/soup.h>
+-#include <libsoup/soup-address.h>
+-#include <libsoup/soup-message.h>
+-#include <libsoup/soup-uri.h>
+-#include <libsoup/soup-server.h>
+ 
+ #include <libdmapsharing/dmap-record.h>
+ #include <libdmapsharing/dmap-mdns-publisher.h>
+-- 
+GitLab
+

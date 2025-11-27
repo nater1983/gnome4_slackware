@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+               |-----handy-ruler------------------------------------------------------|
+python3-tzlocal: python3-tzlocal (Python module that guess's what your timezone is)
+python3-tzlocal:
+python3-tzlocal: tzlocal 4.0 also adds an official function get_localzone_name()
+python3-tzlocal: to get only the timezone name, instead of a timezone object.
+python3-tzlocal: On unix, it can raise an error if you don't have a timezone
+python3-tzlocal: name configured, where get_localzone() will succeed, so only use that
+python3-tzlocal: if you need the timezone name.
+python3-tzlocal:
+python3-tzlocal: Homepage: https://github.com/regebro/tzlocal
+python3-tzlocal:
+python3-tzlocal:

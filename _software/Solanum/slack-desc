@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+       |-----handy-ruler------------------------------------------------------|
+Solanum: Solanum (Balance working time and break time)
+Solanum:
+Solanum: Solanum is a time tracking app that uses the pomodoro technique. 
+Solanum: Work in 4 sessions, with breaks in between each session and one long 
+Solanum: break after all 4. 
+Solanum:  
+Solanum:  
+Solanum: 
+Solanum: 
+Solanum: https://gitlab.gnome.org/World/Solanum
+Solanum: 

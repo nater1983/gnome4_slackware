@@ -1,0 +1,18 @@
+--- libportal-0.6/libportal/portal-gtk4.c.orig     2022-09-18 20:56:10.062136394 +0100                                                                        
++++ libportal-0.6/libportal/portal-gtk4.c  2022-09-18 20:59:44.879138215 +0100                                                                                
+@@ -258,9 +258,13 @@                                                                                                                       
+ xdp_portal_init (XdpPortal *portal)                                                                                                       
+ {                                                                                                                                         
+   int i;                                                                                                                                  
++  const gchar *dbus_connection_name;                                                                                                      
+                                                                                                                                           
+   portal->bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);                                                                          
+-  portal->sender = g_strdup (g_dbus_connection_get_unique_name (portal->bus) + 1);                                                        
++  dbus_connection_name = portal->bus ? g_dbus_connection_get_unique_name (portal->bus) : NULL;                                            
++  if (!dbus_connection_name)                                                                                                              
++    dbus_connection_name = "_DBUS_NOT_PRESENT";                                                                                           
++  portal->sender = g_strdup (dbus_connection_name + 1);                                                                                   
+   for (i = 0; portal->sender[i]; i++)                                                                                                     
+     if (portal->sender[i] == '.')                                                                                                         
+       portal->sender[i] = '_';
+

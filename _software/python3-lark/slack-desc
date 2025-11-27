@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+            |-----handy-ruler------------------------------------------------------|
+python3-lark: python3-lark (a parsing toolkit for Python)
+python3-lark:
+python3-lark: Lark is a parsing toolkit for Python, built with a focus on
+python3-lark: ergonomics, performance and modularity. Lark can parse all
+python3-lark: context-free languages.  To put it simply, it means that it is capable
+python3-lark: of parsing almost any programming language out there, and to some
+python3-lark: degree most natural languages too.
+python3-lark:
+python3-lark:
+python3-lark: https://github.com/lark-parser/lark
+python3-lark:

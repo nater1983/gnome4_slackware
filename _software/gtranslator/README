@@ -1,0 +1,11 @@
+Gtranslator (-the GNOME translation making program-)
+
+If you get this code from the git repository the easier way to build is using
+gnome-builder. There's a flatpak manifest that gnome-builder uses to build all
+deps and launch the application sandboxed so you don't need to worry about
+dependencies.
+If you want to build by hand, you should follow the meson build commands:
+
+meson _build
+ninja -C _build
+ninja -C _build install

@@ -1,0 +1,7 @@
+meson
+ninja
+python3
+pygobject3
+gtk4
+libadwaita
+gstreamer

@@ -1,0 +1,56 @@
+diff --git a/apostrophe/inline_preview.py b/apostrophe/inline_preview.py
+--- a/apostrophe/inline_preview.py.orig	2022-04-29 23:19:21.000000000 +0300
++++ b/apostrophe/inline_preview.py	2023-06-02 14:05:48.215963851 +0300
+@@ -22,7 +22,11 @@
+ import gi
+ 
+ gi.require_version("Gtk", "3.0")
+-gi.require_version("WebKit2", "4.0")
++try:
++    gi.require_version('WebKit2', '4.1')
++except ValueError:
++    gi.require_version('WebKit2', '4.0')
++
+ from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
+ from gi.repository import WebKit2
+ from apostrophe import latex_to_PNG, markup_regex
+ 
+--
+
+diff --git a/apostrophe/preview_handler.py b/apostrophe/preview_handler.py
+--- a/apostrophe/preview_handler.py.orig	2022-04-29 23:19:21.000000000 +0300
++++ b/apostrophe/preview_handler.py	2023-06-02 14:06:15.338962167 +0300
+@@ -22,7 +22,11 @@
+ from apostrophe.preview_renderer import PreviewRenderer
+ from apostrophe.settings import Settings
+ 
+-gi.require_version('WebKit2', '4.0')
++try:
++    gi.require_version('WebKit2', '4.1')
++except ValueError:
++    gi.require_version('WebKit2', '4.0')
++
+ from gi.repository import WebKit2, GLib, Gtk, GObject
+ 
+ from apostrophe.preview_converter import PreviewConverter
+ 
+--
+
+diff --git a/apostrophe/preview_web_view.py b/apostrophe/preview_web_view.py
+--- a/apostrophe/preview_web_view.py.orig	2022-04-29 23:19:21.000000000 +0300
++++ b/apostrophe/preview_web_view.py	2023-06-02 14:06:23.664961650 +0300
+@@ -17,7 +17,11 @@
+ 
+ import gi
+ 
+-gi.require_version('WebKit2', '4.0')
++try:
++    gi.require_version('WebKit2', '4.1')
++except ValueError:
++    gi.require_version('WebKit2', '4.0')
++
+ from gi.repository import WebKit2, GLib, GObject
+ 
+ 
+---
+2.40.1

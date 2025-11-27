@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+              |-----handy-ruler------------------------------------------------------|
+python3-gaphas: python3-gaphas (Gaphas is the diagramming widget library for Python.)
+python3-gaphas:
+python3-gaphas: Gaphas is a library that provides the user interface component 
+python3-gaphas: (widget) for drawing diagrams. Diagrams can be drawn to screen and 
+python3-gaphas: then easily exported to a variety of formats, including SVG and PDF. 
+python3-gaphas: Want to build an app with chart-like diagrams? Then Gaphas is for 
+python3-gaphas: you! Use this library to build a tree, network, flowchart, or other 
+python3-gaphas: diagrams.
+python3-gaphas: 
+python3-gaphas: https://github.com/gaphor/gaphas
+python3-gaphas:

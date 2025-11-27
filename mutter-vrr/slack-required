@@ -1,0 +1,3 @@
+gnome-settings-daemon
+xvfb-run
+gnome-shell

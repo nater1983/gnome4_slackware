@@ -1,0 +1,241 @@
+From: Debarshi Ray <debarshir@gnome.org>
+Date: Mon, 12 May 2014 14:57:18 +0200
+Subject: [PATCH 01/16] Restore transparency
+
+The transparency settings were removed as a side effect of
+2bff4b63ed3ceef6055e35563e9b0b33ad57349d
+
+This restores them and you will need a compositing window manager to
+use it. The background image setting, also known as faux transparency,
+was not restored.
+
+The transparency checkbox lost its mnemonic accelerator because 't'
+is already taken and using any other letter would make it hard to
+restore the translations of the string.
+
+Some changes by Peter Weber <peter.weber@mailbox.org>
+
+[Kali notes: we include the patch from Fedora:
+https://src.fedoraproject.org/rpms/gnome-terminal/tree/rawhide
+
+This current patch is for 3.45.90 updated for 3.46.1]
+
+Origin: other, https://src.fedoraproject.org/rpms/gnome-terminal/blob/26c20042c6b151a6f05b961fe57998086f274d5f/f/gnome-terminal-cntr-ntfy-autottl-ts.patch
+---
+ src/org.gnome.Terminal.gschema.xml | 10 ++++++++
+ src/preferences.ui                 | 47 ++++++++++++++++++++++++++++++++++++++
+ src/profile-editor.cc              | 19 +++++++++++++++
+ src/terminal-schemas.hh            |  3 +++
+ src/terminal-screen.cc             | 22 +++++++++++++++++-
+ src/terminal-window.cc             |  7 ++++++
+ 6 files changed, 107 insertions(+), 1 deletion(-)
+
+diff --git a/src/org.gnome.Terminal.gschema.xml b/src/org.gnome.Terminal.gschema.xml
+index c343fd9..6843a0a 100644
+--- a/src/org.gnome.Terminal.gschema.xml
++++ b/src/org.gnome.Terminal.gschema.xml
+@@ -349,6 +349,16 @@
+       <default>'narrow'</default>
+       <summary>Whether ambiguous-width characters are narrow or wide when using UTF-8 encoding</summary>
+     </key>
++    <key name="use-transparent-background" type="b">
++      <default>false</default>
++      <summary>Whether to use a transparent background</summary>
++    </key>
++    <key name="background-transparency-percent" type="i">
++      <default>50</default>
++      <range min="0" max="100"/>
++      <summary>Adjust the amount of transparency</summary>
++      <description>A value between 0 and 100, where 0 is opaque and 100 is fully transparent.</description>
++    </key>
+   </schema>
+ 
+   <!-- Keybinding settings -->
+diff --git a/src/preferences.ui b/src/preferences.ui
+index d1aca7b..64f8295 100644
+--- a/src/preferences.ui
++++ b/src/preferences.ui
+@@ -95,6 +95,11 @@
+     <property name="step_increment">0.05</property>
+     <property name="page_increment">0.25</property>
+   </object>
++  <object class="GtkAdjustment" id="background-transparent-adjustment">
++    <property name="upper">100</property>
++    <property name="step_increment">1</property>
++    <property name="page_increment">10</property>
++  </object>
+   <object class="GtkListStore" id="cjk-ambiguous-width-model">
+     <columns>
+       <!-- column-name gchararray -->
+@@ -1402,6 +1407,48 @@
+                                             <property name="position">1</property>
+                                           </packing>
+                                         </child>
++                                        <child>
++                                          <object class="GtkBox" id="use-transparent-background-box">
++                                            <property name="visible">True</property>
++                                            <property name="can_focus">False</property>
++                                            <property name="orientation">horizontal</property>
++                                            <property name="spacing">12</property>
++                                            <child>
++                                              <object class="GtkCheckButton" id="use-transparent-background">
++                                                <property name="label" translatable="yes">Transparent background</property>
++                                                <property name="visible">True</property>
++                                                <property name="can_focus">True</property>
++                                                <property name="receives_default">False</property>
++                                                <property name="use_underline">True</property>
++                                                <property name="xalign">0</property>
++                                                <property name="draw_indicator">True</property>
++                                              </object>
++                                              <packing>
++                                                <property name="expand">False</property>
++                                                <property name="fill">False</property>
++                                                <property name="position">0</property>
++                                              </packing>
++                                            </child>
++                                            <child>
++                                              <object class="GtkScale" id="background-transparent-scale">
++                                                <property name="visible">True</property>
++                                                <property name="can_focus">True</property>
++                                                <property name="adjustment">background-transparent-adjustment</property>
++                                                <property name="draw_value">False</property>
++                                              </object>
++                                              <packing>
++                                                <property name="expand">True</property>
++                                                <property name="fill">True</property>
++                                                <property name="position">1</property>
++                                              </packing>
++                                            </child>
++                                          </object>
++                                          <packing>
++                                            <property name="expand">True</property>
++                                            <property name="fill">True</property>
++                                            <property name="position">2</property>
++                                          </packing>
++                                        </child>
+                                       </object>
+                                     </child>
+                                   </object>
+diff --git a/src/profile-editor.cc b/src/profile-editor.cc
+index 0cb99b6..d0e71e2 100644
+--- a/src/profile-editor.cc
++++ b/src/profile-editor.cc
+@@ -1491,6 +1491,25 @@ profile_prefs_load (const char *uuid, GSettings *profile)
+ 			       GSettingsBindFlags(G_SETTINGS_BIND_GET |
+ 						  G_SETTINGS_BIND_SET));
+   gtk_widget_set_visible (w, (vte_get_feature_flags() & VTE_FEATURE_FLAG_SIXEL) != 0);
++
++  profile_prefs_settings_bind (profile,
++                               TERMINAL_PROFILE_USE_TRANSPARENT_BACKGROUND,
++                               gtk_builder_get_object (builder, "use-transparent-background"),
++                               "active",
++                               GSettingsBindFlags(G_SETTINGS_BIND_GET |
++                                                  G_SETTINGS_BIND_SET));
++  profile_prefs_settings_bind (profile,
++                               TERMINAL_PROFILE_USE_TRANSPARENT_BACKGROUND,
++                               gtk_builder_get_object (builder, "background-transparent-scale"),
++                               "sensitive",
++                               GSettingsBindFlags(G_SETTINGS_BIND_GET |
++                                                  G_SETTINGS_BIND_NO_SENSITIVITY));
++  profile_prefs_settings_bind (profile,
++                               TERMINAL_PROFILE_BACKGROUND_TRANSPARENCY_PERCENT,
++                               gtk_builder_get_object (builder, "background-transparent-adjustment"),
++                               "value",
++                               GSettingsBindFlags(G_SETTINGS_BIND_GET |
++                                                  G_SETTINGS_BIND_SET));
+ }
+ 
+ /* Called once per Preferences window, to destroy stuff that doesn't depend on the profile being edited */
+diff --git a/src/terminal-schemas.hh b/src/terminal-schemas.hh
+index b146ba8..d2917fa 100644
+--- a/src/terminal-schemas.hh
++++ b/src/terminal-schemas.hh
+@@ -78,6 +78,9 @@ G_BEGIN_DECLS
+ #define TERMINAL_PROFILE_VISIBLE_NAME_KEY               "visible-name"
+ #define TERMINAL_PROFILE_WORD_CHAR_EXCEPTIONS_KEY       "word-char-exceptions"
+ 
++#define TERMINAL_PROFILE_USE_TRANSPARENT_BACKGROUND      "use-transparent-background"
++#define TERMINAL_PROFILE_BACKGROUND_TRANSPARENCY_PERCENT "background-transparency-percent"
++
+ #define TERMINAL_SETTING_CONFIRM_CLOSE_KEY              "confirm-close"
+ #define TERMINAL_SETTING_CONTEXT_INFO_KEY               "context-info"
+ #define TERMINAL_SETTING_DEFAULT_SHOW_MENUBAR_KEY       "default-show-menubar"
+diff --git a/src/terminal-screen.cc b/src/terminal-screen.cc
+index 7b1da98..1cafd29 100644
+--- a/src/terminal-screen.cc
++++ b/src/terminal-screen.cc
+@@ -1116,7 +1116,9 @@ terminal_screen_profile_changed_cb (GSettings     *profile,
+       prop_name == I_(TERMINAL_PROFILE_HIGHLIGHT_COLORS_SET_KEY) ||
+       prop_name == I_(TERMINAL_PROFILE_HIGHLIGHT_BACKGROUND_COLOR_KEY) ||
+       prop_name == I_(TERMINAL_PROFILE_HIGHLIGHT_FOREGROUND_COLOR_KEY) ||
+-      prop_name == I_(TERMINAL_PROFILE_PALETTE_KEY))
++      prop_name == I_(TERMINAL_PROFILE_PALETTE_KEY) ||
++      prop_name == I_(TERMINAL_PROFILE_USE_TRANSPARENT_BACKGROUND) ||
++      prop_name == I_(TERMINAL_PROFILE_BACKGROUND_TRANSPARENCY_PERCENT))
+     update_color_scheme (screen);
+ 
+   if (!prop_name || prop_name == I_(TERMINAL_PROFILE_AUDIBLE_BELL_KEY))
+@@ -1201,6 +1203,8 @@ update_color_scheme (TerminalScreen *screen)
+   GdkRGBA *cursor_bgp = nullptr, *cursor_fgp = nullptr;
+   GdkRGBA *highlight_bgp = nullptr, *highlight_fgp = nullptr;
+   GtkStyleContext *context;
++  GtkWidget *toplevel;
++  gboolean transparent;
+   gboolean use_theme_colors;
+ 
+   context = gtk_widget_get_style_context (widget);
+@@ -1244,6 +1248,18 @@ update_color_scheme (TerminalScreen *screen)
+     }
+ 
+   colors = terminal_g_settings_get_rgba_palette (priv->profile, TERMINAL_PROFILE_PALETTE_KEY, &n_colors);
++
++  transparent = g_settings_get_boolean (profile, TERMINAL_PROFILE_USE_TRANSPARENT_BACKGROUND);
++  if (transparent)
++    {
++      gint transparency_percent;
++
++      transparency_percent = g_settings_get_int (profile, TERMINAL_PROFILE_BACKGROUND_TRANSPARENCY_PERCENT);
++      bg.alpha = (100 - transparency_percent) / 100.0;
++    }
++  else
++    bg.alpha = 1.0;
++
+   vte_terminal_set_colors (VTE_TERMINAL (screen), &fg, &bg,
+                            colors, n_colors);
+   vte_terminal_set_color_bold (VTE_TERMINAL (screen), boldp);
+@@ -1251,6 +1267,10 @@ update_color_scheme (TerminalScreen *screen)
+   vte_terminal_set_color_cursor_foreground (VTE_TERMINAL (screen), cursor_fgp);
+   vte_terminal_set_color_highlight (VTE_TERMINAL (screen), highlight_bgp);
+   vte_terminal_set_color_highlight_foreground (VTE_TERMINAL (screen), highlight_fgp);
++
++  toplevel = gtk_widget_get_toplevel (GTK_WIDGET (screen));
++  if (toplevel != nullptr && gtk_widget_is_toplevel (toplevel))
++    gtk_widget_set_app_paintable (toplevel, transparent);
+ }
+ 
+ static void
+diff --git a/src/terminal-window.cc b/src/terminal-window.cc
+index 78fcbc1..4810c56 100644
+--- a/src/terminal-window.cc
++++ b/src/terminal-window.cc
+@@ -2134,6 +2134,8 @@ terminal_window_init (TerminalWindow *window)
+   };
+   TerminalWindowPrivate *priv;
+   TerminalApp *app;
++  GdkScreen *screen;
++  GdkVisual *visual;
+   GSettings *gtk_debug_settings;
+   GtkWindowGroup *window_group;
+   //  GtkAccelGroup *accel_group;
+@@ -2149,6 +2151,11 @@ terminal_window_init (TerminalWindow *window)
+ 
+   gtk_widget_init_template (GTK_WIDGET (window));
+ 
++  screen = gtk_widget_get_screen (GTK_WIDGET (window));
++  visual = gdk_screen_get_rgba_visual (screen);
++  if (visual != nullptr)
++    gtk_widget_set_visual (GTK_WIDGET (window), visual);
++
+   uuid_generate (u);
+   uuid_unparse (u, uuidstr);
+   priv->uuid = g_strdup (uuidstr);

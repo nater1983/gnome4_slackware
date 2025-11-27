@@ -1,0 +1,5 @@
+libadwaita
+python-gobject
+python-requests
+webkit2gtk6.0
+appstream-glib

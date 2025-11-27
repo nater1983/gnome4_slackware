@@ -1,0 +1,29 @@
+From ea55693f23889796d470433e6c7b198a3d6ccbe5 Mon Sep 17 00:00:00 2001
+From: Adam Williamson <awilliam@redhat.com>
+Date: Sat, 25 Mar 2023 09:19:41 -0700
+Subject: [PATCH] screenshot: fix broken GLib.Error.matches call
+
+You have to pass a domain and an error code, not just an error
+code.
+
+Signed-off-by: Adam Williamson <awilliam@redhat.com>
+---
+ js/ui/screenshot.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/js/ui/screenshot.js b/js/ui/screenshot.js
+index ecbe50bcc..d25744e87 100644
+--- a/js/ui/screenshot.js
++++ b/js/ui/screenshot.js
+@@ -2084,7 +2084,7 @@ function _storeScreenshot(bytes, pixbuf) {
+         try {
+             bookmarks.load_from_file(recentFile);
+         } catch (e) {
+-            if (!e.matches(GLib.BookmarkFileError.FILE_NOT_FOUND)) {
++            if (!e.matches(GLib.BookmarkFileError, GLib.BookmarkFileError.FILE_NOT_FOUND)) {
+                 log(`Could not open recent file ${uri}: ${e.message}`);
+                 return;
+             }
+-- 
+2.40.0
+

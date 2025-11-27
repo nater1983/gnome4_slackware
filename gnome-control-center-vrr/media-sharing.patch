@@ -1,0 +1,28 @@
+diff -Nur gnome-control-center-44.1.orig/panels/sharing/cc-media-sharing.c gnome-control-center-44.1/panels/sharing/cc-media-sharing.c
+--- gnome-control-center-44.1.orig/panels/sharing/cc-media-sharing.c    2023-04-20 18:39:42.000000000 -0500
++++ gnome-control-center-44.1/panels/sharing/cc-media-sharing.c 2023-04-23 22:13:54.189278297 -0500
+@@ -95,7 +95,23 @@
+ 
+ void
+ cc_media_sharing_set_preferences (gchar    **folders)
+-{
++
++/* Spawn the rygel daemon for non-systemd system's */
++
++
++{ g_autoptr(GError) error = NULL;
++  gchar *argv[]={"/usr/bin/rygel",NULL};
++  gint pid;
++  gboolean ret;
++  
++  ret = g_spawn_async(NULL,argv,NULL,G_SPAWN_DO_NOT_REAP_CHILD,NULL,NULL,&pid,&error);
++  
++  if (!ret){
++  g_print("Error: %s\n",error->message);
++  g_error_free(error);
++  return;
++  }
++
+   g_autoptr(GKeyFile) file = NULL;
+   gchar **str_list;
+   g_autofree gchar *path = NULL;

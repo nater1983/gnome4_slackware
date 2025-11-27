@@ -1,0 +1,81 @@
+diff -Naur xdg-desktop-portal-gnome-44.rc.orig/data/meson.build xdg-desktop-portal-gnome-44.rc/data/meson.build
+--- xdg-desktop-portal-gnome-44.rc.orig/data/meson.build	2023-03-06 20:32:54.000000000 -0600
++++ xdg-desktop-portal-gnome-44.rc/data/meson.build	2023-03-07 03:16:58.111901444 -0600
+@@ -16,12 +16,14 @@
+ )
+ 
+ # systemd unit
+-configure_file(
+-  input: 'xdg-desktop-portal-gnome.service.in',
+-  output: 'xdg-desktop-portal-gnome.service',
+-  configuration: libexecdir_conf,
+-  install_dir: systemduserunitdir,
+-)
++if systemduserunitdir != ''
++  configure_file(
++    input: 'xdg-desktop-portal-gnome.service.in',
++    output: 'xdg-desktop-portal-gnome.service',
++    configuration: libexecdir_conf,
++    install_dir: systemduserunitdir,
++  )
++endif
+ 
+ # Desktop file
+ desktop_in = configure_file(
+diff -Naur xdg-desktop-portal-gnome-44.rc.orig/meson.build xdg-desktop-portal-gnome-44.rc/meson.build
+--- xdg-desktop-portal-gnome-44.rc.orig/meson.build	2023-03-06 20:32:54.000000000 -0600
++++ xdg-desktop-portal-gnome-44.rc/meson.build	2023-03-07 03:16:58.111901444 -0600
+@@ -10,14 +10,17 @@
+ datadir = get_option('datadir')
+ libdir = get_option('libdir')
+ libexecdir = get_option('libexecdir')
++build_systemd_service = get_option('systemd_service')
+ 
+ systemduserunitdir = get_option('systemduserunitdir')
+ if systemduserunitdir == ''
+-  systemd = dependency('systemd', version: '>= 242')
+-  systemduserunitdir = systemd.get_variable(
+-    pkgconfig: 'systemduserunitdir',
+-    pkgconfig_define: ['prefix', get_option('prefix')]
+-  )
++  systemd = dependency('systemd', version: '>= 242', required: build_systemd_service)
++  if (build_systemd_service.auto() or build_systemd_service.enabled()) and systemd.found()
++    systemduserunitdir = systemd.get_variable(
++      pkgconfig: 'systemduserunitdir',
++      pkgconfig_define: ['prefix', get_option('prefix')]
++    )
++  endif
+ endif
+ 
+ dbus_service_dir = get_option('dbus_service_dir')
+@@ -35,5 +38,14 @@
+   'libdir': libdir,
+   'libexecdir': libexecdir,
+   'dbus_service_dir': dbus_service_dir,
+-  'systemduserunitdir': systemduserunitdir,
+ })
++if systemduserunitdir != ''
++  summary({
++    'systemd_service': build_systemd_service.enabled() or build_systemd_service.auto(),
++    'systemduserunitdir': systemduserunitdir,
++  })
++else
++  summary({
++    'systemd_service': 'False',
++  })
++endif
+diff -Naur xdg-desktop-portal-gnome-44.rc.orig/meson_options.txt xdg-desktop-portal-gnome-44.rc/meson_options.txt
+--- xdg-desktop-portal-gnome-44.rc.orig/meson_options.txt	2023-03-06 20:32:54.000000000 -0600
++++ xdg-desktop-portal-gnome-44.rc/meson_options.txt	2023-03-07 03:16:58.111901444 -0600
+@@ -3,6 +3,11 @@
+   description: 'Directory for D-Bus service files'
+ )
+ 
++option('systemd_service',
++  type: 'feature',
++  description: 'Whether or not the systemd user service should be built'
++)
++
+ option('systemduserunitdir',
+   type: 'string',
+   description: 'Directory for systemd user service files'

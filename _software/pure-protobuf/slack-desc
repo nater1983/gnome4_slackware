@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+             |-----handy-ruler------------------------------------------------------|
+pure-protobuf: pure-protobuf (Google's data interchange format)
+pure-protobuf:
+pure-protobuf: Python implementation of Protocol Buffers data types with dataclasses
+pure-protobuf: support. pure-protobuf allows you to take advantages of the standard
+pure-protobuf: dataclasses module to define message types. It is preferred over the 
+pure-protobuf: legacy interface for new projects.
+pure-protobuf:
+pure-protobuf:
+pure-protobuf: Project URL: https://github.com/eigenein/protobuf
+pure-protobuf:
+pure-protobuf:
