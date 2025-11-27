@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                 |-----handy-ruler------------------------------------------------------|
+gnome-ssh-askpass: gnome-ssh-askpass (A passphrase requester for ssh-add using gcr.)
+gnome-ssh-askpass:
+gnome-ssh-askpass: gnome-ssh-askpass is a GNOME-based passphrase dialog for use with 
+gnome-ssh-askpass: OpenSSH. It is intended to be called by the ssh-add(1) program and
+gnome-ssh-askpass: not invoked directly. It allows ssh-add(1) to obtain a passphrase
+gnome-ssh-askpass: from a user, even if not connected to a terminal (assuming that an X
+gnome-ssh-askpass: display is available). This happens automatically in the case where
+gnome-ssh-askpass: ssh-add(1) is invoked from one's ~/.xsession or as one of the GNOME
+gnome-ssh-askpass: startup programs.
+gnome-ssh-askpass:
+gnome-ssh-askpass: Homepage: https://github.com/openssh/openssh-portable
