@@ -1,2 +1,5 @@
-  cd contrib
-  make gnome-ssh-askpass4
+cd contrib
+make gnome-ssh-askpass4
+mkdir -p $PKG/{usr/lib$LIBDIRSUFFIX/ssh,etc/profile.d/}
+install -D -m 755 gnome-ssh-askpass4 "${PKG}/usr/lib$LIBDIRSUFFIX/ssh/gnome-ssh-askpass4"
+install -D -m 755 redhat/gnome-ssh-askpass.sh "${PKG}/etc/profile.d/gnome-ssh-askpass.sh"
