@@ -1,0 +1,2 @@
+  cd contrib
+  make gnome-ssh-askpass4
