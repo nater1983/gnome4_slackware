@@ -1,0 +1,22 @@
+From 0de27841206f420f6f403d023803502b1324975c Mon Sep 17 00:00:00 2001
+From: lucaxvi <lucaxvi@gmail.com>
+Date: Wed, 3 Aug 2022 16:26:06 +0200
+Subject: [PATCH] Change first launch action fixes #1622
+
+---
+ appIcons.js | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/appIcons.js b/appIcons.js
+index ab0d22b6..c9da5905 100644
+--- a/appIcons.js
++++ b/appIcons.js
+@@ -1023,7 +1023,7 @@ var TaskbarAppIcon = GObject.registerClass({
+     }
+ 
+     _launchNewInstance() {
+-        if (this.app.can_open_new_window()) {
++        if (this.app.can_open_new_window() && this.app.state == Shell.AppState.RUNNING) {
+             let appActions = this.app.get_app_info().list_actions();
+             let newWindowIndex = appActions.indexOf('new-window');
+ 

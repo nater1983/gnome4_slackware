@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                              |-----handy-ruler------------------------------------------------------|
+gnome-shell-extension-cpupower: gnome-shell-extension-cpupower ( support for intel pstate )
+gnome-shell-extension-cpupower:
+gnome-shell-extension-cpupower: You need to have a CPU which is supported by the cpufreq
+gnome-shell-extension-cpupower: or intel_pstate CPU frequency scaling driver of the Linux kernel.
+gnome-shell-extension-cpupower: This applies for most modern CPU's. 
+gnome-shell-extension-cpupower: 
+gnome-shell-extension-cpupower:
+gnome-shell-extension-cpupower:
+gnome-shell-extension-cpupower: https://github.com/deinstapel/cpupower 
+gnome-shell-extension-cpupower:
+gnome-shell-extension-cpupower:

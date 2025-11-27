@@ -1,0 +1,45 @@
+diff --git a/cratebibtex/Cargo.lock.orig b/cratebibtex/Cargo.lock
+--- a/cratebibtex/Cargo.lock.orig	2022-09-28 23:15:43.000000000 +0300
++++ b/cratebibtex/Cargo.lock	2023-05-22 10:40:54.834009873 +0300
+@@ -321,7 +321,7 @@
+ [[package]]
+ name = "nom-bibtex"
+ version = "0.3.0"
+-source = "git+https://github.com/A6GibKm/nom-bibtex.git#3e20b1f6a1f8709bf61836f171b8d90cb84cd8b3"
++source = "git+https://github.com/charlesvdv/nom-bibtex.git#20a3ea578f37b1b25e50546cc870133c1203788f"
+ dependencies = [
+  "nom",
+  "nom-tracable",
+---
+
+diff --git a/cratebibtex/Cargo.toml.orig b/cratebibtex/Cargo.toml
+--- a/cratebibtex/Cargo.toml.orig	2022-09-28 23:15:43.000000000 +0300
++++ b/cratebibtex/Cargo.toml	2023-05-22 10:43:45.345011010 +0300
+@@ -9,6 +9,6 @@
+ gio = "0.15"
+ glib = { version = "0.15", features = ["v2_72"] }
+ log = "0.4"
+-nom-bibtex = { git = "https://github.com/A6GibKm/nom-bibtex.git" }
++nom-bibtex = { git = "https://github.com/charlesvdv/nom-bibtex" }
+ once_cell = "1.12"
+ regex = "1.5"
+---
+
+diff --git a/cratebibtex/src/entry.rs b/cratebibtex/src/entry.rs
+index 5915812..50e3d3d 100644
+--- a/cratebibtex/src/entry.rs
++++ b/cratebibtex/src/entry.rs
+@@ -164,7 +164,11 @@ impl Default for Entry {
+ 
+ impl From<&nom_bibtex::Bibliography> for Entry {
+     fn from(bib: &nom_bibtex::Bibliography) -> Self {
+-        let tags = bib.tags();
++        let tags: HashMap<String, String> = bib
++            .tags()
++            .iter()
++            .map(|(k, v)| (k.to_lowercase(), v.clone()))
++            .collect();
+         let entry = Self::default();
+         entry.imp().tags.replace(tags);
+         entry
+-- 

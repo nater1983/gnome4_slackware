@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+         |-----handy-ruler------------------------------------------------------|
+boatswain: boatswain (Control your Elgato Stream Decks)
+boatswain:
+boatswain: Boatswain allows you to control Elgato Stream Deck devices.
+boatswain: With Boatswain you will be able to:  
+boatswain: Organize your actions in pages and profiles.
+boatswain: Set custom icons to actions.
+boatswain: Control your music player.
+boatswain: Play sound effects during your streams.
+boatswain: Control OBS Studio using Stream Deck.
+boatswain: https://gitlab.gnome.org/World/boatswain
+boatswain:

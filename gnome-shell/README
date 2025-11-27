@@ -1,0 +1,7 @@
+GNOME Shell provides core user interface functions for the GNOME desktop.
+ 
+Required Dependencies:
+- evolution-data-server
+- gnome-autoar 
+- gnome-control-center 
+- mutter

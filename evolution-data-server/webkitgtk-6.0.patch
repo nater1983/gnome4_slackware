@@ -1,0 +1,72 @@
+From cdb16f26f63f5093479a43cab32012845bcf33ed Mon Sep 17 00:00:00 2001
+From: Michael Catanzaro <mcatanzaro@gnome.org>
+Date: Tue, 15 Nov 2022 08:58:38 +0000
+Subject: [PATCH] M!107 - Use webkitgtk-6.0 API version
+
+In WebKitGTK 2.39.1, the GTK 4 API version has been renamed from webkit2gtk-5.0 to webkitgtk-6.0.
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/merge_requests/107
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a3ce7c1dd..c575acd3e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -426,7 +426,7 @@ if(ENABLE_GTK4)
+ 
+ 	if(ENABLE_OAUTH2_WEBKITGTK4)
+ 		pkg_check_modules_for_option(ENABLE_OAUTH2_WEBKITGTK4 "WebKitGTK gtk4 for built-in OAuth2 authentications" OAUTH2_WEBKITGTK4
+-			webkit2gtk-5.0>=${webkit2gtk4_minimum_version}
++			webkitgtk-6.0>=${webkit2gtk4_minimum_version}
+ 		)
+ 	endif(ENABLE_OAUTH2_WEBKITGTK4)
+ endif(ENABLE_GTK4)
+-- 
+GitLab
+
+From 8d29b0bded2e4e3700ce08e9db2eaeac4400528a Mon Sep 17 00:00:00 2001
+From: Michael Catanzaro <mcatanzaro@gnome.org>
+Date: Mon, 21 Nov 2022 17:49:29 +0000
+Subject: [PATCH] M!108 - Try harder to support webkitgtk-6.0
+
+The cdb16f26f63f5093479a43cab32012845bcf33ed attempted to handle WebKitGTK
+API changes, but I forgot the header file name changed as well.
+
+Closes https://gitlab.gnome.org/GNOME/evolution-data-server/-/merge_requests/108
+---
+ src/libedataserverui/e-credentials-prompter-impl-oauth2.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/src/libedataserverui/e-credentials-prompter-impl-oauth2.c b/src/libedataserverui/e-credentials-prompter-impl-oauth2.c
+index 2415947c3..b99ac4e60 100644
+--- a/src/libedataserverui/e-credentials-prompter-impl-oauth2.c
++++ b/src/libedataserverui/e-credentials-prompter-impl-oauth2.c
+@@ -32,21 +32,19 @@
+ #if GTK_CHECK_VERSION(4, 0, 0)
+ #ifdef ENABLE_OAUTH2_WEBKITGTK4
+ #define WITH_WEBKITGTK 1
++#include <webkit/webkit.h>
+ #else
+ #undef WITH_WEBKITGTK
+ #endif
+ #else
+ #ifdef ENABLE_OAUTH2_WEBKITGTK
+ #define WITH_WEBKITGTK 1
++#include <webkit2/webkit2.h>
+ #else
+ #undef WITH_WEBKITGTK
+ #endif
+ #endif
+ 
+-#ifdef WITH_WEBKITGTK
+-#include <webkit2/webkit2.h>
+-#endif /* WITH_WEBKITGTK */
+-
+ struct _ECredentialsPrompterImplOAuth2Private {
+ 	GMutex property_lock;
+ 
+-- 
+GitLab
+

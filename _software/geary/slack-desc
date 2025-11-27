@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+     |-----handy-ruler------------------------------------------------------|
+geary: geary (Geary is an email application built around conversations.)
+geary:
+geary: Geary is an email application built around conversations, for the
+geary: GNOME 3 desktop. It allows you to read, find and send email with a
+geary: straight-forward, modern interface. 
+geary: 
+geary:
+geary:
+geary: https://gitlab.gnome.org/GNOME/geary
+geary:
+geary:

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+        			       |-----handy-ruler------------------------------------------------------|
+gnome-shell-extension-coverflow-alt-tab: gnome-shell-extension-coverflow-alt-tab ( Replacement of Alt-Tab )
+gnome-shell-extension-coverflow-alt-tab:
+gnome-shell-extension-coverflow-alt-tab: Replacement of Alt-Tab, iterates through windows in a cover-flow  
+gnome-shell-extension-coverflow-alt-tab: manner. 
+gnome-shell-extension-coverflow-alt-tab: 
+gnome-shell-extension-coverflow-alt-tab: 
+gnome-shell-extension-coverflow-alt-tab: 
+gnome-shell-extension-coverflow-alt-tab:
+gnome-shell-extension-coverflow-alt-tab: https://github.com/dmo60/CoverflowAltTab 
+gnome-shell-extension-coverflow-alt-tab: 
+gnome-shell-extension-coverflow-alt-tab:

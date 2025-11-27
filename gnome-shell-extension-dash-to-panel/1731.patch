@@ -1,0 +1,73 @@
+From 0b422806fbd193e1b5db4f6dea6278e48525a9ff Mon Sep 17 00:00:00 2001
+From: TheSola10 <me@thesola.io>
+Date: Fri, 19 Aug 2022 12:20:36 +0200
+Subject: [PATCH 1/2] Added check for button style
+
+Certain extensions such as ArcMenu or PaperWM delete the Activities button, which breaks Dash to Panel's resume action.
+---
+ panelStyle.js | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/panelStyle.js b/panelStyle.js
+index 5e61311c..140d8c50 100644
+--- a/panelStyle.js
++++ b/panelStyle.js
+@@ -295,7 +295,8 @@ var PanelStyle = class {
+             delete actor._dtp_style_overrides;
+         }
+ 
+-        if (actor.has_style_class_name('panel-button')) {
++        if (actor.has_style_class_name !== undefined
++                && actor.has_style_class_name('panel-button')) {
+             this._refreshPanelButton(actor);
+         }
+     }
+
+From d1d3b749664933278ac51f54e62e38588b513583 Mon Sep 17 00:00:00 2001
+From: TheSola10 <me@thesola.io>
+Date: Fri, 19 Aug 2022 18:07:37 +0200
+Subject: [PATCH 2/2] Added additional checks when reloading screens
+
+I'm not too well-versed in the object architecture of GNOME, but it seems a couple functions pointlessly break at the seams when connecting a new display. This is an attempt at fixing them
+---
+ panelStyle.js | 6 ++++--
+ taskbar.js    | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/panelStyle.js b/panelStyle.js
+index 140d8c50..2448eeb7 100644
+--- a/panelStyle.js
++++ b/panelStyle.js
+@@ -273,7 +273,7 @@ var PanelStyle = class {
+     }
+     
+     _overrideStyle(actor, styleLine, operationIdx) {
+-        if (actor._dtp_original_inline_style === undefined) {
++        if (actor._dtp_original_inline_style === undefined && actor.get_style !== undefined) {
+             actor._dtp_original_inline_style = actor.get_style();
+         }
+ 
+@@ -285,7 +285,9 @@ var PanelStyle = class {
+         let newStyleLine = '';
+         for(let i in actor._dtp_style_overrides)
+             newStyleLine += actor._dtp_style_overrides[i] + '; ';
+-        actor.set_style(newStyleLine + (actor._dtp_original_inline_style || ''));
++        if (actor.set_style !== undefined) {
++            actor.set_style(newStyleLine + (actor._dtp_original_inline_style || ''));
++        }
+      }
+ 
+     _restoreOriginalStyle(actor) {
+diff --git a/taskbar.js b/taskbar.js
+index f791e661..af2a53b3 100644
+--- a/taskbar.js
++++ b/taskbar.js
+@@ -928,6 +928,8 @@ var Taskbar = class {
+             return;
+         }
+ 
++        this.dtpPanel._initProgressManager();
++
+         //get the currently displayed appIcons
+         let currentAppIcons = this._getTaskbarIcons();
+         let expectedAppInfos = this.getAppInfos();

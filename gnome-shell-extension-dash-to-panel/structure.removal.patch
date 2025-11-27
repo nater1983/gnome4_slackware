@@ -1,0 +1,37 @@
+From 1c1c73976857d61e74ab7bb79564924df37003a5 Mon Sep 17 00:00:00 2001
+From: Charles Gagnon <charlesg99@outlook.com>
+Date: Tue, 12 Jul 2022 09:05:19 -0400
+Subject: [PATCH] Adjust for PopupMenuManager data structure removal
+
+---
+ windowPreview.js | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/windowPreview.js b/windowPreview.js
+index d0f47685..6a659450 100644
+--- a/windowPreview.js
++++ b/windowPreview.js
+@@ -932,17 +932,18 @@ var Preview = GObject.registerClass({
+             height: 0
+         });
+ 
+-        let ctxMenuData = Main.wm._windowMenuManager._manager._menus[0];
++        let menu = Main.wm._windowMenuManager._manager._menus[0];
+ 
+-        ctxMenuData.menu.connect('open-state-changed', () => this._previewMenu.menu.sync_hover());
++        menu.connect('open-state-changed', () => this._previewMenu.menu.sync_hover());
++        this._previewMenu.menu.sync_hover();
+ 
+         if (this.window.get_workspace() != currentWorkspace) {
+             let menuItem = new PopupMenu.PopupMenuItem(_('Move to current Workspace') + ' [' + (currentWorkspace.index() + 1) + ']');
+-            let menuItems = ctxMenuData.menu.box.get_children();
++            let menuItems = menu.box.get_children();
+             let insertIndex = Utils.findIndex(menuItems, c => c._delegate instanceof PopupMenu.PopupSeparatorMenuItem);
+ 
+             insertIndex = insertIndex >= 0 ? insertIndex : menuItems.length - 1;
+-            ctxMenuData.menu.addMenuItem(menuItem, insertIndex);
++            menu.addMenuItem(menuItem, insertIndex);
+             menuItem.connect('activate', () => this.window.change_workspace(currentWorkspace));
+         }
+     }
+

@@ -1,0 +1,51 @@
+From ca521566423fce692fbb9b57da14a382e624fb05 Mon Sep 17 00:00:00 2001
+From: Charles Gagnon <charlesg99@outlook.com>
+Date: Tue, 21 Jun 2022 15:12:21 -0400
+Subject: [PATCH] Fix search entry results on secondary monitors
+
+---
+ panelManager.js | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/panelManager.js b/panelManager.js
+index 8e32942f..28995747 100755
+--- a/panelManager.js
++++ b/panelManager.js
+@@ -140,6 +140,9 @@ var PanelManager = class {
+         this._oldUpdateWorkspacesViews = Main.overview._overview._controls._workspacesDisplay._updateWorkspacesViews;
+         Main.overview._overview._controls._workspacesDisplay._updateWorkspacesViews = this._newUpdateWorkspacesViews.bind(Main.overview._overview._controls._workspacesDisplay);
+ 
++        this._oldSetPrimaryWorkspaceVisible = Main.overview._overview._controls._workspacesDisplay.setPrimaryWorkspaceVisible
++        Main.overview._overview._controls._workspacesDisplay.setPrimaryWorkspaceVisible = this._newSetPrimaryWorkspaceVisible.bind(Main.overview._overview._controls._workspacesDisplay);
++
+         LookingGlass.LookingGlass.prototype._oldResize = LookingGlass.LookingGlass.prototype._resize;
+         LookingGlass.LookingGlass.prototype._resize = _newLookingGlassResize;
+ 
+@@ -274,6 +277,7 @@ var PanelManager = class {
+         Main.layoutManager._updatePanelBarrier();
+ 
+         Main.overview._overview._controls._workspacesDisplay._updateWorkspacesViews = this._oldUpdateWorkspacesViews;
++        Main.overview._overview._controls._workspacesDisplay.setPrimaryWorkspaceVisible = this._oldSetPrimaryWorkspaceVisible;
+ 
+         LookingGlass.LookingGlass.prototype._resize = LookingGlass.LookingGlass.prototype._oldResize;
+         delete LookingGlass.LookingGlass.prototype._oldResize;
+@@ -317,6 +321,18 @@ var PanelManager = class {
+         }
+     }
+ 
++    _newSetPrimaryWorkspaceVisible(visible) {
++        if (this._primaryVisible === visible)
++            return;
++
++        this._primaryVisible = visible;
++
++        const primaryIndex = Main.overview._overview._controls._workspacesDisplay._primaryIndex;
++        const primaryWorkspace = this._workspacesViews[primaryIndex];
++        if (primaryWorkspace)
++            primaryWorkspace.visible = visible;
++    }
++
+     _newUpdateWorkspacesViews() {
+         for (let i = 0; i < this._workspacesViews.length; i++)
+             this._workspacesViews[i].destroy();
+

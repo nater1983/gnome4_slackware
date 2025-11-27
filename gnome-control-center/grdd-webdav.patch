@@ -1,0 +1,76 @@
+--- gnome-control-center-43.5.orig/panels/sharing/cc-sharing-panel.c	2023-03-17 18:38:36.000000000 +0200
++++ gnome-control-center-43.5/panels/sharing/cc-sharing-panel.c	2023-04-21 09:48:43.721210215 +0300
+@@ -732,6 +732,8 @@
+   gtk_grid_attach (GTK_GRID (self->shared_folders_grid), networks, 0, 4, 2, 1);
+ 
+   w = create_switch_with_bindings (GTK_SWITCH (g_object_get_data (G_OBJECT (networks), "switch")));
++  
++  
+   gtk_accessible_update_property (GTK_ACCESSIBLE (w),
+                                 GTK_ACCESSIBLE_PROPERTY_LABEL, _("Enable media sharing"),
+                                 -1);
+@@ -879,6 +881,7 @@
+                                    GVariant *variant,
+                                    gpointer  user_data)
+ {
++  
+   if (g_str_equal (g_variant_get_string (variant, NULL), "always"))
+     g_value_set_boolean (value, TRUE);
+   else
+@@ -891,7 +894,20 @@
+ file_sharing_set_require_password (const GValue       *value,
+                                    const GVariantType *type,
+                                    gpointer            user_data)
+-{
++{ 
++
++  g_autoptr(GError) error = NULL;
++  gchar *argv[]={"/usr/libexec/gnome-user-share-webdav",NULL};
++  gint pid;
++  gboolean ret;
++  
++  ret = g_spawn_async(NULL,argv,NULL,G_SPAWN_DO_NOT_REAP_CHILD,NULL,NULL,&pid,&error);
++  
++  if (!ret){
++  g_print("Error: %s\n",error->message);
++  g_error_free(error);
++  return;
++  }
+   if (g_value_get_boolean (value))
+     return g_variant_new_string ("always");
+   else
+@@ -900,7 +916,8 @@
+ 
+ static void
+ file_sharing_password_changed (GtkEntry *entry)
+-{
++{ 
++  
+   file_share_write_out_password (gtk_editable_get_text (GTK_EDITABLE (entry)));
+ }
+ 
+@@ -1038,8 +1055,23 @@
+ static void
+ enable_gnome_remote_desktop_service (CcSharingPanel *self)
+ {
+-  g_autoptr(GError) error = NULL;
+ 
++  g_autoptr(GError) error = NULL;
++  gchar *argv[]={"/usr/libexec/gnome-remote-desktop-daemon",NULL};
++  gint pid;
++  gboolean ret;
++  
++  ret = g_spawn_async(NULL,argv,NULL,G_SPAWN_DO_NOT_REAP_CHILD,NULL,NULL,&pid,&error);
++  
++  if (!ret){
++  g_print("Error: %s\n",error->message);
++  g_error_free(error);
++  return;
++  }
++  
++  return;
++  
++	
+   if (is_remote_desktop_enabled (self))
+     return;
+ 

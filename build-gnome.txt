@@ -1,0 +1,327 @@
+#!/bin/sh
+
+# Copyright 2012  Patrick J. Volkerding, Sebeka, Minnesota, USA
+# All rights reserved.
+#
+# Copyright 2013 Chess Griffin <chess.griffin@gmail.com> Raleigh, NC
+# Copyright 2013-2018 Willy Sudiarto Raharjo <willysr@slackware-id.org>
+# Copyright 2022 N. Russell <naterussell83@gmail.com> Gnome for Slackware
+# All rights reserved.
+#
+# Based on the xfce-build-all.sh script by Patrick J. Volkerding
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+INST=1
+
+TMP=${TMP:-/tmp/gfs}
+OUTPUT=${OUTPUT:-/tmp}
+
+ROOT=$(pwd)
+
+# Check for duplicate sources (default: OFF)
+CHECKDUPLICATE=0
+
+
+src=(
+# Main recompiles
+libnma-gtk4
+libadwaita
+sysprof
+libsoup3
+python-toml
+smartypants
+typogrify
+gi-docgen
+gcr4
+
+# GNOME Settings Daemon and deps:
+libgusb
+colord
+gnome-desktop
+geocode-glib
+libdaemon
+avahi
+geoclue2
+libgweather4
+gnome-settings-daemon
+
+# Mutter compositor:
+zenity
+mutter
+
+# Cheese is GNOME's webcam application:
+# NOTE: Build this before GNOME Control Center to build in webcam support to GNOME Control
+#	Center, which is used in user profile pic settings
+cogl
+clutter
+clutter-gtk
+clutter-gst
+cheese
+
+# GNOME Control Center and deps:
+colord-gtk
+gsound
+libadwaita
+gnome-bluetooth
+libhandy
+xdg-dbus-proxy
+libwpe
+wpebackend-fdo
+bubblewrap
+webkit2gtk4.1
+unifdef
+dav1d
+svt-av1
+libavif
+webkit2gtk6.0
+gtksourceview4
+gtksourceview5
+rest
+gnome-online-accounts
+libstemmer
+libxmlb
+appstream-glib
+AppStream
+libostree
+flatpak
+malcontent
+gnome-control-center
+
+# GNOME Shell and deps:
+libgdata
+evolution-data-server
+gnome-autoar
+gnome-shell
+
+# GNOME Session Manager:
+gnome-session
+
+# GNOME Display Manager:
+blocaled
+gdm
+
+# GNOME Tweaks:
+gnome-tweaks
+
+# GNOME Shell Extensions and deps:
+libportal
+tracker
+libcloudproviders
+nautilus
+gnome-menus
+gnome-shell-extensions
+
+# Chrome GNOME Shell browser integration and deps:
+jq
+p7zip
+gnome-browser-connector
+
+# GNOME Backgrounds:
+webp-pixbuf-loader
+gnome-backgrounds
+
+# Yelp:
+lxml
+yelp-xsl
+yelp-tools
+yelp
+
+# GNOME Terminal Emulator:
+vte-gtk4
+gnome-terminal
+
+# GNOME System Monitor:
+gnome-system-monitor
+
+# GNOME Weather (Also provides weather in the panel menu):
+gnome-weather
+
+# GNOME Disks:
+gnome-disk-utility
+
+# GNOME Disk Usage Analyzer
+baobab
+
+# GNOME Scanner Utility:
+simple-scan
+
+# GNOME Calendar:
+libdazzle
+gnome-calendar
+
+# GNOME Calculator:
+gnome-calculator
+
+#GNOME Gedit:
+libpeas
+gedit
+
+# tracker-miners enables thumbnails in GNOME Files (nautilus):
+exempi
+libgxps
+libiptcdata
+osinfo-db-tools
+osinfo-db
+libosinfo
+totem-pl-parser
+libgrss
+tracker-miners
+
+# Evince document viewer:
+gspell
+evince
+
+# Evolution email/calendar/organizer client:
+cmark
+libpst
+lua53
+highlight
+ytnef
+evolution
+
+# File-Roller archive manager:
+file-roller
+
+# GNOME Maps:
+libshumate
+telepathy-glib
+folks
+gnome-maps
+
+# GNOME Photos: Unknown reason for not working
+grilo
+#gfbgraph
+#gnome-photos
+
+# Seahorse GNOME Keyring manager:
+seahorse
+xdg-desktop-portal-gtk
+xdg-desktop-portal-gnome
+
+# Gnome Games and Deps:
+libgnome-games-support 
+gnome-mines
+retro-gtk
+libmanette
+gnome-games
+five-or-more
+qqwing
+gnome-sudoku
+gnome-nibbles
+gnome-2048
+gnome-mahjongg
+gnome-klotski
+four-in-a-row
+aisleriot
+iagno
+gnome-chess
+
+# Gnome Builder and Deps:
+flatpak-builder
+devhelp
+sysprof
+sphinx_rtd_theme
+libpanel
+jsonrpc-glib
+template-glib
+vte-gtk4
+http-parser
+libgit2
+libgit2-glib
+gnome-builder
+
+# Internet & Network Applications:
+epiphany
+libmediaart
+libdmapsharing
+gom
+liboauth
+grilo-plugins
+gnome-music
+gnome-photos
+nv-codec-headers
+tpm2-tss
+libfdk-aac
+fdkaac
+gnome-remote-desktop
+gnome-clocks
+gnome-font-viewer
+
+
+# Gnome User Docs:
+gnome-user-docs
+
+# Gnome CD Burning Software:
+brasero
+
+# Gnome CharacterMap:
+gnome-characters
+
+# Assistive technology for people with visual impairments:
+liblouis
+orca
+
+# Other Gnome Apps:
+gnome-dictionary
+gnome-contacts
+gnome-commander
+)
+
+for dir in ${src[@]}; do
+
+	# get package name
+	package=$(echo $dir)
+
+	# Change to package directory
+  	cd $ROOT/$dir || exit 1
+
+	# Get the version
+  	version=$(cat ${package}.SlackBuild | grep "VERSION:" | head -n1 | cut -d "-" -f2 | rev | cut -c 2- | rev)
+
+	# Get the build
+	build=$(cat ${package}.SlackBuild | grep "BUILD:" | cut -d "-" -f2 | rev | cut -c 2- | rev)
+
+  	if [ $CHECKDUPLICATE -eq 1 ]; then
+    	# Check for duplicate sources
+    	sourcefile="$(ls -l $ROOT/$dir/${package}-*.tar.?z* 2>/dev/null | wc -l)"
+    	if [ $sourcefile -gt 1 ]; then
+          echo "You have following duplicate sources:"
+          ls $ROOT/$dir/${package}-*.tar.?z* | cut -d " " -f1
+          echo "Please delete sources other than ${package}-$version to avoid problems"
+          exit 1
+    	  fi
+  	fi
+
+
+	# The real build starts here
+  	TMP=$TMP OUTPUT=$OUTPUT sh ${package}.SlackBuild || exit 1
+  	if [ "$INST" = "1" ]; then
+    	PACKAGE=$(ls $OUTPUT/${package}-${version}-*-${build}*gfs.txz 2>/dev/null)
+    	if [ -f "$PACKAGE" ]; then
+      	upgradepkg --install-new --reinstall "$PACKAGE"
+    	else
+      	echo "Error:  package to upgrade "$PACKAGE" not found in $OUTPUT"
+      	exit 1
+    	  fi
+  	fi
+
+  	# back to original directory
+  	cd $ROOT
+done

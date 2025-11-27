@@ -1,2 +1,0 @@
-mkdir -p $PKG/etc/ld.so.conf.d
-echo "/usr/lib${LIBDIRSUFFIX}/evolution/" > $PKG/etc/ld.so.conf.d/evolution.conf

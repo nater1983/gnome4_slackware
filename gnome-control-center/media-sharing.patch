@@ -1,0 +1,22 @@
+--- gnome-control-center-43.5.orig/panels/sharing/cc-media-sharing.c	2023-03-17 18:38:36.000000000 +0200
++++ gnome-control-center-43.5/panels/sharing/cc-media-sharing.c	2023-04-20 21:31:49.571293884 +0300
+@@ -95,7 +95,18 @@
+ 
+ void
+ cc_media_sharing_set_preferences (gchar    **folders)
+-{
++{ g_autoptr(GError) error = NULL;
++  gchar *argv[]={"/usr/bin/rygel",NULL};
++  gint pid;
++  gboolean ret;
++  
++  ret = g_spawn_async(NULL,argv,NULL,G_SPAWN_DO_NOT_REAP_CHILD,NULL,NULL,&pid,&error);
++  
++  if (!ret){
++  g_print("Error: %s\n",error->message);
++  g_error_free(error);
++  return;
++  }
+   g_autoptr(GKeyFile) file = NULL;
+   gchar **str_list;
+   g_autofree gchar *path = NULL;
