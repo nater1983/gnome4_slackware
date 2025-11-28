@@ -94,6 +94,7 @@ python3-pyopenssl
 python3-rsa
 python3-typing_extensions
 python3-uritemplate
+pika-backup
 # pure_protobuf
 python3-poetry-dynamic-versioning
 python3-toml
