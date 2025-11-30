@@ -1,1 +1,3 @@
 patch -Np1 -i $CWD/patch/libportal/gio-unixinputstream.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+# Only have this in here since we are not just installing the gtk3/4 backends but also qt5/6 backends as well
+patch -Np1 -i $CWD/patch/libportal/qt6.9-services.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
