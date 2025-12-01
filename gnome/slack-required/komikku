@@ -9,6 +9,7 @@ python3-emoji
 python3-entrypoints
 python3-jaraco.functools
 python3-jaraco.context
+python3-jwt
 python3-keyring
 python3-magic
 python3-more-itertools
