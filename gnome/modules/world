@@ -124,6 +124,7 @@ python3-soupsieve
 python3-tzlocal
 python3-unidecode
 python3-modern.colorthief
+python3-jwt
 komikku
 # Commit
 blueprint-compiler
