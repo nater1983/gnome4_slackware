@@ -186,10 +186,9 @@ no_usr_share_doc() {
 
 no_usr_doc_prgnam() {
   # If there are docs, move them:
-  # Special case for Debian docs (often in /usr/share/doc/<package>)
-  if [ "$IS_DEB" = "yes" ] && [ -d "usr/share/doc/${DOCNAME}" ]; then
-    mkdir -p "usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
-    cp -a usr/share/doc/${DOCNAME}/* "usr/doc/${DOCNAME}-${PACKAGE_VERSION}/"
+  if [ -d "usr/doc/${DOCNAME}" ]; then
+    mv usr/doc/${DOCNAME}/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
+    rmdir usr/doc/${DOCNAME}
   fi
 }
 
