@@ -44,11 +44,6 @@ pkgbase() {
   echo $PKGRETURN
 }
 
-IS_DEB="no"
-if [[ "$gnome_src" == *.deb ]]; then
-  IS_DEB="yes"
-fi
-
 # Set initial directory variables
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -367,6 +362,12 @@ build_mod_pkg() {
           echo
         fi
       fi
+
+
+IS_DEB="no"
+if [[ "$gnome_src" == *.deb ]]; then
+  IS_DEB="yes"
+fi
 
       # Set $PKG to a private dir for the modular package build:
       PKG=$SLACK_GNOME_BUILD_DIR/${gnome_module}/package-$PKGNAME
