@@ -177,7 +177,7 @@ process_info_pages() {
 
 no_usr_share_doc() {
   # If there are docs, move them:
-  if [ -d "usr/share/doc" ]; then
+  if [ "$IS_DEB" = "yes" ] && [ -d "usr/share/doc/" ]; then
     mkdir -p usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     mv usr/share/doc/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
     rmdir usr/share/doc
