@@ -44,6 +44,11 @@ pkgbase() {
   echo $PKGRETURN
 }
 
+IS_DEB="no"
+if [[ "$gnome_src" == *.deb ]]; then
+  IS_DEB="yes"
+fi
+
 # Set initial directory variables
 cd $(dirname $0) ; CWD=$(pwd)
 
@@ -181,9 +186,10 @@ no_usr_share_doc() {
 
 no_usr_doc_prgnam() {
   # If there are docs, move them:
-  if [ -d "usr/doc/${DOCNAME}" ]; then
-    mv usr/doc/${DOCNAME}/* usr/doc/${DOCNAME}-${PACKAGE_VERSION}
-    rmdir usr/doc/${DOCNAME}
+  # Special case for Debian docs (often in /usr/share/doc/<package>)
+  if [ "$IS_DEB" = "yes" ] && [ -d "usr/share/doc/${DOCNAME}" ]; then
+    mkdir -p "usr/doc/${DOCNAME}-${PACKAGE_VERSION}"
+    cp -a usr/share/doc/${DOCNAME}/* "usr/doc/${DOCNAME}-${PACKAGE_VERSION}/"
   fi
 }
 
