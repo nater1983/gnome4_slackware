@@ -369,7 +369,17 @@ build_mod_pkg() {
       mkdir -p $PKG
 
       # Let's figure out the version number on the modular package:
-      MODULAR_PACKAGE_VERSION=$(echo $gnome_src | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+      #MODULAR_PACKAGE_VERSION=$(echo $gnome_src | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+
+      if [[ "$gnome_src" == *.deb ]]; then
+        # For .deb files like pandoc-3.8.3.deb
+        MODULAR_PACKAGE_VERSION=$(basename "$gnome_src")
+        MODULAR_PACKAGE_VERSION=${MODULAR_PACKAGE_VERSION%.deb}   # remove .deb
+        MODULAR_PACKAGE_VERSION=${MODULAR_PACKAGE_VERSION#*-}     # remove prefix before first dash
+      else
+        # For tarballs (default SlackBuild logic)
+        MODULAR_PACKAGE_VERSION=$(echo "$gnome_src" | rev | cut -f 3- -d . | cut -f 1 -d - | rev)
+      fi
 
       # If this variable is passed to the script, nothing will be built.
       # Instead, a list of packages to be built will be output.
