@@ -11,7 +11,7 @@ CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
     --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
-    --with-dbusconfdir=/usr/share/dbus-1
+    --with-dbusconfdir=/usr/share/dbus-1 \
     --with-gnu-ld \
     --with-qt=no \
     --disable-video
