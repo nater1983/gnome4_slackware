@@ -1,6 +1,3 @@
-clutter
-clutter-gst
-clutter-gtk
-cogl
+libadwaita
 gsound
 libmanette
