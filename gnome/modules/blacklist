@@ -45,6 +45,7 @@ python-docutils
 python-flit-core
 python-hatch-vcs
 python-hatchling
+python-hatch-fancy-pypi-readme
 python-html5lib
 python-installer
 python-lxml
