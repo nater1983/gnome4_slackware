@@ -1,4 +1,4 @@
-rm -f configure.ac
+rm -f {configure.ac,configure,Makefile*}
 
 mkdir build
 cd build
