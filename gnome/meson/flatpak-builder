@@ -1,3 +1,5 @@
+rm -f configure.ac
+
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
