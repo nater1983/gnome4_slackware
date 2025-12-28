@@ -1,3 +1,18 @@
+diff --git a/src/builder-utils.c b/src/builder-utils.c
+index c069f69a..26031935 100644
+--- a/src/builder-utils.c
++++ b/src/builder-utils.c
+@@ -51,6 +51,10 @@ G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (yaml_parser_t, yaml_parser_delete)
+ G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (yaml_document_t, yaml_document_delete)
+ #endif
+ 
++#ifndef DEBUGEDIT
++#define DEBUGEDIT "eu-strip"  /* or "strip" if eu-strip isn’t installed */
++#endif
++
+ char *
+ builder_uri_to_filename (const char *uri)
+ {
 diff --git a/meson.build b/meson.build
 index ef324d27..317d17ff 100644
 --- a/meson.build
