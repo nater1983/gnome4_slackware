@@ -12,3 +12,4 @@ spice-protocol
 xvfb-run
 gnome-video-effects
 glm
+gnome-common
