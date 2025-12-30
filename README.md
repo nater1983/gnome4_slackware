@@ -1,7 +1,7 @@
 # GFS ( Gnome For Slackware )
 
 
-> We\'re living the future so
+> We're living the future so
 > the present is our past.
 > LONG LIVE SLACKWARE!
 
