@@ -1,7 +1,5 @@
-gtk-vnc
-libosinfo
+blueprint-compiler
+libmks
 libvirt-glib
-spice-gtk
-tinysparql
-webkit2gtk4.1
-gtksourceview5
+libosinfo
+libadwaita
