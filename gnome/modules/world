@@ -31,8 +31,6 @@ metadata-cleaner
 mousai
 news_flash_gtk
 fractal
-zbar
-Authenticator
 liboauth
 duplicity
 librsync
@@ -94,6 +92,7 @@ python3-pyopenssl
 python3-rsa
 python3-typing_extensions
 python3-uritemplate
+pika-backup
 # pure_protobuf
 python3-poetry-dynamic-versioning
 python3-toml
@@ -123,6 +122,8 @@ python3-soupsieve
 python3-tzlocal
 python3-unidecode
 python3-modern.colorthief
+python3-jwt
+python3-pypdf
 komikku
 # Commit
 blueprint-compiler

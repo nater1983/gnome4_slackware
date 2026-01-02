@@ -9,12 +9,14 @@ python3-emoji
 python3-entrypoints
 python3-jaraco.functools
 python3-jaraco.context
+python3-jwt
 python3-keyring
 python3-magic
 python3-more-itertools
 python3-natsort
 python3-piexif
 python3-pillow_heif
+python3-pypdf
 python3-pytz
 python3-rarfile
 python3-regex
