@@ -1,7 +1,8 @@
 geoclue2
 libadwaita
 libgweather4
-libshumate
-librest
 geocode-glib
 libportal
+libshumate
+librest
+blueprint-compiler
