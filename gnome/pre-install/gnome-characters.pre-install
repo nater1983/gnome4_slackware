@@ -1,0 +1,1 @@
+sed -i "s/dependency('gio-2.0', version: '>= 2\.87\.0')/dependency('gio-2.0', version: '>= 2.83.0')/" meson.build
