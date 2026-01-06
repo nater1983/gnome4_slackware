@@ -1,13 +1,5 @@
 evolution-data-server
-geoclue2
+libadwaita
 libgweather4
-libwpe
-xdg-dbus-proxy
-wpebackend-fdo
-bubblewrap
-webkit2gtk4.1
-librest
-gnome-online-accounts
-geocode-glib
-libgdata
-libdazzle
+geoclue2
+blueprint-compiler
