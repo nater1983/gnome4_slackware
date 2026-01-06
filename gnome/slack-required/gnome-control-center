@@ -2,3 +2,8 @@ blueprint-compiler
 libadwaita
 tecla
 gnome-desktop
+gnome-settings-daemon
+gnome-online-accounts
+gnome-bluetooth
+colord-gtk
+gsound
