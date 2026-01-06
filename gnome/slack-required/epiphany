@@ -1,9 +1,3 @@
-webkit2gtk6.0
-libwpe
-gcab
-xdg-dbus-proxy
-wpebackend-fdo
-geoclue2
-bubblewrap
+libadwaita
 libportal
-libdazzle
+webkit2gtk6.0
