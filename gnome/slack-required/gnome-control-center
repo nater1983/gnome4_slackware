@@ -4,6 +4,7 @@ tecla
 gnome-desktop
 gnome-settings-daemon
 gnome-online-accounts
+libnma-gtk4
 gnome-bluetooth
 colord-gtk
 gsound
