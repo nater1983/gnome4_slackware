@@ -5005,7 +5005,7 @@ diff --git a/gnome-session/gsm-session-fill.c b/gnome-session/gsm-session-fill.c
 index b94dec25..d6aeaa50 100644
 --- a/gnome-session/gsm-session-fill.c
 +++ b/gnome-session/gsm-session-fill.c
-@@ -23,36 +23,117 @@
+@@ -23,33 +23,116 @@
  
  #include "gsm-system.h"
  #include "gsm-manager.h"
@@ -5035,8 +5035,6 @@ index b94dec25..d6aeaa50 100644
 -        const char * const *system_dirs;
 +        char **required_components;
          int    i;
- 
--        if (g_key_file_get_boolean (keyfile, GSM_KEYFILE_SESSION_GROUP, "Kiosk", NULL))
 +        g_assert (keyfile != NULL);
 +        g_assert (callback != NULL);
 +
@@ -5046,33 +5044,28 @@ index b94dec25..d6aeaa50 100644
 +                                                          NULL, NULL);
 +
 +        if (!required_components)
-                 return;
++                 return;
++ 
++        for (i = 0; required_components[i] != NULL; i++) {
++                char *app_path;
++
++                app_path = gsm_util_find_desktop_file_for_app_name (required_components[i],
++                                                                    TRUE);
++                callback (required_components[i], app_path, user_data);
++                g_free (app_path);
++        }
  
 -        dir = g_build_filename (g_get_user_config_dir (), "autostart", NULL);
 -        gsm_manager_add_autostart_apps_from_dir (manager, dir);
 -        g_free (dir);
-+        for (i = 0; required_components[i] != NULL; i++) {
-+                char *app_path;
++        g_strfreev (required_components);
++}
  
 -        system_dirs = g_get_system_data_dirs ();
 -        for (i = 0; system_dirs[i]; i++) {
 -                dir = g_build_filename (system_dirs[i], "gnome", "autostart", NULL);
 -                gsm_manager_add_autostart_apps_from_dir (manager, dir);
 -                g_free (dir);
-+                app_path = gsm_util_find_desktop_file_for_app_name (required_components[i],
-+                                                                    TRUE);
-+                callback (required_components[i], app_path, user_data);
-+                g_free (app_path);
-         }
- 
--        system_dirs = g_get_system_config_dirs ();
--        for (i = 0; system_dirs[i]; i++) {
--                dir = g_build_filename (system_dirs[i], "autostart", NULL);
--                gsm_manager_add_autostart_apps_from_dir (manager, dir);
--                g_free (dir);
-+        g_strfreev (required_components);
-+}
-+
 +static void
 +check_required_components_helper (const char *component,
 +                                  const char *app_path,
@@ -5083,7 +5076,7 @@ index b94dec25..d6aeaa50 100644
 +        if (app_path == NULL) {
 +                g_warning ("Unable to find required component '%s'", component);
 +                *error = TRUE;
-+        }
+         }
 +}
 +
 +static gboolean
@@ -5136,12 +5129,17 @@ index b94dec25..d6aeaa50 100644
 +                        gsm_manager_add_autostart_apps_from_dir (manager,
 +                                                                 autostart_dirs[i]);
 +                }
-+
+ 
+-        system_dirs = g_get_system_config_dirs ();
+-        for (i = 0; system_dirs[i]; i++) {
+-                dir = g_build_filename (system_dirs[i], "autostart", NULL);
+-                gsm_manager_add_autostart_apps_from_dir (manager, dir);
+-                g_free (dir);
 +                g_strfreev (autostart_dirs);
          }
  }
  
-@@ -60,6 +141,8 @@ static GKeyFile *
+@@ -57,6 +140,8 @@ static GKeyFile *
  get_session_keyfile_if_valid (const char *path)
  {
          GKeyFile  *keyfile;
@@ -5150,7 +5148,7 @@ index b94dec25..d6aeaa50 100644
  
          g_debug ("fill: *** Looking if %s is a valid session file", path);
  
-@@ -75,6 +158,15 @@ get_session_keyfile_if_valid (const char *path)
+@@ -72,6 +157,15 @@ get_session_keyfile_if_valid (const char *path)
                  goto error;
          }
  
@@ -5166,7 +5164,7 @@ index b94dec25..d6aeaa50 100644
          return keyfile;
  
  error:
-@@ -131,11 +223,68 @@ find_valid_session_keyfile (const char *session)
+@@ -128,11 +222,67 @@ find_valid_session_keyfile (const char *session)
  }
  
  static GKeyFile *
@@ -5183,7 +5181,6 @@ index b94dec25..d6aeaa50 100644
 +        *actual_session = NULL;
 +
          g_debug ("fill: *** Getting session '%s'", session);
-+
          keyfile = find_valid_session_keyfile (session);
 +
 +        if (!keyfile)
@@ -5236,26 +5233,30 @@ index b94dec25..d6aeaa50 100644
          return keyfile;
  }
  
-@@ -144,13 +293,17 @@ gsm_session_fill (GsmManager  *manager,
+@@ -141,18 +291,17 @@ gsm_session_fill (GsmManager  *manager,
                    const char  *session)
  {
-         GKeyFile *keyfile;
+         g_autoptr (GKeyFile) keyfile = NULL;
+-        gboolean is_kiosk;
 +        gboolean is_fallback;
 +        char *actual_session;
  
 -        keyfile = get_session_keyfile (session);
 +        keyfile = get_session_keyfile (session, &actual_session, &is_fallback);
- 
          if (!keyfile)
                  return FALSE;
  
--        _gsm_manager_set_active_session (manager, session);
+-        is_kiosk = g_key_file_get_boolean (keyfile, GSM_KEYFILE_SESSION_GROUP,
+-                                           "Kiosk", NULL);
 +        _gsm_manager_set_active_session (manager, actual_session, is_fallback);
-+
+ 
+-        _gsm_manager_set_active_session (manager, session, is_kiosk);
 +        g_free (actual_session);
  
-         load_standard_apps (manager, keyfile);
+-        if (!is_kiosk)
+                 load_standard_apps (manager, keyfile);
  
+         return TRUE;
 diff --git a/gnome-session/gsm-shell-extensions.c b/gnome-session/gsm-shell-extensions.c
 new file mode 100644
 index 00000000..064babe4
