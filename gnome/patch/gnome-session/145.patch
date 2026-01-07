@@ -115,46 +115,6 @@ index 6240926d..2c3d1963 100644
  
  # We need to make sure this unit is stopped; primarily so that the tree of
  # units that we created is completely cleaned.
-diff --git a/data/gnome-session-wayland.target b/data/gnome-session-wayland.target
-index 9a0a72a5..6552b4d4 100644
---- a/data/gnome-session-wayland.target
-+++ b/data/gnome-session-wayland.target
-@@ -1,5 +1,6 @@
- [Unit]
- Description=GNOME Wayland Session
-+# On wayland all is lost, do a shutdown
- OnFailure=gnome-session-shutdown.target
- OnFailureJobMode=replace-irreversibly
- # Avoid default After/Before rules
-diff --git a/data/gnome-session-x11.target b/data/gnome-session-x11.target
-index a91d0877..e13cc9ee 100644
---- a/data/gnome-session-x11.target
-+++ b/data/gnome-session-x11.target
-@@ -1,7 +1,8 @@
- [Unit]
- Description=GNOME X11 Session
--OnFailure=gnome-session-shutdown.target
--OnFailureJobMode=replace-irreversibly
-+# On X11, try to show the fail screen
-+OnFailure=gnome-session-failed.target
-+OnFailureJobMode=replace
- # Avoid default After/Before rules
- DefaultDependencies=no
- 
-diff --git a/data/gnome-session-x11@.target b/data/gnome-session-x11@.target
-index b371759a..ce5879b2 100644
---- a/data/gnome-session-x11@.target
-+++ b/data/gnome-session-x11@.target
-@@ -1,7 +1,7 @@
- [Unit]
- Description=GNOME X11 Session (session: %i)
--OnFailure=gnome-session-shutdown.target
--OnFailureJobMode=replace-irreversibly
-+OnFailure=gnome-session-failed.target
-+OnFailureJobMode=replace
- DefaultDependencies=no
- # Start happens explicitly
- RefuseManualStart=no
 diff --git a/data/gnome-session.target b/data/gnome-session.target
 index bf4615b6..ea305558 100644
 --- a/data/gnome-session.target
