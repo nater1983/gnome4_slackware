@@ -3,7 +3,7 @@ deleted file mode 100644
 index ac8f7011..00000000
 --- a/data/gnome-session-basic-services.target
 +++ /dev/null
-@@ -1,43 +0,0 @@
+@@ -1,42 +0,0 @@
 -[Unit]
 -Description=GNOME basic session services
 -OnFailure=gnome-session-shutdown.target
