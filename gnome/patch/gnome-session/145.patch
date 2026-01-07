@@ -637,42 +637,27 @@ diff --git a/gnome-session/gsm-app.c b/gnome-session/gsm-app.c
 index d38138be..c05ae06a 100644
 --- a/gnome-session/gsm-app.c
 +++ b/gnome-session/gsm-app.c
-@@ -21,49 +21,174 @@
+@@ -21,46 +21,173 @@
  #include "config.h"
  #endif
  
-+#include <glib.h>
- #include <string.h>
- 
--#include <glib.h>
+-#include <string.h>
+-
+ #include <glib.h>
 -#include <gio/gio.h>
 -#include <gio/gdesktopappinfo.h>
-+#include "gsm-app.h"
-+#include "org.gnome.SessionManager.App.h"
++#include <string.h>
  
--#define GNOME_DESKTOP_USE_UNSTABLE_API
--#include <libgnome-desktop/gnome-systemd.h>
-+/* If a component crashes twice within a minute, we count that as a fatal error */
-+#define _GSM_APP_RESPAWN_RATELIMIT_USEC (60 * G_USEC_PER_SEC)
- 
--#include "gsm-app.h"
+ #include "gsm-app.h"
 -#include "gsm-util.h"
-+typedef struct
-+{
-+        char            *id;
-+        char            *app_id;
-+        int              phase;
-+        char            *startup_id;
-+        gboolean         registered;
-+        gint64           last_restart_time;
-+        GDBusConnection *connection;
-+        GsmExportedApp  *skeleton;
-+} GsmAppPrivate;
++#include "org.gnome.SessionManager.App.h"
  
 -#define GSM_APP_SYSTEMD_SKIP_KEY   "X-systemd-skip"
 -#define GSM_APP_SYSTEMD_HIDDEN_KEY "X-GNOME-HiddenUnderSystemd"
 -#define GSM_APP_ENABLED_KEY        "X-GNOME-Autostart-enabled"
 -#define GSM_APP_PHASE_KEY          "X-GNOME-Autostart-Phase"
++/* If a component crashes twice within a minute, we count that as a fatal error */
++#define _GSM_APP_RESPAWN_RATELIMIT_USEC (60 * G_USEC_PER_SEC)
  
 -/* This comment is a record of keys that were previously used but are not used
 - * anymore. We keep this so that we don't accidentally redefine these keys in
@@ -691,7 +676,19 @@ index d38138be..c05ae06a 100644
 -{
 -        GObject          parent;
 -        GDesktopAppInfo *inner;
-+enum {
++typedef struct
++{
++        char            *id;
++        char            *app_id;
++        int              phase;
++        char            *startup_id;
++        gboolean         registered;
++        gint64           last_restart_time;
++        GDBusConnection *connection;
++        GsmExportedApp  *skeleton;
++} GsmAppPrivate;
++
+++enum {
 +        EXITED,
 +        DIED,
 +        LAST_SIGNAL
@@ -842,7 +839,7 @@ index d38138be..c05ae06a 100644
  
  static void
  gsm_app_init (GsmApp *app)
-@@ -71,13 +196,43 @@ gsm_app_init (GsmApp *app)
+@@ -68,13 +195,42 @@ gsm_app_init (GsmApp *app)
  }
  
  static void
@@ -850,6 +847,16 @@ index d38138be..c05ae06a 100644
 -                   GDesktopAppInfo *app_info)
 +gsm_app_set_phase (GsmApp *app,
 +                   int     phase)
++{
++        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
++
++        g_return_if_fail (GSM_IS_APP (app));
++        priv->phase = phase;
++}
++
++static void
++gsm_app_set_id (GsmApp     *app,
++                const char *id)
  {
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
 +
@@ -857,17 +864,6 @@ index d38138be..c05ae06a 100644
 -        g_return_if_fail (app_info == NULL || G_IS_DESKTOP_APP_INFO (app_info));
  
 -        g_set_object (&app->inner, app_info);
-+        priv->phase = phase;
-+}
-+
-+static void
-+gsm_app_set_id (GsmApp     *app,
-+                const char *id)
-+{
-+        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+
-+        g_return_if_fail (GSM_IS_APP (app));
-+
 +        g_free (priv->id);
 +
 +        priv->id = g_strdup (id);
@@ -890,7 +886,7 @@ index d38138be..c05ae06a 100644
  }
  
  static void
-@@ -89,8 +244,17 @@ gsm_app_set_property (GObject      *object,
+@@ -86,8 +242,17 @@ gsm_app_set_property (GObject      *object,
          GsmApp *app = GSM_APP (object);
  
          switch (prop_id) {
@@ -910,7 +906,7 @@ index d38138be..c05ae06a 100644
                  break;
          default:
                  break;
-@@ -104,10 +268,20 @@ gsm_app_get_property (GObject    *object,
+@@ -101,10 +266,20 @@ gsm_app_get_property (GObject    *object,
                        GParamSpec *pspec)
  {
          GsmApp *app = GSM_APP (object);
@@ -933,7 +929,7 @@ index d38138be..c05ae06a 100644
                  break;
          default:
                  break;
-@@ -118,8 +292,21 @@ static void
+@@ -115,8 +290,21 @@ static void
  gsm_app_dispose (GObject *object)
  {
          GsmApp *app = GSM_APP (object);
@@ -941,8 +937,7 @@ index d38138be..c05ae06a 100644
 +
 +        g_free (priv->startup_id);
 +        priv->startup_id = NULL;
- 
--        g_clear_object (&app->inner);
++
 +        g_free (priv->id);
 +        priv->id = NULL;
 +
@@ -951,17 +946,18 @@ index d38138be..c05ae06a 100644
 +                                                                    priv->connection);
 +                g_clear_object (&priv->skeleton);
 +        }
-+
+ 
+-        g_clear_object (&app->inner);
 +        g_clear_object (&priv->connection);
  
          G_OBJECT_CLASS (gsm_app_parent_class)->dispose (object);
  }
-@@ -132,22 +319,103 @@ gsm_app_class_init (GsmAppClass *klass)
+@@ -129,22 +317,102 @@ gsm_app_class_init (GsmAppClass *klass)
          object_class->set_property = gsm_app_set_property;
          object_class->get_property = gsm_app_get_property;
          object_class->dispose = gsm_app_dispose;
 +        object_class->constructor = gsm_app_constructor;
-+
+ 
 +        klass->impl_start = NULL;
 +        klass->impl_get_app_id = NULL;
 +        klass->impl_get_autorestart = NULL;
@@ -992,7 +988,6 @@ index d38138be..c05ae06a 100644
 +                                                              "Session management startup ID",
 +                                                              NULL,
 +                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
- 
          g_object_class_install_property (object_class,
 -                                         PROP_INNER,
 -                                         g_param_spec_object ("inner",
@@ -1068,7 +1063,7 @@ index d38138be..c05ae06a 100644
  }
  
  gboolean
-@@ -155,146 +423,171 @@ gsm_app_peek_is_disabled (GsmApp *app)
+@@ -152,87 +420,138 @@ gsm_app_peek_is_disabled (GsmApp *app)
  {
          g_return_val_if_fail (GSM_IS_APP (app), FALSE);
  
@@ -1118,8 +1113,8 @@ index d38138be..c05ae06a 100644
 -                g_debug ("App %s is disabled by " GSM_APP_SYSTEMD_SKIP_KEY,
 -                         gsm_app_peek_app_id (app));
 -                return TRUE;
-+gboolean
-+gsm_app_is_running (GsmApp *app)
+++gboolean
+++gsm_app_is_running (GsmApp *app)
 +{
 +        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
 +
@@ -1129,65 +1124,15 @@ index d38138be..c05ae06a 100644
 +                return FALSE;
          }
 +}
-+
+ 
+-        return FALSE;
 +gboolean
 +gsm_app_peek_autorestart (GsmApp *app)
 +{
 +        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
- 
--        return FALSE;
++ 
 +        if (GSM_APP_GET_CLASS (app)->impl_get_autorestart) {
 +                return GSM_APP_GET_CLASS (app)->impl_get_autorestart (app);
-+        } else {
-+                return FALSE;
-+        }
- }
- 
--static void
--app_launched (GAppLaunchContext *ctx,
--              GAppInfo          *appinfo,
--              GVariant          *platform_data,
--              gpointer           data)
-+gboolean
-+gsm_app_provides (GsmApp *app, const char *service)
- {
--        GsmApp *app = data;
-+        if (GSM_APP_GET_CLASS (app)->impl_provides) {
-+                return GSM_APP_GET_CLASS (app)->impl_provides (app, service);
-+        } else {
-+                return FALSE;
-+        }
-+}
- 
--        gint pid = 0;
--        g_variant_lookup (platform_data, "pid", "i", &pid);
-+char **
-+gsm_app_get_provides (GsmApp *app)
-+{
-+        if (GSM_APP_GET_CLASS (app)->impl_get_provides) {
-+                return GSM_APP_GET_CLASS (app)->impl_get_provides (app);
-+        } else {
-+                return NULL;
-+        }
-+}
- 
--        /* If pid == 0 the application was launched through D-Bus
--         * activation, therefore it's already in its own unit */
--        if (pid == 0)
--                return;
-+gboolean
-+gsm_app_has_autostart_condition (GsmApp     *app,
-+                                 const char *condition)
-+{
- 
--        /* We are not interested in the result. */
--        gnome_start_systemd_scope (gsm_app_peek_app_id (app),
--                                   pid,
--                                   NULL,
--                                   NULL,
--                                   NULL, NULL, NULL);
-+        if (GSM_APP_GET_CLASS (app)->impl_has_autostart_condition) {
-+                return GSM_APP_GET_CLASS (app)->impl_has_autostart_condition (app, condition);
 +        } else {
 +                return FALSE;
 +        }
@@ -1197,36 +1142,24 @@ index d38138be..c05ae06a 100644
  gsm_app_start (GsmApp  *app,
                 GError **error)
  {
--        g_autoptr (GAppLaunchContext) ctx = NULL;
--        GError *local_error = NULL;
--        const char * const *variable_denylist;
--        const char * const *child_environment;
--        guint handler;
--        gboolean success;
--
 -        g_debug ("GsmApp: starting %s (command=%s)",
 -                 gsm_app_peek_app_id (app),
 -                 g_app_info_get_commandline (G_APP_INFO (app->inner)));
--
--        ctx = g_app_launch_context_new ();
+-        return gsm_util_launch_app (app->inner, error);
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
- 
--        variable_denylist = gsm_util_get_variable_blacklist ();
--        for (size_t i = 0; variable_denylist[i] != NULL; i++)
--                g_app_launch_context_unsetenv (ctx, variable_denylist[i]);
++ 
 +        g_debug ("Starting app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_start (app, error);
-+}
+ }
  
--        child_environment = gsm_util_listenv ();
--        for (size_t i = 0; child_environment[i] != NULL; i++) {
--                g_auto (GStrv) split = g_strsplit (child_environment[i], "=", 2);
--                if (split[1] != NULL)
--                        g_app_launch_context_setenv (ctx, split[0], split[1]);
+-GsmApp *
+-gsm_app_new (GDesktopAppInfo  *info,
+-             GError          **error)
 +gboolean
 +gsm_app_restart (GsmApp  *app,
 +                 GError **error)
-+{
+ {
+-        g_autofree char *app_phase = NULL;
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
 +        gint64 current_time;
 +        g_debug ("Re-starting app: %s", priv->id);
@@ -1241,53 +1174,17 @@ index d38138be..c05ae06a 100644
 +                             "Component '%s' crashing too quickly",
 +                             gsm_app_peek_app_id (app));
 +                return FALSE;
-         }
++        }
 +        priv->last_restart_time = current_time;
- 
--        handler = g_signal_connect (ctx, "launched", G_CALLBACK (app_launched), app);
--        success = g_desktop_app_info_launch_uris_as_manager (app->inner,
--                                                             NULL,
--                                                             ctx,
--                                                             G_SPAWN_SEARCH_PATH,
--                                                             NULL, NULL, NULL, NULL,
--                                                             &local_error);
--        if (!success)
--                g_propagate_prefixed_error (error, local_error,
--                                            "Unable to start app (%s): ",
--                                            gsm_app_peek_app_id (app));
 +        return GSM_APP_GET_CLASS (app)->impl_restart (app, error);
 +}
  
--        g_signal_handler_disconnect (ctx, handler);
+-        g_return_val_if_fail (info != NULL, NULL);
 +gboolean
 +gsm_app_stop (GsmApp  *app,
 +              GError **error)
 +{
 +        return GSM_APP_GET_CLASS (app)->impl_stop (app, error);
-+}
-+
-+void
-+gsm_app_exited (GsmApp *app,
-+                guchar  exit_code)
-+{
-+        g_return_if_fail (GSM_IS_APP (app));
- 
--        return success;
-+        g_signal_emit (app, signals[EXITED], 0, exit_code);
- }
- 
--GsmApp *
--gsm_app_new (GDesktopAppInfo  *info,
--             GError          **error)
-+void
-+gsm_app_died (GsmApp *app,
-+              int     signal)
- {
--        g_autofree char *app_phase = NULL;
-+        g_return_if_fail (GSM_IS_APP (app));
- 
--        g_return_val_if_fail (info != NULL, NULL);
-+        g_signal_emit (app, signals[DIED], 0, signal);
 +}
  
 -        app_phase = g_desktop_app_info_get_string (info, GSM_APP_PHASE_KEY);
@@ -1297,29 +1194,36 @@ index d38138be..c05ae06a 100644
 -                             g_app_info_get_id (G_APP_INFO(info)));
 -                return NULL;
 -        }
-+gboolean
-+gsm_app_get_registered (GsmApp *app)
++void
++gsm_app_exited (GsmApp *app,
++                guchar  exit_code)
 +{
-+        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+
-+        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
++        g_return_if_fail (GSM_IS_APP (app));
++ 
++        g_signal_emit (app, signals[EXITED], 0, exit_code);
++}
  
 -        return g_object_new (GSM_TYPE_APP, "inner", info, NULL);
-+        return priv->registered;
++void
++gsm_app_died (GsmApp *app,
++              int     signal)
++{
++        g_return_if_fail (GSM_IS_APP (app));
++
++        g_signal_emit (app, signals[DIED], 0, signal);
  }
  
 -GsmApp *
 -gsm_app_new_for_path (const char  *path,
 -                      GError     **error)
-+void
-+gsm_app_set_registered (GsmApp   *app,
-+                        gboolean  registered)
++gboolean
++gsm_app_get_registered (GsmApp *app)
  {
 -        g_autoptr (GDesktopAppInfo) info = NULL;
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
  
 -        g_return_val_if_fail (path != NULL, NULL);
-+        g_return_if_fail (GSM_IS_APP (app));
++        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
  
 -        info = g_desktop_app_info_new_from_filename (path);
 -        if (info == NULL) {
@@ -1327,11 +1231,24 @@ index d38138be..c05ae06a 100644
 -                             "Desktop file %s couldn't be parsed, or references a missing TryExec binary",
 -                             path);
 -                return NULL;
+-        }
++        return priv->registered;
++}
++
++void
++gsm_app_set_registered (GsmApp   *app,
++                        gboolean  registered)
++{
++        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
++
++        g_return_if_fail (GSM_IS_APP (app));
+ 
+-        return gsm_app_new (info, error);
 +        if (priv->registered != registered) {
 +                priv->registered = registered;
 +                g_object_notify (G_OBJECT (app), "registered");
-         }
-+}
++         }
+ }
 +
 +gboolean
 +gsm_app_save_to_keyfile (GsmApp    *app,
@@ -1339,11 +1256,11 @@ index d38138be..c05ae06a 100644
 +                         GError   **error)
 +{
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
- 
--        return gsm_app_new (info, error);
++ 
 +        g_debug ("Saving app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_save_to_keyfile (app, keyfile, error);
- }
++}
+\ No newline at end of file
 diff --git a/gnome-session/gsm-app.h b/gnome-session/gsm-app.h
 index a3099709..765a70da 100644
 --- a/gnome-session/gsm-app.h
