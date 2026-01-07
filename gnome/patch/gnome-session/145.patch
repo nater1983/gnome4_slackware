@@ -20,7 +20,6 @@ index ac8f7011..00000000
 -PartOf=gnome-session.target
 -Before=gnome-session.target
 -
--
 -# Manages a11y settings, starts Orca when needed
 -Wants=org.gnome.SettingsDaemon.A11ySettings.target
 -
