@@ -133,16 +133,17 @@ diff --git a/data/gnome-session@.target b/data/gnome-session@.target
 index d5ca3a11..536d9c0f 100644
 --- a/data/gnome-session@.target
 +++ b/data/gnome-session@.target
-@@ -1,7 +1,7 @@
- [Unit]
- Description=GNOME Session (session: %i)
+@@ -6,8 +6,8 @@ RefuseManualStart=no
+ # Stop happens by starting gnome-session-shutdown.target
+ RefuseManualStop=yes
+ 
 -OnFailure=gnome-session-shutdown.target
 -OnFailureJobMode=replace-irreversibly
 +OnFailure=gnome-session-failed.target
 +OnFailureJobMode=replace
- DefaultDependencies=no
- RefuseManualStart=yes
- RefuseManualStop=yes
+ 
+ Conflicts=shutdown.target gnome-session-shutdown.target
+ PartOf=graphical-session.target
 diff --git a/data/gnome.session.conf b/data/gnome.session.conf
 deleted file mode 100644
 index 916191fc..00000000
