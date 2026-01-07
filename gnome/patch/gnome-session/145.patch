@@ -6809,7 +6809,7 @@ diff --git a/gnome-session/meson.build b/gnome-session/meson.build
 index 5861fa47..75a69c07 100644
 --- a/gnome-session/meson.build
 +++ b/gnome-session/meson.build
-@@ -1,63 +1,60 @@
+@@ -1,64 +1,60 @@
 -sources = files(
 -  'gsm-util.c',
 -  'leader-main.c'
@@ -6870,6 +6870,7 @@ index 5861fa47..75a69c07 100644
    'gsm-presence.c',
 +  'gsm-process-helper.c',
    'gsm-session-fill.c',
+-  'gsm-session-save.c',
 +  'gsm-shell-extensions.c',
    'gsm-shell.c',
    'gsm-store.c',
@@ -6881,8 +6882,7 @@ index 5861fa47..75a69c07 100644
  )
  
  dbus_ifaces = [
--  'org.gnome.SessionManager',
-+  'org.gnome.SessionManager',
+   'org.gnome.SessionManager',
 +  'org.gnome.SessionManager.Client',
    'org.gnome.SessionManager.ClientPrivate',
 +  'org.gnome.SessionManager.App',
@@ -6901,7 +6901,7 @@ index 5861fa47..75a69c07 100644
  foreach iface: dbus_ifaces
    out = gnome.gdbus_codegen(
      iface,
-@@ -71,17 +68,32 @@ foreach iface: dbus_ifaces
+@@ -72,17 +68,32 @@ foreach iface: dbus_ifaces
  endforeach
  
  executable(
