@@ -1247,7 +1247,7 @@ index d38138be..c05ae06a 100644
 +        if (priv->registered != registered) {
 +                priv->registered = registered;
 +                g_object_notify (G_OBJECT (app), "registered");
-+         }
++        }
  }
 +
 +gboolean
