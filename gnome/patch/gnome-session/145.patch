@@ -4755,7 +4755,7 @@ diff --git a/gnome-session/gsm-manager.h b/gnome-session/gsm-manager.h
 index b358d2b5..3cfd8608 100644
 --- a/gnome-session/gsm-manager.h
 +++ b/gnome-session/gsm-manager.h
-@@ -28,25 +28,41 @@
+@@ -28,17 +28,35 @@
  
  G_BEGIN_DECLS
  
@@ -4797,19 +4797,9 @@ index b358d2b5..3cfd8608 100644
 +        GSM_MANAGER_PHASE_DESKTOP,
 +        /* everything else */
          GSM_MANAGER_PHASE_APPLICATION,
--        /* The session is running */
-+        /* done launching */
+         /* The session is running */
          GSM_MANAGER_PHASE_RUNNING,
--        /* Someone requested for the session to end,  */
-+        /* shutting down */
-         GSM_MANAGER_PHASE_QUERY_END_SESSION,
--        /* The session is shutting down */
-         GSM_MANAGER_PHASE_END_SESSION,
--        /* The session has shut down, and gnome-session is about to exit */
-         GSM_MANAGER_PHASE_EXIT
- } GsmManagerPhase;
- 
-@@ -65,13 +81,20 @@ typedef enum
+@@ -65,13 +83,22 @@ typedef enum
  #define GSM_MANAGER_ERROR gsm_manager_error_quark ()
  GQuark              gsm_manager_error_quark                    (void);
  
@@ -4819,40 +4809,41 @@ index b358d2b5..3cfd8608 100644
 +                                                                gboolean        systemd_managed);
  GsmManager *        gsm_manager_get                            (void);
  
-+
 +gboolean            gsm_manager_get_failsafe                   (GsmManager     *manager);
++
  gboolean            gsm_manager_get_dbus_disconnected          (GsmManager *manager);
-+gboolean            gsm_manager_get_systemd_managed            (GsmManager     *manager);
  
++gboolean            gsm_manager_get_systemd_managed            (GsmManager     *manager);
++
  gboolean            gsm_manager_add_autostart_app              (GsmManager     *manager,
                                                                  const char     *path);
 +gboolean            gsm_manager_add_required_app               (GsmManager     *manager,
 +                                                                const char     *path);
++
  gboolean            gsm_manager_add_autostart_apps_from_dir    (GsmManager     *manager,
                                                                  const char     *path);
  gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *manager,
-@@ -79,8 +102,11 @@ gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *
+@@ -79,9 +106,11 @@ gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *
  
  void                gsm_manager_start                          (GsmManager     *manager);
  
 +char *              _gsm_manager_get_default_session           (GsmManager     *manager);
 +
  void                _gsm_manager_set_active_session            (GsmManager     *manager,
--                                                                const char     *session_name);
-+                                                                const char     *session_name,
+                                                                 const char     *session_name,
+-                                                                gboolean        is_kiosk);
 +                                                                gboolean        is_fallback);
  
  gboolean            gsm_manager_logout                         (GsmManager     *manager,
                                                                  guint           logout_mode,
-@@ -89,8 +115,6 @@ gboolean            gsm_manager_logout                         (GsmManager     *
+@@ -90,7 +119,6 @@ gboolean            gsm_manager_logout                         (GsmManager     *
  gboolean            gsm_manager_set_phase                      (GsmManager     *manager,
                                                                  GsmManagerPhase phase);
  
 -void                gsm_quit                                   (void);
--
+ 
  G_END_DECLS
  
- #endif /* __GSM_MANAGER_H */
 diff --git a/gnome-session/gsm-process-helper.c b/gnome-session/gsm-process-helper.c
 new file mode 100644
 index 00000000..32f26c8d
