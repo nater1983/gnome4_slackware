@@ -6924,7 +6924,6 @@ index 5861fa47..75a69c07 100644
 +  meson.project_name() + '-failed',
 +  sources,
 +  include_directories: top_inc,
-+ /* dependencies: gtk_dep, */
 +  c_args: cflags,
    install: true,
    install_dir: session_libexecdir
