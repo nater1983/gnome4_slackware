@@ -4287,7 +4287,7 @@ index 00000000..9b2bca4f
 +
 +#include <stdlib.h>
 +
-+#include <glib/gi18n.h>
++#include <glib-2.0/glib/gi18n.h>
 +#include <gtk/gtk.h>
 +
 +#include "gsm-icon-names.h"
