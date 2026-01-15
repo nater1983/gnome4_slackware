@@ -196,7 +196,6 @@ nautilus-python
 libxmlb
 gcab
 libsmbios
-protobuf-c
 python3-pefile
 libjcat
 # fwupd -in gnome-software module
