@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                  |-----handy-ruler------------------------------------------------------|
+gweather-locations: gweather-locations (GWeather Locations Database)
+gweather-locations:
+gweather-locations: Ideally, libgweather would contain a list of all the more important
+gweather-locations: cities in each country, with a METAR weather station/airport near it
+gweather-locations: listed, so that accurate current weather can be fetched, and timezone
+gweather-locations: or world clocks configuration can be done offline, without the need
+gweather-locations: to resort to online databases.
+gweather-locations:
+gweather-locations: Homepage: https://gitlab.gnome.org/GNOME/gweather-locations
+gweather-locations:
+gweather-locations:
