@@ -1,2 +1,2 @@
 #patch -Np1 -i $CWD/patch/gnome-software/gnome-pwa-list.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-patch -Np1 -i $CWD/patch/gnome-software/0002-rhbug2416542-crash-under-gs_flatpak_refine_wildcard.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gnome-software/0002-rhbug2416542-crash-under-gs_flatpak_refine_wildcard.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
