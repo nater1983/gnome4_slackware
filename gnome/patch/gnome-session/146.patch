@@ -1,198 +1,315 @@
-From 5ff368087e819cd051d96de15a2c1dc48e1daf04 Mon Sep 17 00:00:00 2001
-From: Nathaniel Russell <naterussell83@gmail.com>
-Date: Sun, 8 Jun 2025 14:47:56 +0000
-Subject: [PATCH 1/3] Edit meson.build
+From aa65c573f75d52590e949c2a190977fc36e1fe7d Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Fri, 16 Jan 2026 21:21:12 -0600
+Subject: [PATCH 1/3] Refactor leader-openrc for SysVinit compatibility
 
+Signed-off-by: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
 ---
- data/meson.build | 118 ++++++++++++++++++++++-------------------------
- 1 file changed, 56 insertions(+), 62 deletions(-)
+ gnome-session/leader-openrc.c | 160 +++++++++-------------------------
+ 1 file changed, 40 insertions(+), 120 deletions(-)
 
-diff --git a/data/meson.build b/data/meson.build
-index 764c57d3..2985f786 100644
---- a/data/meson.build
-+++ b/data/meson.build
-@@ -62,49 +62,63 @@ endif
+diff --git a/gnome-session/leader-openrc.c b/gnome-session/leader-openrc.c
+index 3b5012c..6b7aa54 100644
+--- a/gnome-session/leader-openrc.c
++++ b/gnome-session/leader-openrc.c
+@@ -24,7 +24,9 @@
+ #include <glib-unix.h>
+ #include <gio/gio.h>
+ #include <sys/syslog.h>
+-#include <rc.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <errno.h>
  
- # Next, let's install the necessary systemd scaffolding
+ typedef struct {
+         GDBusConnection *session_bus;
+@@ -38,7 +40,8 @@ leader_clear (Leader *ctx)
+ {
+         g_clear_object (&ctx->session_bus);
+         g_clear_pointer (&ctx->loop, g_main_loop_unref);
+-        g_close (ctx->fifo_fd, NULL);
++        if (ctx->fifo_fd >= 0)
++            close (ctx->fifo_fd);
+         g_clear_object (&ctx->awaiting_shutdown);
+ }
  
--install_data(
--    'gnome.session.conf',
--    install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
--)
+@@ -57,36 +60,42 @@ async_run_cmd (gchar **argv, GError **error)
+                              error);
+ }
+ 
++/* -------------------- SysVinit-compatible unit handling -------------------- */
++
+ static gboolean
+-openrc_unit_action (const char       *unit,
+-                    const char       *action,
+-                    GError          **error)
++sysvinit_unit_action (const char *unit,
++                      const char *action,
++                      GError    **error)
+ {
+-        g_autofree char *service = rc_service_resolve(unit);
+-        if (!service)
+-        {
+-                g_debug ("Couldn't resolve service '%s'", unit);
++        if (!unit || !action)
+                 return FALSE;
+-        }
+-        gchar *argv[] = { service, "-U", action, NULL };
++
++        g_autofree char *cmd = g_strdup_printf("/etc/init.d/%s %s", unit, action);
++        gchar *argv[] = { "/bin/sh", "-c", cmd, NULL };
++
+         gboolean res = async_run_cmd(argv, error);
++        if (!res)
++                g_warning("Failed to run unit %s %s: %s", unit, action,
++                          error ? (*error)->message : "(no message)");
+         return res;
+ }
+ 
+ static gboolean
+-openrc_start_unit (const char       *unit,
+-                   GError          **error)
++sysvinit_start_unit (const char *unit,
++                     GError    **error)
+ {
+-        return openrc_unit_action (unit, "start", error);
++        return sysvinit_unit_action(unit, "start", error);
+ }
+ 
+ static gboolean
+-openrc_stop_unit (const char       *unit,
+-                  GError          **error)
++sysvinit_stop_unit (const char *unit,
++                    GError    **error)
+ {
+-        return openrc_unit_action (unit, "stop", error);
++        return sysvinit_unit_action(unit, "stop", error);
+ }
+ 
++/* --------------------------------------------------------------------------- */
++
+ static gboolean
+ leader_term_or_int_signal_cb (gpointer data)
+ {
+@@ -149,7 +158,8 @@ monitor_hangup_cb (int          fd,
+                                             NULL,
+                                             &error);
+         if (!unit) {
+-                g_warning ("Could not get unit for graphical-session-pre.target: %s", error->message);
++                g_warning ("Could not get unit for graphical-session-pre.target: %s",
++                           error->message);
+                 g_main_loop_quit (ctx->loop);
+                 return G_SOURCE_REMOVE;
+         }
+@@ -165,7 +175,8 @@ monitor_hangup_cb (int          fd,
+                                        NULL,
+                                        &error);
+         if (!proxy) {
+-                g_warning ("Could not get proxy for graphical-session-pre.target unit: %s", error->message);
++                g_warning ("Could not get proxy for graphical-session-pre.target unit: %s",
++                           error->message);
+                 g_main_loop_quit (ctx->loop);
+                 return G_SOURCE_REMOVE;
+         }
+@@ -207,96 +218,37 @@ debug_logger (gchar const *log_domain,
+         syslog (LOG_INFO, "%s", message);
+ }
+ 
+-/**
+- * This is the session leader, i.e. it is the only process that's not managed
+- * by the systemd user instance. This process is the one executed by GDM, and
+- * it is part of the session scope in the system systemd instance. This process
+- * works in conjunction with a service running within the user's service manager
+- * (i.e. `gnome-session-monitor.service`) to implement the following:
+- *
+- * - When asked to shut down cleanly (i.e. via SIGTERM), the leader needs to
+- *   bring down the session
+- * - The leader needs to quit right after the session shuts down
+- * - If the leader shuts down uncleanly, the session needs to shut down as well.
+- *
+- * This is achieved by opening a named FIFO in a well known location. If this
+- * process receives SIGTERM or SIGINT then it will write a single byte, causing
+- * the monitor service to signal STOPPING=1 to systemd. This triggers a clean
+- * shutdown, solving the first item. To handle unclean shutdowns, we also wait
+- * for EOF/HUP on both sides and quit if that signal is received.
+- *
+- * As an example, a shutdown might look as follows:
+- *
+- * - session-X.scope for user is stopped
+- * - Leader process receives SIGTERM
+- * - Leader sends single byte
+- * - Monitor process receives byte and signals STOPPING=1
+- * - Systemd user instance starts session teardown
+- * - The last job that runs during session teardown is a stop job for the
+- *   monitor process.
+- * - Monitor process quits, closing FD in the process
+- * - Leader process receives HUP and quits
+- * - GDM sees the leader quit and cleans up its state in response.
+- *
+- * The result is that the session is stopped cleanly.
+- */
+ int
+ main (int argc, char **argv)
+ {
+-        // Hook into syslog, as on an openrc system it's probably more convenient
+         g_log_set_default_handler(debug_logger, NULL);
+         g_autoptr (GError) error = NULL;
+         g_auto (Leader) ctx = { .fifo_fd = -1 };
+         const char *session_name = NULL;
+         const char *debug_string = NULL;
+-        g_autofree char *target = NULL;
+         g_autofree char *fifo_path = NULL;
+         g_autofree char *home_dir = NULL;
+         g_autofree char *config_dir = NULL;
+         struct stat statbuf;
+-        
++
+         if (argc < 2)
+             g_error ("No session name was specified");
+         session_name = argv[1];
+-        
+-        // probably not rely on this
++
+         char const *user = g_getenv("USER");
+         if (!user)
+-                user = "gdm-greeter"; // :/
++                user = "gdm-greeter";
++
+         g_info("User is: %s", user);
+-        // strncmp because we also have gdm-greeter-{2,3,4,...}
+         if (strncmp(user, "gdm-greeter", sizeof("gdm-greeter")) == 0)
+         {
+                 home_dir = g_strdup_printf("/var/lib/%s", user);
 -
--systemd_service = [
--  'gnome-session-manager@.service',
--  'gnome-session-signal-init.service',
--  'gnome-session-restart-dbus.service',
--  'gnome-session-monitor.service',
--]
-+if use_systemd
-+    wanted_targets = []
-+    foreach component: wanted_components
-+      wanted_targets += 'Wants=@0@.target'.format(component)
-+    endforeach
-+
-+    required_targets = []
-+    foreach component: required_components
-+      wanted_targets += 'Requires=@0@.target'.format(component)
-+    endforeach
-+
-+    configure_file(
-+      input: 'gnome.session.conf.in',
-+      output: 'gnome.session.conf',
-+      configuration: {
-+        'wants_components': '\n'.join(wanted_targets),
-+        'requires_components': '\n'.join(required_targets),
-+      },
-+      install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
-+    )
-+endif
- 
--foreach service: systemd_service
--  configure_file(
--    input: service + '.in',
--    output: service,
--    install: true,
--    install_dir: systemd_userunitdir,
--    configuration: {
--      'libexecdir': session_libexecdir,
--    },
--  )
--endforeach
-+if use_systemd
-+  systemd_service = ['gnome-session-manager@.service',
-+                     'gnome-session-signal-init.service',
-+                     'gnome-session-restart-dbus.service',
-+                     'gnome-session-monitor.service',
-+                     'gnome-session-failed.service']
-+
-+  foreach service: systemd_service
-+    configure_file(
-+      input: service + '.in',
-+      output: service,
-+      install: true,
-+      install_dir: systemd_userunitdir,
-+      configuration: unit_conf
-+    )
-+  endforeach
- 
--systemd_target = [
--  'gnome-session-wayland@.target',
--  'gnome-session-wayland.target',
--  'gnome-session@.target',
--  'gnome-session.target',
--  'gnome-session-basic-services.target',
--  'gnome-session-pre.target',
--  'gnome-session-manager.target',
--  'gnome-session-initialized.target',
--  'gnome-session-shutdown.target',
--  'gnome-session-x11-services.target',
--  'gnome-session-x11-services-ready.target',
--]
--if have_x11
--  systemd_target += [
--    'gnome-session-x11@.target',
--    'gnome-session-x11.target',
--  ]
--endif
-+  systemd_target = files('gnome-session-wayland@.target',
-+                         'gnome-session-wayland.target',
-+                         'gnome-session@.target',
-+                         'gnome-session.target',
-+                         'gnome-session-pre.target',
-+                         'gnome-session-manager.target',
-+                        'gnome-session-initialized.target',
-+                         'gnome-session-shutdown.target',
-+                         'gnome-session-failed.target',
-+                         )
-+  if have_x11
-+    systemd_target += [
-+      'gnome-session-x11@.target',
-+      'gnome-session-x11.target',
-+      'gnome-session-x11-services.target',
-+      'gnome-session-x11-services-ready.target',
-+    ]
-+  endif
- 
- install_data(
-   systemd_target,
-@@ -118,6 +132,7 @@ install_data(
-   rename: 'override.conf',
-   install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
- )
-+endif
- 
- # FIXME: https://github.com/systemd/systemd/issues/37104
- install_data(
--- 
-GitLab
-
-
-From 95324acfd4a8a78a17846a9bfc45c6cfe132ea2f Mon Sep 17 00:00:00 2001
-From: Nathaniel Russell <naterussell83@gmail.com>
-Date: Sun, 8 Jun 2025 14:51:08 +0000
-Subject: [PATCH 2/3] Edit meson_options.txt
-
----
- meson_options.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/meson_options.txt b/meson_options.txt
-index 781d8eea..56798ac6 100644
---- a/meson_options.txt
-+++ b/meson_options.txt
-@@ -1,4 +1,5 @@
- option('deprecation_flags', type: 'boolean', value: false, description: 'use *_DISABLE_DEPRECATED flags')
-+option('logind_provider', type: 'combo', choices: ['systemd', 'elogind'], value: 'systemd', description: 'logind implementation')
- option('systemduserunitdir', type: 'string', description: 'Directory for systemd user service files')
- option('docbook', type: 'boolean', value: true, description: 'build documentation')
- option('man', type: 'boolean', value: true, description: 'build documentation (requires xmlto)')
--- 
-GitLab
-
-
-From cd6730a326c7d527ff672f2c24ae6690202599ca Mon Sep 17 00:00:00 2001
-From: Nathaniel Russell <naterussell83@gmail.com>
-Date: Sun, 8 Jun 2025 14:51:29 +0000
-Subject: [PATCH 3/3] Edit meson.build
-
----
- meson.build | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/meson.build b/meson.build
-index 361b388c..2374bed4 100644
---- a/meson.build
-+++ b/meson.build
-@@ -90,17 +90,22 @@ session_deps = [
-   dependency('json-glib-1.0', version: '>= 0.10')
- ]
- 
--libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
--config_h.set('SYSTEMD_STRICT_ENV',
--              libsystemd_dep.version().version_compare('< 248'))
+-                // Need to hijack the home to point to /var/lib because /var/run/... gets nuked on each gdm start
+                 config_dir = g_strdup_printf("%s/.config", home_dir);
+                 g_setenv("XDG_CONFIG_HOME", config_dir, TRUE);
+                 g_setenv("HOME", home_dir, TRUE);
+         }
+         else
+-                g_warning("The gdm-greeter-{1,2,3,4} user wasn't found. Expect stuff to break.")
+-        
+-        // Finally, let's get started
+-        rc_set_user();
+-        
+-        char const *session_type = g_getenv("XDG_SESSION_TYPE");
+-        char const *home         = g_getenv("HOME");
+-        g_info("XDG_RUNTIME_DIR: %s", g_getenv("XDG_RUNTIME_DIR"));
+-        
+-        // TODO what about custom XDG config directory?
+-        g_autofree char *gnome_runlevel_dir = g_strdup_printf("%s/.config/rc/runlevels/gnome-session", home);
+-        if (!g_mkdir_with_parents(gnome_runlevel_dir, 0755))
+-                g_debug("Directory exists. OK");
 -
- session_bin_deps = session_deps + [
--  libsystemd_dep,
-   dependency('gio-unix-2.0', version: glib_req_version),
- ]
+-        g_debug("runlevel dir: %s", gnome_runlevel_dir);
+-
+-        debug_string = g_getenv ("GNOME_SESSION_DEBUG");
+-        if (debug_string != NULL)
+-                g_log_set_debug_enabled (atoi (debug_string) == 1);
+-        else
+-                g_log_set_debug_enabled(TRUE);
+-        g_debug("Hi! from leader-openrc.");
++                g_warning("The gdm-greeter-{1,2,3,4} user wasn't found. Expect stuff to break.");
  
-+# Check for systemd
-+use_systemd = get_option('logind_provider') == 'systemd'
-+if use_systemd
-+  libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
-+  session_bin_deps += libsystemd_dep
-+elif get_option('logind_provider') == 'elogind'
-+  libelogind_dep = dependency('libelogind', version: '>= 209', required: true)
-+  session_bin_deps += libelogind_dep
-+endif
-+
- systemd_userunitdir = get_option('systemduserunitdir')
--if systemd_userunitdir == ''
-+if systemd_userunitdir == '' and use_systemd
-   systemd_dep = dependency('systemd', version: '>= 242', required: true)
-   systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir',
-                                                  pkgconfig_define: ['prefix', session_prefix])
--- 
-GitLab
+         ctx.loop = g_main_loop_new (NULL, TRUE);
+ 
+@@ -304,42 +256,10 @@ main (int argc, char **argv)
+         if (ctx.session_bus == NULL)
+                 g_error ("Failed to obtain session bus: %s", error->message);
+ 
+-        /* XDG_SESSION_TYPE from the console is TTY which isn't a service and doesn't make
+-            too much sense anyway */
++        const char *session_type = g_getenv("XDG_SESSION_TYPE");
+         if (session_type && strcmp(session_type, "tty") == 0)
+-                session_type = "wayland"; 
+-        target = g_strdup_printf ("gnome-session-%s.%s",
+-                                  session_type ? session_type : "wayland", session_name);
+-
+-        RC_SERVICE state = rc_service_state(target);
+-        switch (state)
+-        {
+-        case RC_SERVICE_STARTED:
+-        case RC_SERVICE_FAILED:
+-                g_error("Service manager is already running!");
+-                break;
+-        case RC_SERVICE_STOPPED:
+-                break;
+-        default:
+-                g_debug("Service in state: %d", state);
+-        }
+-        
+-        if (!rc_runlevel_stack("gnome-session", "default"))
+-                g_info("Couldn't set runlevel stack");
+-        if (!rc_runlevel_exists("gnome-session"))
+-                g_info("No runlevel \"gnome-session\" seen!"); // next function will fail now, but librc error reporting sucks so we check this specifically
+-        if (!rc_service_add("gnome-session", target))
+-        {
+-                g_info("Couldn't add service to gnome-session runlevel: %s", strerror(errno));
+-        }
+-
+-        g_message ("Starting GNOME session target: %s", target);
++                session_type = "wayland";
+ 
+-        // No way that i'm aware of to enter a user runlevel from librc :/
+-        gchar *rl_argv[] = { "/usr/bin/openrc", "-U", "gnome-session", NULL };
+-        if (!async_run_cmd(rl_argv, &error))
+-                g_error("Failed to start unit %s: %s", target, error ? error->message : "(no message)");
+-        
+         fifo_path = g_build_filename (g_get_user_runtime_dir (),
+                                       "gnome-session-leader-fifo",
+                                       NULL);
+@@ -348,11 +268,11 @@ main (int argc, char **argv)
+ 
+         ctx.fifo_fd = g_open (fifo_path, O_WRONLY | O_CLOEXEC, 0666);
+         if (ctx.fifo_fd < 0)
+-                g_error ("Failed to watch openrc session: open failed: %m");
++                g_error ("Failed to watch session: open failed: %m");
+         if (fstat (ctx.fifo_fd, &statbuf) < 0)
+-                g_error ("Failed to watch openrc session: fstat failed: %m");
++                g_error ("Failed to watch session: fstat failed: %m");
+         else if (!(statbuf.st_mode & S_IFIFO))
+-                g_error ("Failed to watch openrc session: FD is not a FIFO");
++                g_error ("Failed to watch session: FD is not a FIFO");
+ 
+         g_unix_fd_add (ctx.fifo_fd, G_IO_HUP, (GUnixFDSourceFunc) monitor_hangup_cb, &ctx);
+         g_unix_signal_add (SIGHUP, leader_term_or_int_signal_cb, &ctx);
 
+From 8dd43d85886f9cf889a0b145106da6083d443ffc Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Fri, 16 Jan 2026 21:21:58 -0600
+Subject: [PATCH 2/3] Rename leader-openrc.c to leader-sysvinit.c
+
+Signed-off-by: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+---
+ gnome-session/{leader-openrc.c => leader-sysvinit.c} | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename gnome-session/{leader-openrc.c => leader-sysvinit.c} (100%)
+
+diff --git a/gnome-session/leader-openrc.c b/gnome-session/leader-sysvinit.c
+similarity index 100%
+rename from gnome-session/leader-openrc.c
+rename to gnome-session/leader-sysvinit.c
+
+From 2b732d793247ac0d669b4322f426d9c4a77c2fd7 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Fri, 16 Jan 2026 21:22:20 -0600
+Subject: [PATCH 3/3] Add support for SysVinit in meson.build
+
+Signed-off-by: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+---
+ gnome-session/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gnome-session/meson.build b/gnome-session/meson.build
+index dc5a0a5..1f05bf0 100644
+--- a/gnome-session/meson.build
++++ b/gnome-session/meson.build
+@@ -26,7 +26,7 @@ sources = files(
+ if use_openrc
+   sources += files('leader-openrc.c')
+ else
+-  sources += files('leader-systemd.c')
++  sources += files('leader-sysvinit.c')
+ endif
+ 
+ executable(
