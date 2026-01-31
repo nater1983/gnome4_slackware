@@ -1,0 +1,5 @@
+# These files are technically apart of libgnome-games-support3 but have been made now as a copylib for all of GNOME games.
+# For the time being we shall delete these files since the games are staticlly linked with libgnome-games-support3,
+# and also keep the last known set of libraries until all GNOME games have this functionality.
+
+find "$PKG" -type f -name "*_libgnome-games-support.mo" -delete
