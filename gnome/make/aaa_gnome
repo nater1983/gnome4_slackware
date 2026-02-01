@@ -4,7 +4,7 @@ if [ -x /sbin/ldconfig ]; then
 fi
 
 cd $PKG
-cat $CWD/symlinks-to-tracked-libs \
+cat $CWD/pre-install/aaa_gnome/symlinks-to-tracked-libs \
   | grep -v "^#" | grep -v "^$" \
   | sed -e "s#^/lib/#/lib${LIBDIRSUFFIX}/#" \
         -e "s#^/usr/lib/#/usr/lib${LIBDIRSUFFIX}/#" \
@@ -24,7 +24,7 @@ cat $CWD/symlinks-to-tracked-libs \
   )
 done
 
-cat $CWD/tracked-files \
+cat $CWD/pre-install/aaa_gnome/tracked-files \
   | grep -v "^#" | grep -v "^$" \
   | sed -e "s#^/lib/#/lib${LIBDIRSUFFIX}/#" \
         -e "s#^/usr/lib/#/usr/lib${LIBDIRSUFFIX}/#" \
