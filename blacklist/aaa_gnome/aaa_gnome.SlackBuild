@@ -52,7 +52,7 @@ PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/home/build/gnome}
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 
 if [ -x /sbin/ldconfig ]; then
   /sbin/ldconfig
