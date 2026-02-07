@@ -1,0 +1,13 @@
+diff --git a/src/plugins/swig/src/target_ruby.c b/src/plugins/swig/src/target_ruby.c
+index bbce3981..e17bb443 100644
+--- a/src/plugins/swig/src/target_ruby.c
++++ b/src/plugins/swig/src/target_ruby.c
+@@ -49,7 +49,7 @@
+  */
+ 
+ static VALUE
+-load_module()
++load_module(VALUE)
+ {
+   ruby_script(PLUGIN_FILE);
+   return rb_require(PLUGIN_FILE);

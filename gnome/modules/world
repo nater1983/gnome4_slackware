@@ -114,7 +114,6 @@ python3-magic
 python3-more-itertools
 python3-natsort
 python3-piexif
-python3-pillow_heif
 python3-pytz
 python3-rarfile
 python3-regex
@@ -196,7 +195,6 @@ nautilus-python
 libxmlb
 gcab
 libsmbios
-protobuf-c
 python3-pefile
 libjcat
 # fwupd -in gnome-software module
