@@ -1,2 +1,2 @@
-wget -c -P "$CWD/post-install/gnome-session" https://github.com/nater1983/gnome-session-sysvinit/archive/27aa310444129fd17c9fadcb94c64f5a2c13e70a/gnome-session-sysvinit-27aa310444129fd17c9fadcb94c64f5a2c13e70a.tar.gz
-tar --strip-components=1 -xzf $CWD/post-install/gnome-session/gnome-session-sysvinit-27aa310444129fd17c9fadcb94c64f5a2c13e70a.tar.gz
+#wget -c -P "$CWD/post-install/gnome-session" https://github.com/nater1983/gnome-session-sysvinit/archive/27aa310444129fd17c9fadcb94c64f5a2c13e70a/gnome-session-sysvinit-27aa310444129fd17c9fadcb94c64f5a2c13e70a.tar.gz
+#tar --strip-components=1 -xzf $CWD/post-install/gnome-session/gnome-session-sysvinit-27aa310444129fd17c9fadcb94c64f5a2c13e70a.tar.gz
