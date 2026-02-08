@@ -2,7 +2,7 @@
 Type=Application
 Name=GNOME Shell
 Comment=Window management and application launching
-Exec=@bindir@/gnome-shell --mode=%i
+Exec=@bindir@/gnome-shell --mode=gdm
 TryExec=@bindir@/gnome-shell
 Categories=GNOME;GTK;Core;
 OnlyShowIn=GNOME;
