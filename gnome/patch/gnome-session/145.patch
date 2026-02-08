@@ -3,7 +3,7 @@ deleted file mode 100644
 index ac8f7011..00000000
 --- a/data/gnome-session-basic-services.target
 +++ /dev/null
-@@ -1,42 +0,0 @@
+@@ -1,44 +0,0 @@
 -[Unit]
 -Description=GNOME basic session services
 -OnFailure=gnome-session-shutdown.target
@@ -19,6 +19,8 @@ index ac8f7011..00000000
 -Requisite=gnome-session.target
 -PartOf=gnome-session.target
 -Before=gnome-session.target
+-
+-Requires=org.gnome.Shell.target
 -
 -# Manages a11y settings, starts Orca when needed
 -Wants=org.gnome.SettingsDaemon.A11ySettings.target
@@ -115,6 +117,46 @@ index 6240926d..2c3d1963 100644
  
  # We need to make sure this unit is stopped; primarily so that the tree of
  # units that we created is completely cleaned.
+diff --git a/data/gnome-session-wayland.target b/data/gnome-session-wayland.target
+index 9a0a72a5..6552b4d4 100644
+--- a/data/gnome-session-wayland.target
++++ b/data/gnome-session-wayland.target
+@@ -1,5 +1,6 @@
+ [Unit]
+ Description=GNOME Wayland Session
++# On wayland all is lost, do a shutdown
+ OnFailure=gnome-session-shutdown.target
+ OnFailureJobMode=replace-irreversibly
+ # Avoid default After/Before rules
+diff --git a/data/gnome-session-x11.target b/data/gnome-session-x11.target
+index a91d0877..e13cc9ee 100644
+--- a/data/gnome-session-x11.target
++++ b/data/gnome-session-x11.target
+@@ -1,7 +1,8 @@
+ [Unit]
+ Description=GNOME X11 Session
+-OnFailure=gnome-session-shutdown.target
+-OnFailureJobMode=replace-irreversibly
++# On X11, try to show the fail screen
++OnFailure=gnome-session-failed.target
++OnFailureJobMode=replace
+ # Avoid default After/Before rules
+ DefaultDependencies=no
+ 
+diff --git a/data/gnome-session-x11@.target b/data/gnome-session-x11@.target
+index b371759a..ce5879b2 100644
+--- a/data/gnome-session-x11@.target
++++ b/data/gnome-session-x11@.target
+@@ -1,7 +1,7 @@
+ [Unit]
+ Description=GNOME X11 Session (session: %i)
+-OnFailure=gnome-session-shutdown.target
+-OnFailureJobMode=replace-irreversibly
++OnFailure=gnome-session-failed.target
++OnFailureJobMode=replace
+ DefaultDependencies=no
+ # Start happens explicitly
+ RefuseManualStart=no
 diff --git a/data/gnome-session.target b/data/gnome-session.target
 index bf4615b6..ea305558 100644
 --- a/data/gnome-session.target
@@ -133,27 +175,70 @@ diff --git a/data/gnome-session@.target b/data/gnome-session@.target
 index d5ca3a11..536d9c0f 100644
 --- a/data/gnome-session@.target
 +++ b/data/gnome-session@.target
-@@ -6,8 +6,8 @@ RefuseManualStart=no
- # Stop happens by starting gnome-session-shutdown.target
- RefuseManualStop=yes
- 
+@@ -1,7 +1,7 @@
+ [Unit]
+ Description=GNOME Session (session: %i)
 -OnFailure=gnome-session-shutdown.target
 -OnFailureJobMode=replace-irreversibly
 +OnFailure=gnome-session-failed.target
 +OnFailureJobMode=replace
- 
- Conflicts=shutdown.target gnome-session-shutdown.target
- PartOf=graphical-session.target
+ DefaultDependencies=no
+ RefuseManualStart=yes
+ RefuseManualStop=yes
 diff --git a/data/gnome.session.conf b/data/gnome.session.conf
 deleted file mode 100644
 index 916191fc..00000000
 --- a/data/gnome.session.conf
 +++ /dev/null
-@@ -1,3 +0,0 @@
+@@ -1,48 +0,0 @@
 -[Unit]
--Requires=gnome-session-services.target
--Requires=org.gnome.Shell@user.service
-\ No newline at end of file
+-# Basic services required by any GNOME session
+-Requires=gnome-session-basic-services.target
+-
+-# Manages monitor color calibration and night-light
+-Wants=org.gnome.SettingsDaemon.Color.target
+-
+-# Manages location-based timezone
+-Wants=org.gnome.SettingsDaemon.Datetime.target
+-
+-# Notifies when disk is full, notifies when RAM is full,
+-# cleans up trash and temp files, donation reminders
+-Wants=org.gnome.SettingsDaemon.Housekeeping.target
+-
+-# Notifies when events happen with printers: low on ink,
+-# jammed, job cancelled, etc etc etc
+-Wants=org.gnome.SettingsDaemon.PrintNotifications.target
+-
+-# org.freedesktop.ScreenSaver API
+-Wants=org.gnome.SettingsDaemon.ScreensaverProxy.target
+-
+-# Flushes PulseAudio sample cache whenever the
+-# sound theme changes
+-Wants=org.gnome.SettingsDaemon.Sound.target
+-
+-# Manages SIM cards (unlocking, etc)
+-Wants=org.gnome.SettingsDaemon.Wwan.target
+-
+-# Monitors disks for SMART errors, and notifies
+-# the user if their disk is about to fail
+-Wants=gnome-disk-utility-notify.service
+-
+-# Filesystem indexer
+-Wants=localsearch-3.service
+-
+-# Graphical wrapper around ssh-agent
+-Wants=gcr-ssh-agent.socket
+-
+-# Checking for automatic updates, etc
+-Wants=gnome-software.service
+-
+-# Translates the user's standard directories
+-# (Downloads/, Documents/, Music/, etc) whenever
+-# the user's locale changes
+-Wants=user-dirs-update-gtk.service
+-
+-# Notifies the user about their calendar events
+-Wants=evolution-alarm-notify.service
 diff --git a/data/gnome.session.conf.in b/data/gnome.session.conf.in
 new file mode 100644
 index 00000000..73da0850
@@ -188,9 +273,12 @@ diff --git a/data/meson.build b/data/meson.build
 index 76b15e92..e4256fcd 100644
 --- a/data/meson.build
 +++ b/data/meson.build
-@@ -17,16 +17,85 @@ i18n.merge_file(
+@@ -60,18 +60,87 @@ if have_x11
+   endforeach
+ endif
  
- # Next, let's install the necessary systemd scaffolding
+-# Next, let's install the necessary systemd scaffolding
++# Next, let's configure the required components for a session.
  
 -install_data(
 -    'gnome.session.conf',
@@ -230,8 +318,8 @@ index 76b15e92..e4256fcd 100644
 +    'libexecdir': session_libexecdir,
 +    'required_components': ';'.join(builtin_required),
 +  }
-+)
-+
+ )
+ 
 +i18n.merge_file(
 +  type: 'desktop',
 +  input: desktop_in,
@@ -264,8 +352,8 @@ index 76b15e92..e4256fcd 100644
 +    'requires_components': '\n'.join(required_targets),
 +  },
 +  install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
- )
- 
++)
++
 +# Install the other necessary systemd scaffolding
 +
  systemd_service = [
@@ -277,12 +365,11 @@ index 76b15e92..e4256fcd 100644
  ]
  
  foreach service: systemd_service
-@@ -44,12 +113,12 @@ endforeach
- systemd_target = [
+@@ -91,11 +160,11 @@ systemd_target = [
+   'gnome-session-wayland.target',
    'gnome-session@.target',
    'gnome-session.target',
 -  'gnome-session-basic-services.target',
-   'gnome-session-services.target',
    'gnome-session-pre.target',
    'gnome-session-manager.target',
    'gnome-session-initialized.target',
@@ -291,7 +378,7 @@ index 76b15e92..e4256fcd 100644
    'gnome-session-x11-services.target',
    'gnome-session-x11-services-ready.target',
  ]
-@@ -76,15 +145,6 @@ install_data(
+@@ -128,15 +197,6 @@ install_data(
  
  # Install some other misc. configuration files
  
@@ -637,27 +724,42 @@ diff --git a/gnome-session/gsm-app.c b/gnome-session/gsm-app.c
 index d38138be..c05ae06a 100644
 --- a/gnome-session/gsm-app.c
 +++ b/gnome-session/gsm-app.c
-@@ -21,46 +21,173 @@
+@@ -21,49 +21,174 @@
  #include "config.h"
  #endif
  
--#include <string.h>
--
- #include <glib.h>
++#include <glib.h>
+ #include <string.h>
+ 
+-#include <glib.h>
 -#include <gio/gio.h>
 -#include <gio/gdesktopappinfo.h>
-+#include <string.h>
- 
- #include "gsm-app.h"
--#include "gsm-util.h"
++#include "gsm-app.h"
 +#include "org.gnome.SessionManager.App.h"
+ 
+-#define GNOME_DESKTOP_USE_UNSTABLE_API
+-#include <libgnome-desktop/gnome-systemd.h>
++/* If a component crashes twice within a minute, we count that as a fatal error */
++#define _GSM_APP_RESPAWN_RATELIMIT_USEC (60 * G_USEC_PER_SEC)
+ 
+-#include "gsm-app.h"
+-#include "gsm-util.h"
++typedef struct
++{
++        char            *id;
++        char            *app_id;
++        int              phase;
++        char            *startup_id;
++        gboolean         registered;
++        gint64           last_restart_time;
++        GDBusConnection *connection;
++        GsmExportedApp  *skeleton;
++} GsmAppPrivate;
  
 -#define GSM_APP_SYSTEMD_SKIP_KEY   "X-systemd-skip"
 -#define GSM_APP_SYSTEMD_HIDDEN_KEY "X-GNOME-HiddenUnderSystemd"
 -#define GSM_APP_ENABLED_KEY        "X-GNOME-Autostart-enabled"
 -#define GSM_APP_PHASE_KEY          "X-GNOME-Autostart-Phase"
-+/* If a component crashes twice within a minute, we count that as a fatal error */
-+#define _GSM_APP_RESPAWN_RATELIMIT_USEC (60 * G_USEC_PER_SEC)
  
 -/* This comment is a record of keys that were previously used but are not used
 - * anymore. We keep this so that we don't accidentally redefine these keys in
@@ -676,19 +778,7 @@ index d38138be..c05ae06a 100644
 -{
 -        GObject          parent;
 -        GDesktopAppInfo *inner;
-+typedef struct
-+{
-+        char            *id;
-+        char            *app_id;
-+        int              phase;
-+        char            *startup_id;
-+        gboolean         registered;
-+        gint64           last_restart_time;
-+        GDBusConnection *connection;
-+        GsmExportedApp  *skeleton;
-+} GsmAppPrivate;
-+
-++enum {
++enum {
 +        EXITED,
 +        DIED,
 +        LAST_SIGNAL
@@ -839,7 +929,7 @@ index d38138be..c05ae06a 100644
  
  static void
  gsm_app_init (GsmApp *app)
-@@ -68,13 +195,42 @@ gsm_app_init (GsmApp *app)
+@@ -71,13 +196,43 @@ gsm_app_init (GsmApp *app)
  }
  
  static void
@@ -847,16 +937,6 @@ index d38138be..c05ae06a 100644
 -                   GDesktopAppInfo *app_info)
 +gsm_app_set_phase (GsmApp *app,
 +                   int     phase)
-+{
-+        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+
-+        g_return_if_fail (GSM_IS_APP (app));
-+        priv->phase = phase;
-+}
-+
-+static void
-+gsm_app_set_id (GsmApp     *app,
-+                const char *id)
  {
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
 +
@@ -864,6 +944,17 @@ index d38138be..c05ae06a 100644
 -        g_return_if_fail (app_info == NULL || G_IS_DESKTOP_APP_INFO (app_info));
  
 -        g_set_object (&app->inner, app_info);
++        priv->phase = phase;
++}
++
++static void
++gsm_app_set_id (GsmApp     *app,
++                const char *id)
++{
++        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
++
++        g_return_if_fail (GSM_IS_APP (app));
++
 +        g_free (priv->id);
 +
 +        priv->id = g_strdup (id);
@@ -886,7 +977,7 @@ index d38138be..c05ae06a 100644
  }
  
  static void
-@@ -86,8 +242,17 @@ gsm_app_set_property (GObject      *object,
+@@ -89,8 +244,17 @@ gsm_app_set_property (GObject      *object,
          GsmApp *app = GSM_APP (object);
  
          switch (prop_id) {
@@ -906,7 +997,7 @@ index d38138be..c05ae06a 100644
                  break;
          default:
                  break;
-@@ -101,10 +266,20 @@ gsm_app_get_property (GObject    *object,
+@@ -104,10 +268,20 @@ gsm_app_get_property (GObject    *object,
                        GParamSpec *pspec)
  {
          GsmApp *app = GSM_APP (object);
@@ -929,7 +1020,7 @@ index d38138be..c05ae06a 100644
                  break;
          default:
                  break;
-@@ -115,8 +290,21 @@ static void
+@@ -118,8 +292,21 @@ static void
  gsm_app_dispose (GObject *object)
  {
          GsmApp *app = GSM_APP (object);
@@ -937,7 +1028,8 @@ index d38138be..c05ae06a 100644
 +
 +        g_free (priv->startup_id);
 +        priv->startup_id = NULL;
-+
+ 
+-        g_clear_object (&app->inner);
 +        g_free (priv->id);
 +        priv->id = NULL;
 +
@@ -946,18 +1038,17 @@ index d38138be..c05ae06a 100644
 +                                                                    priv->connection);
 +                g_clear_object (&priv->skeleton);
 +        }
- 
--        g_clear_object (&app->inner);
++
 +        g_clear_object (&priv->connection);
  
          G_OBJECT_CLASS (gsm_app_parent_class)->dispose (object);
  }
-@@ -129,22 +317,102 @@ gsm_app_class_init (GsmAppClass *klass)
+@@ -132,22 +319,103 @@ gsm_app_class_init (GsmAppClass *klass)
          object_class->set_property = gsm_app_set_property;
          object_class->get_property = gsm_app_get_property;
          object_class->dispose = gsm_app_dispose;
 +        object_class->constructor = gsm_app_constructor;
- 
++
 +        klass->impl_start = NULL;
 +        klass->impl_get_app_id = NULL;
 +        klass->impl_get_autorestart = NULL;
@@ -988,6 +1079,7 @@ index d38138be..c05ae06a 100644
 +                                                              "Session management startup ID",
 +                                                              NULL,
 +                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+ 
          g_object_class_install_property (object_class,
 -                                         PROP_INNER,
 -                                         g_param_spec_object ("inner",
@@ -1063,7 +1155,7 @@ index d38138be..c05ae06a 100644
  }
  
  gboolean
-@@ -152,87 +420,138 @@ gsm_app_peek_is_disabled (GsmApp *app)
+@@ -155,146 +423,171 @@ gsm_app_peek_is_disabled (GsmApp *app)
  {
          g_return_val_if_fail (GSM_IS_APP (app), FALSE);
  
@@ -1113,8 +1205,8 @@ index d38138be..c05ae06a 100644
 -                g_debug ("App %s is disabled by " GSM_APP_SYSTEMD_SKIP_KEY,
 -                         gsm_app_peek_app_id (app));
 -                return TRUE;
-++gboolean
-++gsm_app_is_running (GsmApp *app)
++gboolean
++gsm_app_is_running (GsmApp *app)
 +{
 +        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
 +
@@ -1124,15 +1216,65 @@ index d38138be..c05ae06a 100644
 +                return FALSE;
          }
 +}
- 
--        return FALSE;
++
 +gboolean
 +gsm_app_peek_autorestart (GsmApp *app)
 +{
 +        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
-+ 
+ 
+-        return FALSE;
 +        if (GSM_APP_GET_CLASS (app)->impl_get_autorestart) {
 +                return GSM_APP_GET_CLASS (app)->impl_get_autorestart (app);
++        } else {
++                return FALSE;
++        }
+ }
+ 
+-static void
+-app_launched (GAppLaunchContext *ctx,
+-              GAppInfo          *appinfo,
+-              GVariant          *platform_data,
+-              gpointer           data)
++gboolean
++gsm_app_provides (GsmApp *app, const char *service)
+ {
+-        GsmApp *app = data;
++        if (GSM_APP_GET_CLASS (app)->impl_provides) {
++                return GSM_APP_GET_CLASS (app)->impl_provides (app, service);
++        } else {
++                return FALSE;
++        }
++}
+ 
+-        gint pid = 0;
+-        g_variant_lookup (platform_data, "pid", "i", &pid);
++char **
++gsm_app_get_provides (GsmApp *app)
++{
++        if (GSM_APP_GET_CLASS (app)->impl_get_provides) {
++                return GSM_APP_GET_CLASS (app)->impl_get_provides (app);
++        } else {
++                return NULL;
++        }
++}
+ 
+-        /* If pid == 0 the application was launched through D-Bus
+-         * activation, therefore it's already in its own unit */
+-        if (pid == 0)
+-                return;
++gboolean
++gsm_app_has_autostart_condition (GsmApp     *app,
++                                 const char *condition)
++{
+ 
+-        /* We are not interested in the result. */
+-        gnome_start_systemd_scope (gsm_app_peek_app_id (app),
+-                                   pid,
+-                                   NULL,
+-                                   NULL,
+-                                   NULL, NULL, NULL);
++        if (GSM_APP_GET_CLASS (app)->impl_has_autostart_condition) {
++                return GSM_APP_GET_CLASS (app)->impl_has_autostart_condition (app, condition);
 +        } else {
 +                return FALSE;
 +        }
@@ -1142,24 +1284,36 @@ index d38138be..c05ae06a 100644
  gsm_app_start (GsmApp  *app,
                 GError **error)
  {
+-        g_autoptr (GAppLaunchContext) ctx = NULL;
+-        GError *local_error = NULL;
+-        const char * const *variable_denylist;
+-        const char * const *child_environment;
+-        guint handler;
+-        gboolean success;
+-
 -        g_debug ("GsmApp: starting %s (command=%s)",
 -                 gsm_app_peek_app_id (app),
 -                 g_app_info_get_commandline (G_APP_INFO (app->inner)));
--        return gsm_util_launch_app (app->inner, error);
+-
+-        ctx = g_app_launch_context_new ();
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+ 
+ 
+-        variable_denylist = gsm_util_get_variable_blacklist ();
+-        for (size_t i = 0; variable_denylist[i] != NULL; i++)
+-                g_app_launch_context_unsetenv (ctx, variable_denylist[i]);
 +        g_debug ("Starting app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_start (app, error);
- }
++}
  
--GsmApp *
--gsm_app_new (GDesktopAppInfo  *info,
--             GError          **error)
+-        child_environment = gsm_util_listenv ();
+-        for (size_t i = 0; child_environment[i] != NULL; i++) {
+-                g_auto (GStrv) split = g_strsplit (child_environment[i], "=", 2);
+-                if (split[1] != NULL)
+-                        g_app_launch_context_setenv (ctx, split[0], split[1]);
 +gboolean
 +gsm_app_restart (GsmApp  *app,
 +                 GError **error)
- {
--        g_autofree char *app_phase = NULL;
++{
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
 +        gint64 current_time;
 +        g_debug ("Re-starting app: %s", priv->id);
@@ -1174,17 +1328,53 @@ index d38138be..c05ae06a 100644
 +                             "Component '%s' crashing too quickly",
 +                             gsm_app_peek_app_id (app));
 +                return FALSE;
-+        }
+         }
 +        priv->last_restart_time = current_time;
+ 
+-        handler = g_signal_connect (ctx, "launched", G_CALLBACK (app_launched), app);
+-        success = g_desktop_app_info_launch_uris_as_manager (app->inner,
+-                                                             NULL,
+-                                                             ctx,
+-                                                             G_SPAWN_SEARCH_PATH,
+-                                                             NULL, NULL, NULL, NULL,
+-                                                             &local_error);
+-        if (!success)
+-                g_propagate_prefixed_error (error, local_error,
+-                                            "Unable to start app (%s): ",
+-                                            gsm_app_peek_app_id (app));
 +        return GSM_APP_GET_CLASS (app)->impl_restart (app, error);
 +}
  
--        g_return_val_if_fail (info != NULL, NULL);
+-        g_signal_handler_disconnect (ctx, handler);
 +gboolean
 +gsm_app_stop (GsmApp  *app,
 +              GError **error)
 +{
 +        return GSM_APP_GET_CLASS (app)->impl_stop (app, error);
++}
++
++void
++gsm_app_exited (GsmApp *app,
++                guchar  exit_code)
++{
++        g_return_if_fail (GSM_IS_APP (app));
+ 
+-        return success;
++        g_signal_emit (app, signals[EXITED], 0, exit_code);
+ }
+ 
+-GsmApp *
+-gsm_app_new (GDesktopAppInfo  *info,
+-             GError          **error)
++void
++gsm_app_died (GsmApp *app,
++              int     signal)
+ {
+-        g_autofree char *app_phase = NULL;
++        g_return_if_fail (GSM_IS_APP (app));
+ 
+-        g_return_val_if_fail (info != NULL, NULL);
++        g_signal_emit (app, signals[DIED], 0, signal);
 +}
  
 -        app_phase = g_desktop_app_info_get_string (info, GSM_APP_PHASE_KEY);
@@ -1194,36 +1384,29 @@ index d38138be..c05ae06a 100644
 -                             g_app_info_get_id (G_APP_INFO(info)));
 -                return NULL;
 -        }
-+void
-+gsm_app_exited (GsmApp *app,
-+                guchar  exit_code)
++gboolean
++gsm_app_get_registered (GsmApp *app)
 +{
-+        g_return_if_fail (GSM_IS_APP (app));
-+ 
-+        g_signal_emit (app, signals[EXITED], 0, exit_code);
-+}
++        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
++
++        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
  
 -        return g_object_new (GSM_TYPE_APP, "inner", info, NULL);
-+void
-+gsm_app_died (GsmApp *app,
-+              int     signal)
-+{
-+        g_return_if_fail (GSM_IS_APP (app));
-+
-+        g_signal_emit (app, signals[DIED], 0, signal);
++        return priv->registered;
  }
  
 -GsmApp *
 -gsm_app_new_for_path (const char  *path,
 -                      GError     **error)
-+gboolean
-+gsm_app_get_registered (GsmApp *app)
++void
++gsm_app_set_registered (GsmApp   *app,
++                        gboolean  registered)
  {
 -        g_autoptr (GDesktopAppInfo) info = NULL;
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
  
 -        g_return_val_if_fail (path != NULL, NULL);
-+        g_return_val_if_fail (GSM_IS_APP (app), FALSE);
++        g_return_if_fail (GSM_IS_APP (app));
  
 -        info = g_desktop_app_info_new_from_filename (path);
 -        if (info == NULL) {
@@ -1231,24 +1414,11 @@ index d38138be..c05ae06a 100644
 -                             "Desktop file %s couldn't be parsed, or references a missing TryExec binary",
 -                             path);
 -                return NULL;
--        }
-+        return priv->registered;
-+}
-+
-+void
-+gsm_app_set_registered (GsmApp   *app,
-+                        gboolean  registered)
-+{
-+        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+
-+        g_return_if_fail (GSM_IS_APP (app));
- 
--        return gsm_app_new (info, error);
 +        if (priv->registered != registered) {
 +                priv->registered = registered;
 +                g_object_notify (G_OBJECT (app), "registered");
-+        }
- }
+         }
++}
 +
 +gboolean
 +gsm_app_save_to_keyfile (GsmApp    *app,
@@ -1256,11 +1426,11 @@ index d38138be..c05ae06a 100644
 +                         GError   **error)
 +{
 +        GsmAppPrivate *priv = gsm_app_get_instance_private (app);
-+ 
+ 
+-        return gsm_app_new (info, error);
 +        g_debug ("Saving app: %s", priv->id);
 +        return GSM_APP_GET_CLASS (app)->impl_save_to_keyfile (app, keyfile, error);
-+}
-\ No newline at end of file
+ }
 diff --git a/gnome-session/gsm-app.h b/gnome-session/gsm-app.h
 index a3099709..765a70da 100644
 --- a/gnome-session/gsm-app.h
@@ -4755,7 +4925,7 @@ diff --git a/gnome-session/gsm-manager.h b/gnome-session/gsm-manager.h
 index b358d2b5..3cfd8608 100644
 --- a/gnome-session/gsm-manager.h
 +++ b/gnome-session/gsm-manager.h
-@@ -28,17 +28,35 @@
+@@ -28,25 +28,41 @@
  
  G_BEGIN_DECLS
  
@@ -4797,9 +4967,19 @@ index b358d2b5..3cfd8608 100644
 +        GSM_MANAGER_PHASE_DESKTOP,
 +        /* everything else */
          GSM_MANAGER_PHASE_APPLICATION,
-         /* The session is running */
+-        /* The session is running */
++        /* done launching */
          GSM_MANAGER_PHASE_RUNNING,
-@@ -65,13 +83,22 @@ typedef enum
+-        /* Someone requested for the session to end,  */
++        /* shutting down */
+         GSM_MANAGER_PHASE_QUERY_END_SESSION,
+-        /* The session is shutting down */
+         GSM_MANAGER_PHASE_END_SESSION,
+-        /* The session has shut down, and gnome-session is about to exit */
+         GSM_MANAGER_PHASE_EXIT
+ } GsmManagerPhase;
+ 
+@@ -65,13 +81,20 @@ typedef enum
  #define GSM_MANAGER_ERROR gsm_manager_error_quark ()
  GQuark              gsm_manager_error_quark                    (void);
  
@@ -4809,41 +4989,40 @@ index b358d2b5..3cfd8608 100644
 +                                                                gboolean        systemd_managed);
  GsmManager *        gsm_manager_get                            (void);
  
++
 +gboolean            gsm_manager_get_failsafe                   (GsmManager     *manager);
-+
  gboolean            gsm_manager_get_dbus_disconnected          (GsmManager *manager);
- 
 +gboolean            gsm_manager_get_systemd_managed            (GsmManager     *manager);
-+
+ 
  gboolean            gsm_manager_add_autostart_app              (GsmManager     *manager,
                                                                  const char     *path);
 +gboolean            gsm_manager_add_required_app               (GsmManager     *manager,
 +                                                                const char     *path);
-+
  gboolean            gsm_manager_add_autostart_apps_from_dir    (GsmManager     *manager,
                                                                  const char     *path);
  gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *manager,
-@@ -79,9 +106,11 @@ gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *
+@@ -79,8 +102,11 @@ gboolean            gsm_manager_add_legacy_session_apps        (GsmManager     *
  
  void                gsm_manager_start                          (GsmManager     *manager);
  
 +char *              _gsm_manager_get_default_session           (GsmManager     *manager);
 +
  void                _gsm_manager_set_active_session            (GsmManager     *manager,
-                                                                 const char     *session_name,
--                                                                gboolean        is_kiosk);
+-                                                                const char     *session_name);
++                                                                const char     *session_name,
 +                                                                gboolean        is_fallback);
  
  gboolean            gsm_manager_logout                         (GsmManager     *manager,
                                                                  guint           logout_mode,
-@@ -90,7 +119,6 @@ gboolean            gsm_manager_logout                         (GsmManager     *
+@@ -89,8 +115,6 @@ gboolean            gsm_manager_logout                         (GsmManager     *
  gboolean            gsm_manager_set_phase                      (GsmManager     *manager,
                                                                  GsmManagerPhase phase);
  
 -void                gsm_quit                                   (void);
- 
+-
  G_END_DECLS
  
+ #endif /* __GSM_MANAGER_H */
 diff --git a/gnome-session/gsm-process-helper.c b/gnome-session/gsm-process-helper.c
 new file mode 100644
 index 00000000..32f26c8d
@@ -5005,7 +5184,7 @@ diff --git a/gnome-session/gsm-session-fill.c b/gnome-session/gsm-session-fill.c
 index b94dec25..d6aeaa50 100644
 --- a/gnome-session/gsm-session-fill.c
 +++ b/gnome-session/gsm-session-fill.c
-@@ -23,33 +23,116 @@
+@@ -23,36 +23,117 @@
  
  #include "gsm-system.h"
  #include "gsm-manager.h"
@@ -5035,6 +5214,8 @@ index b94dec25..d6aeaa50 100644
 -        const char * const *system_dirs;
 +        char **required_components;
          int    i;
+ 
+-        if (g_key_file_get_boolean (keyfile, GSM_KEYFILE_SESSION_GROUP, "Kiosk", NULL))
 +        g_assert (keyfile != NULL);
 +        g_assert (callback != NULL);
 +
@@ -5044,28 +5225,33 @@ index b94dec25..d6aeaa50 100644
 +                                                          NULL, NULL);
 +
 +        if (!required_components)
-+                 return;
-+ 
-+        for (i = 0; required_components[i] != NULL; i++) {
-+                char *app_path;
-+
-+                app_path = gsm_util_find_desktop_file_for_app_name (required_components[i],
-+                                                                    TRUE);
-+                callback (required_components[i], app_path, user_data);
-+                g_free (app_path);
-+        }
+                 return;
  
 -        dir = g_build_filename (g_get_user_config_dir (), "autostart", NULL);
 -        gsm_manager_add_autostart_apps_from_dir (manager, dir);
 -        g_free (dir);
-+        g_strfreev (required_components);
-+}
++        for (i = 0; required_components[i] != NULL; i++) {
++                char *app_path;
  
 -        system_dirs = g_get_system_data_dirs ();
 -        for (i = 0; system_dirs[i]; i++) {
 -                dir = g_build_filename (system_dirs[i], "gnome", "autostart", NULL);
 -                gsm_manager_add_autostart_apps_from_dir (manager, dir);
 -                g_free (dir);
++                app_path = gsm_util_find_desktop_file_for_app_name (required_components[i],
++                                                                    TRUE);
++                callback (required_components[i], app_path, user_data);
++                g_free (app_path);
+         }
+ 
+-        system_dirs = g_get_system_config_dirs ();
+-        for (i = 0; system_dirs[i]; i++) {
+-                dir = g_build_filename (system_dirs[i], "autostart", NULL);
+-                gsm_manager_add_autostart_apps_from_dir (manager, dir);
+-                g_free (dir);
++        g_strfreev (required_components);
++}
++
 +static void
 +check_required_components_helper (const char *component,
 +                                  const char *app_path,
@@ -5076,7 +5262,7 @@ index b94dec25..d6aeaa50 100644
 +        if (app_path == NULL) {
 +                g_warning ("Unable to find required component '%s'", component);
 +                *error = TRUE;
-         }
++        }
 +}
 +
 +static gboolean
@@ -5129,17 +5315,12 @@ index b94dec25..d6aeaa50 100644
 +                        gsm_manager_add_autostart_apps_from_dir (manager,
 +                                                                 autostart_dirs[i]);
 +                }
- 
--        system_dirs = g_get_system_config_dirs ();
--        for (i = 0; system_dirs[i]; i++) {
--                dir = g_build_filename (system_dirs[i], "autostart", NULL);
--                gsm_manager_add_autostart_apps_from_dir (manager, dir);
--                g_free (dir);
++
 +                g_strfreev (autostart_dirs);
          }
  }
  
-@@ -57,6 +140,8 @@ static GKeyFile *
+@@ -60,6 +141,8 @@ static GKeyFile *
  get_session_keyfile_if_valid (const char *path)
  {
          GKeyFile  *keyfile;
@@ -5148,7 +5329,7 @@ index b94dec25..d6aeaa50 100644
  
          g_debug ("fill: *** Looking if %s is a valid session file", path);
  
-@@ -72,6 +157,15 @@ get_session_keyfile_if_valid (const char *path)
+@@ -75,6 +158,15 @@ get_session_keyfile_if_valid (const char *path)
                  goto error;
          }
  
@@ -5164,7 +5345,7 @@ index b94dec25..d6aeaa50 100644
          return keyfile;
  
  error:
-@@ -128,11 +222,67 @@ find_valid_session_keyfile (const char *session)
+@@ -131,11 +223,68 @@ find_valid_session_keyfile (const char *session)
  }
  
  static GKeyFile *
@@ -5181,6 +5362,7 @@ index b94dec25..d6aeaa50 100644
 +        *actual_session = NULL;
 +
          g_debug ("fill: *** Getting session '%s'", session);
++
          keyfile = find_valid_session_keyfile (session);
 +
 +        if (!keyfile)
@@ -5233,30 +5415,26 @@ index b94dec25..d6aeaa50 100644
          return keyfile;
  }
  
-@@ -141,18 +291,17 @@ gsm_session_fill (GsmManager  *manager,
+@@ -144,13 +293,17 @@ gsm_session_fill (GsmManager  *manager,
                    const char  *session)
  {
-         g_autoptr (GKeyFile) keyfile = NULL;
--        gboolean is_kiosk;
+         GKeyFile *keyfile;
 +        gboolean is_fallback;
 +        char *actual_session;
  
 -        keyfile = get_session_keyfile (session);
 +        keyfile = get_session_keyfile (session, &actual_session, &is_fallback);
+ 
          if (!keyfile)
                  return FALSE;
  
--        is_kiosk = g_key_file_get_boolean (keyfile, GSM_KEYFILE_SESSION_GROUP,
--                                           "Kiosk", NULL);
+-        _gsm_manager_set_active_session (manager, session);
 +        _gsm_manager_set_active_session (manager, actual_session, is_fallback);
- 
--        _gsm_manager_set_active_session (manager, session, is_kiosk);
++
 +        g_free (actual_session);
  
--        if (!is_kiosk)
-                 load_standard_apps (manager, keyfile);
+         load_standard_apps (manager, keyfile);
  
-         return TRUE;
 diff --git a/gnome-session/gsm-shell-extensions.c b/gnome-session/gsm-shell-extensions.c
 new file mode 100644
 index 00000000..064babe4
@@ -6809,7 +6987,7 @@ diff --git a/gnome-session/meson.build b/gnome-session/meson.build
 index 5861fa47..75a69c07 100644
 --- a/gnome-session/meson.build
 +++ b/gnome-session/meson.build
-@@ -1,64 +1,60 @@
+@@ -1,63 +1,60 @@
 -sources = files(
 -  'gsm-util.c',
 -  'leader-main.c'
@@ -6870,7 +7048,6 @@ index 5861fa47..75a69c07 100644
    'gsm-presence.c',
 +  'gsm-process-helper.c',
    'gsm-session-fill.c',
--  'gsm-session-save.c',
 +  'gsm-shell-extensions.c',
    'gsm-shell.c',
    'gsm-store.c',
@@ -6882,7 +7059,8 @@ index 5861fa47..75a69c07 100644
  )
  
  dbus_ifaces = [
-   'org.gnome.SessionManager',
+-  'org.gnome.SessionManager',
++  'org.gnome.SessionManager',
 +  'org.gnome.SessionManager.Client',
    'org.gnome.SessionManager.ClientPrivate',
 +  'org.gnome.SessionManager.App',
@@ -6901,7 +7079,7 @@ index 5861fa47..75a69c07 100644
  foreach iface: dbus_ifaces
    out = gnome.gdbus_codegen(
      iface,
-@@ -72,17 +68,32 @@ foreach iface: dbus_ifaces
+@@ -71,17 +68,32 @@ foreach iface: dbus_ifaces
  endforeach
  
  executable(
@@ -6924,7 +7102,7 @@ index 5861fa47..75a69c07 100644
 +  meson.project_name() + '-failed',
 +  sources,
 +  include_directories: top_inc,
-+  #dependencies: gtk_deps,
++  dependencies: gtk_dep,
 +  c_args: cflags,
    install: true,
    install_dir: session_libexecdir
@@ -7499,6 +7677,2180 @@ index 216e4880..361b388c 100644
  
  gio_dep = dependency('gio-2.0', version: glib_req_version)
  gtk_dep = dependency('gtk4')
+diff --git a/po/POTFILES.in b/po/POTFILES.in
+index 1c1ff5a1..bf7c9839 100644
+--- a/po/POTFILES.in
++++ b/po/POTFILES.in
+@@ -1,14 +1,15 @@
+ # List of source files containing translatable strings.
+ # Please keep this file sorted alphabetically.
+ data/gnome.desktop.in.in
+-data/gnome.session.desktop
++data/gnome.session.desktop.in.in
+ data/gnome-wayland.desktop.in.in
+ data/gnome-xorg.desktop.in.in
+ data/org.gnome.SessionManager.gschema.xml
++gnome-session/gsm-fail-whale-dialog.c
+ gnome-session/gsm-manager.c
++gnome-session/gsm-process-helper.c
+ gnome-session/gsm-util.c
+-gnome-session/leader-main.c
+-gnome-session/service-main.c
++gnome-session/main.c
+ tools/gnome-session-ctl.c
+ tools/gnome-session-inhibit.c
+ tools/gnome-session-quit.c
+diff --git a/po/gl.po b/po/gl.po
+index a7cf9578..cd1c1ace 100644
+--- a/po/gl.po
++++ b/po/gl.po
+@@ -17,8 +17,8 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gnome-session.master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-session/issues\n"
+-"POT-Creation-Date: 2025-07-18 19:39+0000\n"
+-"PO-Revision-Date: 2025-08-02 22:46+0200\n"
++"POT-Creation-Date: 2024-01-13 12:21+0000\n"
++"PO-Revision-Date: 2024-01-23 22:17+0100\n"
+ "Last-Translator: Fran Dieguez <fran.dieguez@gnome.org>\n"
+ "Language-Team: Galician <proxecto@trasno.gal>\n"
+ "Language: gl\n"
+@@ -26,7 +26,7 @@ msgstr ""
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+-"X-Generator: Poedit 3.6\n"
++"X-Generator: Poedit 3.4.2\n"
+ "X-Project-Style: gnome\n"
+ "X-DL-Team: gl\n"
+ "X-DL-Module: gnome-session\n"
+@@ -34,6 +34,14 @@ msgstr ""
+ "X-DL-Domain: po\n"
+ "X-DL-State: Translating\n"
+ 
++#: data/gnome-custom-session.desktop.in.in:3
++msgid "Custom"
++msgstr "Personalizada"
++
++#: data/gnome-custom-session.desktop.in.in:4
++msgid "This entry lets you select a saved session"
++msgstr "Esta entrada permítelle selecciona unha sesión gardada"
++
+ #: data/gnome.desktop.in.in:3 data/gnome.session.desktop.in.in:3
+ msgid "GNOME"
+ msgstr "GNOME"
+@@ -43,6 +51,10 @@ msgstr "GNOME"
+ msgid "This session logs you into GNOME"
+ msgstr "Esta sesión iniciará en GNOME"
+ 
++#: data/gnome-dummy.session.desktop.in.in:3
++msgid "GNOME dummy"
++msgstr "GNOME de proba"
++
+ #: data/gnome-wayland.desktop.in.in:3
+ msgid "GNOME on Wayland"
+ msgstr "GNOME en Wayland"
+@@ -52,20 +64,40 @@ msgid "GNOME on Xorg"
+ msgstr "GNOME en Xorg"
+ 
+ #: data/org.gnome.SessionManager.gschema.xml:5
++msgid "Save sessions"
++msgstr "Gardar as sesións"
++
++#: data/org.gnome.SessionManager.gschema.xml:6
++msgid "If enabled, gnome-session will save the session automatically."
++msgstr "Se está activo, gnome-session gardará a sesión automaticamente."
++
++#: data/org.gnome.SessionManager.gschema.xml:10
++msgid "Save this session"
++msgstr "Gardar esta sesión"
++
++#: data/org.gnome.SessionManager.gschema.xml:11
++msgid ""
++"When enabled, gnome-session will automatically save the next session at log "
++"out even if auto saving is disabled."
++msgstr ""
++"Cando está activado, gnome-session gardará automaticamente a seguinte sesión "
++"cando peche a sesión aínda que o autogardado estea desactivado."
++
++#: data/org.gnome.SessionManager.gschema.xml:15
+ msgid "Logout prompt"
+ msgstr "Preguntar ao pechar a sesión"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:6
++#: data/org.gnome.SessionManager.gschema.xml:16
+ msgid "If enabled, gnome-session will prompt the user before ending a session."
+ msgstr ""
+ "Se está activado, gnome-session preguntaralle ao usuario antes de finalizar "
+ "a sesión."
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:10
++#: data/org.gnome.SessionManager.gschema.xml:20
+ msgid "Show the fallback warning"
+ msgstr "Mostrar un aviso ao usar fallback"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:11
++#: data/org.gnome.SessionManager.gschema.xml:21
+ msgid ""
+ "If enabled, gnome-session will display a warning dialog after login if the "
+ "session was automatically fallen back."
+@@ -73,55 +105,153 @@ msgstr ""
+ "Se está activado, gnome-session mostrará un diálogo de aviso despois de "
+ "iniciar a sesión se se usou automaticamente a sesión de respaldo."
+ 
+-#: gnome-session/gsm-manager.c:709 gnome-session/gsm-manager.c:1040
++#: data/session-selector.ui:15
++msgid "Custom Session"
++msgstr "Sesión personalizada"
++
++#: data/session-selector.ui:50 tools/gnome-session-selector.c:102
++msgid "Please select a custom session to run"
++msgstr "Seleccione unha sesión personalizada para executar"
++
++#: data/session-selector.ui:105
++msgid "_New Session"
++msgstr "_Nova sesión"
++
++#: data/session-selector.ui:119
++msgid "_Remove Session"
++msgstr "_Quitar sesión"
++
++#: data/session-selector.ui:133
++msgid "Rena_me Session"
++msgstr "Reno_mear sesión"
++
++#: data/session-selector.ui:168
++msgid "_Continue"
++msgstr "_Continuar"
++
++#: gnome-session/gsm-fail-whale-dialog.c:318
++msgid "Oh no!  Something has gone wrong."
++msgstr "Recoiro! Algo foi mal."
++
++#: gnome-session/gsm-fail-whale-dialog.c:325
++msgid ""
++"A problem has occurred and the system can’t recover. Please contact a system "
++"administrator"
++msgstr ""
++"Produciuse un problema e non é posíbel recuperar o sistema. Contacte co "
++"administrador do sistema"
++
++#: gnome-session/gsm-fail-whale-dialog.c:327
++msgid ""
++"A problem has occurred and the system can’t recover. All extensions have "
++"been disabled as a precaution."
++msgstr ""
++"Produciuse un problema e non é posíbel recuperar o sistema. Desactiváronse "
++"todas as extensións como medida de precaución."
++
++#: gnome-session/gsm-fail-whale-dialog.c:329
++msgid ""
++"A problem has occurred and the system can’t recover.\n"
++"Please log out and try again."
++msgstr ""
++"Produciuse un problema e non é posíbel recuperar o sistema.\n"
++"Peche a sesión e ténteo de novo."
++
++#: gnome-session/gsm-fail-whale-dialog.c:344
++msgid "_Log Out"
++msgstr "_Saír da sesión"
++
++#: gnome-session/gsm-fail-whale-dialog.c:412 gnome-session/main.c:403
++msgid "Enable debugging code"
++msgstr "Activar o código de depuración"
++
++#: gnome-session/gsm-fail-whale-dialog.c:413
++msgid "Allow logout"
++msgstr "Permitir saír da sesión"
++
++#: gnome-session/gsm-fail-whale-dialog.c:414
++msgid "Show extension warning"
++msgstr "Mostrar aviso de extensión"
++
++#: gnome-session/gsm-manager.c:1301 gnome-session/gsm-manager.c:2050
+ msgid "Not responding"
+ msgstr "Non responde"
+ 
+-#: gnome-session/gsm-util.c:283
++#: gnome-session/gsm-util.c:431
+ msgid "_Log out"
+ msgstr "_Saír da sesión"
+ 
+-#: gnome-session/leader-main.c:534
++#. It'd be really surprising to reach this code: if we're here,
++#. * then the XSMP client already has set several XSMP
++#. * properties. But it could still be that SmProgram is not set.
++#.
++#: gnome-session/gsm-xsmp-client.c:557
++msgid "Remembered Application"
++msgstr "Aplicación recordado"
++
++#: gnome-session/gsm-xsmp-client.c:1216
++msgid "This program is blocking logout."
++msgstr "Este programa está bloqueando a saída da sesión."
++
++#: gnome-session/gsm-xsmp-server.c:340
++msgid ""
++"Refusing new client connection because the session is currently being shut "
++"down\n"
++msgstr ""
++"Rexeitouse a conexión co novo cliente porque neste momento a sesión está "
++"sendo apagada\n"
++
++#: gnome-session/gsm-xsmp-server.c:607
++#, c-format
++msgid "Could not create ICE listening socket: %s"
++msgstr "Non foi posíbel crear o socket de escoita ICE: %s"
++
++#: gnome-session/main.c:400
++msgid "Running as systemd service"
++msgstr "Executándose como un servizo de systemd"
++
++#: gnome-session/main.c:401
+ msgid "Override standard autostart directories"
+ msgstr "Ignorar os directorios de inicio automático estándares"
+ 
+-#: gnome-session/leader-main.c:534
++#: gnome-session/main.c:401
+ msgid "AUTOSTART_DIR"
+ msgstr "CARTAFO_DE_AUTOINICIO"
+ 
+-#: gnome-session/leader-main.c:535 gnome-session/service-main.c:147
++#: gnome-session/main.c:402
+ msgid "Session to use"
+ msgstr "Sesión a usar"
+ 
+-#: gnome-session/leader-main.c:535 gnome-session/service-main.c:147
++#: gnome-session/main.c:402
+ msgid "SESSION_NAME"
+ msgstr "NOME_DA_SESIÓN"
+ 
+-#: gnome-session/leader-main.c:536
+-msgid "Enable debugging code"
+-msgstr "Activar o código de depuración"
++#: gnome-session/main.c:404
++msgid "Do not load user-specified applications"
++msgstr "Non cargar as aplicacións especificadas polo usuario"
+ 
+-#: gnome-session/leader-main.c:537
++#: gnome-session/main.c:405
+ msgid "Version of this application"
+ msgstr "Versión desta aplicación"
+ 
+-#: gnome-session/leader-main.c:538
+-msgid "This option is ignored"
+-msgstr "Esta opción ignórase"
++#. Translators: the 'fail whale' is the black dialog we show when something goes seriously wrong
++#: gnome-session/main.c:407
++msgid "Show the fail whale dialog for testing"
++msgstr "Mostrar o diálogo da balea de fallos"
+ 
+-#: gnome-session/leader-main.c:539
+-msgid "Don't re-exec into a login shell"
+-msgstr "Non re-executar nunha shell de inicio de sesión"
++#: gnome-session/main.c:408
++msgid "Disable hardware acceleration check"
++msgstr "Desactivar a comprobación de aceleración de hardware"
+ 
+-#: gnome-session/leader-main.c:560 gnome-session/service-main.c:156
++#: gnome-session/main.c:440
+ msgid " — the GNOME session manager"
+ msgstr " — o xestor de sesións do GNOME"
+ 
+-#: tools/gnome-session-ctl.c:247
++#: tools/gnome-session-ctl.c:245
+ msgid "Start gnome-session-shutdown.target"
+ msgstr "Iniciar gnome-session-shutdown.target"
+ 
+-#: tools/gnome-session-ctl.c:248
++#: tools/gnome-session-ctl.c:246
+ msgid ""
+ "Start gnome-session-shutdown.target when receiving EOF or a single byte on "
+ "stdin"
+@@ -129,92 +259,79 @@ msgstr ""
+ "Iniciar gnome-session-shutdown.target ao recibir EOF ou un byte único pola "
+ "stdin"
+ 
+-#: tools/gnome-session-ctl.c:249
++#: tools/gnome-session-ctl.c:247
+ msgid "Signal initialization done to gnome-session"
+ msgstr "Inicialización de sinal feita para gnome-session"
+ 
+-#: tools/gnome-session-ctl.c:250
++#: tools/gnome-session-ctl.c:248
+ msgid "Restart dbus.service if it is running"
+ msgstr "Reiniciar dbus.service se está executándose"
+ 
+-#: tools/gnome-session-ctl.c:251
++#: tools/gnome-session-ctl.c:249
+ msgid ""
+-"Run from ExecStopPost to start gnome-session-shutdown.target on service "
+-"failure"
++"Run from ExecStopPost to start gnome-session-failed.target on service failure"
+ msgstr ""
+-"Execute desde ExecStopPost para iniciar o obxectivo gnome-session-"
+-"shutdown.target cando falle o servizo"
++"Execute desde ExecStopPost para iniciar o obxectivo gnome-session-failed "
++"cando falle o servizo"
+ 
+-#: tools/gnome-session-ctl.c:281
++#: tools/gnome-session-ctl.c:279
+ msgid "Program needs exactly one parameter"
+ msgstr "O programa precisa exactamente un parámetro"
+ 
+-#: tools/gnome-session-inhibit.c:69
++#: tools/gnome-session-inhibit.c:108
+ #, c-format
+-msgid "Unknown inhibit argument: %s"
+-msgstr "Argumento de inhibición descoñecido: %s"
+-
+-#: tools/gnome-session-inhibit.c:289
++msgid ""
++"%s [OPTION…] COMMAND\n"
++"\n"
++"Execute COMMAND while inhibiting some session functionality.\n"
++"\n"
++"  -h, --help        Show this help\n"
++"  --version         Show program version\n"
++"  --app-id ID       The application id to use\n"
++"                    when inhibiting (optional)\n"
++"  --reason REASON   The reason for inhibiting (optional)\n"
++"  --inhibit ARG     Things to inhibit, colon-separated list of:\n"
++"                    logout, switch-user, suspend, idle, automount\n"
++"  --inhibit-only    Do not launch COMMAND and wait forever instead\n"
++"  -l, --list        List the existing inhibitions, and exit\n"
++"\n"
++"If no --inhibit option is specified, idle is assumed.\n"
++msgstr ""
++"%s [OPCIÓN…] ORDE\n"
++"\n"
++"Execute ORDE ao inhibir algunha funcionalidade da sesión.\n"
++"\n"
++"  -h, --help        Mostrar esta axuda\n"
++"  --version         Mostrar versión do programa\n"
++"  --app-id ID       Id de aplicación a usar\n"
++"                    ao inhibir (opcional)\n"
++"  --reason REASON   A razón para inhibir (opcional)\n"
++"  --inhibit ARG     Cousas a inhibir, lista separada por comas de:\n"
++"                    logout, switch-user, suspend, idle, automount\n"
++"  --inhibit-only    Non executar ORDE e agardar no lugar\n"
++"  -l, --list        Lista as inhibicións existentes, e sae\n"
++"\n"
++"Se non se especifica a opción --inhibit, asúmese idle.\n"
++
++#: tools/gnome-session-inhibit.c:282
+ #, c-format
+-msgid "Failed to execute %s: %m\n"
+-msgstr "Produciuse un erro ao executar %s: %m\n"
+-
+-#: tools/gnome-session-inhibit.c:361
+-msgid "Show program version"
+-msgstr "Mostrar a versión do programa"
+-
+-#: tools/gnome-session-inhibit.c:362
+-msgid "The application id to use when inhibiting (optional)"
+-msgstr "O id de aplicación a usar ao inhibir (opcional)"
+-
+-#: tools/gnome-session-inhibit.c:362
+-msgid "ID"
+-msgstr "ID"
+-
+-#: tools/gnome-session-inhibit.c:363
+-msgid "The reason for inhibiting (optional)"
+-msgstr "A razón para inhibir (opcional)"
++msgid "Error while creating pipe: %s\n"
++msgstr "Produciuse un erro ao crear a tubería: %s\n"
+ 
+-#: tools/gnome-session-inhibit.c:363
+-msgid "REASON"
+-msgstr "RAZÓN"
++#: tools/gnome-session-inhibit.c:299
++msgid "Failure reading pipe\n"
++msgstr "Produciuse un erro ao ler a tubería\n"
+ 
+-#: tools/gnome-session-inhibit.c:364
+-msgid "Add action to inhibit (repeatable)"
+-msgstr "Engadir acción ao inhibir (repetíbel)"
+-
+-#: tools/gnome-session-inhibit.c:364
+-msgid "ACTION"
+-msgstr "ACCIÓN"
+-
+-#: tools/gnome-session-inhibit.c:365
+-msgid "Do not launch COMMAND and wait forever instead"
+-msgstr "Non lanzar ORDE e agardar por sempre no lugar"
+-
+-#: tools/gnome-session-inhibit.c:366
+-msgid "List the existing inhibitions, and exit"
+-msgstr "Lista das inhibicións existentes e saír"
+-
+-#: tools/gnome-session-inhibit.c:378
+-msgid "COMMAND"
+-msgstr "ORDE"
+-
+-#: tools/gnome-session-inhibit.c:384
+-msgid "Execute COMMAND while inhibiting some session functionality."
+-msgstr "Executar ORDE ao inhibir algunha funcionalidade da sesión."
+-
+-#: tools/gnome-session-inhibit.c:385
+-msgid ""
+-"Valid ACTION values are: logout, switch-user, suspend, idle, and automount.\n"
+-"If no --inhibit options are specified, idle is assumed."
+-msgstr ""
+-"Os valores de ACCIÓN válidos son: logout, switch-user, suspend, idle e "
+-"automount.\n"
+-"Se non se especifican as opcións —inhibit asúmese idle."
++#: tools/gnome-session-inhibit.c:303
++#, c-format
++msgid "Failed to execute %s\n"
++msgstr "Produciuse un erro ao executar %s\n"
+ 
+-#: tools/gnome-session-inhibit.c:409
+-msgid "Neither COMMAND nor --inhibit-only were specified."
+-msgstr "Non se especificou ORDE nin —inhibit-only."
++#: tools/gnome-session-inhibit.c:376 tools/gnome-session-inhibit.c:386
++#: tools/gnome-session-inhibit.c:396
++#, c-format
++msgid "%s requires an argument\n"
++msgstr "%s require un argumento\n"
+ 
+ #: tools/gnome-session-quit.c:50
+ msgid "Log out"
+@@ -244,174 +361,28 @@ msgstr "Non foi posíbel conectar co xestor de sesión"
+ msgid "Program called with conflicting options"
+ msgstr "Chamouse un programa con opcións en conflito"
+ 
+-#~ msgid "Custom"
+-#~ msgstr "Personalizada"
+-
+-#~ msgid "This entry lets you select a saved session"
+-#~ msgstr "Esta entrada permítelle selecciona unha sesión gardada"
+-
+-#~ msgid "GNOME dummy"
+-#~ msgstr "GNOME de proba"
+-
+-#~ msgid "Save sessions"
+-#~ msgstr "Gardar as sesións"
+-
+-#~ msgid "If enabled, gnome-session will save the session automatically."
+-#~ msgstr "Se está activo, gnome-session gardará a sesión automaticamente."
+-
+-#~ msgid "Save this session"
+-#~ msgstr "Gardar esta sesión"
+-
+-#~ msgid ""
+-#~ "When enabled, gnome-session will automatically save the next session at "
+-#~ "log out even if auto saving is disabled."
+-#~ msgstr ""
+-#~ "Cando está activado, gnome-session gardará automaticamente a seguinte "
+-#~ "sesión cando peche a sesión aínda que o autogardado estea desactivado."
+-
+-#~ msgid "Custom Session"
+-#~ msgstr "Sesión personalizada"
+-
+-#~ msgid "Please select a custom session to run"
+-#~ msgstr "Seleccione unha sesión personalizada para executar"
+-
+-#~ msgid "_New Session"
+-#~ msgstr "_Nova sesión"
+-
+-#~ msgid "_Remove Session"
+-#~ msgstr "_Quitar sesión"
+-
+-#~ msgid "Rena_me Session"
+-#~ msgstr "Reno_mear sesión"
+-
+-#~ msgid "_Continue"
+-#~ msgstr "_Continuar"
+-
+-#~ msgid "Oh no!  Something has gone wrong."
+-#~ msgstr "Recoiro! Algo foi mal."
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover. Please contact a "
+-#~ "system administrator"
+-#~ msgstr ""
+-#~ "Produciuse un problema e non é posíbel recuperar o sistema. Contacte co "
+-#~ "administrador do sistema"
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover. All extensions have "
+-#~ "been disabled as a precaution."
+-#~ msgstr ""
+-#~ "Produciuse un problema e non é posíbel recuperar o sistema. "
+-#~ "Desactiváronse todas as extensións como medida de precaución."
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover.\n"
+-#~ "Please log out and try again."
+-#~ msgstr ""
+-#~ "Produciuse un problema e non é posíbel recuperar o sistema.\n"
+-#~ "Peche a sesión e ténteo de novo."
+-
+-#~ msgid "_Log Out"
+-#~ msgstr "_Saír da sesión"
+-
+-#~ msgid "Allow logout"
+-#~ msgstr "Permitir saír da sesión"
+-
+-#~ msgid "Show extension warning"
+-#~ msgstr "Mostrar aviso de extensión"
+-
+-#~ msgid "Remembered Application"
+-#~ msgstr "Aplicación recordado"
+-
+-#~ msgid "This program is blocking logout."
+-#~ msgstr "Este programa está bloqueando a saída da sesión."
+-
+-#~ msgid ""
+-#~ "Refusing new client connection because the session is currently being "
+-#~ "shut down\n"
+-#~ msgstr ""
+-#~ "Rexeitouse a conexión co novo cliente porque neste momento a sesión está "
+-#~ "sendo apagada\n"
+-
++#: tools/gnome-session-selector.c:61
+ #, c-format
+-#~ msgid "Could not create ICE listening socket: %s"
+-#~ msgstr "Non foi posíbel crear o socket de escoita ICE: %s"
+-
+-#~ msgid "Running as systemd service"
+-#~ msgstr "Executándose como un servizo de systemd"
++msgid "Session %d"
++msgstr "Sesión %d"
+ 
+-#~ msgid "Do not load user-specified applications"
+-#~ msgstr "Non cargar as aplicacións especificadas polo usuario"
+-
+-#~ msgid "Show the fail whale dialog for testing"
+-#~ msgstr "Mostrar o diálogo da balea de fallos"
+-
+-#~ msgid "Disable hardware acceleration check"
+-#~ msgstr "Desactivar a comprobación de aceleración de hardware"
+-
+-#, c-format
+-#~ msgid ""
+-#~ "%s [OPTION…] COMMAND\n"
+-#~ "\n"
+-#~ "Execute COMMAND while inhibiting some session functionality.\n"
+-#~ "\n"
+-#~ "  -h, --help        Show this help\n"
+-#~ "  --version         Show program version\n"
+-#~ "  --app-id ID       The application id to use\n"
+-#~ "                    when inhibiting (optional)\n"
+-#~ "  --reason REASON   The reason for inhibiting (optional)\n"
+-#~ "  --inhibit ARG     Things to inhibit, colon-separated list of:\n"
+-#~ "                    logout, switch-user, suspend, idle, automount\n"
+-#~ "  --inhibit-only    Do not launch COMMAND and wait forever instead\n"
+-#~ "  -l, --list        List the existing inhibitions, and exit\n"
+-#~ "\n"
+-#~ "If no --inhibit option is specified, idle is assumed.\n"
+-#~ msgstr ""
+-#~ "%s [OPCIÓN…] ORDE\n"
+-#~ "\n"
+-#~ "Execute ORDE ao inhibir algunha funcionalidade da sesión.\n"
+-#~ "\n"
+-#~ "  -h, --help        Mostrar esta axuda\n"
+-#~ "  --version         Mostrar versión do programa\n"
+-#~ "  --app-id ID       Id de aplicación a usar\n"
+-#~ "                    ao inhibir (opcional)\n"
+-#~ "  --reason REASON   A razón para inhibir (opcional)\n"
+-#~ "  --inhibit ARG     Cousas a inhibir, lista separada por comas de:\n"
+-#~ "                    logout, switch-user, suspend, idle, automount\n"
+-#~ "  --inhibit-only    Non executar ORDE e agardar no lugar\n"
+-#~ "  -l, --list        Lista as inhibicións existentes, e sae\n"
+-#~ "\n"
+-#~ "Se non se especifica a opción --inhibit, asúmese idle.\n"
+-
+-#, c-format
+-#~ msgid "Error while creating pipe: %s\n"
+-#~ msgstr "Produciuse un erro ao crear a tubería: %s\n"
+-
+-#~ msgid "Failure reading pipe\n"
+-#~ msgstr "Produciuse un erro ao ler a tubería\n"
+-
+-#, c-format
+-#~ msgid "%s requires an argument\n"
+-#~ msgstr "%s require un argumento\n"
+-
+-#, c-format
+-#~ msgid "Session %d"
+-#~ msgstr "Sesión %d"
+-
+-#~ msgid ""
+-#~ "Session names are not allowed to start with “.” or contain “/” characters"
+-#~ msgstr ""
+-#~ "Os nomes de sesións non poden comezar con «.» ou conter caracteres «/»"
++#: tools/gnome-session-selector.c:107
++msgid ""
++"Session names are not allowed to start with “.” or contain “/” characters"
++msgstr "Os nomes de sesións non poden comezar con «.» ou conter caracteres «/»"
+ 
+-#~ msgid "Session names are not allowed to start with “.”"
+-#~ msgstr "Os nomes das sesións non poden comezar por «.»"
++#: tools/gnome-session-selector.c:111
++msgid "Session names are not allowed to start with “.”"
++msgstr "Os nomes das sesións non poden comezar por «.»"
+ 
+-#~ msgid "Session names are not allowed to contain “/” characters"
+-#~ msgstr "Os nomes de sesións non poden conter caracteres «/»"
++#: tools/gnome-session-selector.c:115
++msgid "Session names are not allowed to contain “/” characters"
++msgstr "Os nomes de sesións non poden conter caracteres «/»"
+ 
++#: tools/gnome-session-selector.c:123
+ #, c-format
+-#~ msgid "A session named “%s” already exists"
+-#~ msgstr "Xa existe unha sesión co nome «%s»"
++msgid "A session named “%s” already exists"
++msgstr "Xa existe unha sesión co nome «%s»"
+ 
+ #~ msgid "Use systemd session management"
+ #~ msgstr "Usar a xestión de sesións de systemd"
+diff --git a/po/ro.po b/po/ro.po
+index 2055afbd..ccbc0674 100644
+--- a/po/ro.po
++++ b/po/ro.po
+@@ -4,203 +4,328 @@
+ # Lucian Adrian Grijincu <lucian.grijincu@gmail.com>, 2009, 2011.
+ # Daniel Șerbănescu <cyber19rider@gmail.com>, 2010, 2011.
+ # Daniel Șerbănescu <daniel [at] serbanescu [dot] dk>, 2015, 2017.
+-# Antonio Marin <gnmer.6qxyg@slmail.me>, 2025.
+-#
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: gnome-session-2.0\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-session/issues\n"
+-"POT-Creation-Date: 2025-09-12 18:51+0000\n"
+-"PO-Revision-Date: 2025-09-14 19:04+0200\n"
+-"Last-Translator: Antonio Marin <gnmer.6qxyg@slmail.me>\n"
+-"Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
++"POT-Creation-Date: 2024-01-08 21:02+0000\n"
++"PO-Revision-Date: 2024-01-10 10:53+0200\n"
++"Last-Translator: Florentina Mușat <florentina [dot] musat [dot] 28 [at] "
++"gmail [dot] com>\n"
++"Language-Team: Gnome Romanian Translation Team\n"
+ "Language: ro\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+-"20)) ? 1 : 2);\n"
+-"X-Generator: Gtranslator 48.0\n"
++"20)) ? 1 : 2);;\n"
++"X-Generator: Poedit 3.4.1\n"
+ "X-Project-Style: gnome\n"
+ 
+-#: data/gnome.desktop.in.in:2 data/gnome.session.desktop:2
++#: data/gnome-custom-session.desktop.in.in:3
++msgid "Custom"
++msgstr "Personalizat"
++
++#: data/gnome-custom-session.desktop.in.in:4
++msgid "This entry lets you select a saved session"
++msgstr "Această opțiune vă permite să selectați o sesiune salvată"
++
++#: data/gnome.desktop.in.in:3 data/gnome.session.desktop.in.in:3
+ msgid "GNOME"
+ msgstr "GNOME"
+ 
+-#: data/gnome.desktop.in.in:3 data/gnome-wayland.desktop.in.in:3
+-#: data/gnome-xorg.desktop.in.in:3
++#: data/gnome.desktop.in.in:4 data/gnome-wayland.desktop.in.in:4
++#: data/gnome-xorg.desktop.in.in:4
+ msgid "This session logs you into GNOME"
+-msgstr "Această sesiune efectuează autentificarea în GNOME"
++msgstr "Această sesiune vă va autentifica în GNOME"
+ 
+-#: data/gnome-wayland.desktop.in.in:2
++#: data/gnome-dummy.session.desktop.in.in:3
++msgid "GNOME dummy"
++msgstr "Machetă GNOME"
++
++#: data/gnome-wayland.desktop.in.in:3
+ msgid "GNOME on Wayland"
+ msgstr "GNOME pe Wayland"
+ 
+-#: data/gnome-xorg.desktop.in.in:2
++#: data/gnome-xorg.desktop.in.in:3
+ msgid "GNOME on Xorg"
+ msgstr "GNOME pe Xorg"
+ 
+ #: data/org.gnome.SessionManager.gschema.xml:5
+-msgid "Logout prompt"
+-msgstr "Aviz la terminarea sesiunii"
++msgid "Save sessions"
++msgstr "Salvează sesiuni"
+ 
+ #: data/org.gnome.SessionManager.gschema.xml:6
++msgid "If enabled, gnome-session will save the session automatically."
++msgstr "Dacă este activat, gnome-session va salva sesiunea automat."
++
++#: data/org.gnome.SessionManager.gschema.xml:10
++msgid "Save this session"
++msgstr "Salvează această sesiune"
++
++#: data/org.gnome.SessionManager.gschema.xml:11
++msgid ""
++"When enabled, gnome-session will automatically save the next session at log "
++"out even if auto saving is disabled."
++msgstr ""
++"Când este activată, gnome-session va salva sesiunea automat sesiunea "
++"următoare la deautentificare chiar și dacă salvarea automată este "
++"dezactivată."
++
++#: data/org.gnome.SessionManager.gschema.xml:15
++msgid "Logout prompt"
++msgstr "Anunță ieșirea din sesiune"
++
++#: data/org.gnome.SessionManager.gschema.xml:16
+ msgid "If enabled, gnome-session will prompt the user before ending a session."
+ msgstr ""
+-"Dacă este activată, gnome-session va cere confirmarea utilizatorului înainte "
+-"de terminarea sesiunii."
++"Dacă este activat, gnome-session va anunța utilizatorul înainte de "
++"terminarea sesiunii."
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:10
++#: data/org.gnome.SessionManager.gschema.xml:20
+ msgid "Show the fallback warning"
+-msgstr "Arată avertismentul sesiunii de rezervă"
++msgstr "Arată avertizarea sesiunii de rezervă"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:11
++#: data/org.gnome.SessionManager.gschema.xml:21
+ msgid ""
+ "If enabled, gnome-session will display a warning dialog after login if the "
+ "session was automatically fallen back."
+ msgstr ""
+-"Dacă este activată, gnome-session va afișa un dialog de avertizare după "
+-"autentificare dacă s-a trecut automat la sesiunea de rezervă.."
++"Dacă este activat, gnome-session va afișa un dialog de avertizare după "
++"autentificare dacă sesiunea de rezervă a fost inițiată."
++
++#: data/session-selector.ui:15
++msgid "Custom Session"
++msgstr "Sesiune personalizată"
++
++#: data/session-selector.ui:50 tools/gnome-session-selector.c:102
++msgid "Please select a custom session to run"
++msgstr "Selectați o sesiune personalizată pentru rulare"
++
++#: data/session-selector.ui:105
++msgid "_New Session"
++msgstr "Sesiune _nouă"
++
++#: data/session-selector.ui:119
++msgid "_Remove Session"
++msgstr "_Elimină sesiunea"
++
++#: data/session-selector.ui:133
++msgid "Rena_me Session"
++msgstr "Redenu_mește sesiunea"
++
++#: data/session-selector.ui:168
++msgid "_Continue"
++msgstr "_Continuă"
++
++#: gnome-session/gsm-fail-whale-dialog.c:318
++msgid "Oh no!  Something has gone wrong."
++msgstr "Oh, nu! Ceva nu a funcționat corect."
++
++#: gnome-session/gsm-fail-whale-dialog.c:325
++msgid ""
++"A problem has occurred and the system can’t recover. Please contact a system "
++"administrator"
++msgstr ""
++"A intervenit o problemă și sistemul nu se poate recupera. Contactați un "
++"administrator de sistem"
++
++#: gnome-session/gsm-fail-whale-dialog.c:327
++msgid ""
++"A problem has occurred and the system can’t recover. All extensions have "
++"been disabled as a precaution."
++msgstr ""
++"A intervenit o problemă și sistemul nu se poate recupera. Toate extensiile "
++"au fost dezactivate preventiv."
++
++#: gnome-session/gsm-fail-whale-dialog.c:329
++msgid ""
++"A problem has occurred and the system can’t recover.\n"
++"Please log out and try again."
++msgstr ""
++"A intervenit o problemă și sistemul nu se poate recupera.\n"
++"Ieșiți din sesiune și încercați din nou."
++
++#: gnome-session/gsm-fail-whale-dialog.c:344
++msgid "_Log Out"
++msgstr "_Ieșire din sesiune"
++
++#: gnome-session/gsm-fail-whale-dialog.c:412 gnome-session/main.c:403
++msgid "Enable debugging code"
++msgstr "Activează codul pentru depanare"
++
++#: gnome-session/gsm-fail-whale-dialog.c:413
++msgid "Allow logout"
++msgstr "Permite ieșierea din sesiune"
++
++#: gnome-session/gsm-fail-whale-dialog.c:414
++msgid "Show extension warning"
++msgstr "Afișează avertizările pentru extensii"
+ 
+-#: gnome-session/gsm-manager.c:709 gnome-session/gsm-manager.c:1040
++#: gnome-session/gsm-manager.c:1301 gnome-session/gsm-manager.c:2050
+ msgid "Not responding"
+ msgstr "Nu răspunde"
+ 
+-#: gnome-session/gsm-util.c:167
++#: gnome-session/gsm-util.c:431
+ msgid "_Log out"
+-msgstr "_Termină sesiunea"
++msgstr "În_chide sesiunea"
++
++#. It'd be really surprising to reach this code: if we're here,
++#. * then the XSMP client already has set several XSMP
++#. * properties. But it could still be that SmProgram is not set.
++#.
++#: gnome-session/gsm-xsmp-client.c:557
++msgid "Remembered Application"
++msgstr "Aplicație memorată"
++
++#: gnome-session/gsm-xsmp-client.c:1216
++msgid "This program is blocking logout."
++msgstr "Acest program blochează ieșirea din sesiune."
++
++#: gnome-session/gsm-xsmp-server.c:340
++msgid ""
++"Refusing new client connection because the session is currently being shut "
++"down\n"
++msgstr ""
++"Se refuză conexiunea noului client deoarece sesiunea este în curs de oprire\n"
++
++#: gnome-session/gsm-xsmp-server.c:607
++#, c-format
++msgid "Could not create ICE listening socket: %s"
++msgstr "Nu s-a putut creea socketul de ascultare ICE: %s"
++
++#: gnome-session/main.c:400
++msgid "Running as systemd service"
++msgstr "Rulează ca serviciu systemd"
++
++#: gnome-session/main.c:401
++msgid "Override standard autostart directories"
++msgstr "Înlocuiește dosarele standard de pornire automată"
+ 
+-#: gnome-session/leader-main.c:181 gnome-session/service-main.c:148
++#: gnome-session/main.c:401
++msgid "AUTOSTART_DIR"
++msgstr "DIRECTOR_DE_PORNIRE"
++
++#: gnome-session/main.c:402
+ msgid "Session to use"
+ msgstr "Sesiunea de utilizat"
+ 
+-#: gnome-session/leader-main.c:181 gnome-session/service-main.c:148
++#: gnome-session/main.c:402
+ msgid "SESSION_NAME"
+ msgstr "NUMELE_SESIUNII"
+ 
+-#: gnome-session/leader-main.c:182
+-msgid "Enable debugging code"
+-msgstr "Activează codul pentru depanare"
++#: gnome-session/main.c:404
++msgid "Do not load user-specified applications"
++msgstr "Nu încărca aplicațiile specificate de utilizator"
+ 
+-#: gnome-session/leader-main.c:183
++#: gnome-session/main.c:405
+ msgid "Version of this application"
+ msgstr "Versiunea acestei aplicații"
+ 
+-#: gnome-session/leader-main.c:184
+-msgid "This option is ignored"
+-msgstr "Această opțiune este ignorată"
++#. Translators: the 'fail whale' is the black dialog we show when something goes seriously wrong
++#: gnome-session/main.c:407
++msgid "Show the fail whale dialog for testing"
++msgstr "Afișează dialogul de eroare pentru testare"
+ 
+-#: gnome-session/leader-main.c:185
+-msgid "Don't re-exec into a login shell"
+-msgstr "Nu reporni la autentificare"
++#: gnome-session/main.c:408
++msgid "Disable hardware acceleration check"
++msgstr "Dezactivează verificarea accelerării hardware"
+ 
+-#: gnome-session/leader-main.c:203 gnome-session/service-main.c:157
++#: gnome-session/main.c:440
+ msgid " — the GNOME session manager"
+-msgstr " — Administratorul de sesiuni GNOME"
++msgstr " — Administratorul de sesiune GNOME"
+ 
+-#: tools/gnome-session-ctl.c:247
++#: tools/gnome-session-ctl.c:245
+ msgid "Start gnome-session-shutdown.target"
+-msgstr "Pornește gnome-session-shutdown.target"
++msgstr "Începe gnome-session-shutdown.target"
+ 
+-#: tools/gnome-session-ctl.c:248
++#: tools/gnome-session-ctl.c:246
+ msgid ""
+ "Start gnome-session-shutdown.target when receiving EOF or a single byte on "
+ "stdin"
+ msgstr ""
+-"Pornește gnome-session-shutdown.target când se primește EOF sau un singur "
++"Începe gnome-session-shutdown.target când se primește EOF sau un singur "
+ "octet la stdin"
+ 
+-#: tools/gnome-session-ctl.c:249
++#: tools/gnome-session-ctl.c:247
+ msgid "Signal initialization done to gnome-session"
+ msgstr "Inițializarea semnalului a fost făcută la gnome-session"
+ 
+-#: tools/gnome-session-ctl.c:250
++#: tools/gnome-session-ctl.c:248
+ msgid "Restart dbus.service if it is running"
+-msgstr "Reporneșe dbus.service dacă este în funcțiune"
++msgstr "Reporneșe dbus.service dacă rulează"
+ 
+-#: tools/gnome-session-ctl.c:251
++#: tools/gnome-session-ctl.c:249
+ msgid ""
+-"Run from ExecStopPost to start gnome-session-shutdown.target on service "
+-"failure"
++"Run from ExecStopPost to start gnome-session-failed.target on service failure"
+ msgstr ""
+-"Execută din ExecStopPost pentru a porni gnome-session-shutdown.target la "
++"Rulează de la ExecStopPost pentru a începe gnome-session-failed.target la "
+ "eșecul serviciului"
+ 
+-#: tools/gnome-session-ctl.c:281
++#: tools/gnome-session-ctl.c:279
+ msgid "Program needs exactly one parameter"
+ msgstr "Programul necesită exact un parametru"
+ 
+-#: tools/gnome-session-inhibit.c:68
++#: tools/gnome-session-inhibit.c:108
+ #, c-format
+-msgid "Unknown inhibit argument: %s"
+-msgstr "Argument necunoscut de blocare: %s"
+-
+-#: tools/gnome-session-inhibit.c:288
++msgid ""
++"%s [OPTION…] COMMAND\n"
++"\n"
++"Execute COMMAND while inhibiting some session functionality.\n"
++"\n"
++"  -h, --help        Show this help\n"
++"  --version         Show program version\n"
++"  --app-id ID       The application id to use\n"
++"                    when inhibiting (optional)\n"
++"  --reason REASON   The reason for inhibiting (optional)\n"
++"  --inhibit ARG     Things to inhibit, colon-separated list of:\n"
++"                    logout, switch-user, suspend, idle, automount\n"
++"  --inhibit-only    Do not launch COMMAND and wait forever instead\n"
++"  -l, --list        List the existing inhibitions, and exit\n"
++"\n"
++"If no --inhibit option is specified, idle is assumed.\n"
++msgstr ""
++"%s [OPȚIUNE…] COMANDĂ\n"
++"\n"
++"Execută COMANDA în timp ce se inhibă unele funcționalități ale sesiunii.\n"
++"\n"
++"  -h, --help        Arată acest ajutor\n"
++"  --version         Arată versiunea programului\n"
++"  --app-id ID       ID-ul aplicației de utilizat\n"
++"                    când se inhibă (opțional)\n"
++"  --reason MOTIV   Motivul pentru inhibare (opțional)\n"
++"  --inhibit ARG     Lucruri de inhibat, listă separată prin două puncte de:\n"
++"                    deautentificare, comutare utilizator, suspendă, în "
++"așteptare, automontare\n"
++"  --inhibit-only    Nu lansa COMANDA și așteaptă pentru totdeauna în schimb\n"
++"  -l, --list        Listează inhibițiile existente, și ieși\n"
++"\n"
++"Dacă nicio opțiune --inhibit option nu este specificată, în așteptare este "
++"presupusă.\n"
++
++#: tools/gnome-session-inhibit.c:282
+ #, c-format
+-msgid "Failed to execute %s: %m\n"
+-msgstr "Eroare la executarea %s: %m\n"
+-
+-#: tools/gnome-session-inhibit.c:360
+-msgid "Show program version"
+-msgstr "Arată versiunea programului"
+-
+-#: tools/gnome-session-inhibit.c:361
+-msgid "The application id to use when inhibiting (optional)"
+-msgstr "ID-ul programului care va fi utilizat pentru blocare (facultativ)"
+-
+-#: tools/gnome-session-inhibit.c:361
+-msgid "ID"
+-msgstr "ID"
++msgid "Error while creating pipe: %s\n"
++msgstr "Eroare în timpul creării conductei: %s\n"
+ 
+-#: tools/gnome-session-inhibit.c:362
+-msgid "The reason for inhibiting (optional)"
+-msgstr "Motivul blocării (facultativ)"
++#: tools/gnome-session-inhibit.c:299
++msgid "Failure reading pipe\n"
++msgstr "Eșec la citirea conductei\n"
+ 
+-#: tools/gnome-session-inhibit.c:362
+-msgid "REASON"
+-msgstr "MOTIVUL"
+-
+-#: tools/gnome-session-inhibit.c:363
+-msgid "Add action to inhibit (repeatable)"
+-msgstr "Adaugă acțiunea de blocat (repetabilă)"
+-
+-#: tools/gnome-session-inhibit.c:363
+-msgid "ACTION"
+-msgstr "ACȚIUNE"
+-
+-#: tools/gnome-session-inhibit.c:364
+-msgid "Do not launch COMMAND and wait forever instead"
+-msgstr "Nu lansa COMANDA ci așteaptă pentru totdeauna"
+-
+-#: tools/gnome-session-inhibit.c:365
+-msgid "List the existing inhibitions, and exit"
+-msgstr "Afișează blocările existente, și închide"
+-
+-#: tools/gnome-session-inhibit.c:377
+-msgid "COMMAND"
+-msgstr "COMANDA"
+-
+-#: tools/gnome-session-inhibit.c:383
+-msgid "Execute COMMAND while inhibiting some session functionality."
+-msgstr ""
+-"Execută COMANDA în timpul blocării anumitor caracteristici ale sesiunii."
+-
+-#: tools/gnome-session-inhibit.c:384
+-msgid ""
+-"Valid ACTION values are: logout, switch-user, suspend, idle, and automount.\n"
+-"If no --inhibit options are specified, idle is assumed."
+-msgstr ""
+-"Valorile ACȚIUNE valabile sunt: logout, switch-user, suspend, idle și "
+-"automount.\n"
+-"Dacă nu este specificată nicio opțiune --inhibit, va fi folosit idle."
++#: tools/gnome-session-inhibit.c:303
++#, c-format
++msgid "Failed to execute %s\n"
++msgstr "Eroare la executarea %s\n"
+ 
+-#: tools/gnome-session-inhibit.c:408
+-msgid "Neither COMMAND nor --inhibit-only were specified."
+-msgstr "Nu au fost specificate nici COMANDA, nici --inhibit-only."
++#: tools/gnome-session-inhibit.c:376 tools/gnome-session-inhibit.c:386
++#: tools/gnome-session-inhibit.c:396
++#, c-format
++msgid "%s requires an argument\n"
++msgstr "%s necesită un argument\n"
+ 
+ #: tools/gnome-session-quit.c:50
+ msgid "Log out"
+-msgstr "Termină sesiunea"
++msgstr "Închide sesiunea"
+ 
+ #: tools/gnome-session-quit.c:51
+ msgid "Power off"
+@@ -224,4 +349,397 @@ msgstr "Nu s-a putut realiza conectarea la administratorul de sesiuni"
+ 
+ #: tools/gnome-session-quit.c:198
+ msgid "Program called with conflicting options"
+-msgstr "Program pornit cu opțiuni care intră în conflict"
++msgstr "Program apelat cu opțiuni care intră în conflict"
++
++#: tools/gnome-session-selector.c:61
++#, c-format
++msgid "Session %d"
++msgstr "Sesiunea %d"
++
++#: tools/gnome-session-selector.c:107
++msgid ""
++"Session names are not allowed to start with “.” or contain “/” characters"
++msgstr ""
++"Nu este permis ca numele sesiunilor să înceapă cu „.” sau să conțină "
++"caracterul „/”"
++
++#: tools/gnome-session-selector.c:111
++msgid "Session names are not allowed to start with “.”"
++msgstr "Nu este permis ca numele sesiunilor să înceapă cu „.”"
++
++#: tools/gnome-session-selector.c:115
++msgid "Session names are not allowed to contain “/” characters"
++msgstr "Nu este permis ca numele sesiunilor să conțină caracterul „/”"
++
++#: tools/gnome-session-selector.c:123
++#, c-format
++msgid "A session named “%s” already exists"
++msgstr "O sesiune numită „%s” există deja"
++
++#~ msgid "Use systemd session management"
++#~ msgstr "Utilizează administrarea de sesiune systemd"
++
++#~ msgid "Use builtin session management (rather than the systemd based one)"
++#~ msgstr ""
++#~ "Utilizează administrarea de sesiune încorporată (față de cea bazată pe "
++#~ "systemd)"
++
++#~| msgid "This session logs you into GNOME"
++#~ msgid "This session logs you into GNOME, using Wayland"
++#~ msgstr "Această sesiune vă va autentifica în GNOME, folosind Wayland"
++
++#~ msgid "Additional startup _programs:"
++#~ msgstr "_Programe la pornire adiționale:"
++
++#~ msgid "Startup Programs"
++#~ msgstr "Programe la pornire"
++
++#~ msgid "_Automatically remember running applications when logging out"
++#~ msgstr "Memorează _automat aplicațiile ce rulează la ieșire"
++
++#~| msgid "_Remember Currently Running Application"
++#~ msgid "_Remember Currently Running Applications"
++#~ msgstr "Memo_rează aplicațiile ce rulează în acest moment"
++
++#~ msgid "Options"
++#~ msgstr "Opțiuni"
++
++#~ msgid "Browse…"
++#~ msgstr "Navighează…"
++
++#~ msgid "Comm_ent:"
++#~ msgstr "Com_entariu:"
++
++#~ msgid "Co_mmand:"
++#~ msgstr "Co_mandă:"
++
++#~ msgid "_Name:"
++#~ msgstr "_Nume:"
++
++#~ msgid "Select Command"
++#~ msgstr "Alegere comandă"
++
++#~ msgid "Add Startup Program"
++#~ msgstr "Adaugă un program de pornit"
++
++# LG: aici e vorba de titlul unei ferestre.
++#~ msgid "Edit Startup Program"
++#~ msgstr "Editare program de pornit"
++
++#~ msgid "The startup command cannot be empty"
++#~ msgstr "Comanda de pornire nu poate fi nulă"
++
++#~ msgid "The startup command is not valid"
++#~ msgstr "Comanda de start nu este validă"
++
++#~ msgid "Enabled"
++#~ msgstr "Activat"
++
++#~ msgid "Icon"
++#~ msgstr "Iconiță"
++
++#~ msgid "Program"
++#~ msgstr "Program"
++
++#~ msgid "Startup Applications Preferences"
++#~ msgstr "Preferințe aplicații la pornire"
++
++#~ msgid "No name"
++#~ msgstr "Fără nume"
++
++#~ msgid "No description"
++#~ msgstr "Fără descriere"
++
++#~ msgid "Could not display help document"
++#~ msgstr "Nu se poate afișa documentul de ajutor"
++
++#~ msgid "<b>Some programs are still running:</b>"
++#~ msgstr "<b>O parte din programe sunt încă în funcțiune:</b>"
++
++#~ msgid ""
++#~ "Waiting for the program to finish.  Interrupting the program may cause "
++#~ "you to lose work."
++#~ msgstr ""
++#~ "Se așteaptă terminarea programului. Întreruperea lui poate duce la "
++#~ "pierderea modificărilor efectuate."
++
++#~ msgid "Choose what applications to start when you log in"
++#~ msgstr "Alegeți aplicațiile ce vor porni după ce vă autentificați"
++
++#~ msgid "Startup Applications"
++#~ msgstr "Aplicații pornite după autentificare"
++
++#~ msgid "File is not a valid .desktop file"
++#~ msgstr "Fișierul nu este un fișier .desktop valid"
++
++#~ msgid "Unrecognized desktop file Version '%s'"
++#~ msgstr "Versiunea „%s” a fișierului desktop este nerecunoscută"
++
++#~ msgid "Starting %s"
++#~ msgstr "Se pornește %s"
++
++#~ msgid "Application does not accept documents on command line"
++#~ msgstr "Aplicația nu acceptă documente în linia de comandă"
++
++#~ msgid "Unrecognized launch option: %d"
++#~ msgstr "Opțiune de lansare nerecunoscută: %d"
++
++#~ msgid "Can't pass document URIs to a 'Type=Link' desktop entry"
++#~ msgstr ""
++#~ "Nu s-a putut trimite URI-ul documentului unei intrări desktop „Type=Link”"
++
++#~ msgid "Not a launchable item"
++#~ msgstr "Nu este un element lansabil"
++
++#~ msgid "Disable connection to session manager"
++#~ msgstr "Dezactivează conexiunea la administratorul sesiunii"
++
++#~ msgid "Specify file containing saved configuration"
++#~ msgstr "Specifică fișierul ce conține configurația salvată"
++
++#~ msgid "FILE"
++#~ msgstr "FIȘIER"
++
++#~ msgid "ID"
++#~ msgstr "ID"
++
++#~ msgid "Session management options:"
++#~ msgstr "Opțiuni de administrare a sesiunii:"
++
++#~ msgid "Show session management options"
++#~ msgstr "Afișează opțiunile de administrare a sesiunii"
++
++#~ msgid ""
++#~ "There is a problem with the configuration server.\n"
++#~ "(%s exited with status %d)"
++#~ msgstr ""
++#~ "Există o problemă cu serverul de configurare.\n"
++#~ "(%s a ieșit cu starea %d)"
++
++#~ msgid "Icon '%s' not found"
++#~ msgstr "Iconița „%s” nu a fost găsită"
++
++#~ msgid "Unknown"
++#~ msgstr "Necunoscut"
++
++#~ msgid "A program is still running:"
++#~ msgstr "Un program este încă în funcțiune:"
++
++#~ msgid "Some programs are still running:"
++#~ msgstr "Unele programe sunt încă în funcțiune:"
++
++#~ msgid ""
++#~ "Waiting for programs to finish.  Interrupting these programs may cause "
++#~ "you to lose work."
++#~ msgstr ""
++#~ "Se așteaptă terminarea programelor. Întreruperea acestora poate duce la "
++#~ "pierderea modificărilor efectuate."
++
++#~ msgid "Switch User Anyway"
++#~ msgstr "Schimbă oricum utilizatorul"
++
++#~ msgid "Log Out Anyway"
++#~ msgstr "Închide sesiunea oricum"
++
++#~ msgid "Suspend Anyway"
++#~ msgstr "Suspendă oricum"
++
++#~ msgid "Hibernate Anyway"
++#~ msgstr "Hibernează oricum"
++
++#~ msgid "Shut Down Anyway"
++#~ msgstr "Oprește oricum"
++
++#~ msgid "Lock Screen"
++#~ msgstr "Blochează ecranul"
++
++#~ msgid "Cancel"
++#~ msgstr "Renunță"
++
++#~ msgid "You will be automatically logged out in %d second."
++#~ msgid_plural "You will be automatically logged out in %d seconds."
++#~ msgstr[0] "Sesiunea se va închide automat într-o secundă."
++#~ msgstr[1] "Sesiunea se va închide automat în %d secunde."
++#~ msgstr[2] "Sesiunea se va închide automat în %d de secunde."
++
++#~ msgid "This system will be automatically shut down in %d second."
++#~ msgid_plural "This system will be automatically shut down in %d seconds."
++#~ msgstr[0] "Sistemul va fi oprit automat într-o secundă."
++#~ msgstr[1] "Sistemul va fi oprit automat în %d secunde."
++#~ msgstr[2] "Sistemul va fi oprit automat în %d de secunde."
++
++#~ msgid "You are currently logged in as \"%s\"."
++#~ msgstr "Sunteți autentificat ca „%s”."
++
++#~ msgid "Log out of this system now?"
++#~ msgstr "Ieșiți de pe acest sistem acum?"
++
++#~ msgid "_Switch User"
++#~ msgstr "_Schimbă utilizatorul"
++
++#~ msgid "Shut down this system now?"
++#~ msgstr "Opriți sistemul acum?"
++
++#~ msgid "S_uspend"
++#~ msgstr "S_uspendă"
++
++#~ msgid "_Hibernate"
++#~ msgstr "_Hibernează"
++
++#~ msgid "_Restart"
++#~ msgstr "_Repornește"
++
++#~ msgid "_Shut Down"
++#~ msgstr "_Oprește"
++
++#~ msgid "Exited with code %d"
++#~ msgstr "A ieșit cu codul %d"
++
++#~ msgid "Killed by signal %d"
++#~ msgstr "Omorât de semnalul %d"
++
++#~ msgid "Stopped by signal %d"
++#~ msgstr "Oprit de semnalul %d"
++
++#~ msgid "GNOME 3 Failed to Load"
++#~ msgstr "GNOME 3 nu a reușit să pornească"
++
++#~ msgid ""
++#~ "Unfortunately GNOME 3 failed to start properly and started in the "
++#~ "<i>fallback mode</i>.\n"
++#~ "\n"
++#~ "This most likely means your system (graphics hardware or driver) is not "
++#~ "capable of delivering the full GNOME 3 experience."
++#~ msgstr ""
++#~ "Din păcate, GNOME 3 nu a reușit să pornească corect și a pornit versiunea "
++#~ "<i>de rezervă</i>.\n"
++#~ "\n"
++#~ "Cel mai probabil aceasta înseamnă că sistemul dumneavoastră (placa "
++#~ "grafică sau driverul acesteia) nu poate oferi o experiență GNOME 3 "
++#~ "completă."
++
++#~ msgid "Learn more about GNOME 3"
++#~ msgstr "Aflați mai multe despre GNOME 3"
++
++#~ msgid ""
++#~ "Unable to start login session (and unable to connect to the X server)"
++#~ msgstr ""
++#~ "Nu s-a putut porni sesiunea de start (iar conexiunea la serverul X nu a "
++#~ "putut fi realizată)"
++
++#~ msgid "File Manager"
++#~ msgstr "Administrator de fișiere"
++
++#~ msgid "List of applications that are part of the default session."
++#~ msgstr "Lista aplicațiilor care fac parte din sesiunea implicită."
++
++#~ msgid ""
++#~ "List of components that are required as part of the session. (Each "
++#~ "element names a key under \"/desktop/gnome/session/"
++#~ "required_components\"). The Startup Applications preferences tool will "
++#~ "not normally allow users to remove a required component from the session, "
++#~ "and the session manager will automatically add the required components "
++#~ "back to the session at login time if they do get removed."
++#~ msgstr ""
++#~ "Lista componentelor care sunt necesare ca parte a sesiunii. (Fiecare "
++#~ "element numește o cheie din „/desktop/gnome/session/"
++#~ "required_components\".) Preferințele aplicațiilor de la pornire nu vor "
++#~ "permite în mod normal ca utilizatorii să șteargă o componentă necesară "
++#~ "din sesiune, iar administratorul sesiunii va adăuga automat componentele "
++#~ "necesare în cazul în care vor fi șterse."
++
++#~ msgid "Panel"
++#~ msgstr "Panou"
++
++#~ msgid "Required session components"
++#~ msgstr "Componentele necesare sesiunii"
++
++#~ msgid ""
++#~ "The file manager provides the desktop icons and allows you to interact "
++#~ "with your saved files."
++#~ msgstr ""
++#~ "Administratorul de fișiere furnizează iconițele de pe desktop și permite "
++#~ "interacțiunea cu fișierele salvate."
++
++#~ msgid ""
++#~ "The number of minutes of inactivity before the session is considered idle."
++#~ msgstr ""
++#~ "Numărul de minute de inactivitate înainte ca sesiunea să fie considerată "
++#~ "inactivă."
++
++#~ msgid ""
++#~ "The panel provides the bar at the top or bottom of the screen containing "
++#~ "menus, the window list, status icons, the clock, etc."
++#~ msgstr ""
++#~ "Panoul furnizează bara de deasupra ori dedesubtul ecranului ce conține "
++#~ "meniuri, lista cu ferestre, iconițele de stare, ceasul etc."
++
++#~ msgid ""
++#~ "The window manager is the program that draws the title bar and borders "
++#~ "around windows, and allows you to move and resize windows."
++#~ msgstr ""
++#~ "Administratorul de ferestre este programul care afișează bara de titlu și "
++#~ "marginile de jur împrejurul ferestrelor și permite mutarea sau "
++#~ "redimensionarea acestora."
++
++#~ msgid "Time before session is considered idle"
++#~ msgstr "Durata până ce sesiunea este considerată inactivă"
++
++#~ msgid "Window Manager"
++#~ msgstr "Administrator de ferestre"
++
++#~ msgid "GConf key used to look up default session"
++#~ msgstr "Cheia GConf folosită la căutarea sesiunii implicite"
++
++#~ msgid "Show shutdown dialog"
++#~ msgstr "Afișează dialogul de oprire"
++
++#~ msgid "Use dialog boxes for errors"
++#~ msgstr "Folosește casete de dialog pentru erori"
++
++#~ msgid "Set the current session name"
++#~ msgstr "Definește numele sesiunii curente"
++
++#~ msgid "NAME"
++#~ msgstr "NUME"
++
++#~ msgid "GNOME Settings Daemon Helper"
++#~ msgstr "Ajutor serviciu configurări GNOME"
++
++#~ msgid ""
++#~ "If enabled, gnome-session will save the session automatically. Otherwise, "
++#~ "the logout dialog will have an option to save the session."
++#~ msgstr ""
++#~ "Dacă este activat, gnome-session va salva sesiunea automat. Altfel, "
++#~ "dialogul de ieșire va avea o opțiune pentru salvarea sesiunii."
++
++#~ msgid "Preferred Image to use for login splash screen"
++#~ msgstr "Imaginea preferată afișată după autentificare"
++
++#~ msgid "Show the splash screen"
++#~ msgstr "Arată imaginea de pornire"
++
++#~ msgid "Show the splash screen when the session starts up"
++#~ msgstr "Arată imaginea de pornire la intrarea în sesiune"
++
++#~ msgid ""
++#~ "This is a relative path value based off the $datadir/pixmaps/ directory. "
++#~ "Sub-directories and image names are valid values. Changing this value "
++#~ "will effect the next session login."
++#~ msgstr ""
++#~ "Aceasta este o cale relativă bazată pe directorul $datadir/pixmaps/. "
++#~ "Numele de subdirectoare și de imagini sunt valori valide. Efectul "
++#~ "modificării acestei valori va fi vizibil la pornirea următoarei sesiuni."
++
++#~ msgid ""
++#~ "Waiting for program to finish.  Interrupting program may cause you to "
++#~ "lose work."
++#~ msgstr ""
++#~ "Se așteaptă ca programul să termine. Întreruperea acestuia poate duce la "
++#~ "pierderea activității de până acum."
++
++#~ msgid "- GNOME Splash Screen"
++#~ msgstr "- Imagine de pornire GNOME"
++
++#~ msgid "GNOME Splash Screen"
++#~ msgstr "Imagine pornire GNOME"
+diff --git a/po/sl.po b/po/sl.po
+index e15e6eda..a1f345b8 100644
+--- a/po/sl.po
++++ b/po/sl.po
+@@ -9,18 +9,18 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: gnome-session master\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-session/issues\n"
+-"POT-Creation-Date: 2025-07-18 19:39+0000\n"
+-"PO-Revision-Date: 2025-07-19 11:32+0200\n"
++"POT-Creation-Date: 2025-04-14 21:21+0000\n"
++"PO-Revision-Date: 2025-04-15 18:46+0200\n"
+ "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+ "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+ "Language: sl_SI\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+-"%100==4 ? 3 : 0);\n"
++"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
++"n%100==4 ? 3 : 0);\n"
+ "X-Poedit-SourceCharset: utf-8\n"
+-"X-Generator: Poedit 2.2.1\n"
++"X-Generator: Poedit 3.4.2\n"
+ 
+ #: data/gnome.desktop.in.in:3 data/gnome.session.desktop.in.in:3
+ msgid "GNOME"
+@@ -40,18 +40,38 @@ msgid "GNOME on Xorg"
+ msgstr "GNOME na sistemu Xorg"
+ 
+ #: data/org.gnome.SessionManager.gschema.xml:5
++msgid "Save sessions"
++msgstr "Shrani seje"
++
++#: data/org.gnome.SessionManager.gschema.xml:6
++msgid "If enabled, gnome-session will save the session automatically."
++msgstr "Izbrana možnost omogoči samodejno shranjevanje seje."
++
++#: data/org.gnome.SessionManager.gschema.xml:10
++msgid "Save this session"
++msgstr "Shrani sejo"
++
++#: data/org.gnome.SessionManager.gschema.xml:11
++msgid ""
++"When enabled, gnome-session will automatically save the next session at log "
++"out even if auto saving is disabled."
++msgstr ""
++"Izbrana možnost omogoči samodejno shranjevanje seje ob odjavi, neglede na "
++"nastavitev samodejnega shranjevanja."
++
++#: data/org.gnome.SessionManager.gschema.xml:15
+ msgid "Logout prompt"
+ msgstr "Vnosno polje odjave"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:6
++#: data/org.gnome.SessionManager.gschema.xml:16
+ msgid "If enabled, gnome-session will prompt the user before ending a session."
+ msgstr "Izbrana možnost omogoči prikaz vnosnega polja pred koncem seje."
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:10
++#: data/org.gnome.SessionManager.gschema.xml:20
+ msgid "Show the fallback warning"
+ msgstr "Pokaži opozorila programske povrnitve"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:11
++#: data/org.gnome.SessionManager.gschema.xml:21
+ msgid ""
+ "If enabled, gnome-session will display a warning dialog after login if the "
+ "session was automatically fallen back."
+@@ -59,47 +79,119 @@ msgstr ""
+ "Izbrana možnost omogoči prikaz opozorila po prijavi, če je seja samodejno "
+ "povrnjena."
+ 
+-#: gnome-session/gsm-manager.c:709 gnome-session/gsm-manager.c:1040
++#: gnome-session/gsm-fail-whale-dialog.c:90
++msgid "Oh no! Something has gone wrong."
++msgstr "Prišlo je do nepričakovane napake."
++
++#: gnome-session/gsm-fail-whale-dialog.c:97
++msgid ""
++"A problem has occurred and the system can’t recover. Please contact a system "
++"administrator"
++msgstr ""
++"Prišlo je do napake, ki je ni mogoče samodejno odpraviti. Stopite v stik s "
++"skrbnikom."
++
++#: gnome-session/gsm-fail-whale-dialog.c:99
++msgid ""
++"A problem has occurred and the system can’t recover. All extensions have "
++"been disabled as a precaution."
++msgstr ""
++"Prišlo je do napake, ki je ni mogoče samodejno odpraviti. Priporočljivo je "
++"onemogočiti vse razširitve, dokler se napaka ne razreši."
++
++#: gnome-session/gsm-fail-whale-dialog.c:101
++msgid ""
++"A problem has occurred and the system can’t recover.\n"
++"Please log out and try again."
++msgstr ""
++"Prišlo je do napake, ki je ni mogoče samodejno odpraviti.\n"
++"Odjavite se in poskusite znova."
++
++#: gnome-session/gsm-fail-whale-dialog.c:109
++msgid "_Log Out"
++msgstr "_Odjava"
++
++#: gnome-session/gsm-fail-whale-dialog.c:153 gnome-session/main.c:479
++msgid "Enable debugging code"
++msgstr "Omogoči razhroščevanje kode"
++
++#: gnome-session/gsm-fail-whale-dialog.c:154
++msgid "Allow logout"
++msgstr "Dovoli odjavo"
++
++#: gnome-session/gsm-fail-whale-dialog.c:155
++msgid "Show extension warning"
++msgstr "Pokaži opozorila razširitev"
++
++#: gnome-session/gsm-manager.c:1305 gnome-session/gsm-manager.c:2054
+ msgid "Not responding"
+ msgstr "Ni odziva"
+ 
+-#: gnome-session/gsm-util.c:283
++#: gnome-session/gsm-util.c:431
+ msgid "_Log out"
+ msgstr "_Odjavi"
+ 
+-#: gnome-session/leader-main.c:534
++#. It'd be really surprising to reach this code: if we're here,
++#. * then the XSMP client already has set several XSMP
++#. * properties. But it could still be that SmProgram is not set.
++#.
++#: gnome-session/gsm-xsmp-client.c:557
++msgid "Remembered Application"
++msgstr "Zapomnjeni programi"
++
++#: gnome-session/gsm-xsmp-client.c:1216
++msgid "This program is blocking logout."
++msgstr "Program zavira postopek odjave."
++
++#: gnome-session/gsm-xsmp-server.c:340
++msgid ""
++"Refusing new client connection because the session is currently being shut "
++"down\n"
++msgstr "Povezave z odjemalci bodo zavrnjene, ker se trenutna seja izklaplja.\n"
++
++#: gnome-session/gsm-xsmp-server.c:613
++#, c-format
++msgid "Could not create ICE listening socket: %s"
++msgstr "Ni mogoče ustvariti vtiča za prisluh ICE: %s"
++
++#: gnome-session/main.c:476
++msgid "Running as systemd service"
++msgstr "Zagnano kot storitev systemd"
++
++#: gnome-session/main.c:477
+ msgid "Override standard autostart directories"
+ msgstr "Preskoči običajne mape samodejnega zagona"
+ 
+-#: gnome-session/leader-main.c:534
++#: gnome-session/main.c:477
+ msgid "AUTOSTART_DIR"
+ msgstr "ZAČETNA_MAPA"
+ 
+-#: gnome-session/leader-main.c:535 gnome-session/service-main.c:147
++#: gnome-session/main.c:478
+ msgid "Session to use"
+ msgstr "Seja za uporabo"
+ 
+-#: gnome-session/leader-main.c:535 gnome-session/service-main.c:147
++#: gnome-session/main.c:478
+ msgid "SESSION_NAME"
+ msgstr "IME_SEJE"
+ 
+-#: gnome-session/leader-main.c:536
+-msgid "Enable debugging code"
+-msgstr "Omogoči razhroščevanje kode"
++#: gnome-session/main.c:480
++msgid "Do not load user-specified applications"
++msgstr "Ne naloži uporabniško določenih programov"
+ 
+-#: gnome-session/leader-main.c:537
++#: gnome-session/main.c:481
+ msgid "Version of this application"
+ msgstr "Različica programa"
+ 
+-#: gnome-session/leader-main.c:538
++#. Translators: the 'fail whale' is the black dialog we show when something goes seriously wrong
++#: gnome-session/main.c:483
++msgid "Show the fail whale dialog for testing"
++msgstr "Pokaži pogovorno okno napak med preizkušanjem"
++
++#: gnome-session/main.c:484
+ msgid "This option is ignored"
+ msgstr "Ta možnost je prezrta"
+ 
+-#: gnome-session/leader-main.c:539
+-msgid "Don't re-exec into a login shell"
+-msgstr "Ne izvedi ponovno v lupini za prijavo"
+-
+-#: gnome-session/leader-main.c:560 gnome-session/service-main.c:156
++#: gnome-session/main.c:516
+ msgid " — the GNOME session manager"
+ msgstr " – upravljalnik seje GNOME"
+ 
+@@ -125,11 +217,10 @@ msgstr "Ponovno zaženi storitev dbus.service, če je že zagnana"
+ 
+ #: tools/gnome-session-ctl.c:251
+ msgid ""
+-"Run from ExecStopPost to start gnome-session-shutdown.target on service "
+-"failure"
++"Run from ExecStopPost to start gnome-session-failed.target on service failure"
+ msgstr ""
+ "Zaženi iz ExecStopPost za zagon gnome-session-failed.target ob spodleteli "
+-"storitvi"
++"seji"
+ 
+ #: tools/gnome-session-ctl.c:281
+ msgid "Program needs exactly one parameter"
+diff --git a/po/tr.po b/po/tr.po
+index 30729c40..2943295c 100644
+--- a/po/tr.po
++++ b/po/tr.po
+@@ -16,14 +16,14 @@
+ # Muhammet Kara <muhammetk@gmail.com>, 2011-2015.
+ # Çağatay Yiğit Şahin <cyigitsahin@outlook.com>, 2017, 2018.
+ # Sabri Ünal <yakushabb@gmail.com>, 2019, 2022-2024.
+-# Emin Tufan Çetin <etcetin@gmail.com>, 2017-2025.
++# Emin Tufan Çetin <etcetin@gmail.com>, 2017-2024.
+ #
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: gnome-session\n"
+ "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-session/issues\n"
+-"POT-Creation-Date: 2025-08-27 22:11+0000\n"
+-"PO-Revision-Date: 2025-08-28 14:07+0300\n"
++"POT-Creation-Date: 2024-07-29 23:21+0000\n"
++"PO-Revision-Date: 2024-05-07 12:06+0300\n"
+ "Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
+ "Language-Team: Turkish <takim@gnome.org.tr>\n"
+ "Language: tr\n"
+@@ -31,39 +31,71 @@ msgstr ""
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+ "Plural-Forms: nplurals=1; plural=0;\n"
+-"X-Generator: Poedit 3.6\n"
++"X-Generator: Poedit 3.4.2\n"
+ 
+-#: data/gnome.desktop.in.in:2 data/gnome.session.desktop:2
++#: data/gnome-custom-session.desktop.in.in:3
++msgid "Custom"
++msgstr "Özel"
++
++#: data/gnome-custom-session.desktop.in.in:4
++msgid "This entry lets you select a saved session"
++msgstr "Bu girdi, kaydedilmiş oturum seçmenizi sağlar"
++
++#: data/gnome.desktop.in.in:3 data/gnome.session.desktop.in.in:3
+ msgid "GNOME"
+ msgstr "GNOME"
+ 
+-#: data/gnome.desktop.in.in:3 data/gnome-wayland.desktop.in.in:3
+-#: data/gnome-xorg.desktop.in.in:3
++#: data/gnome.desktop.in.in:4 data/gnome-wayland.desktop.in.in:4
++#: data/gnome-xorg.desktop.in.in:4
+ msgid "This session logs you into GNOME"
+ msgstr "Bu oturum GNOME’a girmenizi sağlar"
+ 
+-#: data/gnome-wayland.desktop.in.in:2
++#: data/gnome-dummy.session.desktop.in.in:3
++msgid "GNOME dummy"
++msgstr "GNOME dummy"
++
++#: data/gnome-wayland.desktop.in.in:3
+ msgid "GNOME on Wayland"
+ msgstr "Wayland üzerinde GNOME"
+ 
+-#: data/gnome-xorg.desktop.in.in:2
++#: data/gnome-xorg.desktop.in.in:3
+ msgid "GNOME on Xorg"
+ msgstr "Xorg üzerinde GNOME"
+ 
+ #: data/org.gnome.SessionManager.gschema.xml:5
++msgid "Save sessions"
++msgstr "Oturumları kaydet"
++
++#: data/org.gnome.SessionManager.gschema.xml:6
++msgid "If enabled, gnome-session will save the session automatically."
++msgstr "Etkinse, gnome-session, oturumu kendiliğinden kaydedecektir."
++
++#: data/org.gnome.SessionManager.gschema.xml:10
++msgid "Save this session"
++msgstr "Bu oturumu kaydet"
++
++#: data/org.gnome.SessionManager.gschema.xml:11
++msgid ""
++"When enabled, gnome-session will automatically save the next session at log "
++"out even if auto saving is disabled."
++msgstr ""
++"Etkinleştirildiğinde; gnome-session, kendiliğinden kaydetme devre dışı olsa "
++"bile oturum kapatıldığında sonraki oturumu kendiliğinden kaydedecektir."
++
++#: data/org.gnome.SessionManager.gschema.xml:15
+ msgid "Logout prompt"
+ msgstr "Oturum kapatma istemi"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:6
++#: data/org.gnome.SessionManager.gschema.xml:16
+ msgid "If enabled, gnome-session will prompt the user before ending a session."
+ msgstr ""
+ "Etkinse, gnome-session, oturumu bitirmeden önce kullanıcıya soracaktır."
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:10
++#: data/org.gnome.SessionManager.gschema.xml:20
+ msgid "Show the fallback warning"
+ msgstr "Yedeğe dönüş uyarısını göster"
+ 
+-#: data/org.gnome.SessionManager.gschema.xml:11
++#: data/org.gnome.SessionManager.gschema.xml:21
+ msgid ""
+ "If enabled, gnome-session will display a warning dialog after login if the "
+ "session was automatically fallen back."
+@@ -71,39 +103,142 @@ msgstr ""
+ "Etkinse, gnome-session, oturum kendiliğinden yedeğe düşmüşse girişin "
+ "ardından uyarı penceresi gösterecektir."
+ 
+-#: gnome-session/gsm-manager.c:709 gnome-session/gsm-manager.c:1040
++#: data/session-selector.ui:15
++msgid "Custom Session"
++msgstr "Özel Oturum"
++
++#: data/session-selector.ui:50 tools/gnome-session-selector.c:102
++msgid "Please select a custom session to run"
++msgstr "Lütfen çalıştırılacak özel oturum seçin"
++
++#: data/session-selector.ui:105
++msgid "_New Session"
++msgstr "_Yeni Oturum"
++
++#: data/session-selector.ui:119
++msgid "_Remove Session"
++msgstr "Oturumu _Kaldır"
++
++#: data/session-selector.ui:133
++msgid "Rena_me Session"
++msgstr "Oturumu Yeniden _Adlandır"
++
++#: data/session-selector.ui:168
++msgid "_Continue"
++msgstr "_Sürdür"
++
++#: gnome-session/gsm-fail-whale-dialog.c:318
++msgid "Oh no!  Something has gone wrong."
++msgstr "Hayda!  Bir şeyler yanlış gitti."
++
++#: gnome-session/gsm-fail-whale-dialog.c:325
++msgid ""
++"A problem has occurred and the system can’t recover. Please contact a system "
++"administrator"
++msgstr ""
++"Sorun oluştu ve sistem kurtarılamıyor. Lütfen sistem yöneticisine başvurun"
++
++#: gnome-session/gsm-fail-whale-dialog.c:327
++msgid ""
++"A problem has occurred and the system can’t recover. All extensions have "
++"been disabled as a precaution."
++msgstr ""
++"Sorun oluştu ve sistem kurtarılamıyor. Önlem olarak tüm uzantılar devre dışı "
++"bırakıldı."
++
++#: gnome-session/gsm-fail-whale-dialog.c:329
++msgid ""
++"A problem has occurred and the system can’t recover.\n"
++"Please log out and try again."
++msgstr ""
++"Sorun oluştu ve sistem kurtarılamıyor.\n"
++"Lütfen oturumu kapatıp yeniden deneyin."
++
++#: gnome-session/gsm-fail-whale-dialog.c:344
++msgid "_Log Out"
++msgstr "_Oturumu Kapat"
++
++#: gnome-session/gsm-fail-whale-dialog.c:412 gnome-session/main.c:505
++msgid "Enable debugging code"
++msgstr "Kod hatası ayıklamayı etkinleştir"
++
++#: gnome-session/gsm-fail-whale-dialog.c:413
++msgid "Allow logout"
++msgstr "Oturumu kapatmaya izin ver"
++
++#: gnome-session/gsm-fail-whale-dialog.c:414
++msgid "Show extension warning"
++msgstr "Uzantı uyarısını göster"
++
++#: gnome-session/gsm-manager.c:1301 gnome-session/gsm-manager.c:2050
+ msgid "Not responding"
+ msgstr "Yanıtlamıyor"
+ 
+-#: gnome-session/gsm-util.c:167
++#: gnome-session/gsm-util.c:431
+ msgid "_Log out"
+ msgstr "_Oturumu kapat"
+ 
+-#: gnome-session/leader-main.c:181 gnome-session/service-main.c:148
++#. It'd be really surprising to reach this code: if we're here,
++#. * then the XSMP client already has set several XSMP
++#. * properties. But it could still be that SmProgram is not set.
++#.
++#: gnome-session/gsm-xsmp-client.c:557
++msgid "Remembered Application"
++msgstr "Anımsanan Uygulama"
++
++#: gnome-session/gsm-xsmp-client.c:1216
++msgid "This program is blocking logout."
++msgstr "Bu program, oturumu kapatmayı engelliyor."
++
++#: gnome-session/gsm-xsmp-server.c:340
++msgid ""
++"Refusing new client connection because the session is currently being shut "
++"down\n"
++msgstr "Oturum şu anda kapatıldığından yeni istemci bağlantısı reddediliyor\n"
++
++#: gnome-session/gsm-xsmp-server.c:607
++#, c-format
++msgid "Could not create ICE listening socket: %s"
++msgstr "ICE dinleme soketi oluşturulamadı: %s"
++
++#: gnome-session/main.c:502
++msgid "Running as systemd service"
++msgstr "systemd hizmeti olarak çalışıyor"
++
++#: gnome-session/main.c:503
++msgid "Override standard autostart directories"
++msgstr "Standart kendiliğinden başlat dizinlerinin yerine geç"
++
++#: gnome-session/main.c:503
++msgid "AUTOSTART_DIR"
++msgstr "KENDILIGINDANBASLAT_DIZINI"
++
++#: gnome-session/main.c:504
+ msgid "Session to use"
+ msgstr "Kullanılacak oturum"
+ 
+-#: gnome-session/leader-main.c:181 gnome-session/service-main.c:148
++#: gnome-session/main.c:504
+ msgid "SESSION_NAME"
+ msgstr "OTURUM_ADI"
+ 
+-#: gnome-session/leader-main.c:182
+-msgid "Enable debugging code"
+-msgstr "Kod hatası ayıklamayı etkinleştir"
++#: gnome-session/main.c:506
++msgid "Do not load user-specified applications"
++msgstr "Kullanıcıya özel programları yükleme"
+ 
+-#: gnome-session/leader-main.c:183
++#: gnome-session/main.c:507
+ msgid "Version of this application"
+ msgstr "Bu uygulamanın sürümü"
+ 
+-#: gnome-session/leader-main.c:184
+-msgid "This option is ignored"
+-msgstr "Bu seçenek yok sayıldı"
++#. Translators: the 'fail whale' is the black dialog we show when something goes seriously wrong
++#: gnome-session/main.c:509
++msgid "Show the fail whale dialog for testing"
++msgstr "Sınama için büyük hata iletişim penceresini göster"
+ 
+-#: gnome-session/leader-main.c:185
+-msgid "Don't re-exec into a login shell"
+-msgstr "Oturum açma kabuğuna yeniden girme"
++#: gnome-session/main.c:510
++msgid "Disable hardware acceleration check"
++msgstr "Donanım hızlandırma denetimini devre dışı bırak"
+ 
+-#: gnome-session/leader-main.c:203 gnome-session/service-main.c:157
++#: gnome-session/main.c:542
+ msgid " — the GNOME session manager"
+ msgstr " — GNOME oturum yöneticisi"
+ 
+@@ -128,82 +263,67 @@ msgstr "Çalışıyorsa dbus.service’i yeniden başlat"
+ 
+ #: tools/gnome-session-ctl.c:251
+ msgid ""
+-"Run from ExecStopPost to start gnome-session-shutdown.target on service "
+-"failure"
+-msgstr ""
+-"Hizmet hatasında gnome-session-shutdown.target’ı ExecStopPost’tan başlat"
++"Run from ExecStopPost to start gnome-session-failed.target on service failure"
++msgstr "Hizmet hatasında gnome-session-failed.target’ı ExecStopPost’tan başlat"
+ 
+ #: tools/gnome-session-ctl.c:281
+ msgid "Program needs exactly one parameter"
+ msgstr "Program tam olarak bir parametreye gereksiniyor"
+ 
+-#: tools/gnome-session-inhibit.c:69
++#: tools/gnome-session-inhibit.c:108
+ #, c-format
+-msgid "Unknown inhibit argument: %s"
+-msgstr "Bilinmeyen önleme argümanı: %s"
+-
+-#: tools/gnome-session-inhibit.c:289
++msgid ""
++"%s [OPTION…] COMMAND\n"
++"\n"
++"Execute COMMAND while inhibiting some session functionality.\n"
++"\n"
++"  -h, --help        Show this help\n"
++"  --version         Show program version\n"
++"  --app-id ID       The application id to use\n"
++"                    when inhibiting (optional)\n"
++"  --reason REASON   The reason for inhibiting (optional)\n"
++"  --inhibit ARG     Things to inhibit, colon-separated list of:\n"
++"                    logout, switch-user, suspend, idle, automount\n"
++"  --inhibit-only    Do not launch COMMAND and wait forever instead\n"
++"  -l, --list        List the existing inhibitions, and exit\n"
++"\n"
++"If no --inhibit option is specified, idle is assumed.\n"
++msgstr ""
++"%s [SEÇENEK…] KOMUT\n"
++"\n"
++"Bazı oturum işlevlerini kısıtlayarak KOMUT çalıştır.\n"
++"\n"
++"  -h, --help        Bu yardımı göster\n"
++"  --version         Program sürümünü göster\n"
++"  --app-id ID       Kısıtlama yapılırken kullanılacak\n"
++"                    uygulama ID’si (isteğe bağlı)\n"
++"  --reason REASON   Kısıtlama nedeni (isteğe bağlı)\n"
++"  --inhibit ARG     Kısıtlamaların virgülle ayrılmış listesi:\n"
++"                    logout, switch-user, suspend, idle, automount\n"
++"  --inhibit-only    KOMUT’u çalıştırmak yerine sürekli bekle\n"
++"  -l, --list        Var olan kısıtlamaları göster ve çık\n"
++"\n"
++"Eğer hiç --inhibit seçeneği verilmediyse, idle kısıtı kabul edilir.\n"
++
++#: tools/gnome-session-inhibit.c:282
+ #, c-format
+-msgid "Failed to execute %s: %m\n"
+-msgstr "%s çalıştırılamadı: %m\n"
+-
+-#: tools/gnome-session-inhibit.c:361
+-msgid "Show program version"
+-msgstr "Program sürümünü göster"
+-
+-#: tools/gnome-session-inhibit.c:362
+-msgid "The application id to use when inhibiting (optional)"
+-msgstr "Önlenirken kullanılacak uygulama kimliği (isteğe bağlı)"
+-
+-#: tools/gnome-session-inhibit.c:362
+-msgid "ID"
+-msgstr "KİMLİK"
+-
+-#: tools/gnome-session-inhibit.c:363
+-msgid "The reason for inhibiting (optional)"
+-msgstr "Önleme nedeni (isteğe bağlı)"
+-
+-#: tools/gnome-session-inhibit.c:363
+-msgid "REASON"
+-msgstr "NEDEN"
++msgid "Error while creating pipe: %s\n"
++msgstr "Boru oluşturulurken hata: %s\n"
+ 
+-#: tools/gnome-session-inhibit.c:364
+-msgid "Add action to inhibit (repeatable)"
+-msgstr "Önlemeye eylem ekle (yinelenebilir)"
++#: tools/gnome-session-inhibit.c:299
++msgid "Failure reading pipe\n"
++msgstr "Boru okuma hatası\n"
+ 
+-#: tools/gnome-session-inhibit.c:364
+-msgid "ACTION"
+-msgstr "EYLEM"
+-
+-#: tools/gnome-session-inhibit.c:365
+-msgid "Do not launch COMMAND and wait forever instead"
+-msgstr "KOMUTU çalıştırma ve bunun yerine sonsuza dek bekle"
+-
+-#: tools/gnome-session-inhibit.c:366
+-msgid "List the existing inhibitions, and exit"
+-msgstr "Var olan önlemeleri listele ve çık"
+-
+-#: tools/gnome-session-inhibit.c:378
+-msgid "COMMAND"
+-msgstr "KOMUT"
+-
+-#: tools/gnome-session-inhibit.c:384
+-msgid "Execute COMMAND while inhibiting some session functionality."
+-msgstr "Bazı oturum işlevselliğini önlerken KOMUTU çalıştır"
+-
+-#: tools/gnome-session-inhibit.c:385
+-msgid ""
+-"Valid ACTION values are: logout, switch-user, suspend, idle, and automount.\n"
+-"If no --inhibit options are specified, idle is assumed."
+-msgstr ""
+-"Geçerli EYLEM değerleri şunlardır: logout (oturumu kapat), switch-user "
+-"(kullanıcı değiştir), suspend (askıya al), idle (boşta) ve automount "
+-"(kendiliğinden bağla).\n"
+-"Eğer herhangi bir --inhibit seçeneği belirtilmezse idle (boşta) kullanılır."
++#: tools/gnome-session-inhibit.c:303
++#, c-format
++msgid "Failed to execute %s\n"
++msgstr "%s çalıştırılamadı\n"
+ 
+-#: tools/gnome-session-inhibit.c:409
+-msgid "Neither COMMAND nor --inhibit-only were specified."
+-msgstr "Ne KOMUT ne de --inhibit-only belirtildi."
++#: tools/gnome-session-inhibit.c:376 tools/gnome-session-inhibit.c:386
++#: tools/gnome-session-inhibit.c:396
++#, c-format
++msgid "%s requires an argument\n"
++msgstr "%s için parametre eksik\n"
+ 
+ #: tools/gnome-session-quit.c:50
+ msgid "Log out"
+@@ -215,11 +335,11 @@ msgstr "Bilgisayarı kapat"
+ 
+ #: tools/gnome-session-quit.c:52
+ msgid "Reboot"
+-msgstr "Yeniden başlat"
++msgstr "Yeniden Başlat"
+ 
+ #: tools/gnome-session-quit.c:53
+ msgid "Ignoring any existing inhibitors"
+-msgstr "Var olan tüm önleyiciler yok sayılıyor"
++msgstr "Var olan tüm engelleyiciler yok sayılıyor"
+ 
+ #: tools/gnome-session-quit.c:54
+ msgid "Don’t prompt for user confirmation"
+@@ -233,49 +353,25 @@ msgstr "Oturum yöneticisine bağlanılamadı"
+ msgid "Program called with conflicting options"
+ msgstr "Program çakışan seçeneklerle çağırıldı"
+ 
+-#~ msgid "Oh no! Something has gone wrong."
+-#~ msgstr "Hayda! Bir şeyler yanlış gitti."
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover. Please contact a "
+-#~ "system administrator"
+-#~ msgstr ""
+-#~ "Sorun oluştu ve sistem kurtarılamıyor. Lütfen sistem yöneticisine başvurun"
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover. All extensions have "
+-#~ "been disabled as a precaution."
+-#~ msgstr ""
+-#~ "Sorun oluştu ve sistem kurtarılamıyor. Önlem olarak tüm uzantılar devre "
+-#~ "dışı bırakıldı."
+-
+-#~ msgid ""
+-#~ "A problem has occurred and the system can’t recover.\n"
+-#~ "Please log out and try again."
+-#~ msgstr ""
+-#~ "Sorun oluştu ve sistem kurtarılamıyor.\n"
+-#~ "Lütfen oturumu kapatıp yeniden deneyin."
+-
+-#~ msgid "_Log Out"
+-#~ msgstr "_Oturumu Kapat"
+-
+-#~ msgid "Allow logout"
+-#~ msgstr "Oturumu kapatmaya izin ver"
+-
+-#~ msgid "Show extension warning"
+-#~ msgstr "Uzantı uyarısını göster"
+-
+-#~ msgid "Running as systemd service"
+-#~ msgstr "systemd hizmeti olarak çalışıyor"
++#: tools/gnome-session-selector.c:61
++#, c-format
++msgid "Session %d"
++msgstr "%d Oturumu"
+ 
+-#~ msgid "Override standard autostart directories"
+-#~ msgstr "Standart kendiliğinden başlat dizinlerinin yerine geç"
++#: tools/gnome-session-selector.c:107
++msgid ""
++"Session names are not allowed to start with “.” or contain “/” characters"
++msgstr "Oturum adları “.” ile başlayamaz ve “/” karakterini içeremez"
+ 
+-#~ msgid "AUTOSTART_DIR"
+-#~ msgstr "KENDILIGINDANBASLAT_DIZINI"
++#: tools/gnome-session-selector.c:111
++msgid "Session names are not allowed to start with “.”"
++msgstr "Oturum adları “.” ile başlayamaz"
+ 
+-#~ msgid "Do not load user-specified applications"
+-#~ msgstr "Kullanıcıya özel programları yükleme"
++#: tools/gnome-session-selector.c:115
++msgid "Session names are not allowed to contain “/” characters"
++msgstr "Oturum adları “/” karakterini içeremez"
+ 
+-#~ msgid "Show the fail whale dialog for testing"
+-#~ msgstr "Sınama için büyük hata iletişim penceresini göster"
++#: tools/gnome-session-selector.c:123
++#, c-format
++msgid "A session named “%s” already exists"
++msgstr "“%s” adında oturum var"
 diff --git a/tools/gnome-session-ctl.c b/tools/gnome-session-ctl.c
 index e413cd52..edae5062 100644
 --- a/tools/gnome-session-ctl.c
@@ -7523,26 +9875,26 @@ index e413cd52..edae5062 100644
                  g_assert_not_reached ();
 --- a/gnome-session/gsm-manager.c
 +++ b/gnome-session/gsm-manager.c
-@@ -44,22 +44,46 @@
+@@ -44,62 +44,108 @@
  
  #include <systemd/sd-daemon.h>
  
 -#include "gsm-app.h"
 -#include "gsm-client.h"
++#include "gsm-store.h"
  #include "gsm-inhibitor.h"
  #include "gsm-presence.h"
- #include "gsm-session-save.h"
  #include "gsm-shell.h"
- #include "gsm-store.h"
--#include "gsm-system.h"
+-#include "gsm-store.h"
 +
 +#include "gsm-dbus-client.h"
 +
 +#include "gsm-autostart-app.h"
 +
- #include "gsm-util.h"
++#include "gsm-util.h"
 +#include "gsm-icon-names.h"
-+#include "gsm-system.h"
+ #include "gsm-system.h"
+-#include "gsm-util.h"
 +#include "gsm-shell-extensions.h"
 +#include "gsm-fail-whale.h"
 +
@@ -7570,10 +9922,15 @@ index e413cd52..edae5062 100644
  #define SESSION_SCHEMA            "org.gnome.desktop.session"
  #define KEY_IDLE_DELAY            "idle-delay"
 +#define KEY_SESSION_NAME          "session-name"
- #define KEY_SAVE_RESTORE          "save-restore"
  
  #define GSM_MANAGER_SCHEMA        "org.gnome.SessionManager"
-@@ -69,19 +93,24 @@
+ #define KEY_LOGOUT_PROMPT         "logout-prompt"
++#define KEY_SHOW_FALLBACK_WARNING "show-fallback-warning"
++
++#define SCREENSAVER_SCHEMA        "org.gnome.desktop.screensaver"
++#define KEY_SLEEP_LOCK            "lock-enabled"
+ 
+ #define LOCKDOWN_SCHEMA           "org.gnome.desktop.lockdown"
  #define KEY_DISABLE_LOG_OUT       "disable-log-out"
  #define KEY_DISABLE_USER_SWITCHING "disable-user-switching"
  
@@ -7590,10 +9947,11 @@ index e413cd52..edae5062 100644
  } GsmManagerLogoutType;
  
 -struct _GsmManager
-+typedef struct
- {
+-{
 -        GObject                 parent;
 -
++typedef struct
++{
 +        gboolean                failsafe;
 +        gboolean                systemd_managed;
          gboolean                systemd_initialized;
@@ -7601,9 +9959,8 @@ index e413cd52..edae5062 100644
          GsmStore               *clients;
          GsmStore               *inhibitors;
          GsmInhibitorFlag        inhibited_actions;
-@@ -89,20 +118,33 @@ struct _GsmManager
+         GsmStore               *apps;
          GsmPresence            *presence;
-         GsmSessionSave         *session_save;
          char                   *session_name;
 +        gboolean                is_fallback_session : 1;
  
@@ -7635,7 +9992,7 @@ index e413cd52..edae5062 100644
          GSettings              *lockdown_settings;
  
          GsmSystem              *system;
-@@ -111,33 +153,46 @@ struct _GsmManager
+@@ -108,33 +154,45 @@
          gboolean                dbus_disconnected : 1;
  
          GsmShell               *shell;
@@ -7660,14 +10017,14 @@ index e413cd52..edae5062 100644
 +        PROP_FAILSAFE,
 +        PROP_SYSTEMD_MANAGED
  };
- 
++
 +enum {
 +        PHASE_CHANGED,
 +        LAST_SIGNAL
 +};
 +
 +static guint signals [LAST_SIGNAL] = { 0 };
-+
+ 
  static void     gsm_manager_class_init  (GsmManagerClass *klass);
  static void     gsm_manager_init        (GsmManager      *manager);
  
@@ -7677,13 +10034,13 @@ index e413cd52..edae5062 100644
 -                                                gboolean    is_ok,
 -                                                const char *reason,
 -                                                GsmManager *manager);
+-
 +static void     _handle_client_end_session_response (GsmManager *manager,
 +                                                     GsmClient  *client,
 +                                                     gboolean    is_ok,
 +                                                     gboolean    do_last,
 +                                                     gboolean    cancel,
 +                                                     const char *reason);
- 
  static void     show_shell_end_session_dialog (GsmManager                   *manager,
                                                 GsmShellEndSessionDialogType  type);
  static gpointer manager_object = NULL;
@@ -7693,11 +10050,19 @@ index e413cd52..edae5062 100644
  
  static const GDBusErrorEntry gsm_manager_error_entries[] = {
          { GSM_MANAGER_ERROR_GENERAL, GSM_MANAGER_DBUS_IFACE ".GeneralError" },
-@@ -178,6 +233,75 @@ start_app_or_warn (GsmManager *manager,
-         return res;
+@@ -165,7 +223,7 @@
+         gboolean res;
+         GError *error = NULL;
+ 
+-        g_debug ("GsmManager: starting app '%s'", gsm_app_peek_app_id (app));
++        g_debug ("GsmManager: starting app '%s'", gsm_app_peek_id (app));
+ 
+         res = gsm_app_start (app, &error);
+         if (error != NULL) {
+@@ -176,6 +234,75 @@
  }
  
-+static gboolean
+ static gboolean
 +is_app_required (GsmManager *manager,
 +                 GsmApp     *app)
 +{
@@ -7728,7 +10093,7 @@ index e413cd52..edae5062 100644
 +                allow_logout = FALSE;
 +        } else {
 +                allow_logout = !_log_out_is_locked_down (manager);
-+       }
++        }
 +
 +        sd_journal_send ("MESSAGE_ID=%s", GSM_MANAGER_UNRECOVERABLE_FAILURE_MSGID,
 +                         "PRIORITY=%d", 3,
@@ -7766,10 +10131,11 @@ index e413cd52..edae5062 100644
 +        gsm_quit ();
 +}
 +
- static gboolean
++static gboolean
  _debug_client (const char *id,
                 GsmClient  *client,
-@@ -190,7 +314,9 @@ _debug_client (const char *id,
+                GsmManager *manager)
+@@ -187,7 +314,9 @@
  static void
  debug_clients (GsmManager *manager)
  {
@@ -7780,7 +10146,7 @@ index e413cd52..edae5062 100644
                             (GsmStoreFunc)_debug_client,
                             manager);
  }
-@@ -207,25 +333,129 @@ _find_by_cookie (const char   *id,
+@@ -204,25 +333,129 @@
          return (*cookie_ap == cookie_b);
  }
  
@@ -7859,7 +10225,7 @@ index e413cd52..edae5062 100644
  static const char *
  phase_num_to_name (guint phase)
  {
-+       const char *name;
++        const char *name;
 +
          switch (phase) {
 +        case GSM_MANAGER_PHASE_STARTUP:
@@ -7909,14 +10275,15 @@ index e413cd52..edae5062 100644
 +                break;
          default:
                  g_assert_not_reached ();
+-        }
 +                break;
-         }
++        }
 +
 +        return name;
  }
  
  static void start_phase (GsmManager *manager);
-@@ -233,17 +463,24 @@ static void start_phase (GsmManager *manager);
+@@ -230,17 +463,24 @@
  static void
  gsm_manager_quit (GsmManager *manager)
  {
@@ -7944,7 +10311,7 @@ index e413cd52..edae5062 100644
                  gsm_quit ();
                  break;
          default:
-@@ -257,18 +494,47 @@ static gboolean do_query_end_session_exit (GsmManager *manager);
+@@ -254,18 +494,47 @@
  static void
  end_phase (GsmManager *manager)
  {
@@ -7953,21 +10320,24 @@ index e413cd52..edae5062 100644
  
          g_debug ("GsmManager: ending phase %s",
 -                 phase_num_to_name (manager->phase));
+-
+-        g_slist_free (manager->query_clients);
+-        manager->query_clients = NULL;
+-
+-        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
+-
+-        switch (manager->phase) {
 +                 phase_num_to_name (priv->phase));
 +
 +        g_slist_free (priv->pending_apps);
 +        priv->pending_apps = NULL;
- 
--        g_slist_free (manager->query_clients);
--        manager->query_clients = NULL;
++
 +        g_slist_free (priv->query_clients);
 +        priv->query_clients = NULL;
- 
--        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
++
 +        g_slist_free (priv->next_query_clients);
 +        priv->next_query_clients = NULL;
- 
--        switch (manager->phase) {
++
 +        if (priv->query_timeout_id > 0) {
 +                g_source_remove (priv->query_timeout_id);
 +                priv->query_timeout_id = 0;
@@ -7997,7 +10367,7 @@ index e413cd52..edae5062 100644
          case GSM_MANAGER_PHASE_APPLICATION:
                  break;
          case GSM_MANAGER_PHASE_RUNNING:
-@@ -293,17 +559,199 @@ end_phase (GsmManager *manager)
+@@ -290,9 +559,177 @@
          }
  
          if (start_next_phase) {
@@ -8005,8 +10375,8 @@ index e413cd52..edae5062 100644
 +                priv->phase++;
                  start_phase (manager);
          }
- }
- 
++}
++
 +static void
 +app_event_during_startup (GsmManager *manager,
 +                          GsmApp     *app)
@@ -8173,10 +10543,10 @@ index e413cd52..edae5062 100644
 +        end_phase (manager);
 +
 +        return FALSE;
-+}
-+
+ }
+ 
  static gboolean
- _start_app (const char *id,
+@@ -300,7 +737,21 @@
              GsmApp     *app,
              GsmManager *manager)
  {
@@ -8199,7 +10569,7 @@ index e413cd52..edae5062 100644
                  g_debug ("GsmManager: Skipping disabled app: %s", id);
                  goto out;
          }
-@@ -311,6 +759,30 @@ _start_app (const char *id,
+@@ -308,6 +759,30 @@
          if (!start_app_or_warn (manager, app))
                  goto out;
  
@@ -8230,16 +10600,16 @@ index e413cd52..edae5062 100644
   out:
          return FALSE;
  }
-@@ -321,11 +793,21 @@ do_phase_startup (GsmManager *manager)
-         if (manager->session_save && gsm_session_save_restore (manager->session_save))
-                 g_info ("Restored from save, skipping normal autostart apps.");
-         else
--                gsm_store_foreach (manager->apps,
+@@ -315,11 +790,21 @@
+ static void
+ do_phase_startup (GsmManager *manager)
+ {
+-        gsm_store_foreach (manager->apps,
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +
 +        gsm_store_foreach (priv->apps,
-                                    (GsmStoreFunc)_start_app,
-                                    manager);
+                            (GsmStoreFunc)_start_app,
+                            manager);
  
 -        end_phase (manager);
 +        if (priv->pending_apps != NULL) {
@@ -8254,7 +10624,7 @@ index e413cd52..edae5062 100644
  }
  
  typedef struct {
-@@ -335,10 +817,10 @@ typedef struct {
+@@ -329,10 +814,10 @@
  
  
  static gboolean
@@ -8267,7 +10637,7 @@ index e413cd52..edae5062 100644
          gboolean ret;
          GError  *error;
  
-@@ -354,18 +836,27 @@ _client_end_session (const char           *id,
+@@ -348,18 +833,27 @@
                  /* FIXME: what should we do if we can't communicate with client? */
          } else {
                  g_debug ("GsmManager: adding client to end-session clients: %s", gsm_client_peek_id (client));
@@ -8297,7 +10667,7 @@ index e413cd52..edae5062 100644
               l != NULL;
               l = l->next) {
                  GTask *task = G_TASK (l->data);
-@@ -373,49 +864,68 @@ complete_end_session_tasks (GsmManager *manager)
+@@ -367,49 +861,68 @@
                      g_task_return_boolean (task, TRUE);
          }
  
@@ -8305,32 +10675,50 @@ index e413cd52..edae5062 100644
 +        g_slist_free_full (priv->pending_end_session_tasks,
                             (GDestroyNotify) g_object_unref);
 -        manager->pending_end_session_tasks = NULL;
-+        priv->pending_end_session_tasks = NULL;
- }
- 
+-}
+-
 -static gboolean
 -on_end_session_timeout (GsmManager *manager)
-+static void
-+do_phase_end_session (GsmManager *manager)
- {
+-{
 -        manager->phase_timeout_id = 0;
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
-+        ClientEndSessionData data;
- 
+-
 -        for (GSList *l = manager->query_clients; l != NULL; l = l->next) {
 -                g_warning ("Client '%s' failed to reply before timeout",
 -                           gsm_client_peek_id (l->data));
-+        complete_end_session_tasks (manager);
-+
-+        data.manager = manager;
+-        }
+-
+-        end_phase (manager);
+-        return FALSE;
++        priv->pending_end_session_tasks = NULL;
+ }
+ 
+ static void
+ do_phase_end_session (GsmManager *manager)
+ {
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
+         ClientEndSessionData data;
+ 
+         complete_end_session_tasks (manager);
+ 
+         data.manager = manager;
+-        data.flags = GSM_CLIENT_END_SESSION_FLAG_NONE;
+-
+-        if (manager->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
 +        data.flags = 0;
 +
 +        if (priv->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
-+                data.flags |= GSM_CLIENT_END_SESSION_FLAG_FORCEFUL;
+                 data.flags |= GSM_CLIENT_END_SESSION_FLAG_FORCEFUL;
          }
  
--        end_phase (manager);
--        return FALSE;
+-        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
+-
+-        if (gsm_store_size (manager->clients) > 0) {
+-                manager->phase_timeout_id = g_timeout_add_seconds (10,
+-                                                                   (GSourceFunc)on_end_session_timeout,
+-                                                                   manager);
+-
+-                gsm_store_foreach (manager->clients,
+-                                   (GsmStoreFunc)_client_end_session,
 +        if (priv->phase_timeout_id > 0) {
 +                g_source_remove (priv->phase_timeout_id);
 +                priv->phase_timeout_id = 0;
@@ -8343,57 +10731,43 @@ index e413cd52..edae5062 100644
 +
 +                gsm_store_foreach (priv->clients,
 +                                   (GsmStoreFunc)_client_end_session_helper,
-+                                   &data);
+                                    &data);
 +        } else {
 +                end_phase (manager);
 +        }
- }
- 
- static void
--do_phase_end_session (GsmManager *manager)
++}
++
++static void
 +do_phase_end_session_part_2 (GsmManager *manager)
- {
++{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
-         ClientEndSessionData data;
- 
--        complete_end_session_tasks (manager);
--
-         data.manager = manager;
--        data.flags = GSM_CLIENT_END_SESSION_FLAG_NONE;
++        ClientEndSessionData data;
++
++        data.manager = manager;
 +        data.flags = 0;
- 
--        if (manager->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
++
 +        if (priv->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
-                 data.flags |= GSM_CLIENT_END_SESSION_FLAG_FORCEFUL;
-         }
++                data.flags |= GSM_CLIENT_END_SESSION_FLAG_FORCEFUL;
++        }
 +        data.flags |= GSM_CLIENT_END_SESSION_FLAG_LAST;
- 
--        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
++
 +        /* keep the timeout that was started at the beginning of the
 +         * GSM_MANAGER_PHASE_END_SESSION phase */
- 
--        if (gsm_store_size (manager->clients) > 0) {
--                manager->phase_timeout_id = g_timeout_add_seconds (10,
--                                                                   (GSourceFunc)on_end_session_timeout,
--                                                                   manager);
++
 +        if (g_slist_length (priv->next_query_clients) > 0) {
 +                g_slist_foreach (priv->next_query_clients,
 +                                 (GFunc)_client_end_session,
 +                                 &data);
- 
--                gsm_store_foreach (manager->clients,
--                                   (GsmStoreFunc)_client_end_session,
--                                   &data);
++
 +                g_slist_free (priv->next_query_clients);
 +                priv->next_query_clients = NULL;
          } else {
                  end_phase (manager);
          }
-@@ -442,15 +952,53 @@ _client_stop (const char *id,
-         return FALSE;
+@@ -437,13 +950,51 @@
  }
  
-+static void
+ static void
 +maybe_restart_user_bus (GsmManager *manager)
 +{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
@@ -8426,7 +10800,7 @@ index e413cd52..edae5062 100644
 +        }
 +}
 +
- static void
++static void
  do_phase_exit (GsmManager *manager)
  {
 -        if (gsm_store_size (manager->clients) > 0) {
@@ -8438,14 +10812,13 @@ index e413cd52..edae5062 100644
                                     (GsmStoreFunc)_client_stop,
                                     NULL);
          }
- 
++
 +        if (!priv->systemd_managed)
 +                maybe_restart_user_bus (manager);
-+
+ 
          end_phase (manager);
  }
- 
-@@ -459,6 +1007,7 @@ _client_query_end_session (const char           *id,
+@@ -453,6 +1004,7 @@
                             GsmClient            *client,
                             ClientEndSessionData *data)
  {
@@ -8453,7 +10826,7 @@ index e413cd52..edae5062 100644
          gboolean ret;
          GError  *error;
  
-@@ -474,7 +1023,7 @@ _client_query_end_session (const char           *id,
+@@ -468,7 +1020,7 @@
                  /* FIXME: what should we do if we can't communicate with client? */
          } else {
                  g_debug ("GsmManager: adding client to query clients: %s", gsm_client_peek_id (client));
@@ -8462,7 +10835,7 @@ index e413cd52..edae5062 100644
          }
  
          return FALSE;
-@@ -498,17 +1047,18 @@ inhibitor_has_flag (gpointer      key,
+@@ -492,17 +1044,18 @@
  static gboolean
  gsm_manager_is_logout_inhibited (GsmManager *manager)
  {
@@ -8484,11 +10857,11 @@ index e413cd52..edae5062 100644
                                                      (GsmStoreFunc)inhibitor_has_flag,
                                                      GUINT_TO_POINTER (GSM_INHIBITOR_FLAG_LOGOUT));
          if (inhibitor == NULL) {
-@@ -520,13 +1070,14 @@ gsm_manager_is_logout_inhibited (GsmManager *manager)
+@@ -514,13 +1067,14 @@
  static gboolean
  gsm_manager_is_idle_inhibited (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          GsmInhibitor *inhibitor;
  
 -        if (manager->inhibitors == NULL) {
@@ -8501,11 +10874,12 @@ index e413cd52..edae5062 100644
                                                      (GsmStoreFunc)inhibitor_has_flag,
                                                      GUINT_TO_POINTER (GSM_INHIBITOR_FLAG_IDLE));
          if (inhibitor == NULL) {
-@@ -571,27 +1122,28 @@ inhibitor_is_jit (gpointer      key,
+@@ -565,27 +1119,29 @@
  static void
  cancel_end_session (GsmManager *manager)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          /* just ignore if received outside of shutdown */
 -        if (manager->phase < GSM_MANAGER_PHASE_QUERY_END_SESSION) {
 +        if (priv->phase < GSM_MANAGER_PHASE_QUERY_END_SESSION) {
@@ -8520,9 +10894,10 @@ index e413cd52..edae5062 100644
  
          gsm_manager_set_phase (manager, GSM_MANAGER_PHASE_RUNNING);
 -        manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_NORMAL;
-+        priv->logout_mode = GSM_MANAGER_LOGOUT_MODE_NORMAL;
- 
+-
 -        manager->logout_type = GSM_MANAGER_LOGOUT_NONE;
++        priv->logout_mode = GSM_MANAGER_LOGOUT_MODE_NORMAL;
++
 +        priv->logout_type = GSM_MANAGER_LOGOUT_NONE;
  
          /* clear all JIT inhibitors */
@@ -8536,11 +10911,11 @@ index e413cd52..edae5062 100644
                             (GsmStoreFunc)_client_cancel_end_session,
                             NULL);
  
-@@ -604,32 +1156,35 @@ cancel_end_session (GsmManager *manager)
+@@ -595,32 +1151,35 @@
  static void
  end_session_or_show_shell_dialog (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          gboolean logout_prompt;
          GsmShellEndSessionDialogType type;
          gboolean logout_inhibited;
@@ -8576,11 +10951,12 @@ index e413cd52..edae5062 100644
          case GSM_MANAGER_LOGOUT_MODE_NORMAL:
                  if (logout_inhibited || logout_prompt) {
                          show_shell_end_session_dialog (manager, type);
-@@ -659,11 +1214,15 @@ end_session_or_show_shell_dialog (GsmManager *manager)
+@@ -650,11 +1209,16 @@
  static void
  query_end_session_complete (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: query end session complete");
  
          /* Remove the timeout since this can be called from outside the timer
@@ -8593,11 +10969,11 @@ index e413cd52..edae5062 100644
  
          end_session_or_show_shell_dialog (manager);
  }
-@@ -681,11 +1240,12 @@ generate_cookie (void)
+@@ -672,11 +1236,12 @@
  static guint32
  _generate_unique_cookie (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          guint32 cookie;
  
          do {
@@ -8607,15 +10983,15 @@ index e413cd52..edae5062 100644
  
          return cookie;
  }
-@@ -693,37 +1253,56 @@ _generate_unique_cookie (GsmManager *manager)
+@@ -684,37 +1249,56 @@
  static gboolean
  _on_query_end_session_timeout (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          GSList *l;
  
 -        manager->phase_timeout_id = 0;
-+        priv->phase_timeout_id = 0;
++        priv->query_timeout_id = 0;
  
          g_debug ("GsmManager: query end session timed out");
  
@@ -8673,27 +11049,26 @@ index e413cd52..edae5062 100644
  
          query_end_session_complete (manager);
  
-@@ -733,81 +1312,108 @@ _on_query_end_session_timeout (GsmManager *manager)
+@@ -724,81 +1308,112 @@
  static void
  do_phase_query_end_session (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          ClientEndSessionData data;
  
          data.manager = manager;
 -        data.flags = GSM_CLIENT_END_SESSION_FLAG_NONE;
-+        data.flags = 0;
- 
+-
 -        if (manager->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
++        data.flags = 0;
++
 +        if (priv->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
                  data.flags |= GSM_CLIENT_END_SESSION_FLAG_FORCEFUL;
          }
- 
-+
 +        /* We only query if an app is ready to log out, so we don't use
 +         * GSM_CLIENT_END_SESSION_FLAG_SAVE here.
 +         */
-+
+ 
          debug_clients (manager);
          g_debug ("GsmManager: sending query-end-session to clients (logout mode: %s)",
 -                 manager->logout_mode == GSM_MANAGER_LOGOUT_MODE_NORMAL? "normal" :
@@ -8707,13 +11082,16 @@ index e413cd52..edae5062 100644
                             &data);
  
 -        manager->phase_timeout_id = g_timeout_add_seconds (1, (GSourceFunc)_on_query_end_session_timeout, manager);
-+        priv->phase_timeout_id = g_timeout_add_seconds (1, (GSourceFunc)_on_query_end_session_timeout, manager);
++        /* This phase doesn't time out unless logout is forced. Typically, this
++         * separate timer is only used to show UI. */
++        priv->query_timeout_id = g_timeout_add_seconds (1, (GSourceFunc)_on_query_end_session_timeout, manager);
  }
  
  static void
  update_idle (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          if (gsm_manager_is_idle_inhibited (manager)) {
 -                gsm_presence_set_idle_enabled (manager->presence, FALSE);
 +                gsm_presence_set_idle_enabled (priv->presence, FALSE);
@@ -8726,7 +11104,8 @@ index e413cd52..edae5062 100644
  static void
  start_phase (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: starting phase %s\n",
 -                 phase_num_to_name (manager->phase));
 +                 phase_num_to_name (priv->phase));
@@ -8734,14 +11113,17 @@ index e413cd52..edae5062 100644
          /* reset state */
 -        g_slist_free (manager->query_clients);
 -        manager->query_clients = NULL;
+-
+-        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
+-
+-        switch (manager->phase) {
 +        g_slist_free (priv->pending_apps);
 +        priv->pending_apps = NULL;
 +        g_slist_free (priv->query_clients);
 +        priv->query_clients = NULL;
 +        g_slist_free (priv->next_query_clients);
 +        priv->next_query_clients = NULL;
- 
--        g_clear_handle_id (&manager->phase_timeout_id, g_source_remove);
++
 +        if (priv->query_timeout_id > 0) {
 +                g_source_remove (priv->query_timeout_id);
 +                priv->query_timeout_id = 0;
@@ -8750,10 +11132,7 @@ index e413cd52..edae5062 100644
 +                g_source_remove (priv->phase_timeout_id);
 +                priv->phase_timeout_id = 0;
 +        }
- 
--        switch (manager->phase) {
--        case GSM_MANAGER_PHASE_INITIALIZATION:
--                sd_notify (0, "READY=1\nSTATUS=Waiting for session to start");
++
 +        sd_notifyf (0, "STATUS=GNOME Session Manager phase is %s", phase_num_to_name (priv->phase));
 +
 +        switch (priv->phase) {
@@ -8761,12 +11140,14 @@ index e413cd52..edae5062 100644
 +        case GSM_MANAGER_PHASE_EARLY_INITIALIZATION:
 +        case GSM_MANAGER_PHASE_PRE_DISPLAY_SERVER:
 +                do_phase_startup (manager);
-                 break;
++                break;
 +        case GSM_MANAGER_PHASE_DISPLAY_SERVER:
 +                sd_notify (0, "READY=1");
 +                do_phase_startup (manager);
 +                break;
-+        case GSM_MANAGER_PHASE_INITIALIZATION:
+         case GSM_MANAGER_PHASE_INITIALIZATION:
+-                sd_notify (0, "READY=1\nSTATUS=Waiting for session to start");
+-                break;
 +        case GSM_MANAGER_PHASE_WINDOW_MANAGER:
 +        case GSM_MANAGER_PHASE_PANEL:
 +        case GSM_MANAGER_PHASE_DESKTOP:
@@ -8799,15 +11180,17 @@ index e413cd52..edae5062 100644
 -                sd_notify (0, "STOPPING=1\nSTATUS=Logging out");
 -                gsm_exported_manager_emit_session_over (manager->skeleton);
 +                sd_notify (0, "STOPPING=1");
++
                  do_phase_end_session (manager);
                  break;
          case GSM_MANAGER_PHASE_EXIT:
 -                sd_notify (0, "STOPPING=1\nSTATUS=Quitting");
 +                sd_notify (0, "STOPPING=1");
++
                  do_phase_exit (manager);
                  break;
          default:
-@@ -821,9 +1427,19 @@ _debug_app_for_phase (const char *id,
+@@ -812,9 +1427,19 @@
                        GsmApp     *app,
                        gpointer    data)
  {
@@ -8829,7 +11212,7 @@ index e413cd52..edae5062 100644
  
          return FALSE;
  }
-@@ -831,10 +1447,16 @@ _debug_app_for_phase (const char *id,
+@@ -822,32 +1447,80 @@
  static void
  debug_app_summary (GsmManager *manager)
  {
@@ -8850,13 +11233,16 @@ index e413cd52..edae5062 100644
  }
  
  void
-@@ -843,25 +1465,62 @@ gsm_manager_start (GsmManager *manager)
-         g_debug ("GsmManager: Starting");
+ gsm_manager_start (GsmManager *manager)
+ {
+-        g_debug ("GsmManager: Starting");
++        g_debug ("GsmManager: GSM starting to manage");
  
          g_return_if_fail (GSM_IS_MANAGER (manager));
 -        g_return_if_fail (manager->phase == GSM_MANAGER_PHASE_INITIALIZATION);
+-
++
 +        gsm_manager_set_phase (manager, GSM_MANAGER_PHASE_EARLY_INITIALIZATION);
- 
          debug_app_summary (manager);
          start_phase (manager);
  }
@@ -8876,24 +11262,22 @@ index e413cd52..edae5062 100644
 +}
 +
  void
- _gsm_manager_set_active_session (GsmManager *manager,
--                                 const char *session_name,
--                                 gboolean    is_kiosk)
-+                                 const char     *session_name,
-+                                 gboolean        is_fallback)
- {
+ _gsm_manager_set_active_session (GsmManager     *manager,
+-                                 const char     *session_name)
+-{
 -        g_free (manager->session_name);
 -        manager->session_name = g_strdup (session_name);
+-
+-        gsm_exported_manager_set_session_name (manager->skeleton, session_name);
++                                 const char     *session_name,
++                                 gboolean        is_fallback)
++{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
- 
--        if (!is_kiosk)
--                manager->session_save = gsm_session_save_new (session_name);
++
 +        g_free (priv->session_name);
 +        priv->session_name = g_strdup (session_name);
 +        priv->is_fallback_session = is_fallback;
- 
--        gsm_exported_manager_set_restore_supported (manager->skeleton, manager->session_save != NULL);
--        gsm_exported_manager_set_session_name (manager->skeleton, session_name);
++
 +        gsm_exported_manager_set_session_name (priv->skeleton, session_name);
 +}
 +
@@ -8922,7 +11306,7 @@ index e413cd52..edae5062 100644
  }
  
  static gboolean
-@@ -887,23 +1546,109 @@ inhibitor_has_client_id (gpointer      key,
+@@ -873,23 +1546,109 @@
          return matches;
  }
  
@@ -9037,7 +11421,7 @@ index e413cd52..edae5062 100644
          case GSM_MANAGER_PHASE_QUERY_END_SESSION:
                  /* Instead of answering our end session query, the client just exited.
                   * Treat that as an "okay, end the session" answer.
-@@ -911,15 +1656,18 @@ _disconnect_client (GsmManager *manager,
+@@ -897,15 +1656,18 @@
                   * This call implicitly removes any inhibitors for the client, along
                   * with removing the client from the pending query list.
                   */
@@ -9063,7 +11447,7 @@ index e413cd52..edae5062 100644
                          /* the client sent its EndSessionResponse and we already
                           * processed it.
                           */
-@@ -932,17 +1680,54 @@ _disconnect_client (GsmManager *manager,
+@@ -918,17 +1680,54 @@
                   * in library code after the callback. Or maybe the application
                   * crashed while handling EndSession. Or it was lazy.
                   */
@@ -9124,7 +11508,7 @@ index e413cd52..edae5062 100644
          g_object_unref (client);
  }
  
-@@ -958,6 +1743,10 @@ _disconnect_dbus_client (const char       *id,
+@@ -944,13 +1743,17 @@
  {
          const char *name;
  
@@ -9135,11 +11519,19 @@ index e413cd52..edae5062 100644
          /* If no service name, then we simply disconnect all clients */
          if (!data->service_name) {
                  _disconnect_client (data->manager, client);
-@@ -990,96 +1779,193 @@ static void
+                 return TRUE;
+         }
+ 
+-        name = gsm_client_peek_bus_name (client);
++        name = gsm_dbus_client_get_bus_name (GSM_DBUS_CLIENT (client));
+         if (IS_STRING_EMPTY (name)) {
+                 return FALSE;
+         }
+@@ -976,89 +1779,187 @@
  remove_clients_for_connection (GsmManager *manager,
                                 const char *service_name)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          RemoveClientData data;
  
          data.service_name = service_name;
@@ -9174,9 +11566,11 @@ index e413cd52..edae5062 100644
  gboolean
  gsm_manager_get_dbus_disconnected (GsmManager *manager)
  {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (data->manager);
-+        g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +
+         g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
+ 
+-        return manager->dbus_disconnected;
 +        return priv->dbus_disconnected;
 +}
 +
@@ -9185,9 +11579,8 @@ index e413cd52..edae5062 100644
 +{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +
-         g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
- 
--        return manager->dbus_disconnected;
++        g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
++
 +        return priv->failsafe;
 +}
 +
@@ -9206,6 +11599,7 @@ index e413cd52..edae5062 100644
                          GsmManager *manager)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: disconnect client");
          _disconnect_client (manager, client);
 -        gsm_store_remove (manager->clients, gsm_client_peek_id (client));
@@ -9220,46 +11614,38 @@ index e413cd52..edae5062 100644
  }
  
  static void
--on_client_end_session_response (GsmClient  *client,
--                                gboolean    is_ok,
--                                const char *reason,
--                                GsmManager *manager)
 +_handle_client_end_session_response (GsmManager *manager,
 +                                     GsmClient  *client,
 +                                     gboolean    is_ok,
 +                                     gboolean    do_last,
 +                                     gboolean    cancel,
 +                                     const char *reason)
- {
++{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +
-         /* just ignore if received outside of shutdown */
--        if (manager->phase < GSM_MANAGER_PHASE_QUERY_END_SESSION) {
++        /* just ignore if received outside of shutdown */
 +        if (priv->phase < GSM_MANAGER_PHASE_QUERY_END_SESSION) {
-                 return;
-         }
- 
--        g_debug ("GsmManager: Response from end session request: is-ok=%d reason=%s", is_ok, reason ?: "(none)");
++                return;
++        }
++
 +        g_debug ("GsmManager: Response from end session request: is-ok=%d do-last=%d cancel=%d reason=%s", is_ok, do_last, cancel, reason ? reason :"");
- 
--        manager->query_clients = g_slist_remove (manager->query_clients, client);
++
 +        if (cancel) {
 +                cancel_end_session (manager);
 +                return;
 +        }
- 
--        if (!is_ok && manager->logout_mode != GSM_MANAGER_LOGOUT_MODE_FORCE) {
++
 +        priv->query_clients = g_slist_remove (priv->query_clients, client);
 +
 +        if (! is_ok && priv->logout_mode != GSM_MANAGER_LOGOUT_MODE_FORCE) {
 +                guint         cookie;
-                 GsmInhibitor *inhibitor;
++                GsmInhibitor *inhibitor;
 +                char         *app_id;
 +                const char   *bus_name;
 +
 +                /* FIXME: do we support updating the reason? */
- 
-                 /* Create JIT inhibit */
++
++                /* Create JIT inhibit */
 +                if (GSM_IS_DBUS_CLIENT (client)) {
 +                        bus_name = gsm_dbus_client_get_bus_name (GSM_DBUS_CLIENT (client));
 +                } else {
@@ -9274,32 +11660,24 @@ index e413cd52..edae5062 100644
 +                }
 +
 +                cookie = _generate_unique_cookie (manager);
-                 inhibitor = gsm_inhibitor_new_for_client (gsm_client_peek_id (client),
--                                                          gsm_client_peek_app_id (client),
++                inhibitor = gsm_inhibitor_new_for_client (gsm_client_peek_id (client),
 +                                                          app_id,
-                                                           GSM_INHIBITOR_FLAG_LOGOUT,
-                                                           reason != NULL ? reason : _("Not responding"),
--                                                          gsm_client_peek_bus_name (client),
--                                                          _generate_unique_cookie (manager));
--                gsm_store_add (manager->inhibitors, gsm_inhibitor_peek_id (inhibitor), G_OBJECT (inhibitor));
++                                                          GSM_INHIBITOR_FLAG_LOGOUT,
++                                                          reason != NULL ? reason : _("Not responding"),
 +                                                          bus_name,
 +                                                          cookie);
 +                g_free (app_id);
 +                gsm_store_add (priv->inhibitors, gsm_inhibitor_peek_id (inhibitor), G_OBJECT (inhibitor));
-                 g_object_unref (inhibitor);
-         } else {
--                gsm_store_foreach_remove (manager->inhibitors,
++                g_object_unref (inhibitor);
++        } else {
 +                gsm_store_foreach_remove (priv->inhibitors,
-                                           (GsmStoreFunc)inhibitor_has_client_id,
-                                           (gpointer)gsm_client_peek_id (client));
-         }
- 
--        if (manager->phase == GSM_MANAGER_PHASE_QUERY_END_SESSION) {
--                if (manager->query_clients == NULL)
++                                          (GsmStoreFunc)inhibitor_has_client_id,
++                                          (gpointer)gsm_client_peek_id (client));
++        }
++
 +        if (priv->phase == GSM_MANAGER_PHASE_QUERY_END_SESSION) {
 +                if (priv->query_clients == NULL) {
-                         query_end_session_complete (manager);
--        } else if (manager->phase == GSM_MANAGER_PHASE_END_SESSION) {
++                        query_end_session_complete (manager);
 +                }
 +        } else if (priv->phase == GSM_MANAGER_PHASE_END_SESSION) {
 +                if (do_last) {
@@ -9312,41 +11690,77 @@ index e413cd52..edae5062 100644
 +                                                                             client);
 +                }
 +
-                 /* we can continue to the next step if all clients have replied
-                  * and if there's no inhibitor */
--                if (manager->query_clients != NULL || gsm_manager_is_logout_inhibited (manager))
++                /* we can continue to the next step if all clients have replied
++                 * and if there's no inhibitor */
 +                if (priv->query_clients != NULL
 +                    || gsm_manager_is_logout_inhibited (manager)) {
-                         return;
++                        return;
 +                }
- 
--                end_phase (manager);
++
 +                if (priv->next_query_clients != NULL) {
 +                        do_phase_end_session_part_2 (manager);
 +                } else {
 +                        end_phase (manager);
 +                }
-         }
- }
- 
++        }
++}
++
 +static void
-+on_client_end_session_response (GsmClient  *client,
-+                                gboolean    is_ok,
+ on_client_end_session_response (GsmClient  *client,
+                                 gboolean    is_ok,
 +                                gboolean    do_last,
 +                                gboolean    cancel,
-+                                const char *reason,
-+                                GsmManager *manager)
-+{
+                                 const char *reason,
+                                 GsmManager *manager)
+ {
+-        /* just ignore if received outside of shutdown */
+-        if (manager->phase < GSM_MANAGER_PHASE_QUERY_END_SESSION) {
+-                return;
+-        }
+-
+-        g_debug ("GsmManager: Response from end session request: is-ok=%d reason=%s", is_ok, reason ?: "(none)");
+-
+-        manager->query_clients = g_slist_remove (manager->query_clients, client);
+-
+-        if (!is_ok && manager->logout_mode != GSM_MANAGER_LOGOUT_MODE_FORCE) {
+-                GsmInhibitor *inhibitor;
+-
+-                /* Create JIT inhibit */
+-                inhibitor = gsm_inhibitor_new_for_client (gsm_client_peek_id (client),
+-                                                          gsm_client_peek_app_id (client),
+-                                                          GSM_INHIBITOR_FLAG_LOGOUT,
+-                                                          reason != NULL ? reason : _("Not responding"),
+-                                                          gsm_client_peek_bus_name (client),
+-                                                          _generate_unique_cookie (manager));
+-                gsm_store_add (manager->inhibitors, gsm_inhibitor_peek_id (inhibitor), G_OBJECT (inhibitor));
+-                g_object_unref (inhibitor);
+-        } else {
+-                gsm_store_foreach_remove (manager->inhibitors,
+-                                          (GsmStoreFunc)inhibitor_has_client_id,
+-                                          (gpointer)gsm_client_peek_id (client));
+-        }
+-
+-        if (manager->phase == GSM_MANAGER_PHASE_QUERY_END_SESSION) {
+-                if (manager->query_clients == NULL)
+-                        query_end_session_complete (manager);
+-        } else if (manager->phase == GSM_MANAGER_PHASE_END_SESSION) {
+-                /* we can continue to the next step if all clients have replied
+-                 * and if there's no inhibitor */
+-                if (manager->query_clients != NULL || gsm_manager_is_logout_inhibited (manager))
+-                        return;
+-
+-                end_phase (manager);
+-        }
 +        _handle_client_end_session_response (manager,
 +                                             client,
 +                                             is_ok,
 +                                             do_last,
 +                                             cancel,
 +                                             reason);
-+}
-+
+ }
+ 
  static void
- on_store_client_added (GsmStore   *store,
+@@ -1066,6 +1967,7 @@
                         const char *id,
                         GsmManager *manager)
  {
@@ -9354,7 +11768,7 @@ index e413cd52..edae5062 100644
          GsmClient *client;
  
          g_debug ("GsmManager: Client added: %s", id);
-@@ -1091,18 +1977,59 @@ on_store_client_added (GsmStore   *store,
+@@ -1077,7 +1979,7 @@
                            G_CALLBACK (on_client_end_session_response),
                            manager);
  
@@ -9363,20 +11777,15 @@ index e413cd52..edae5062 100644
          /* FIXME: disconnect signal handler */
  }
  
--static void
--on_store_client_removed (GsmStore   *store,
--                         const char *id,
--                         GsmManager *manager)
--{
--        g_debug ("GsmManager: Client removed: %s", id);
-+static void
-+on_store_client_removed (GsmStore   *store,
-+                         const char *id,
-+                         GsmManager *manager)
-+{
+@@ -1086,9 +1988,51 @@
+                          const char *id,
+                          GsmManager *manager)
+ {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
-+        g_debug ("GsmManager: Client removed: %s", id);
 +
+         g_debug ("GsmManager: Client removed: %s", id);
+ 
+-        gsm_exported_manager_emit_client_removed (manager->skeleton, id);
 +        gsm_exported_manager_emit_client_removed (priv->skeleton, id);
 +}
 +
@@ -9407,8 +11816,7 @@ index e413cd52..edae5062 100644
 +        g_debug ("GsmManager: setting client store %p", store);
 +
 +        priv->clients = store;
- 
--        gsm_exported_manager_emit_client_removed (manager->skeleton, id);
++
 +        if (priv->clients != NULL) {
 +                g_signal_connect (priv->clients,
 +                                  "added",
@@ -9422,7 +11830,7 @@ index e413cd52..edae5062 100644
  }
  
  static void
-@@ -1111,7 +2038,26 @@ gsm_manager_set_property (GObject       *object,
+@@ -1097,7 +2041,26 @@
                            const GValue  *value,
                            GParamSpec    *pspec)
  {
@@ -9450,7 +11858,7 @@ index e413cd52..edae5062 100644
  }
  
  static void
-@@ -1121,10 +2067,20 @@ gsm_manager_get_property (GObject    *object,
+@@ -1107,15 +2070,33 @@
                            GParamSpec *pspec)
  {
          GsmManager *self = GSM_MANAGER (object);
@@ -9472,22 +11880,20 @@ index e413cd52..edae5062 100644
                  break;
          default:
                  G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-@@ -1132,6 +2088,14 @@ gsm_manager_get_property (GObject    *object,
+                 break;
          }
- }
- 
++}
++
 +static gboolean
 +_find_app_provides (const char *id,
 +                    GsmApp     *app,
 +                    const char *service)
 +{
 +        return gsm_app_provides (app, service);
-+}
-+
+ }
+ 
  static GObject *
- gsm_manager_constructor (GType                  type,
-                          guint                  n_construct_properties,
-@@ -1149,21 +2113,24 @@ static void
+@@ -1135,21 +2116,25 @@
  update_inhibited_actions (GsmManager *manager,
                            GsmInhibitorFlag new_inhibited_actions)
  {
@@ -9498,11 +11904,12 @@ index e413cd52..edae5062 100644
                  return;
  
 -        gsm_system_set_inhibitors (manager->system, new_inhibited_actions);
-+        gsm_system_set_inhibitors (priv->system, new_inhibited_actions);
- 
+-
 -        manager->inhibited_actions = new_inhibited_actions;
 -        gsm_exported_manager_set_inhibited_actions (manager->skeleton,
 -                                                    manager->inhibited_actions);
++        gsm_system_set_inhibitors (priv->system, new_inhibited_actions);
++
 +        priv->inhibited_actions = new_inhibited_actions;
 +        gsm_exported_manager_set_inhibited_actions (priv->skeleton,
 +                                                    priv->inhibited_actions);
@@ -9514,11 +11921,12 @@ index e413cd52..edae5062 100644
  {
 -        gsm_store_remove (manager->inhibitors, gsm_inhibitor_peek_id (inhibitor));
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        gsm_store_remove (priv->inhibitors, gsm_inhibitor_peek_id (inhibitor));
  }
  
  static void
-@@ -1171,6 +2138,7 @@ on_store_inhibitor_added (GsmStore   *store,
+@@ -1157,6 +2142,7 @@
                            const char *id,
                            GsmManager *manager)
  {
@@ -9526,7 +11934,7 @@ index e413cd52..edae5062 100644
          GsmInhibitor *i;
          GsmInhibitorFlag new_inhibited_actions;
  
-@@ -1178,12 +2146,12 @@ on_store_inhibitor_added (GsmStore   *store,
+@@ -1164,12 +2150,12 @@
  
          i = GSM_INHIBITOR (gsm_store_lookup (store, id));
  
@@ -9541,15 +11949,7 @@ index e413cd52..edae5062 100644
  
          update_idle (manager);
  }
-@@ -1193,6 +2161,7 @@ collect_inhibition_flags (const char *id,
-                           GObject    *object,
-                           gpointer    user_data)
- {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
-         GsmInhibitorFlag *new_inhibited_actions = user_data;
- 
-         *new_inhibited_actions |= gsm_inhibitor_peek_flags (GSM_INHIBITOR (object));
-@@ -1205,17 +2174,18 @@ on_store_inhibitor_removed (GsmStore   *store,
+@@ -1191,21 +2177,22 @@
                              const char *id,
                              GsmManager *manager)
  {
@@ -9570,21 +11970,27 @@ index e413cd52..edae5062 100644
  
          update_idle (manager);
  
-@@ -1228,51 +2198,55 @@ static void
+-        if (manager->phase >= GSM_MANAGER_PHASE_QUERY_END_SESSION) {
++        if (priv->phase >= GSM_MANAGER_PHASE_QUERY_END_SESSION) {
+                 end_session_or_show_shell_dialog (manager);
+         }
+ }
+@@ -1214,51 +2201,57 @@
  gsm_manager_dispose (GObject *object)
  {
          GsmManager *manager = GSM_MANAGER (object);
--
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
+ 
          g_debug ("GsmManager: disposing manager");
  
 -        g_clear_object (&manager->end_session_cancellable);
 -        g_clear_pointer (&manager->session_name, g_free);
-+        g_clear_object (&priv->end_session_cancellable);
-+        g_clear_pointer (&priv->session_name, g_free);
- 
+-
 -        if (manager->clients != NULL) {
 -                g_signal_handlers_disconnect_by_func (manager->clients,
++        g_clear_object (&priv->end_session_cancellable);
++        g_clear_pointer (&priv->session_name, g_free);
++
 +        if (priv->clients != NULL) {
 +                g_signal_handlers_disconnect_by_func (priv->clients,
                                                        on_store_client_added,
@@ -9595,19 +12001,22 @@ index e413cd52..edae5062 100644
                                                        manager);
 -                g_object_unref (manager->clients);
 -                manager->clients = NULL;
+-        }
+-
+-        g_clear_object (&manager->apps);
+-
+-        if (manager->inhibitors != NULL) {
+-                g_signal_handlers_disconnect_by_func (manager->inhibitors,
 +                g_object_unref (priv->clients);
 +                priv->clients = NULL;
-         }
- 
--        g_clear_object (&manager->apps);
++        }
++
 +        g_clear_object (&priv->apps);
 +        g_slist_free (priv->required_apps);
 +        priv->required_apps = NULL;
 +        g_slist_free (priv->pending_apps);
 +        priv->pending_apps = NULL;
- 
--        if (manager->inhibitors != NULL) {
--                g_signal_handlers_disconnect_by_func (manager->inhibitors,
++
 +        if (priv->inhibitors != NULL) {
 +                g_signal_handlers_disconnect_by_func (priv->inhibitors,
                                                        on_store_inhibitor_added,
@@ -9619,39 +12028,45 @@ index e413cd52..edae5062 100644
  
 -                g_object_unref (manager->inhibitors);
 -                manager->inhibitors = NULL;
-+                g_object_unref (priv->inhibitors);
-+                priv->inhibitors = NULL;
-         }
- 
+-        }
+-
 -        g_clear_object (&manager->presence);
 -        g_clear_object (&manager->settings);
 -        g_clear_object (&manager->session_settings);
 -        g_clear_object (&manager->lockdown_settings);
 -        g_clear_object (&manager->system);
 -        g_clear_object (&manager->shell);
-+        g_clear_object (&priv->presence);
-+        g_clear_object (&priv->settings);
-+        g_clear_object (&priv->session_settings);
-+        g_clear_object (&priv->lockdown_settings);
-+        g_clear_object (&priv->system);
-+        g_clear_object (&priv->shell);
- 
+-
 -        if (manager->skeleton != NULL) {
 -                g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (manager->skeleton),
 -                                                                    manager->connection);
 -                g_clear_object (&manager->skeleton);
+-        }
+-
+-        g_clear_object (&manager->connection);
++                g_object_unref (priv->inhibitors);
++                priv->inhibitors = NULL;
++        }
++
++        g_clear_object (&priv->presence);
++        g_clear_object (&priv->settings);
++        g_clear_object (&priv->session_settings);
++        g_clear_object (&priv->screensaver_settings);
++        g_clear_object (&priv->lockdown_settings);
++        g_clear_object (&priv->system);
++        g_clear_object (&priv->shell);
++
 +        if (priv->skeleton != NULL) {
 +                g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (priv->skeleton),
 +                                                                    priv->connection);
 +                g_clear_object (&priv->skeleton);
-         }
- 
--        g_clear_object (&manager->connection);
++        }
++
 +        g_clear_object (&priv->connection);
  
          G_OBJECT_CLASS (gsm_manager_parent_class)->dispose (object);
  }
-@@ -1287,6 +2261,29 @@ gsm_manager_class_init (GsmManagerClass *klass)
+@@ -1273,6 +2266,29 @@
          object_class->constructor = gsm_manager_constructor;
          object_class->dispose = gsm_manager_dispose;
  
@@ -9681,7 +12096,7 @@ index e413cd52..edae5062 100644
          g_object_class_install_property (object_class,
                                           PROP_SESSION_NAME,
                                           g_param_spec_string ("session-name",
-@@ -1294,6 +2291,36 @@ gsm_manager_class_init (GsmManagerClass *klass)
+@@ -1280,6 +2296,36 @@
                                                                NULL,
                                                                NULL,
                                                                G_PARAM_READABLE));
@@ -9718,14 +12133,15 @@ index e413cd52..edae5062 100644
  }
  
  static void
-@@ -1312,20 +2339,22 @@ on_presence_status_changed (GsmPresence  *presence,
+@@ -1298,20 +2344,23 @@
  static void
  on_gsm_system_active_changed (GsmSystem  *system,
                                GParamSpec *pspec,
 -                              GsmManager *manager)
+-{
 +                              GsmManager *self)
- {
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++{
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (self);
          gboolean is_active;
  
 -        is_active = gsm_system_is_active (manager->system);
@@ -9741,11 +12157,12 @@ index e413cd52..edae5062 100644
  {
 -        return g_settings_get_boolean (manager->lockdown_settings,
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        return g_settings_get_boolean (priv->lockdown_settings,
                                         KEY_DISABLE_LOG_OUT);
  }
  
-@@ -1342,16 +2371,60 @@ complete_end_session_task (GsmManager            *manager,
+@@ -1328,16 +2377,60 @@
                  g_dbus_method_invocation_return_value (invocation, NULL);
  }
  
@@ -9807,14 +12224,15 @@ index e413cd52..edae5062 100644
                  g_dbus_method_invocation_return_error (invocation,
                                                         GSM_MANAGER_ERROR,
                                                         GSM_MANAGER_ERROR_NOT_IN_RUNNING,
-@@ -1370,15 +2443,12 @@ gsm_manager_shutdown (GsmExportedManager    *skeleton,
-         if (manager->session_save)
-                 gsm_session_save_seal (manager->session_save);
+@@ -1353,15 +2446,12 @@
+                 return TRUE;
+         }
  
 -        task = g_task_new (manager, manager->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
-+        task = g_task_new (manager, priv->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
- 
+-
 -        manager->pending_end_session_tasks = g_slist_prepend (manager->pending_end_session_tasks,
++        task = g_task_new (manager, priv->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
++
 +        priv->pending_end_session_tasks = g_slist_prepend (priv->pending_end_session_tasks,
                                                                      task);
  
@@ -9826,7 +12244,7 @@ index e413cd52..edae5062 100644
  
          return TRUE;
  }
-@@ -1388,11 +2458,12 @@ gsm_manager_reboot (GsmExportedManager    *skeleton,
+@@ -1371,11 +2461,12 @@
                      GDBusMethodInvocation *invocation,
                      GsmManager            *manager)
  {
@@ -9840,17 +12258,18 @@ index e413cd52..edae5062 100644
                  g_dbus_method_invocation_return_error (invocation,
                                                         GSM_MANAGER_ERROR,
                                                         GSM_MANAGER_ERROR_NOT_IN_RUNNING,
-@@ -1411,15 +2482,11 @@ gsm_manager_reboot (GsmExportedManager    *skeleton,
-         if (manager->session_save)
-                 gsm_session_save_seal (manager->session_save);
+@@ -1391,15 +2482,12 @@
+                 return TRUE;
+         }
  
 -        task = g_task_new (manager, manager->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
-+        task = g_task_new (manager, priv->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
- 
+-
 -        manager->pending_end_session_tasks = g_slist_prepend (manager->pending_end_session_tasks,
++        task = g_task_new (manager, priv->end_session_cancellable, (GAsyncReadyCallback) complete_end_session_task, invocation);
++
 +        priv->pending_end_session_tasks = g_slist_prepend (priv->pending_end_session_tasks,
                                                                      task);
--
+ 
 -        g_debug ("GsmManager: requesting reboot");
 -
 -        manager->logout_type = GSM_MANAGER_LOGOUT_REBOOT;
@@ -9859,7 +12278,7 @@ index e413cd52..edae5062 100644
  
          return TRUE;
  }
-@@ -1429,15 +2496,16 @@ gsm_manager_can_shutdown (GsmExportedManager    *skeleton,
+@@ -1409,15 +2497,16 @@
                            GDBusMethodInvocation *invocation,
                            GsmManager            *manager)
  {
@@ -9880,7 +12299,7 @@ index e413cd52..edae5062 100644
  
          gsm_exported_manager_complete_can_shutdown (skeleton, invocation, shutdown_available);
  
-@@ -1449,12 +2517,13 @@ gsm_manager_can_reboot_to_firmware_setup (GsmExportedManager    *skeleton,
+@@ -1429,12 +2518,13 @@
                                            GDBusMethodInvocation *invocation,
                                            GsmManager            *manager)
  {
@@ -9895,11 +12314,12 @@ index e413cd52..edae5062 100644
  
          gsm_exported_manager_complete_can_reboot_to_firmware_setup (skeleton, invocation, reboot_to_firmware_available);
  
-@@ -1467,9 +2536,10 @@ gsm_manager_set_reboot_to_firmware_setup (GsmExportedManager    *skeleton,
+@@ -1447,9 +2537,11 @@
                                            gboolean               enable,
                                            GsmManager            *manager)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: SetRebootToFirmwareSetup called");
  
 -        gsm_system_set_restart_to_firmware_setup (manager->system, enable);
@@ -9907,21 +12327,28 @@ index e413cd52..edae5062 100644
  
          gsm_exported_manager_complete_set_reboot_to_firmware_setup (skeleton, invocation);
  
-@@ -1483,7 +2553,8 @@ gsm_manager_setenv (GsmExportedManager    *skeleton,
+@@ -1463,11 +2555,13 @@
                      const char            *value,
                      GsmManager            *manager)
  {
 -        if (manager->phase > GSM_MANAGER_PHASE_INITIALIZATION) {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        if (priv->phase > GSM_MANAGER_PHASE_INITIALIZATION) {
                  g_dbus_method_invocation_return_error (invocation,
                                                         GSM_MANAGER_ERROR,
                                                         GSM_MANAGER_ERROR_NOT_IN_INITIALIZATION,
-@@ -1501,24 +2572,31 @@ gsm_manager_initialized (GsmExportedManager    *skeleton,
+-                                                       "Setenv interface is only available during the Initialization phase");
++                                                       "Setenv interface is only available during the DisplayServer and Initialization phase");
+         } else {
+                 gsm_util_setenv (variable, value);
+                 gsm_exported_manager_complete_setenv (skeleton, invocation);
+@@ -1481,23 +2575,32 @@
                           GDBusMethodInvocation *invocation,
                           GsmManager            *manager)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          /* Signaled by helper when gnome-session-initialized.target is reached. */
 -        if (manager->systemd_initialized) {
 +        if (!priv->systemd_managed) {
@@ -9947,26 +12374,27 @@ index e413cd52..edae5062 100644
 -                manager->phase++;
 -                start_phase (manager);
 +                priv->systemd_initialized = TRUE;
- 
++
 +                if (priv->manager_initialized) {
 +                        g_assert (priv->phase == GSM_MANAGER_PHASE_INITIALIZATION);
 +                        priv->phase++;
 +                        start_phase (manager);
 +                }
+ 
                  gsm_exported_manager_complete_initialized (skeleton, invocation);
          }
- 
-@@ -1594,7 +2672,8 @@ gsm_manager_initialization_error (GsmExportedManager    *skeleton,
+@@ -1574,7 +2677,9 @@
                                    gboolean               fatal,
                                    GsmManager            *manager)
  {
 -        if (manager->phase != GSM_MANAGER_PHASE_INITIALIZATION) {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        if (priv->phase != GSM_MANAGER_PHASE_INITIALIZATION) {
                  g_dbus_method_invocation_return_error (invocation,
                                                         GSM_MANAGER_ERROR,
                                                         GSM_MANAGER_ERROR_NOT_IN_INITIALIZATION,
-@@ -1608,12 +2687,28 @@ gsm_manager_initialization_error (GsmExportedManager    *skeleton,
+@@ -1588,12 +2693,29 @@
          return TRUE;
  }
  
@@ -9992,13 +12420,29 @@ index e413cd52..edae5062 100644
  {
 -        if (manager->phase < GSM_MANAGER_PHASE_RUNNING) {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        if (priv->phase < GSM_MANAGER_PHASE_RUNNING) {
                  g_set_error (error,
                               GSM_MANAGER_ERROR,
                               GSM_MANAGER_ERROR_NOT_IN_RUNNING,
-@@ -1653,18 +2748,6 @@ gsm_manager_logout (GsmManager *manager,
-         if (manager->session_save && logout_mode != GSM_MANAGER_LOGOUT_MODE_FORCE)
-                 gsm_session_save_seal (manager->session_save);
+@@ -1611,13 +2733,9 @@
+ 
+         switch (logout_mode) {
+         case GSM_MANAGER_LOGOUT_MODE_NORMAL:
+-                g_debug ("GsmManager: requesting logout");
+-                break;
+         case GSM_MANAGER_LOGOUT_MODE_NO_CONFIRMATION:
+-                g_debug ("GsmManager: requesting no-confirmation logout");
+-                break;
+         case GSM_MANAGER_LOGOUT_MODE_FORCE:
+-                g_debug ("GsmManager: requesting forced logout");
++                user_logout (manager, logout_mode);
+                 break;
+ 
+         default:
+@@ -1630,18 +2748,6 @@
+                 return FALSE;
+         }
  
 -        manager->logout_mode = logout_mode;
 -
@@ -10015,7 +12459,7 @@ index e413cd52..edae5062 100644
          return TRUE;
  }
  
-@@ -1691,17 +2774,19 @@ static gboolean
+@@ -1668,17 +2774,21 @@
  gsm_manager_register_client (GsmExportedManager    *skeleton,
                               GDBusMethodInvocation *invocation,
                               const char            *app_id,
@@ -10027,18 +12471,22 @@ index e413cd52..edae5062 100644
 +        char       *new_startup_id;
          const char *sender;
          GsmClient  *client;
- 
+-
++        GsmApp     *app;
++
++        app = NULL;
          client = NULL;
  
 -        g_debug ("GsmManager: RegisterClient %s", app_id);
-+        g_debug ("GsmManager: RegisterClient %s", startup_id);
- 
+-
 -        if (manager->phase >= GSM_MANAGER_PHASE_QUERY_END_SESSION) {
++        g_debug ("GsmManager: RegisterClient %s", startup_id);
++
 +        if (priv->phase >= GSM_MANAGER_PHASE_QUERY_END_SESSION) {
                  g_debug ("Unable to register client: shutting down");
  
                  g_dbus_method_invocation_return_error (invocation,
-@@ -1711,8 +2796,39 @@ gsm_manager_register_client (GsmExportedManager    *skeleton,
+@@ -1688,8 +2798,39 @@
                  return TRUE;
          }
  
@@ -10079,7 +12527,7 @@ index e413cd52..edae5062 100644
          if (client == NULL) {
                  g_debug ("Unable to create client");
  
-@@ -1723,14 +2839,29 @@ gsm_manager_register_client (GsmExportedManager    *skeleton,
+@@ -1700,14 +2841,29 @@
                  return TRUE;
          }
  
@@ -10111,7 +12559,7 @@ index e413cd52..edae5062 100644
          gsm_exported_manager_complete_register_client (skeleton, invocation, gsm_client_peek_id (client));
  
          return TRUE;
-@@ -1742,7 +2873,26 @@ gsm_manager_unregister_client (GsmExportedManager    *skeleton,
+@@ -1719,8 +2875,28 @@
                                 const char            *client_id,
                                 GsmManager            *manager)
  {
@@ -10137,9 +12585,11 @@ index e413cd52..edae5062 100644
 +        gsm_client_set_status (client, GSM_CLIENT_UNREGISTERED);
 +
          gsm_exported_manager_complete_unregister_client (skeleton, invocation);
++
          return TRUE;
  }
-@@ -1837,41 +2987,62 @@ static gboolean
+ 
+@@ -1728,41 +2904,62 @@
  gsm_manager_inhibit (GsmExportedManager    *skeleton,
                       GDBusMethodInvocation *invocation,
                       const char            *app_id,
@@ -10156,27 +12606,29 @@ index e413cd52..edae5062 100644
  
 -        g_debug ("GsmManager: Inhibit app_id=%s reason=%s flags=%u",
 -                 app_id, reason, flags);
-+        g_debug ("GsmManager: Inhibit xid=%u app_id=%s reason=%s flags=%u",
-+                 toplevel_xid,
-+                 app_id,
-+                 reason,
-+                 flags);
- 
+-
 -        if (manager->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE)
 -                validation_error = "Forced logout cannot be inhibited";
 -        else if (IS_STRING_EMPTY (reason))
 -                validation_error = "Reason not specified";
 -        else if (flags == 0)
 -                validation_error = "Invalid inhibit flags";
-+        if (priv->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
-+                GError *new_error;
- 
+-
 -        if (validation_error != NULL) {
 -                g_debug ("GsmManager: Unable to inhibit: %s", validation_error);
 -                g_dbus_method_invocation_return_error (invocation,
 -                                                       GSM_MANAGER_ERROR,
 -                                                       GSM_MANAGER_ERROR_GENERAL,
 -                                                       "%s", validation_error);
++        g_debug ("GsmManager: Inhibit xid=%u app_id=%s reason=%s flags=%u",
++                 toplevel_xid,
++                 app_id,
++                 reason,
++                 flags);
++
++        if (priv->logout_mode == GSM_MANAGER_LOGOUT_MODE_FORCE) {
++                GError *new_error;
++
 +                new_error = g_error_new (GSM_MANAGER_ERROR,
 +                                         GSM_MANAGER_ERROR_GENERAL,
 +                                         "Forced logout cannot be inhibited");
@@ -10219,7 +12671,7 @@ index e413cd52..edae5062 100644
          g_object_unref (inhibitor);
  
          gsm_exported_manager_complete_inhibit (skeleton, invocation, cookie);
-@@ -1885,11 +3056,12 @@ gsm_manager_uninhibit (GsmExportedManager    *skeleton,
+@@ -1776,11 +2973,12 @@
                         guint                  cookie,
                         GsmManager            *manager)
  {
@@ -10233,9 +12685,12 @@ index e413cd52..edae5062 100644
                                                      (GsmStoreFunc)_find_by_cookie,
                                                      &cookie);
          if (inhibitor == NULL) {
-@@ -1905,11 +3077,12 @@ gsm_manager_uninhibit (GsmExportedManager    *skeleton,
+@@ -1794,13 +2992,14 @@
+                 return TRUE;
+         }
  
-         g_debug ("GsmManager: removing inhibitor %s reason '%s' %u connection %s",
+-        g_debug ("GsmManager: removing inhibitor %s reason '%s' %u connection %s",
++        g_debug ("GsmManager: removing inhibitor %s %u reason '%s' %u connection %s",
                   gsm_inhibitor_peek_app_id (inhibitor),
 +                 gsm_inhibitor_peek_toplevel_xid (inhibitor),
                   gsm_inhibitor_peek_reason (inhibitor),
@@ -10247,7 +12702,7 @@ index e413cd52..edae5062 100644
  
          gsm_exported_manager_complete_uninhibit (skeleton, invocation);
  
-@@ -1922,11 +3095,12 @@ gsm_manager_is_inhibited (GsmExportedManager    *skeleton,
+@@ -1813,14 +3012,15 @@
                            guint                  flags,
                            GsmManager            *manager)
  {
@@ -10261,12 +12716,15 @@ index e413cd52..edae5062 100644
 +            || gsm_store_size (priv->inhibitors) == 0) {
                  is_inhibited = FALSE;
          } else {
-                 inhibitor = (GsmInhibitor *) gsm_store_find (manager->inhibitors,
-@@ -1953,15 +3127,37 @@ listify_store_ids (char       *id,
-         return FALSE;
+-                inhibitor = (GsmInhibitor *) gsm_store_find (manager->inhibitors,
++                inhibitor = (GsmInhibitor *) gsm_store_find (priv->inhibitors,
+                                                              (GsmStoreFunc)inhibitor_has_flag,
+                                                              GUINT_TO_POINTER (flags));
+                 if (inhibitor == NULL) {
+@@ -1845,14 +3045,36 @@
  }
  
-+static gboolean
+ static gboolean
 +gsm_manager_get_clients (GsmExportedManager    *skeleton,
 +                         GDBusMethodInvocation *invocation,
 +                         GsmManager            *manager)
@@ -10287,7 +12745,7 @@ index e413cd52..edae5062 100644
 +        return TRUE;
 +}
 +
- static gboolean
++static gboolean
  gsm_manager_get_inhibitors (GsmExportedManager    *skeleton,
                              GDBusMethodInvocation *invocation,
                              GsmManager            *manager)
@@ -10301,11 +12759,10 @@ index e413cd52..edae5062 100644
                             (GsmStoreFunc) listify_store_ids,
                             &inhibitors);
          g_ptr_array_add (inhibitors, NULL);
-@@ -1973,18 +3169,54 @@ gsm_manager_get_inhibitors (GsmExportedManager    *skeleton,
-         return TRUE;
+@@ -1865,17 +3087,53 @@
  }
  
-+static gboolean
+ static gboolean
 +_app_has_autostart_condition (const char *id,
 +                              GsmApp     *app,
 +                              const char *condition)
@@ -10344,37 +12801,42 @@ index e413cd52..edae5062 100644
 +        return TRUE;
 +}
 +
- static gboolean
++static gboolean
  gsm_manager_is_session_running (GsmExportedManager    *skeleton,
                                  GDBusMethodInvocation *invocation,
                                  GsmManager            *manager)
  {
 -        gboolean running;
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
- 
+-
 -        running = (manager->phase == GSM_MANAGER_PHASE_APPLICATION ||
 -                   manager->phase == GSM_MANAGER_PHASE_RUNNING ||
 -                   manager->phase == GSM_MANAGER_PHASE_QUERY_END_SESSION);
 -
 -        gsm_exported_manager_complete_is_session_running (skeleton, invocation, running);
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        gsm_exported_manager_complete_is_session_running (skeleton, invocation,
 +                                                          priv->phase == GSM_MANAGER_PHASE_RUNNING);
          return TRUE;
  }
  
-@@ -1995,6 +3227,11 @@ on_session_connection_closed (GDBusConnection *connection,
+@@ -1885,15 +3143,21 @@
+                               GError *error,
                                gpointer user_data)
  {
-         GsmManager *manager = GSM_MANAGER (user_data);
+-        GsmManager *manager = GSM_MANAGER (user_data);
 +        GsmManager *manager;
 +        GsmManagerPrivate *priv;
 +
 +        manager = GSM_MANAGER (user_data);
 +        priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: dbus disconnected; disconnecting dbus clients...");
-         manager->dbus_disconnected = TRUE;
+-        manager->dbus_disconnected = TRUE;
++        priv->dbus_disconnected = TRUE;
          remove_clients_for_connection (manager, NULL);
-@@ -2003,6 +3240,7 @@ on_session_connection_closed (GDBusConnection *connection,
+ }
+ 
  static gboolean
  register_manager (GsmManager *manager)
  {
@@ -10382,7 +12844,7 @@ index e413cd52..edae5062 100644
          GDBusConnection *connection;
          GsmExportedManager *skeleton;
          GError *error = NULL;
-@@ -2032,6 +3270,8 @@ register_manager (GsmManager *manager)
+@@ -1923,6 +3187,8 @@
                            G_CALLBACK (gsm_manager_can_reboot_to_firmware_setup), manager);
          g_signal_connect (skeleton, "handle-can-shutdown",
                            G_CALLBACK (gsm_manager_can_shutdown), manager);
@@ -10391,9 +12853,18 @@ index e413cd52..edae5062 100644
          g_signal_connect (skeleton, "handle-get-inhibitors",
                            G_CALLBACK (gsm_manager_get_inhibitors), manager);
          g_signal_connect (skeleton, "handle-get-locale",
-@@ -2069,18 +3309,18 @@ register_manager (GsmManager *manager)
-         g_signal_connect (skeleton, "handle-unregister-restore",
-                           G_CALLBACK (gsm_manager_unregister_restore), manager);
+@@ -1931,6 +3197,8 @@
+                           G_CALLBACK (gsm_manager_inhibit), manager);
+         g_signal_connect (skeleton, "handle-initialization-error",
+                           G_CALLBACK (gsm_manager_initialization_error), manager);
++        g_signal_connect (skeleton, "handle-is-autostart-condition-handled",
++                          G_CALLBACK (gsm_manager_is_autostart_condition_handled), manager);
+         g_signal_connect (skeleton, "handle-is-inhibited",
+                           G_CALLBACK (gsm_manager_is_inhibited), manager);
+         g_signal_connect (skeleton, "handle-is-session-running",
+@@ -1954,18 +3222,18 @@
+         g_signal_connect (skeleton, "handle-unregister-client",
+                           G_CALLBACK (gsm_manager_unregister_client), manager);
  
 -        manager->dbus_disconnected = FALSE;
 +        priv->dbus_disconnected = FALSE;
@@ -10402,10 +12873,11 @@ index e413cd52..edae5062 100644
  
 -        manager->connection = connection;
 -        manager->skeleton = skeleton;
+-
+-        g_signal_connect (manager->system, "notify::active",
 +        priv->connection = connection;
 +        priv->skeleton = skeleton;
- 
--        g_signal_connect (manager->system, "notify::active",
++
 +        g_signal_connect (priv->system, "notify::active",
                            G_CALLBACK (on_gsm_system_active_changed), manager);
  
@@ -10415,15 +12887,14 @@ index e413cd52..edae5062 100644
  
          return TRUE;
  }
-@@ -2101,39 +3341,32 @@ idle_timeout_get_mapping (GValue *value,
+@@ -1986,50 +3254,43 @@
  static void
  gsm_manager_init (GsmManager *manager)
  {
 -        manager->settings = g_settings_new (GSM_MANAGER_SCHEMA);
 -        manager->session_settings = g_settings_new (SESSION_SCHEMA);
 -        manager->lockdown_settings = g_settings_new (LOCKDOWN_SCHEMA);
-+        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
- 
+-
 -        manager->clients = gsm_store_new ();
 -        g_signal_connect (manager->clients,
 -                          "added",
@@ -10433,35 +12904,33 @@ index e413cd52..edae5062 100644
 -                          "removed",
 -                          G_CALLBACK (on_store_client_removed),
 -                          manager);
+-
+-        manager->inhibitors = gsm_store_new ();
+-        g_signal_connect (manager->inhibitors,
++        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        priv->settings = g_settings_new (GSM_MANAGER_SCHEMA);
 +        priv->session_settings = g_settings_new (SESSION_SCHEMA);
 +        priv->screensaver_settings = g_settings_new (SCREENSAVER_SCHEMA);
 +        priv->lockdown_settings = g_settings_new (LOCKDOWN_SCHEMA);
- 
--        manager->inhibitors = gsm_store_new ();
--        g_signal_connect (manager->inhibitors,
--                          "added",
--                          G_CALLBACK (on_store_inhibitor_added),
--                          manager);
--        g_signal_connect (manager->inhibitors,
--                          "removed",
--                          G_CALLBACK (on_store_inhibitor_removed),
--                          manager);
++
 +        priv->inhibitors = gsm_store_new ();
 +        g_signal_connect (priv->inhibitors,
-+                           "added",
-+                           G_CALLBACK (on_store_inhibitor_added),
-+                           manager);
+                           "added",
+                           G_CALLBACK (on_store_inhibitor_added),
+                           manager);
+-        g_signal_connect (manager->inhibitors,
 +        g_signal_connect (priv->inhibitors,
-+                           "removed",
-+                           G_CALLBACK (on_store_inhibitor_removed),
-+                           manager);
+                           "removed",
+                           G_CALLBACK (on_store_inhibitor_removed),
+                           manager);
  
 -        manager->apps = gsm_store_new ();
-+        priv->apps = gsm_store_new ();
- 
+-
 -        manager->presence = gsm_presence_new ();
 -        g_signal_connect (manager->presence,
++        priv->apps = gsm_store_new ();
++
 +        priv->presence = gsm_presence_new ();
 +        g_signal_connect (priv->presence,
                            "status-changed",
@@ -10471,9 +12940,11 @@ index e413cd52..edae5062 100644
 -        g_settings_bind_with_mapping (manager->session_settings,
 +        g_settings_bind_with_mapping (priv->session_settings,
                                        KEY_IDLE_DELAY,
-                                       manager->presence,
+-                                      manager->presence,
++                                      priv->presence,
                                        "idle-timeout",
-@@ -2142,13 +3375,15 @@ gsm_manager_init (GsmManager *manager)
+                                       G_SETTINGS_BIND_GET,
+                                       idle_timeout_get_mapping,
                                        NULL,
                                        NULL, NULL);
  
@@ -10486,14 +12957,17 @@ index e413cd52..edae5062 100644
  }
  
  GsmManager *
--gsm_manager_get (void)
+@@ -2039,18 +3300,23 @@
+ }
+ 
+ GsmManager *
+-gsm_manager_new (void)
 +gsm_manager_new (GsmStore *client_store,
 +                 gboolean  failsafe,
 +                 gboolean  systemd_managed)
  {
-         return manager_object;
- }
-@@ -2161,7 +3396,11 @@ gsm_manager_new (void)
+         if (manager_object != NULL) {
+                 g_object_ref (manager_object);
          } else {
                  gboolean res;
  
@@ -10506,7 +12980,11 @@ index e413cd52..edae5062 100644
  
                  g_object_add_weak_pointer (manager_object,
                                             (gpointer *) &manager_object);
-@@ -2179,16 +3418,37 @@ gsm_manager_new (void)
+-
+                 res = register_manager (manager_object);
+                 if (! res) {
+                         g_object_unref (manager_object);
+@@ -2064,16 +3330,37 @@
  static void
  disconnect_shell_dialog_signals (GsmManager *manager)
  {
@@ -10554,7 +13032,7 @@ index e413cd52..edae5062 100644
  }
  
  static void
-@@ -2200,29 +3460,27 @@ on_shell_end_session_dialog_canceled (GsmShell   *shell,
+@@ -2085,25 +3372,27 @@
  }
  
  static void
@@ -10575,9 +13053,8 @@ index e413cd52..edae5062 100644
 -        else if (manager->logout_type != confirmed_logout_type)
 -                g_warning ("GsmManager: Shell confirmed unexpected logout type");
 -
--        if (manager->session_save &&
--            !g_settings_get_boolean (manager->session_settings, KEY_SAVE_RESTORE))
--                gsm_session_save_discard (manager->session_save);
+-        manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
+-        manager->logout_type = confirmed_logout_type;
 +_handle_end_session_dialog_response (GsmManager           *manager,
 +                                     GsmManagerLogoutType  logout_type)
 +{
@@ -10596,15 +13073,13 @@ index e413cd52..edae5062 100644
 +                /* Already shutting down, nothing more to do */
 +                return;
 +        }
- 
--        manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
--        manager->logout_type = confirmed_logout_type;
++
 +        priv->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
 +        priv->logout_type = logout_type;
          end_phase (manager);
  }
  
-@@ -2230,54 +3488,58 @@ static void
+@@ -2111,55 +3400,60 @@
  on_shell_end_session_dialog_confirmed_logout (GsmShell   *shell,
                                                GsmManager *manager)
  {
@@ -10636,66 +13111,76 @@ index e413cd52..edae5062 100644
  {
 -        if (manager->shell_end_session_dialog_canceled_id != 0)
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        if (priv->shell_end_session_dialog_canceled_id != 0)
                  return;
  
 -        manager->shell_end_session_dialog_canceled_id =
+-                g_signal_connect (manager->shell,
 +        priv->shell_end_session_dialog_canceled_id =
-                 g_signal_connect (manager->shell,
++                g_signal_connect (priv->shell,
                                    "end-session-dialog-canceled",
                                    G_CALLBACK (on_shell_end_session_dialog_canceled),
                                    manager);
  
 -        manager->shell_end_session_dialog_open_failed_id =
+-                g_signal_connect (manager->shell,
 +        priv->shell_end_session_dialog_open_failed_id =
-                 g_signal_connect (manager->shell,
++                g_signal_connect (priv->shell,
                                    "end-session-dialog-open-failed",
                                    G_CALLBACK (on_shell_end_session_dialog_canceled),
                                    manager);
  
 -        manager->shell_end_session_dialog_confirmed_logout_id =
+-                g_signal_connect (manager->shell,
 +        priv->shell_end_session_dialog_confirmed_logout_id =
-                 g_signal_connect (manager->shell,
++                g_signal_connect (priv->shell,
                                    "end-session-dialog-confirmed-logout",
                                    G_CALLBACK (on_shell_end_session_dialog_confirmed_logout),
                                    manager);
  
 -        manager->shell_end_session_dialog_confirmed_shutdown_id =
+-                g_signal_connect (manager->shell,
 +        priv->shell_end_session_dialog_confirmed_shutdown_id =
-                 g_signal_connect (manager->shell,
++                g_signal_connect (priv->shell,
                                    "end-session-dialog-confirmed-shutdown",
                                    G_CALLBACK (on_shell_end_session_dialog_confirmed_shutdown),
                                    manager);
  
 -        manager->shell_end_session_dialog_confirmed_reboot_id =
+-                g_signal_connect (manager->shell,
 +        priv->shell_end_session_dialog_confirmed_reboot_id =
-                 g_signal_connect (manager->shell,
++                g_signal_connect (priv->shell,
                                    "end-session-dialog-confirmed-reboot",
                                    G_CALLBACK (on_shell_end_session_dialog_confirmed_reboot),
-@@ -2288,14 +3550,15 @@ static void
+                                   manager);
+@@ -2169,14 +3463,15 @@
  show_shell_end_session_dialog (GsmManager                   *manager,
                                 GsmShellEndSessionDialogType  type)
  {
 -        if (!gsm_shell_is_running (manager->shell))
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
 +        if (!gsm_shell_is_running (priv->shell))
                  return;
  
-         connect_shell_dialog_signals (manager);
- 
--        gsm_shell_open_end_session_dialog (manager->shell,
 +        gsm_shell_open_end_session_dialog (priv->shell,
-                                            type,
--                                           manager->inhibitors);
++                                           type,
 +                                           priv->inhibitors);
+         connect_shell_dialog_signals (manager);
+-
+-        gsm_shell_open_end_session_dialog (manager->shell,
+-                                           type,
+-                                           manager->inhibitors);
  }
  
  /*
-@@ -2309,57 +3572,143 @@ gboolean
+@@ -2190,17 +3485,34 @@
  gsm_manager_set_phase (GsmManager      *manager,
                         GsmManagerPhase  phase)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_return_val_if_fail (GSM_IS_MANAGER (manager), FALSE);
 -        manager->phase = phase;
 +        priv->phase = phase;
@@ -10705,14 +13190,15 @@ index e413cd52..edae5062 100644
  static void
  append_app (GsmManager *manager,
 -            GsmApp     *app)
+-{
 +            GsmApp     *app,
 +            gboolean    is_required)
- {
++{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +        const char *id;
          const char *app_id;
          GsmApp     *dup;
- 
++
 +        id = gsm_app_peek_id (app);
 +        if (IS_STRING_EMPTY (id)) {
 +                g_debug ("GsmManager: not adding app: no id");
@@ -10724,9 +13210,10 @@ index e413cd52..edae5062 100644
 +                g_debug ("GsmManager: not adding app: already added");
 +                return;
 +        }
+ 
          app_id = gsm_app_peek_app_id (app);
          if (IS_STRING_EMPTY (app_id)) {
-                 g_debug ("GsmManager: not adding app: no app-id");
+@@ -2208,38 +3520,115 @@
                  return;
          }
  
@@ -10745,21 +13232,24 @@ index e413cd52..edae5062 100644
          }
  
 -        gsm_store_add (manager->apps, app_id, G_OBJECT (app));
+-}
+-
+-gboolean
+-gsm_manager_add_autostart_app (GsmManager *manager,
+-                               const char *path)
+-{
 +        gsm_store_add (priv->apps, id, G_OBJECT (app));
 +        if (is_required) {
 +                g_debug ("GsmManager: adding required app %s", gsm_app_peek_app_id (app));
 +                priv->required_apps = g_slist_prepend (priv->required_apps, app);
 +        }
- }
- 
--gboolean
--gsm_manager_add_autostart_app (GsmManager *manager,
--                               const char *path)
++}
++
 +static gboolean
 +add_autostart_app_internal (GsmManager *manager,
 +                            const char *path,
 +                            gboolean    is_required)
- {
++{
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
          GsmApp  *app;
 +        char   **internal_provides;
@@ -10769,6 +13259,11 @@ index e413cd52..edae5062 100644
          g_return_val_if_fail (path != NULL, FALSE);
  
 -        app = gsm_app_new_for_path (path, &error);
++        /* Note: if we cannot add the app because its service is already
++         * provided, because its app-id is taken, or because of any other
++         * reason meaning there is already an app playing its role, then we
++         * should make sure that relevant properties (like
++         * provides/is_required) are set in the pre-existing app if needed. */
 +        app = gsm_autostart_app_new (path, priv->systemd_managed, &error);
          if (app == NULL) {
                  g_warning ("%s", error->message);
@@ -10816,7 +13311,7 @@ index e413cd52..edae5062 100644
  
          return TRUE;
  }
- 
++
 +gboolean
 +gsm_manager_add_autostart_app (GsmManager *manager,
 +                               const char *path)
@@ -10841,14 +13336,15 @@ index e413cd52..edae5062 100644
 +        return add_autostart_app_internal (manager, path, TRUE);
 +}
 +
+ 
  gboolean
  gsm_manager_add_autostart_apps_from_dir (GsmManager *manager,
-                                          const char *path)
-@@ -2399,17 +3748,18 @@ on_shutdown_prepared (GsmSystem  *system,
+@@ -2280,17 +3669,19 @@
                        gboolean    success,
                        GsmManager *manager)
  {
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
++
          g_debug ("GsmManager: on_shutdown_prepared, success: %d", success);
          g_signal_handlers_disconnect_by_func (system, on_shutdown_prepared, manager);
  
@@ -10866,13 +13362,21 @@ index e413cd52..edae5062 100644
                  /* back to running phase */
                  cancel_end_session (manager);
          }
-@@ -2418,14 +3768,33 @@ on_shutdown_prepared (GsmSystem  *system,
+@@ -2299,14 +3690,33 @@
  static gboolean
  do_query_end_session_exit (GsmManager *manager)
  {
 -        if (manager->logout_type != GSM_MANAGER_LOGOUT_SHUTDOWN &&
 -            manager->logout_type != GSM_MANAGER_LOGOUT_REBOOT)
 -                return TRUE; /* Continue to end session phase */
+-
+-        g_signal_connect (manager->system, "shutdown-prepared",
+-                          G_CALLBACK (on_shutdown_prepared), manager);
+-        gsm_system_prepare_shutdown (manager->system,
+-                                     manager->logout_type == GSM_MANAGER_LOGOUT_REBOOT);
+-
+-        return FALSE; /* don't leave query end session yet */
+-}
 +        GsmManagerPrivate *priv = gsm_manager_get_instance_private (manager);
 +        gboolean reboot = FALSE;
 +        gboolean shutdown = FALSE;
@@ -10893,20 +13397,14 @@ index e413cd52..edae5062 100644
 +                           priv->logout_type);
 +                break;
 +        }
- 
--        g_signal_connect (manager->system, "shutdown-prepared",
--                          G_CALLBACK (on_shutdown_prepared), manager);
--        gsm_system_prepare_shutdown (manager->system,
--                                     manager->logout_type == GSM_MANAGER_LOGOUT_REBOOT);
++
 +        if (reboot || shutdown) {
 +                g_signal_connect (priv->system, "shutdown-prepared",
 +                                  G_CALLBACK (on_shutdown_prepared), manager);
 +                gsm_system_prepare_shutdown (priv->system, reboot);
 +                return FALSE; /* don't leave query end session yet */
 +        }
- 
--        return FALSE; /* don't leave query end session yet */
--}
++
 +        return TRUE; /* go to end session phase */
 +}
-\ No newline at end of file
+
