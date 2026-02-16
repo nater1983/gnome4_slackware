@@ -47,7 +47,7 @@ diff --git a/meson_options.txt b/meson_options.txt
 index 40103c03e..bf8e96433 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -39,6 +39,10 @@ option('efi_os_dir',
+@@ -48,6 +48,10 @@ option(
    type: 'string',
    description: 'the hardcoded name of OS directory in ESP, e.g. fedora',
  )
@@ -55,9 +55,9 @@ index 40103c03e..bf8e96433 100644
 +  type: 'feature',
 +  description: 'elogind support',
 +)
- option('firmware-packager',
+ option(
+   'firmware-packager',
    type: 'boolean',
-   value: true,
 diff --git a/plugins/logind/meson.build b/plugins/logind/meson.build
 index bd66fabbc..7fe59f594 100644
 --- a/plugins/logind/meson.build
