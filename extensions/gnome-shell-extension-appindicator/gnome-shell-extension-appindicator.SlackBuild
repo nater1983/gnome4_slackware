@@ -25,11 +25,11 @@
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-appindicator
-VERSION=${VERSION:-61}
+VERSION=${VERSION:-63}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=7d1e2c827d33f59cfad65be57c00257a1595b5a8
+_commit=be68add0382b1ee19eb8e851464e3a3ac6900c6a
 
 ARCH=noarch
 
@@ -77,7 +77,6 @@ cd ..
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a AUTHORS.md LICENSE README.md \
     $PKG/usr/doc/$PRGNAM-$VERSION
-#cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 rm -fr $PKG/usr/share/glib-2.0/schemas/gschemas.compiled
 
