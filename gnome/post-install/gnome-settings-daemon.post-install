@@ -1,5 +1,5 @@
 mkdir -p $PKG/etc/ld.so.conf.d
-echo "/usr/lib${LIBDIRSUFFIX}/gnome-settings-daemon-49/" > $PKG/etc/ld.so.conf.d/gsd.conf
+echo "/usr/lib${LIBDIRSUFFIX}/gnome-settings-daemon-50/" > $PKG/etc/ld.so.conf.d/gsd.conf
 
 # Don't auto-suspend by default on AC power (Gentoo)/chore: turn off GNOME donation reminder since they don't do a XDG_CURRENT_DESKTOP check
 install -vDm 0644 $CWD/post-install/gnome-settings-daemon/org.gnome.settings-daemon.plugins.power.gschema.override -t $PKG/usr/share/glib-2.0/schemas
