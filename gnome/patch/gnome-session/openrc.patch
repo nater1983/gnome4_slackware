@@ -1,0 +1,1247 @@
+diff -urN gnome-session-49.2/data/meson.build gnome-session-openrc/data/meson.build
+--- gnome-session-49.2/data/meson.build	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/data/meson.build	2026-02-22 08:52:07.782404953 -0600
+@@ -62,69 +62,173 @@
+ 
+ # Next, let's install the necessary systemd scaffolding
+ 
+-install_data(
+-    'gnome.session.conf',
+-    install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
+-)
+-
+-systemd_service = [
+-  'gnome-session-manager@.service',
+-  'gnome-session-signal-init.service',
+-  'gnome-session-restart-dbus.service',
+-  'gnome-session-monitor.service',
+-]
+-
+-foreach service: systemd_service
+-  configure_file(
+-    input: service + '.in',
+-    output: service,
+-    install: true,
+-    install_dir: systemd_userunitdir,
+-    configuration: {
+-      'libexecdir': session_libexecdir,
+-    },
+-  )
+-endforeach
+-
+-systemd_target = [
+-  'gnome-session-wayland@.target',
+-  'gnome-session-wayland.target',
+-  'gnome-session@.target',
+-  'gnome-session.target',
+-  'gnome-session-basic-services.target',
+-  'gnome-session-pre.target',
+-  'gnome-session-manager.target',
+-  'gnome-session-initialized.target',
+-  'gnome-session-shutdown.target',
+-  'gnome-session-x11-services.target',
+-  'gnome-session-x11-services-ready.target',
+-]
+-if have_x11
+-  systemd_target += [
+-    'gnome-session-x11@.target',
+-    'gnome-session-x11.target',
++if is_variable('systemd_userunitdir')
++  install_data(
++      'gnome.session.conf',
++      install_dir: systemd_userunitdir / 'gnome-session@gnome.target.d',
++  )
++
++  systemd_service = [
++    'gnome-session-manager@.service',
++    'gnome-session-signal-init.service',
++    'gnome-session-restart-dbus.service',
++    'gnome-session-monitor.service',
+   ]
+-endif
+ 
+-install_data(
+-  systemd_target,
+-  install_dir: systemd_userunitdir
+-)
+-
+-# Install resource limits that are applied to GNOME-launched apps
+-
+-install_data(
+-  'app-override.scope.conf',
+-  rename: 'override.conf',
+-  install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
+-)
+-
+-# FIXME: https://github.com/systemd/systemd/issues/37104
+-install_data(
+-  'app-override.scope.conf',
+-  rename: 'override.conf',
+-  install_dir : join_paths(systemd_userunitdir, 'app-flatpak-.scope.d')
+-)
++  foreach service: systemd_service
++    configure_file(
++      input: service + '.in',
++      output: service,
++      install: true,
++      install_dir: systemd_userunitdir,
++      configuration: {
++        'libexecdir': session_libexecdir,
++      },
++    )
++  endforeach
++
++  systemd_target = [
++    'gnome-session-wayland@.target',
++    'gnome-session-wayland.target',
++    'gnome-session@.target',
++    'gnome-session.target',
++    'gnome-session-basic-services.target',
++    'gnome-session-pre.target',
++    'gnome-session-manager.target',
++    'gnome-session-initialized.target',
++    'gnome-session-shutdown.target',
++    'gnome-session-x11-services.target',
++    'gnome-session-x11-services-ready.target',
++  ]
++  if have_x11
++    systemd_target += [
++      'gnome-session-x11@.target',
++      'gnome-session-x11.target',
++    ]
++  endif
++
++  install_data(
++    systemd_target,
++    install_dir: systemd_userunitdir
++  )
++
++  # Install resource limits that are applied to GNOME-launched apps
++
++  install_data(
++    'app-override.scope.conf',
++    rename: 'override.conf',
++    install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
++  )
++
++  # FIXME: https://github.com/systemd/systemd/issues/37104
++  install_data(
++    'app-override.scope.conf',
++    rename: 'override.conf',
++    install_dir : join_paths(systemd_userunitdir, 'app-flatpak-.scope.d')
++  )
++else
++  openrc_target = [
++    'openrc/gnome-session',
++    'openrc/gnome-session-tty',
++    'openrc/gnome-session-wayland',
++    'openrc/gnome-shell',
++    'openrc/gnome-shell.gnome-login',
++    'openrc/gnome-settings-daemon',
++    'openrc/gnome-session-dbus',
++    'openrc/gsd',
++  ]
++  # if have_x11
++  #   openrc_target += [
++  #     'openrc/gnome-session-x11@.target',
++  #     'openrc/gnome-session-x11.target',
++  #   ]
++  # endif
++  
++  openrc_gsd = [
++    'gsd-a11y-settings',
++    'gsd-color',
++    'gsd-datetime',
++    'gsd-housekeeping',
++    'gsd-keyboard',
++    'gsd-media-keys',
++    'gsd-power',
++    'gsd-print-notifications',
++    'gsd-rfkill',
++    'gsd-screensaver-proxy',
++    'gsd-sharing',
++    'gsd-smartcard',
++    'gsd-sound',
++    'gsd-usb-protection',
++    'gsd-wacom',
++    'gsd-wwan',
++    'gsd-xsettings',
++  ]
++
++  # Install the primary services
++  # TODO installs unneeded duplicates since we can't symlink due to that OpenRC bug
++  install_data(
++    openrc_target,
++    install_dir: '/etc/user/init.d'
++  )
++  
++  # Create symlinks of gsd daemons
++  foreach gsd : openrc_gsd
++    install_symlink(
++      gsd,
++      install_dir: '/etc/user/init.d',
++      pointing_to: 'gsd'
++    )
++  endforeach
++  
++  # Create services like gnome-session.{gnome,gnome-login,...}
++  gnome_sessions = [ 'gnome', 'gnome-login', 'gnome-initial-setup' ]
++  targets = [
++    'gnome-session-wayland',
++    'gnome-session',
++    'gnome-session-dbus',
++  ]
++  
++  # Since we can't do symlinks yet, we have to create copies of the symlinked services
++  mapped_target = []
++  mapped_target_rename = []
++  
++  foreach session : gnome_sessions
++    foreach target : targets
++      mapped_target += 'openrc/' + target
++      mapped_target_rename += target + '.' + session
++    endforeach
++    # HACK done above, it seems like symlinks break stuff with openrc
++    #foreach target : targets
++    #  install_symlink(
++    #    target + '--' + session,
++    #    install_dir: '/etc/user/init.d',
++    #    pointing_to: target
++    #  )
++    #endforeach
++  endforeach
++  
++  install_data(
++    mapped_target,
++    install_dir: '/etc/user/init.d',
++    rename: mapped_target_rename
++  )
++
++  # Install resource limits that are applied to GNOME-launched apps
++
++  # install_data(
++  #   'app-override.scope.conf',
++  #   rename: 'override.conf',
++  #   install_dir : join_paths(systemd_userunitdir, 'app-gnome-.scope.d')
++  # )
++
++  # # FIXME: https://github.com/systemd/systemd/issues/37104
++  # install_data(
++  #   'app-override.scope.conf',
++  #   rename: 'override.conf',
++  #   install_dir : join_paths(systemd_userunitdir, 'app-flatpak-.scope.d')
++  # )
++	
++endif
+ 
+ # Install some other misc. configuration files
+ 
+diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data/openrc/gnome-session
+--- gnome-session-49.2/data/openrc/gnome-session	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session	2026-02-22 08:52:07.782404953 -0600
+@@ -0,0 +1,16 @@
++#!/sbin/openrc-run
++
++description="GNOME Session (base)"
++
++_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++
++depend() {
++	need dbus
++	if [ "${_session}" == "gnome-login" ]; then
++		need gnome-shell.gnome-login
++	else
++		need gnome-shell
++	fi
++	need gnome-settings-daemon
++	need "gnome-session-dbus.${_session}"
++}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
+--- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,27 @@
++#!/sbin/openrc-run
++
++_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++
++description="GNOME session dbus daemon"
++command="/usr/libexec/gnome-session-service"
++comand_args='--session="${_session}"'
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/gnome-session-dbus.pid"
++
++# start() {
++# 	ebegin "Starting ${description}"
++# 	if [ -f /usr/libexec/gnome-session-service ]; then
++# 		start-stop-daemon --start --exec /usr/local/libexec/gnome-session-service -b -- --session="${_session}"
++# 	else
++# 		echo nope
++# 		#/usr/libexec/gnome-session-service --session=gnome
++# 	fi
++# 	eend $?
++# }
++
++# stop() {
++# 	ebegin "Stopping ${description}"
++# 	# hack
++# 	kill -15 `pgrep -f gnome-session-service` || true
++# 	eend $?
++# }
+diff -urN gnome-session-49.2/data/openrc/gnome-session-tty gnome-session-openrc/data/openrc/gnome-session-tty
+--- gnome-session-49.2/data/openrc/gnome-session-tty	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-tty	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,7 @@
++#!/sbin/openrc-run
++
++description="GNOME Session (wayland)"
++
++depend() {
++	need gnome-session
++}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-wayland gnome-session-openrc/data/openrc/gnome-session-wayland
+--- gnome-session-49.2/data/openrc/gnome-session-wayland	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-wayland	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,9 @@
++#!/sbin/openrc-run
++
++description="GNOME Session (wayland)"
++
++_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++
++depend() {
++	need "gnome-session.${_session}"
++}
+diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon gnome-session-openrc/data/openrc/gnome-settings-daemon
+--- gnome-session-49.2/data/openrc/gnome-settings-daemon	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-settings-daemon	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,26 @@
++#!/sbin/openrc-run
++
++description="GNOME Settings Daemon"
++# command="/usr/bin/gnome-shell"
++# command_args="--wayland"
++#pidfile="/tmp/gnome-shell.pid"
++
++depend() {
++	need gsd-a11y-settings       
++	need gsd-color               
++	need gsd-datetime
++	need gsd-housekeeping        
++	need gsd-keyboard            
++	need gsd-media-keys          
++	need gsd-power               
++	need gsd-print-notifications 
++	need gsd-rfkill        
++	need gsd-screensaver-proxy   
++	need gsd-sharing             
++#	need gsd-smartcard           
++	need gsd-sound               
++	need gsd-usb-protection      
++#	need gsd-wacom               
++#	need gsd-wwan                
++	need gsd-xsettings           
++}
+diff -urN gnome-session-49.2/data/openrc/gnome-shell gnome-session-openrc/data/openrc/gnome-shell
+--- gnome-session-49.2/data/openrc/gnome-shell	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,9 @@
++#!/sbin/openrc-run
++
++description="GNOME Shell"
++XDG_CURRENT_DESKTOP=GNOME
++export XDG_CURRENT_DESKTOP
++command="/usr/bin/gnome-shell"
++command_args="--wayland"
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/gnome-shell.pid"
+diff -urN gnome-session-49.2/data/openrc/gnome-shell.gnome-login gnome-session-openrc/data/openrc/gnome-shell.gnome-login
+--- gnome-session-49.2/data/openrc/gnome-shell.gnome-login	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell.gnome-login	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,9 @@
++#!/sbin/openrc-run
++
++description="GNOME Shell (login)"
++XDG_CURRENT_DESKTOP=GNOME
++export XDG_CURRENT_DESKTOP
++command="/usr/bin/gnome-shell"
++command_args="--wayland --mode=gdm"
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/gnome-shell-gdm.pid"
+diff -urN gnome-session-49.2/data/openrc/gsd gnome-session-openrc/data/openrc/gsd
+--- gnome-session-49.2/data/openrc/gsd	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gsd	2026-02-22 08:52:07.783140761 -0600
+@@ -0,0 +1,7 @@
++#!/sbin/openrc-run
++
++description="${RC_SVCNAME} daemon"
++command="/usr/libexec/${RC_SVCNAME}"
++command_args=""
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/${RC_SVCNAME}.pid"
+diff -urN gnome-session-49.2/doc/man/gnome-session.xml gnome-session-openrc/doc/man/gnome-session.xml
+--- gnome-session-49.2/doc/man/gnome-session.xml	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/doc/man/gnome-session.xml	2026-02-22 08:52:07.783587298 -0600
+@@ -44,6 +44,8 @@
+       (either GDM, SDDM, lightdm, or other). It will load either your saved
+       session, or it will provide a default session for the user as defined by
+       the system administrator (or the default GNOME installation on your system).
++      Note that <command>gnome-session</command> is a wrapper script for
++      <command>gnome-session-binary</command>, which does the bulk of the work.
+     </para>
+     <para>
+       The default session is defined in <filename>gnome.session</filename>, a
+@@ -59,6 +61,15 @@
+     <variablelist>
+ 
+     <varlistentry>
++      <term><option>--autostart</option>=DIR</term>
++      <listitem><para>
++        The directory <filename>DIR</filename> to be searched for autostart
++        .desktop files. This option can be used multiple times. When this option
++        is present, then default autostart directories will not be searched.
++      </para></listitem>
++    </varlistentry>
++
++    <varlistentry>
+       <term><option>--session</option>=SESSION</term>
+       <listitem><para>
+         Use the applications defined in <filename>SESSION.session</filename>.
+@@ -67,18 +78,86 @@
+     </varlistentry>
+ 
+     <varlistentry>
++      <term><option>--failsafe</option></term>
++      <listitem><para>
++        Run in fail-safe mode. User-specified applications will not be started.
++      </para></listitem>
++    </varlistentry>
++
++    <varlistentry>
+       <term><option>--debug</option></term>
+       <listitem><para>Enable debugging code.</para></listitem>
+     </varlistentry>
++
++    <varlistentry>
++      <term><option>--whale</option></term>
++      <listitem><para>
++        Show the fail whale in a dialog for debugging it.
++      </para></listitem>
++      </varlistentry>
+     </variablelist>
+   </refsect1>
+ 
++
++  <refsect1>
++    <title>Session definition</title>
++    <para>
++      Sessions are defined in <filename>.session</filename> files, that are
++      using a .desktop-like format, with the following keys in the
++      <literal>GNOME Session</literal> group:
++    </para>
++
++    <variablelist>
++      <varlistentry>
++        <term><varname>Name</varname></term>
++        <listitem><para>
++          Name of the session. This can be localized.
++        </para></listitem>
++      </varlistentry>
++
++      <varlistentry>
++        <term><varname>RequiredComponents</varname></term>
++        <listitem><para>
++          List of component identifiers (desktop files) that are required by
++          the session. The required components will always run in the session.
++        </para></listitem>
++      </varlistentry>
++    </variablelist>
++
++    <para>Here is an example of a session definition:</para>
++
++    <programlisting>[GNOME Session]
++Name=GNOME
++RequiredComponents=gnome-shell;gnome-settings-daemon;
++</programlisting>
++
++    <para>
++      In <command>systemd</command> managed sessions, the RequiredComponents may
++      be provided by systemd units instead. See the systemd section for more
++      information on how this works.
++    </para>
++
++    <para>
++      The <filename>.session</filename> files are looked for in
++      <filename>$XDG_CONFIG_HOME/gnome-session/sessions</filename>,
++      <filename>$XDG_CONFIG_DIRS/gnome-session/sessions</filename> and
++      <filename>$XDG_DATA_DIRS/gnome-session/sessions</filename>.
++    </para>
++  </refsect1>
++
+   <refsect1><title>systemd</title>
+     <para>
+-      <command>gnome-session</command> uses <command>systemd</command> for the
+-      bulk of its service management. <command>systemd</command> provides the
+-      two special targets for desktop integration: <filename>graphical-session.target</filename>
+-      and <filename>graphical-session-pre.target</filename>. These work across desktop
++      <command>gnome-session</command> will much of the session management over
++      to systemd, if systemd is available. In this case, startup components that
++      have <option>X-GNOME-HiddenUnderSystemd=true</option> set in their
++      <filename>.desktop</filename> file will be ignored by <command>gnome-session</command>.
++      It instead relies on the fact that these components are managed by systemd.
++    </para>
++
++    <para>
++      <command>systemd</command> provides the two special targets for desktop
++      integration: <filename>graphical-session.target</filename> and
++      <filename>graphical-session-pre.target</filename>. These work across desktop
+       environments, and should be used if possible. <command>gnome-session</command>
+       provides the following additional GNOME-specific targets:
+     </para>
+@@ -130,15 +209,6 @@
+       </varlistentry>
+ 
+       <varlistentry>
+-        <term><filename>gnome-session-basic-services.target</filename></term>
+-        <listitem><para>
+-          Special unit that lists basic services that are needed by any GNOME
+-          session built around <command>gnome-shell</command>. This allows for
+-          convenient reuse by kiosk sessions like the GDM login screen.
+-        </para></listitem>
+-      </varlistentry>
+-
+-      <varlistentry>
+         <term><filename>gnome-session-x11-services.target</filename></term>
+         <listitem><para>
+           Special unit started when X11 services are needed.
+@@ -146,6 +216,7 @@
+           environment variable instead of <varname>DISPLAY</varname>.
+         </para></listitem>
+       </varlistentry>
++
+     </variablelist>
+ 
+     <para>
+@@ -163,63 +234,42 @@
+   </refsect1>
+ 
+   <refsect1>
+-    <title>Session definition</title>
++    <title>Environment</title>
+     <para>
+-      Sessions are defined in <filename>.session</filename> files, that are
+-      using a .desktop-like format, with the following keys in the
+-      <literal>GNOME Session</literal> group:
++      <command>gnome-session</command> sets several environment variables for
++      use by the session:
+     </para>
+ 
+     <variablelist>
+       <varlistentry>
+-        <term><varname>Name</varname></term>
++        <term><filename>DISPLAY</filename></term>
+         <listitem><para>
+-          Name of the session. This can be localized.
++          This variable is set to the X display being used by
++          <command>gnome-session</command>. Note that if the <option>--display</option>
++          option is used this might be different from the setting of the environment
++          variable in <command>gnome-session</command>'s environment.
+         </para></listitem>
+       </varlistentry>
++    </variablelist>
+ 
++    <para>
++      Behavior of <command>gnome-session</command> ifself can be modified via
++      the following environment variables:
++    </para>
++
++    <variablelist>
+       <varlistentry>
+-        <term><varname>Kiosk</varname></term>
++        <term><varname>GNOME_SESSION_AUTOSTART_DIR</varname></term>
+         <listitem><para>
+-          Kiosk sessions are special single-purpose sessions that are built around
+-          starting some specific app. For instance, a kiosk session may run a
+-          full-screen web browser that's locked to a specific page. In GNOME,
+-          we use kiosk sessions for the login screen (where the app is the login
+-          screen UI) and the initial-setup first boot experience. When set to true,
+-          <command>gnome-session</command> will make no attempt to autostart
+-          any <filename>.desktop</filename> files, and will instead require that
+-          the session configures all required functionality via systemd.
++          This variable specifies a list of directories to the searched for
++          autostart files. This variable overrides all directories specified
++          via the <option>--autostart</option> option, as well as all default autostart directories.
+         </para></listitem>
+       </varlistentry>
+     </variablelist>
+-
+-    <para>Here is an example of a session definition:</para>
+-
+-    <programlisting>[GNOME Session]
+-Name=GNOME
+-</programlisting>
+-
+-    <para>
+-      The <filename>.session</filename> files are loaded from
+-      <filename>$XDG_CONFIG_HOME/gnome-session/sessions</filename>,
+-      <filename>$XDG_CONFIG_DIRS/gnome-session/sessions</filename> and
+-      <filename>$XDG_DATA_DIRS/gnome-session/sessions</filename>.
+-    </para>
+-
+-    <para>
+-      Session definitions don't do anything on their own, and they need to be
+-      accompanied by <command>systemd</command> configuration to provide some
+-      functionality (i.e. launch services). The recommended way to do that is
+-      by hooking into one of the targets described above. For instance: when
+-      defining a session named <literal>foobar</literal>, you can create
+-      a systemd drop-in file in
+-      <filename>/etc/systemd/user/gnome-session@foobar.target.d/session.conf</filename>
+-      and define <literal>Requires=</literal> and <literal>Wants=</literal>
+-      dependencies to tell systemd what services it needs to start when launching
+-      this session.
+-    </para>
+   </refsect1>
+ 
++
+   <refsect1>
+     <title>Files</title>
+ 
+@@ -230,10 +280,7 @@
+     </literallayout></para>
+     <para>
+       Applications defined via <filename>.desktop</filename> files in those
+-      directories will be started on login. Note that previous versions of
+-      <command>gnome-session</command> would launch services from here, but
+-      this is no longer the case. Services should now be configured via
+-      <command>systemd</command> unit files
++      directories will be started on login.
+     </para>
+ 
+     <para><literallayout>
+@@ -245,6 +292,13 @@
+       These directories contain the <filename>.session</filename> files that
+       can be used with the <option>--session</option> option.
+     </para>
++
++    <para><literallayout>
++      <filename>$XDG_CONFIG_HOME/gnome-session/saved-sessions</filename>
++    </literallayout></para>
++    <para>
++      This directory contains the list of applications of the saved session.
++    </para>
+   </refsect1>
+ 
+   <refsect1>
+diff -urN gnome-session-49.2/gnome-session/gsm-app.c gnome-session-openrc/gnome-session/gsm-app.c
+--- gnome-session-49.2/gnome-session/gsm-app.c	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/gnome-session/gsm-app.c	2026-02-22 08:52:07.783587298 -0600
+@@ -248,7 +248,7 @@
+         success = g_desktop_app_info_launch_uris_as_manager (app->inner,
+                                                              NULL,
+                                                              ctx,
+-                                                             G_SPAWN_SEARCH_PATH,
++                                                             G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+                                                              NULL, NULL, NULL, NULL,
+                                                              &local_error);
+         if (!success)
+diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gnome-session/gsm-manager.c
+--- gnome-session-49.2/gnome-session/gsm-manager.c	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/gnome-session/gsm-manager.c	2026-02-22 08:52:07.784404952 -0600
+@@ -2086,24 +2086,19 @@
+ 
+ static void
+ handle_end_session_dialog_confirmation (GsmManager           *manager,
+-                                        GsmManagerLogoutType  confirmed_logout_type)
++                                        GsmManagerLogoutType  logout_type)
+ {
+         disconnect_shell_dialog_signals (manager);
+ 
+         if (manager->phase >= GSM_MANAGER_PHASE_END_SESSION)
+                 return; /* Already logging out, nothing to do */
+ 
+-        if (manager->logout_type == GSM_MANAGER_LOGOUT_SHUTDOWN &&
+-            confirmed_logout_type == GSM_MANAGER_LOGOUT_REBOOT)
+-                /* When triggering an offline update, gnome-shell will promote a
+-                 * shutdown to a reboot. The offline update occurs after the reboot,
+-                 * and then once that's done the shutdown will occur. */
+-                g_info ("GsmManager: Shell converted shutdown into reboot (offline update?)");
+-        else if (manager->logout_type != confirmed_logout_type)
++        if (manager->logout_type != logout_type) {
+                 g_warning ("GsmManager: Shell confirmed unexpected logout type");
++                return; /* Make it obvious that something went wrong */
++        }
+ 
+         manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
+-        manager->logout_type = confirmed_logout_type;
+         end_phase (manager);
+ }
+ 
+diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gnome-session/leader-main.c
+--- gnome-session-49.2/gnome-session/leader-main.c	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/gnome-session/leader-main.c	2026-02-22 08:52:07.785404952 -0600
+@@ -25,11 +25,16 @@
+ #include <glib.h>
+ #include <glib-unix.h>
+ #include <gio/gio.h>
++#include <sys/syslog.h>
+ 
+ #include "gsm-util.h"
+ 
+ #define INIT_WORKER_PATH (LIBEXECDIR "/gnome-session-init-worker")
+-
++void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data);
+ static char *
+ shell_to_login_shell (const char *shell)
+ {
+@@ -115,16 +120,10 @@
+ static void
+ set_up_environment (void)
+ {
+-        g_autofree char *dbus_address = NULL;
+         g_autoptr (GSettings) locale_settings = NULL;
+         g_autofree char *region = NULL;
+         g_autofree char *ibus_path = NULL;
+ 
+-        dbus_address = g_dbus_address_get_for_bus_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+-        if (!dbus_address)
+-                g_error ("No session bus running!");
+-        g_setenv ("DBUS_SESSION_BUS_ADDRESS", dbus_address, TRUE);
+-
+         locale_settings = g_settings_new ("org.gnome.system.locale");
+         region = g_settings_get_string (locale_settings, "region");
+         if (!IS_STRING_EMPTY (region)) {
+@@ -175,9 +174,23 @@
+         g_setenv ("XDG_MENU_PREFIX", "gnome-", TRUE);
+ }
+ 
++void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data)
++{
++        printf("%s\n", message);
++        syslog(LOG_INFO, "%s", message);
++}
++
++
+ int
+ main (int argc, char **argv)
+ {
++#if 1
++        g_log_set_default_handler(debug_logger, NULL);
++#endif
+         g_autoptr (GError) error = NULL;
+         g_autofree char *session_name = NULL;
+         gboolean debug = FALSE;
+@@ -197,6 +210,17 @@
+                 { NULL, 0, 0, 0, NULL, NULL, NULL }
+         };
+ 
++        g_info("Hello");
++        /* Make sure that we have a session bus */
++        if (!g_getenv ("DBUS_SESSION_BUS_ADDRESS"))
++                g_error ("No session bus running! Cannot continue");
++
++        // HACK: Remove me again soon        
++        if (g_getenv ("XDG_CURRENT_DESKTOP") == NULL) {
++            g_setenv("XDG_CURRENT_DESKTOP", "GNOME", TRUE);
++            gsm_util_setenv ("XDG_CURRENT_DESKTOP", "GNOME");
++        }
++
+         setlocale (LC_ALL, "");
+         bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
+         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+@@ -224,9 +248,6 @@
+                 return 0;
+         }
+ 
+-        if (!g_getenv ("XDG_SESSION_TYPE"))
+-                g_error ("XDG_SESSION_TYPE= is unset!");
+-
+         /* Make sure that we were launched through a login shell. This ensures
+          * that the user's shell profiles are sourced when logging into GNOME */
+         if (!no_reexec)
+diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/gnome-session/leader-openrc.c
+--- gnome-session-49.2/gnome-session/leader-openrc.c	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/gnome-session/leader-openrc.c	2026-02-22 08:52:07.785404952 -0600
+@@ -0,0 +1,344 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
++ *
++ * Copyright (C) 2006 Novell, Inc.
++ * Copyright (C) 2008 Red Hat, Inc.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ */
++
++#include <config.h>
++
++#include <glib.h>
++#include <glib-unix.h>
++#include <gio/gio.h>
++#include <sys/syslog.h>
++
++#include "gsm-util.h"
++
++void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data);
++
++
++typedef struct {
++        GDBusConnection *session_bus;
++        GMainLoop *loop;
++        int fifo_fd;
++        GDBusProxy *awaiting_shutdown;
++} Leader;
++
++static void
++leader_clear (Leader *ctx)
++{
++        g_clear_object (&ctx->session_bus);
++        g_clear_pointer (&ctx->loop, g_main_loop_unref);
++        g_close (ctx->fifo_fd, NULL);
++        g_clear_object (&ctx->awaiting_shutdown);
++}
++
++G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (Leader, leader_clear);
++
++static gboolean
++systemd_unit_is_active (GDBusConnection  *connection,
++                        const char       *unit,
++                        GError          **error)
++{
++	return FALSE;
++}
++
++static gboolean
++openrc_unit_action (const char       *unit,
++                    const char       *action,
++                    GError          **error)
++{
++	g_autofree char *str = g_strdup_printf("/etc/user/init.d/%s -U %s", unit, action);
++	return g_spawn_command_line_async(str, error);
++}
++
++static gboolean
++start_gnome_pls (
++                 GError          **error)
++{
++	return g_spawn_command_line_async("/usr/bin/gnome-shell --wayland", error);
++}
++
++static gboolean
++openrc_start_unit (const char       *unit,
++                    GError          **error)
++{
++	return openrc_unit_action(unit, "start", error);
++}
++
++static gboolean
++openrc_stop_unit (const char       *unit,
++                    GError          **error)
++{
++	return openrc_unit_action(unit, "stop", error);
++}
++
++static gboolean
++systemd_reset_failed (GDBusConnection  *connection,
++                      GError          **error)
++{
++        g_autoptr(GVariant) reply = NULL;
++        reply = g_dbus_connection_call_sync (connection,
++                                             "org.freedesktop.systemd1",
++                                             "/org/freedesktop/systemd1",
++                                             "org.freedesktop.systemd1.Manager",
++                                             "ResetFailed",
++                                             NULL,
++                                             NULL,
++                                             G_DBUS_CALL_FLAGS_NO_AUTO_START,
++                                             -1, NULL, error);
++        return reply != NULL;
++}
++
++static gboolean
++leader_term_or_int_signal_cb (gpointer data)
++{
++        Leader *ctx = data;
++
++        g_debug ("Session termination requested");
++
++        /* Start a shutdown explicitly. */
++        //systemd_start_unit (ctx->session_bus, "gnome-session-shutdown.target",
++        //                    "replace-irreversibly", NULL);
++
++        if (write (ctx->fifo_fd, "S", 1) < 0) {
++                g_warning ("Failed to signal shutdown to monitor: %m");
++                g_main_loop_quit (ctx->loop);
++        }
++
++        return G_SOURCE_REMOVE;
++}
++
++static void
++graphical_session_pre_state_changed_cb (GDBusProxy  *proxy,
++                                        GVariant    *changed_properties,
++                                        char       **invalidated_properties,
++                                        gpointer     data)
++{
++        Leader *ctx = data;
++        g_autoptr (GVariant) value = NULL;
++        const char *state;
++
++        value = g_variant_lookup_value (changed_properties, "ActiveState", NULL);
++        if (value == NULL)
++                return;
++        g_variant_get (value, "&s", &state);
++
++        if (g_strcmp0 (state, "inactive") == 0) {
++                g_debug ("Session services now inactive, quitting");
++                g_main_loop_quit (ctx->loop);
++        }
++}
++
++static gboolean
++monitor_hangup_cb (int          fd,
++                   GIOCondition condition,
++                   gpointer     user_data)
++{
++        Leader *ctx = user_data;
++        g_autoptr (GVariant) unit = NULL;
++        const char *unit_path = NULL;
++        g_autoptr (GDBusProxy) proxy = NULL;
++        g_autoptr (GVariant) value = NULL;
++        g_autoptr (GError) error = NULL;
++
++        g_debug ("Services have begun stopping, waiting for them to finish stopping");
++
++        unit = g_dbus_connection_call_sync (ctx->session_bus,
++                                            "org.freedesktop.systemd1",
++                                            "/org/freedesktop/systemd1",
++                                            "org.freedesktop.systemd1.Manager",
++                                            "GetUnit",
++                                            g_variant_new ("(s)", "graphical-session-pre.target"),
++                                            G_VARIANT_TYPE ("(o)"),
++                                            G_DBUS_CALL_FLAGS_NONE,
++                                            -1,
++                                            NULL,
++                                            &error);
++        if (!unit) {
++                g_warning ("Could not get unit for graphical-session-pre.target: %s", error->message);
++                g_main_loop_quit (ctx->loop);
++                return G_SOURCE_REMOVE;
++        }
++
++        g_variant_get (unit, "(&o)", &unit_path);
++
++        proxy = g_dbus_proxy_new_sync (ctx->session_bus,
++                                       G_DBUS_PROXY_FLAGS_NONE,
++                                       NULL,
++                                       "org.freedesktop.systemd1",
++                                       unit_path,
++                                       "org.freedesktop.systemd1.Unit",
++                                       NULL,
++                                       &error);
++        if (!proxy) {
++                g_warning ("Could not get proxy for graphical-session-pre.target unit: %s", error->message);
++                g_main_loop_quit (ctx->loop);
++                return G_SOURCE_REMOVE;
++        }
++
++        value = g_dbus_proxy_get_cached_property (proxy, "ActiveState");
++
++        if (value) {
++                const char *state;
++
++                g_variant_get (value, "&s", &state);
++
++                if (g_strcmp0 (state, "inactive") == 0) {
++                        g_debug ("State of graphical-session-pre.target unit already inactive quitting");
++                        g_main_loop_quit (ctx->loop);
++                        return G_SOURCE_REMOVE;
++                }
++                g_debug ("State of graphical-session-pre.target unit is '%s', waiting for it to go inactive", state);
++        } else {
++                g_debug ("State of graphical-session-pre.target unit is unknown, waiting for it to go inactive");
++        }
++
++        g_signal_connect (proxy,
++                          "g-properties-changed",
++                          G_CALLBACK (graphical_session_pre_state_changed_cb),
++                          ctx);
++
++        ctx->awaiting_shutdown = g_steal_pointer (&proxy);
++
++        return G_SOURCE_REMOVE;
++}
++
++void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data)
++{
++        printf("%s\n", message);
++        syslog(LOG_INFO, "%s", message);
++}
++
++/**
++ * This is the session leader, i.e. it is the only process that's not managed
++ * by the systemd user instance. This process is the one executed by GDM, and
++ * it is part of the session scope in the system systemd instance. This process
++ * works in conjunction with a service running within the user's service manager
++ * (i.e. `gnome-session-monitor.service`) to implement the following:
++ *
++ * - When asked to shut down cleanly (i.e. via SIGTERM), the leader needs to
++ *   bring down the session
++ * - The leader needs to quit right after the session shuts down
++ * - If the leader shuts down uncleanly, the session needs to shut down as well.
++ *
++ * This is achieved by opening a named FIFO in a well known location. If this
++ * process receives SIGTERM or SIGINT then it will write a single byte, causing
++ * the monitor service to signal STOPPING=1 to systemd. This triggers a clean
++ * shutdown, solving the first item. To handle unclean shutdowns, we also wait
++ * for EOF/HUP on both sides and quit if that signal is received.
++ *
++ * As an example, a shutdown might look as follows:
++ *
++ * - session-X.scope for user is stopped
++ * - Leader process receives SIGTERM
++ * - Leader sends single byte
++ * - Monitor process receives byte and signals STOPPING=1
++ * - Systemd user instance starts session teardown
++ * - The last job that runs during session teardown is a stop job for the
++ *   monitor process.
++ * - Monitor process quits, closing FD in the process
++ * - Leader process receives HUP and quits
++ * - GDM sees the leader quit and cleans up its state in response.
++ *
++ * The result is that the session is stopped cleanly.
++ */
++int
++main (int argc, char **argv)
++{
++#if 1
++        g_log_set_default_handler(debug_logger, NULL);
++#endif
++        g_autoptr (GError) error = NULL;
++        g_auto (Leader) ctx = { .fifo_fd = -1 };
++        const char *session_name = NULL;
++        const char *debug_string = NULL;
++        g_autofree char *target = NULL;
++        //g_autofree char *fifo_path = NULL;
++        struct stat statbuf;
++
++        if (argc < 2)
++            g_error ("No session name was specified");
++        session_name = argv[1];
++
++        debug_string = g_getenv ("GNOME_SESSION_DEBUG");
++        if (debug_string != NULL)
++            g_log_set_debug_enabled (atoi (debug_string) == 1);
++        g_log_set_debug_enabled(TRUE);
++        g_debug("Hi! from leader-openrc.");
++
++        //gsm_util_export_user_environment (&error);
++        //if (error)
++        //        g_warning ("Failed to upload environment to systemd: %s", error->message);
++        //g_clear_error (&error);
++
++        ctx.loop = g_main_loop_new (NULL, TRUE);
++
++        ctx.session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
++        if (ctx.session_bus == NULL)
++                g_error ("Failed to obtain session bus: %s", error->message);
++
++        /* We don't escape the name (i.e. we leave any '-' intact). */
++	char const *session_type = g_getenv("XDG_SESSION_TYPE");
++        target = g_strdup_printf ("gnome-session-%s.%s",
++                                  session_type ? session_type : "wayland", session_name);
++
++        /* if (systemd_unit_is_active (ctx.session_bus, target, &error)) */
++        /*         g_error ("Session manager is already running!"); */
++        /* if (error != NULL) */
++        /*         g_warning ("Failed to check if unit %s is active: %s", */
++        /*                    target, error->message); */
++        /* g_clear_error (&error); */
++
++        g_message ("Starting GNOME session target: %s", target);
++
++	//if (strcmp(session_name, "gnome-login") == 0)
++	//	start_gnome_pls(&error);
++        if (!openrc_start_unit (target, &error))
++                g_error ("Failed to start unit %s: %s", target, error->message);
++		
++	//	char const *fifo_path = "/tmp/gnome-shell.pid";
++        /* fifo_path = g_build_filename (g_get_user_runtime_dir (), */
++        /*                               "gnome-session-leader-fifo", */
++        /*                               NULL); */
++        /* if (mkfifo (fifo_path, 0666) < 0 && errno != EEXIST) */
++        /*         g_warning ("Failed to create leader FIFO: %m"); */
++	/* 	//fifo_path = g_strdup_printf("gnome-session-%s. */
++
++        /* ctx.fifo_fd = g_open (fifo_path, O_WRONLY | O_CLOEXEC, 0666); */
++        /* if (ctx.fifo_fd < 0) */
++        /*         g_error ("Failed to watch systemd session: open failed: %m"); */
++        /* if (fstat (ctx.fifo_fd, &statbuf) < 0) */
++        /*         g_error ("Failed to watch systemd session: fstat failed: %m"); */
++        /* else if (!(statbuf.st_mode & S_IFIFO)) */
++        /*         g_error ("Failed to watch systemd session: FD is not a FIFO"); */
++
++        /* g_unix_fd_add (ctx.fifo_fd, G_IO_HUP, (GUnixFDSourceFunc) monitor_hangup_cb, &ctx); */
++        /* g_unix_signal_add (SIGHUP, leader_term_or_int_signal_cb, &ctx); */
++        /* g_unix_signal_add (SIGTERM, leader_term_or_int_signal_cb, &ctx); */
++        /* g_unix_signal_add (SIGINT, leader_term_or_int_signal_cb, &ctx); */
++
++        g_debug ("Waiting for session to shutdown");
++        g_main_loop_run (ctx.loop);
++        return 0;
++}
+diff -urN gnome-session-49.2/gnome-session/meson.build gnome-session-openrc/gnome-session/meson.build
+--- gnome-session-49.2/gnome-session/meson.build	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/gnome-session/meson.build	2026-02-22 08:52:07.785404952 -0600
+@@ -21,7 +21,7 @@
+ 
+ sources = files(
+     'gsm-util.c',
+-    'leader-systemd.c',
++    'leader-openrc.c',
+ )
+ 
+ executable(
+diff -urN gnome-session-49.2/gnome-session/service-main.c gnome-session-openrc/gnome-session/service-main.c
+--- gnome-session-49.2/gnome-session/service-main.c	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/gnome-session/service-main.c	2026-02-22 08:52:07.786404952 -0600
+@@ -25,6 +25,7 @@
+ #include <glib.h>
+ #include <glib-unix.h>
+ #include <gio/gio.h>
++#include <sys/syslog.h>
+ 
+ #include "gsm-util.h"
+ #include "gsm-manager.h"
+@@ -38,6 +39,12 @@
+ static GMainLoop *loop = NULL;
+ 
+ void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data);
++
++void
+ gsm_quit (void)
+ {
+         g_main_loop_quit (loop);
+@@ -137,9 +144,22 @@
+         create_manager ();
+ }
+ 
++void
++debug_logger(gchar const *log_domain,
++             GLogLevelFlags log_level,
++             gchar const *message,
++             gpointer user_data)
++{
++        printf("%s\n", message);
++        syslog(LOG_INFO, "%s", message);
++}
++
+ int
+ main (int argc, char **argv)
+ {
++#if 1
++        g_log_set_default_handler(debug_logger, NULL);
++#endif
+         g_autoptr (GError) error = NULL;
+         g_autoptr (GOptionContext) options = NULL;
+         const char *debug = NULL;
+@@ -162,6 +182,7 @@
+         debug = g_getenv ("GNOME_SESSION_DEBUG");
+         if (debug != NULL)
+                 g_log_set_debug_enabled (atoi (debug) == 1);
++        g_log_set_debug_enabled (TRUE);
+ 
+         /* Talk to logind before acquiring a name, since it does synchronous
+          * calls at initialization time that invoke a main loop and if we
+diff -urN gnome-session-49.2/meson.build gnome-session-openrc/meson.build
+--- gnome-session-49.2/meson.build	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/meson.build	2026-02-22 08:52:07.786404952 -0600
+@@ -90,20 +90,29 @@
+   dependency('json-glib-1.0', version: '>= 0.10')
+ ]
+ 
+-libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
+-config_h.set('SYSTEMD_STRICT_ENV',
+-              libsystemd_dep.version().version_compare('< 248'))
+-
+-session_bin_deps = session_deps + [
+-  libsystemd_dep,
+-  dependency('gio-unix-2.0', version: glib_req_version),
+-]
++libsystemd_dep = dependency('libsystemd', version: '>= 209', required: false)
++if libsystemd_dep.found()
++  config_h.set('SYSTEMD_STRICT_ENV',
++                libsystemd_dep.version().version_compare('< 248'))
++  session_bin_deps = session_deps + [
++    libsystemd_dep,
++    dependency('gio-unix-2.0', version: glib_req_version),
++  ]
++else
++  elogind_dep = dependency('libelogind', version: '>=209', required: true)
++  session_bin_deps = session_deps + [
++    elogind_dep,
++    dependency('gio-unix-2.0', version: glib_req_version),
++  ]
++endif
+ 
+-systemd_userunitdir = get_option('systemduserunitdir')
+-if systemd_userunitdir == ''
+-  systemd_dep = dependency('systemd', version: '>= 242', required: true)
+-  systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir',
+-                                                 pkgconfig_define: ['prefix', session_prefix])
++if libsystemd_dep.found()
++  systemd_userunitdir = get_option('systemduserunitdir')
++  if systemd_userunitdir == ''
++    systemd_dep = dependency('systemd', version: '>= 242', required: true)
++    systemd_userunitdir = systemd_dep.get_variable(pkgconfig: 'systemduserunitdir',
++                                                   pkgconfig_define: ['prefix', session_prefix])
++  endif
+ endif
+ 
+ configure_file(
+@@ -141,7 +150,6 @@
+  'Use *_DISABLE_DEPRECATED': get_option('deprecation_flags'),
+  'Build Docbook': get_option('docbook'),
+  'Build manpages': get_option('man'),
+- 'Systemd Units Directory': systemd_userunitdir,
+ }
+ 
+ summary_dirs = {
+diff -urN gnome-session-49.2/tools/gnome-session-inhibit.c gnome-session-openrc/tools/gnome-session-inhibit.c
+--- gnome-session-49.2/tools/gnome-session-inhibit.c	2025-11-24 18:14:29.000000000 -0600
++++ gnome-session-openrc/tools/gnome-session-inhibit.c	2026-02-22 08:52:07.801404949 -0600
+@@ -382,7 +382,6 @@
+   g_option_context_set_main_group (opts, main_opts);
+   g_option_context_set_summary (opts, N_("Execute COMMAND while inhibiting some session functionality."));
+   g_option_context_set_description (opts, N_("Valid ACTION values are: logout, switch-user, suspend, idle, and automount.\nIf no --inhibit options are specified, idle is assumed."));
+-  g_option_context_set_strict_posix (opts, TRUE);
+ 
+   if (!g_option_context_parse (opts, &argc, &argv, &error))
+     {
