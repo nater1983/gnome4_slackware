@@ -1,6 +1,6 @@
 diff -urN gnome-session-49.2/data/meson.build gnome-session-openrc/data/meson.build
 --- gnome-session-49.2/data/meson.build	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/data/meson.build	2026-02-22 08:52:07.782404953 -0600
++++ gnome-session-openrc/data/meson.build	2026-02-22 14:46:12.456516481 -0600
 @@ -62,69 +62,173 @@
  
  # Next, let's install the necessary systemd scaffolding
@@ -238,7 +238,7 @@ diff -urN gnome-session-49.2/data/meson.build gnome-session-openrc/data/meson.bu
  
 diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data/openrc/gnome-session
 --- gnome-session-49.2/data/openrc/gnome-session	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session	2026-02-22 08:52:07.782404953 -0600
++++ gnome-session-openrc/data/openrc/gnome-session	2026-02-22 14:46:12.456516481 -0600
 @@ -0,0 +1,16 @@
 +#!/sbin/openrc-run
 +
@@ -258,7 +258,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 +}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
 --- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,27 @@
 +#!/sbin/openrc-run
 +
@@ -289,7 +289,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc
 +# }
 diff -urN gnome-session-49.2/data/openrc/gnome-session-tty gnome-session-openrc/data/openrc/gnome-session-tty
 --- gnome-session-49.2/data/openrc/gnome-session-tty	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session-tty	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-tty	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,7 @@
 +#!/sbin/openrc-run
 +
@@ -300,7 +300,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session-tty gnome-session-openrc/
 +}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-wayland gnome-session-openrc/data/openrc/gnome-session-wayland
 --- gnome-session-49.2/data/openrc/gnome-session-wayland	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session-wayland	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-wayland	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,9 @@
 +#!/sbin/openrc-run
 +
@@ -313,7 +313,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session-wayland gnome-session-ope
 +}
 diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon gnome-session-openrc/data/openrc/gnome-settings-daemon
 --- gnome-session-49.2/data/openrc/gnome-settings-daemon	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-settings-daemon	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-settings-daemon	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,26 @@
 +#!/sbin/openrc-run
 +
@@ -343,7 +343,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon gnome-session-ope
 +}
 diff -urN gnome-session-49.2/data/openrc/gnome-shell gnome-session-openrc/data/openrc/gnome-shell
 --- gnome-session-49.2/data/openrc/gnome-shell	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-shell	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,9 @@
 +#!/sbin/openrc-run
 +
@@ -356,7 +356,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-shell gnome-session-openrc/data/o
 +pidfile="${XDG_RUNTIME_DIR}/gnome-shell.pid"
 diff -urN gnome-session-49.2/data/openrc/gnome-shell.gnome-login gnome-session-openrc/data/openrc/gnome-shell.gnome-login
 --- gnome-session-49.2/data/openrc/gnome-shell.gnome-login	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-shell.gnome-login	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell.gnome-login	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,9 @@
 +#!/sbin/openrc-run
 +
@@ -369,7 +369,7 @@ diff -urN gnome-session-49.2/data/openrc/gnome-shell.gnome-login gnome-session-o
 +pidfile="${XDG_RUNTIME_DIR}/gnome-shell-gdm.pid"
 diff -urN gnome-session-49.2/data/openrc/gsd gnome-session-openrc/data/openrc/gsd
 --- gnome-session-49.2/data/openrc/gsd	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gsd	2026-02-22 08:52:07.783140761 -0600
++++ gnome-session-openrc/data/openrc/gsd	2026-02-22 14:46:12.457238116 -0600
 @@ -0,0 +1,7 @@
 +#!/sbin/openrc-run
 +
@@ -380,7 +380,7 @@ diff -urN gnome-session-49.2/data/openrc/gsd gnome-session-openrc/data/openrc/gs
 +pidfile="${XDG_RUNTIME_DIR}/${RC_SVCNAME}.pid"
 diff -urN gnome-session-49.2/doc/man/gnome-session.xml gnome-session-openrc/doc/man/gnome-session.xml
 --- gnome-session-49.2/doc/man/gnome-session.xml	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/doc/man/gnome-session.xml	2026-02-22 08:52:07.783587298 -0600
++++ gnome-session-openrc/doc/man/gnome-session.xml	2026-02-22 14:46:12.457586189 -0600
 @@ -44,6 +44,8 @@
        (either GDM, SDDM, lightdm, or other). It will load either your saved
        session, or it will provide a default session for the user as defined by
@@ -633,7 +633,7 @@ diff -urN gnome-session-49.2/doc/man/gnome-session.xml gnome-session-openrc/doc/
    <refsect1>
 diff -urN gnome-session-49.2/gnome-session/gsm-app.c gnome-session-openrc/gnome-session/gsm-app.c
 --- gnome-session-49.2/gnome-session/gsm-app.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/gsm-app.c	2026-02-22 08:52:07.783587298 -0600
++++ gnome-session-openrc/gnome-session/gsm-app.c	2026-02-22 14:46:12.457586189 -0600
 @@ -248,7 +248,7 @@
          success = g_desktop_app_info_launch_uris_as_manager (app->inner,
                                                               NULL,
@@ -645,7 +645,7 @@ diff -urN gnome-session-49.2/gnome-session/gsm-app.c gnome-session-openrc/gnome-
          if (!success)
 diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gnome-session/gsm-manager.c
 --- gnome-session-49.2/gnome-session/gsm-manager.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/gsm-manager.c	2026-02-22 08:52:07.784404952 -0600
++++ gnome-session-openrc/gnome-session/gsm-manager.c	2026-02-22 14:46:12.458016998 -0600
 @@ -2086,24 +2086,19 @@
  
  static void
@@ -677,7 +677,7 @@ diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gn
  
 diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gnome-session/leader-main.c
 --- gnome-session-49.2/gnome-session/leader-main.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/leader-main.c	2026-02-22 08:52:07.785404952 -0600
++++ gnome-session-openrc/gnome-session/leader-main.c	2026-02-22 14:46:12.458999204 -0600
 @@ -25,11 +25,16 @@
  #include <glib.h>
  #include <glib-unix.h>
@@ -767,7 +767,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
          if (!no_reexec)
 diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/gnome-session/leader-openrc.c
 --- gnome-session-49.2/gnome-session/leader-openrc.c	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/gnome-session/leader-openrc.c	2026-02-22 08:52:07.785404952 -0600
++++ gnome-session-openrc/gnome-session/leader-openrc.c	2026-02-22 14:46:12.458999204 -0600
 @@ -0,0 +1,344 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 + *
@@ -1115,7 +1115,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +}
 diff -urN gnome-session-49.2/gnome-session/meson.build gnome-session-openrc/gnome-session/meson.build
 --- gnome-session-49.2/gnome-session/meson.build	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/meson.build	2026-02-22 08:52:07.785404952 -0600
++++ gnome-session-openrc/gnome-session/meson.build	2026-02-22 14:46:12.458999204 -0600
 @@ -21,7 +21,7 @@
  
  sources = files(
@@ -1127,7 +1127,7 @@ diff -urN gnome-session-49.2/gnome-session/meson.build gnome-session-openrc/gnom
  executable(
 diff -urN gnome-session-49.2/gnome-session/service-main.c gnome-session-openrc/gnome-session/service-main.c
 --- gnome-session-49.2/gnome-session/service-main.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/service-main.c	2026-02-22 08:52:07.786404952 -0600
++++ gnome-session-openrc/gnome-session/service-main.c	2026-02-22 14:46:12.458999204 -0600
 @@ -25,6 +25,7 @@
  #include <glib.h>
  #include <glib-unix.h>
@@ -1182,7 +1182,7 @@ diff -urN gnome-session-49.2/gnome-session/service-main.c gnome-session-openrc/g
           * calls at initialization time that invoke a main loop and if we
 diff -urN gnome-session-49.2/meson.build gnome-session-openrc/meson.build
 --- gnome-session-49.2/meson.build	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/meson.build	2026-02-22 08:52:07.786404952 -0600
++++ gnome-session-openrc/meson.build	2026-02-22 14:46:12.458999204 -0600
 @@ -90,20 +90,29 @@
    dependency('json-glib-1.0', version: '>= 0.10')
  ]
@@ -1236,7 +1236,7 @@ diff -urN gnome-session-49.2/meson.build gnome-session-openrc/meson.build
  summary_dirs = {
 diff -urN gnome-session-49.2/tools/gnome-session-inhibit.c gnome-session-openrc/tools/gnome-session-inhibit.c
 --- gnome-session-49.2/tools/gnome-session-inhibit.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/tools/gnome-session-inhibit.c	2026-02-22 08:52:07.801404949 -0600
++++ gnome-session-openrc/tools/gnome-session-inhibit.c	2026-02-22 14:46:12.474280421 -0600
 @@ -382,7 +382,6 @@
    g_option_context_set_main_group (opts, main_opts);
    g_option_context_set_summary (opts, N_("Execute COMMAND while inhibiting some session functionality."));
