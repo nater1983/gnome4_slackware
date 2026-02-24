@@ -1,4 +1,4 @@
-patch -Np1 -i $CWD/patch/gdm/307.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-patch -Np1 -i $CWD/patch/gdm/0001-Xsession-Don-t-start-ssh-agent-by-default.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gdm/307.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gdm/0001-Xsession-Don-t-start-ssh-agent-by-default.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 patch -Np1 -i $CWD/patch/gdm/0003-add-wayland-session-script.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
-patch -Np1 -i $CWD/patch/gdm/0004-fix-Xsession-language-in-gnome.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gdm/0004-fix-Xsession-language-in-gnome.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
