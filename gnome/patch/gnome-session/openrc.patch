@@ -631,18 +631,6 @@ diff -urN gnome-session-49.2/doc/man/gnome-session.xml gnome-session-openrc/doc/
    </refsect1>
  
    <refsect1>
-diff -urN gnome-session-49.2/gnome-session/gsm-app.c gnome-session-openrc/gnome-session/gsm-app.c
---- gnome-session-49.2/gnome-session/gsm-app.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/gsm-app.c	2026-02-22 14:46:12.457586189 -0600
-@@ -248,7 +248,7 @@
-         success = g_desktop_app_info_launch_uris_as_manager (app->inner,
-                                                              NULL,
-                                                              ctx,
--                                                             G_SPAWN_SEARCH_PATH,
-+                                                             G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                                              NULL, NULL, NULL, NULL,
-                                                              &local_error);
-         if (!success)
 diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gnome-session/gsm-manager.c
 --- gnome-session-49.2/gnome-session/gsm-manager.c	2025-11-24 18:14:29.000000000 -0600
 +++ gnome-session-openrc/gnome-session/gsm-manager.c	2026-02-22 14:46:12.458016998 -0600
