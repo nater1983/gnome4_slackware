@@ -631,10 +631,11 @@ diff -urN gnome-session-49.2/doc/man/gnome-session.xml gnome-session-openrc/doc/
    </refsect1>
  
    <refsect1>
-diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gnome-session/gsm-manager.c
---- gnome-session-49.2/gnome-session/gsm-manager.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/gsm-manager.c	2026-02-22 14:46:12.458016998 -0600
-@@ -2086,24 +2086,19 @@
+diff --git a/gnome-session/gsm-manager.c b/gnome-session/gsm-manager.c
+index fecde253..0ff9dc6e 100644
+--- a/gnome-session/gsm-manager.c
++++ b/gnome-session/gsm-manager.c
+@@ -2201,28 +2201,23 @@ on_shell_end_session_dialog_canceled (GsmShell   *shell,
  
  static void
  handle_end_session_dialog_confirmation (GsmManager           *manager,
@@ -658,14 +659,19 @@ diff -urN gnome-session-49.2/gnome-session/gsm-manager.c gnome-session-openrc/gn
 +                return; /* Make it obvious that something went wrong */
 +        }
  
+         if (manager->session_save &&
+             !g_settings_get_boolean (manager->session_settings, KEY_SAVE_RESTORE))
+                 gsm_session_save_discard (manager->session_save);
+ 
          manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
 -        manager->logout_type = confirmed_logout_type;
          end_phase (manager);
  }
  
-diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gnome-session/leader-main.c
---- gnome-session-49.2/gnome-session/leader-main.c	2025-11-24 18:14:29.000000000 -0600
-+++ gnome-session-openrc/gnome-session/leader-main.c	2026-02-22 14:46:12.458999204 -0600
+diff --git a/gnome-session/leader-main.c b/gnome-session/leader-main.c
+index 8ccc06d3..cea48dad 100644
+--- a/gnome-session/leader-main.c
++++ b/gnome-session/leader-main.c
 @@ -25,11 +25,16 @@
  #include <glib.h>
  #include <glib-unix.h>
@@ -684,7 +690,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
  static char *
  shell_to_login_shell (const char *shell)
  {
-@@ -115,16 +120,10 @@
+@@ -116,16 +121,10 @@ maybe_reexec_with_login_shell (GStrv argv)
  static void
  set_up_environment (void)
  {
@@ -701,7 +707,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
          locale_settings = g_settings_new ("org.gnome.system.locale");
          region = g_settings_get_string (locale_settings, "region");
          if (!IS_STRING_EMPTY (region)) {
-@@ -175,9 +174,23 @@
+@@ -176,9 +175,22 @@ set_up_environment (void)
          g_setenv ("XDG_MENU_PREFIX", "gnome-", TRUE);
  }
  
@@ -715,7 +721,6 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
 +        syslog(LOG_INFO, "%s", message);
 +}
 +
-+
  int
  main (int argc, char **argv)
  {
@@ -725,7 +730,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
          g_autoptr (GError) error = NULL;
          g_autofree char *session_name = NULL;
          gboolean debug = FALSE;
-@@ -197,6 +210,17 @@
+@@ -198,6 +210,17 @@ main (int argc, char **argv)
                  { NULL, 0, 0, 0, NULL, NULL, NULL }
          };
  
@@ -743,16 +748,6 @@ diff -urN gnome-session-49.2/gnome-session/leader-main.c gnome-session-openrc/gn
          setlocale (LC_ALL, "");
          bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
          bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-@@ -224,9 +248,6 @@
-                 return 0;
-         }
- 
--        if (!g_getenv ("XDG_SESSION_TYPE"))
--                g_error ("XDG_SESSION_TYPE= is unset!");
--
-         /* Make sure that we were launched through a login shell. This ensures
-          * that the user's shell profiles are sourced when logging into GNOME */
-         if (!no_reexec)
 diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/gnome-session/leader-openrc.c
 --- gnome-session-49.2/gnome-session/leader-openrc.c	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/gnome-session/leader-openrc.c	2026-02-22 14:46:12.458999204 -0600
