@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/protobuf-c/0001-Use-FieldLabel-helper-for-label-access.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
