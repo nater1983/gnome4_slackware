@@ -14,6 +14,6 @@ rtkit: (i.e. realtime scheduling mode) on request. It is intended to
 rtkit: be used as a secure mechanism to allow real-time scheduling to
 rtkit: be used by normal user processes.
 rtkit:
-rtkit:
+rtkit: Homepage: https://gitlab.freedesktop.org/pipewire/rtkit
 rtkit:
 rtkit:
