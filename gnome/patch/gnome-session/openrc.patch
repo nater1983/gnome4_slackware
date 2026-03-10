@@ -109,14 +109,20 @@ index 3e5401a0..b7b092a5 100644
 +  )
 +else
 +  openrc_target = [
-+    'openrc/gnome-session',
-+    'openrc/gnome-session-tty',
 +    'openrc/gnome-session-wayland',
-+    'openrc/gnome-shell',
-+    'openrc/gnome-shell.gnome-login',
-+    'openrc/gnome-settings-daemon',
++    'openrc/gnome-session-x11',
++    'openrc/gnome-shell-wayland',
++    'openrc/gnome-shell-x11',
++    'openrc/gnome-shell-wayland.gnome-login',
++    'openrc/gnome-shell-x11.gnome-login',
++    'openrc/gnome-session-init',
++    'openrc/gnome-session-shutdown',
++    'openrc/gnome-session-monitor',
++    'openrc/gnome-settings-daemon-wayland',
++    'openrc/gnome-settings-daemon-x11',
 +    'openrc/gnome-session-dbus',
 +    'openrc/gsd',
++    'openrc/gsd-xsettings',
 +  ]
 +  # if have_x11
 +  #   openrc_target += [
@@ -142,7 +148,7 @@ index 3e5401a0..b7b092a5 100644
 +    'gsd-usb-protection',
 +    'gsd-wacom',
 +    'gsd-wwan',
-+    'gsd-xsettings',
++#    'gsd-xsettings',
 +  ]
  
 -install_data(
