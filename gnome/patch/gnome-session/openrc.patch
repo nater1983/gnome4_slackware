@@ -129,7 +129,7 @@ index 3e5401a0..b7b092a5 100644
 +    'gsd-a11y-settings',
 +    'gsd-color',
 +    'gsd-datetime',
-+   'gsd-housekeeping',
++    'gsd-housekeeping',
 +    'gsd-keyboard',
 +    'gsd-media-keys',
 +    'gsd-power',
@@ -244,6 +244,29 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 +	need gnome-settings-daemon
 +	need "gnome-session-dbus.${_session}"
 +}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-x11 gnome-session-openrc/data/openrc/gnome-session-x11
+--- gnome-session-49.2/data/openrc/gnome-session-x11	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-x11	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,19 @@
++#!/sbin/openrc-run
++
++description="GNOME Session (x11)"
++
++gs_x11_session="${RC_SVCNAME#*.}"
++
++depend() {
++	need dbus
++	if [ "${gs_x11_session}" = "gnome-login" ]; then
++		need gnome-shell-x11.gnome-login
++	else
++		need gnome-shell-x11
++	fi
++	# need "gnome-session.${gs_x11_session}"
++	need gnome-settings-daemon-x11
++	need "gnome-session-dbus.${gs_x11_session}"
++	need gnome-session-monitor
++	need gnome-session-init
++}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
 --- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 14:46:12.457238116 -0600
@@ -286,29 +309,61 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session-tty gnome-session-openrc/
 +depend() {
 +	need gnome-session
 +}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-x11 gnome-session-openrc/data/openrc/gnome-session-x11
+--- gnome-session-49.2/data/openrc/gnome-session-x11	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-x11	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,18 @@
++#!/sbin/openrc-run
++
++description="GNOME Session (x11)"
++
++gs_x11_session="${RC_SVCNAME#*.}"
++
++depend() {
++	need dbus
++	if [ "${gs_x11_session}" = "gnome-login" ]; then
++		need gnome-shell-x11.gnome-login
++	else
++		need gnome-shell-x11
++	fi
++	need gnome-settings-daemon-x11
++	need "gnome-session-dbus.${gs_x11_session}"
++	need gnome-session-monitor
++	need gnome-session-init
++}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-wayland gnome-session-openrc/data/openrc/gnome-session-wayland
 --- gnome-session-49.2/data/openrc/gnome-session-wayland	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-wayland	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,21 @@
 +#!/sbin/openrc-run
 +
 +description="GNOME Session (wayland)"
++output_logger="logger"
++error_logger="logger"
 +
-+_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++gs_wl_session="${RC_SVCNAME#*.}"
 +
 +depend() {
-+	need "gnome-session.${_session}"
++	need dbus
++	if [ "${gs_wl_session}" = "gnome-login" ]; then
++		need gnome-shell-wayland.gnome-login
++	else
++		need gnome-shell-wayland
++	fi
++	# need "gnome-session.${gs_wl_session}"
++	need gnome-settings-daemon-wayland
++	need "gnome-session-dbus.${gs_wl_session}"
++	need gnome-session-monitor
++	need gnome-session-init
 +}
-diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon gnome-session-openrc/data/openrc/gnome-settings-daemon
---- gnome-session-49.2/data/openrc/gnome-settings-daemon	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-settings-daemon	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,26 @@
+diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon-x11 gnome-session-openrc/data/openrc/gnome-settings-daemon-x11
+--- gnome-session-49.2/data/openrc/gnome-settings-daemon-x11	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-settings-daemon-x11	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,24 @@
 +#!/sbin/openrc-run
 +
-+description="GNOME Settings Daemon"
-+# command="/usr/bin/gnome-shell"
-+# command_args="--wayland"
-+#pidfile="/tmp/gnome-shell.pid"
++supervisor=supervise-daemon
++description="GNOME Settings Daemon (x11)"
 +
 +depend() {
 +	need gsd-a11y-settings       
@@ -329,38 +384,144 @@ diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon gnome-session-ope
 +#	need gsd-wwan                
 +	need gsd-xsettings           
 +}
-diff -urN gnome-session-49.2/data/openrc/gnome-shell gnome-session-openrc/data/openrc/gnome-shell
---- gnome-session-49.2/data/openrc/gnome-shell	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-shell	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,9 @@
+diff -urN gnome-session-49.2/data/openrc/gnome-settings-daemon-wayland gnome-session-openrc/data/openrc/gnome-settings-daemon-wayland
+--- gnome-session-49.2/data/openrc/gnome-settings-daemon-wayland	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-settings-daemon-wayland	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,24 @@
 +#!/sbin/openrc-run
 +
-+description="GNOME Shell"
++supervisor=supervise-daemon
++description="GNOME Settings Daemon (wayland)"
++
++depend() {
++	need gsd-a11y-settings       
++	need gsd-color               
++	need gsd-datetime
++	need gsd-housekeeping        
++	need gsd-keyboard            
++	need gsd-media-keys          
++	need gsd-power               
++	need gsd-print-notifications 
++	need gsd-rfkill        
++	need gsd-screensaver-proxy   
++	need gsd-sharing             
++#	need gsd-smartcard           
++	need gsd-sound               
++	need gsd-usb-protection      
++#	need gsd-wacom               
++#	need gsd-wwan                
++#	need gsd-xsettings           
++}
+diff -urN gnome-session-49.2/data/openrc/gnome-shell-wayland gnome-session-openrc/data/openrc/gnome-shell-wayland
+--- gnome-session-49.2/data/openrc/gnome-shell-wayland	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell-wayland	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,19 @@
++#!/sbin/openrc-run
++
 +XDG_CURRENT_DESKTOP=GNOME
 +export XDG_CURRENT_DESKTOP
++XDG_SESSION_TYPE=wayland
++export XDG_SESSION_TYPE
++# HACK: Need better openrc env handling
++DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
++export DBUS_SESSION_BUS_ADDRESS
++XDG_DATA_DIRS="$XDG_DATA_DIRS:/home/$USER/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
++export XDG_DATA_DIRS
++output_logger="logger"
++error_logger="logger"
++
++supervisor=supervise-daemon
++description="GNOME Shell (wayland)"
 +command="/usr/bin/gnome-shell"
 +command_args="--wayland"
-+command_background="true"
-+pidfile="${XDG_RUNTIME_DIR}/gnome-shell.pid"
-diff -urN gnome-session-49.2/data/openrc/gnome-shell.gnome-login gnome-session-openrc/data/openrc/gnome-shell.gnome-login
---- gnome-session-49.2/data/openrc/gnome-shell.gnome-login	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-shell.gnome-login	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,9 @@
++pidfile="${XDG_RUNTIME_DIR}/gnome-shell-wayland.pid"
+diff -urN gnome-session-49.2/data/openrc/gnome-shell-x11 gnome-session-openrc/data/openrc/gnome-shell-x11
+--- gnome-session-49.2/data/openrc/gnome-shell-x11	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell-x11	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,19 @@
 +#!/sbin/openrc-run
 +
-+description="GNOME Shell (login)"
 +XDG_CURRENT_DESKTOP=GNOME
 +export XDG_CURRENT_DESKTOP
++XDG_SESSION_TYPE=x11
++export XDG_SESSION_TYPE
++# HACK: Need better openrc env handling
++DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
++export DBUS_SESSION_BUS_ADDRESS
++XDG_DATA_DIRS="$XDG_DATA_DIRS:/home/$USER/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
++export XDG_DATA_DIRS
++DISPLAY=:2
++export DISPLAY
++
++supervisor=supervise-daemon
++description="GNOME Shell (x11)"
++command="/usr/bin/gnome-shell"
++command_args="--x11"
++pidfile="${XDG_RUNTIME_DIR}/gnome-shell-x11.pid"
+diff -urN gnome-session-49.2/data/openrc/gnome-shell-wayland.gnome-login gnome-session-openrc/data/openrc/gnome-shell-wayland.gnome-login
+--- gnome-session-49.2/data/openrc/gnome-shell-wayland.gnome-login	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell-wayland.gnome-login	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,17 @@
++#!/sbin/openrc-run
++
++XDG_CURRENT_DESKTOP=GNOME
++export XDG_CURRENT_DESKTOP
++XDG_SESSION_TYPE=wayland
++export XDG_SESSION_TYPE
++# HACK: Need better openrc env handling
++DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
++export DBUS_SESSION_BUS_ADDRESS
++output_logger="logger"
++error_logger="logger"
++
++supervisor=supervise-daemon
++description="GNOME Shell (login)"
 +command="/usr/bin/gnome-shell"
 +command_args="--wayland --mode=gdm"
-+command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/gnome-shell-gdm.pid"
+diff -urN gnome-session-49.2/data/openrc/gnome-shell-x11.gnome-login gnome-session-openrc/data/openrc/gnome-shell-x11.gnome-login
+--- gnome-session-49.2/data/openrc/gnome-shell-x11.gnome-login	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-shell-x11.gnome-login	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,17 @@
++#!/sbin/openrc-run
++
++XDG_CURRENT_DESKTOP=GNOME
++export XDG_CURRENT_DESKTOP
++XDG_SESSION_TYPE=x11
++export XDG_SESSION_TYPE
++# HACK: Need better openrc env handling
++DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
++export DBUS_SESSION_BUS_ADDRESS
++DISPLAY=:2
++export DISPLAY
++
++supervisor=supervise-daemon
++description="GNOME Shell (login)"
++command="/usr/bin/gnome-shell"
++command_args="--x11 --mode=gdm"
 +pidfile="${XDG_RUNTIME_DIR}/gnome-shell-gdm.pid"
 diff -urN gnome-session-49.2/data/openrc/gsd gnome-session-openrc/data/openrc/gsd
 --- gnome-session-49.2/data/openrc/gsd	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gsd	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +#!/sbin/openrc-run
 +
++supervisor=supervise-daemon
++description="${RC_SVCNAME} daemon"
++command="/usr/libexec/${RC_SVCNAME}"
++command_args=""
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/${RC_SVCNAME}.pid"
+diff -urN gnome-session-49.2/data/openrc/gsd-xsettings gnome-session-openrc/data/openrc/gsd-xsettings
+--- gnome-session-49.2/data/openrc/gsd-xsettings	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gsd-xsettings	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,11 @@
++#!/sbin/openrc-run
++
++DISPLAY=:2
++export DISPLAY
++
++supervisor=supervise-daemon
 +description="${RC_SVCNAME} daemon"
 +command="/usr/libexec/${RC_SVCNAME}"
 +command_args=""
