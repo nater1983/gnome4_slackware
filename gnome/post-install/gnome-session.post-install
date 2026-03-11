@@ -1,5 +1,7 @@
 # Remove X11
 mkdir -p $PKG/etc/X11/xinit
 install -vDm 0755 $CWD/post-install/gnome-session/xinitrc.gnome -t $PKG/etc/X11/xinit
+install -vDm 0644 $CWD/post-install/gnome-session/gnome-xorg.desktop -t $PKG/usr/share/xsessions
+sudo sed -i 's|@bindir@|/usr/bin|g' $PKG/usr/share/xsessions/gnome-xorg.desktop
 rm -fr $PKG/usr/app-flatpak-.scope.d/
 chmod +x $PKG/etc/user/init.d/*
