@@ -802,11 +802,11 @@ index 8ccc06d3..cea48dad 100644
          setlocale (LC_ALL, "");
          bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
          bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-diff --git a/leader_openrc.c b/leader_openrc.c
+diff --git a/gnome-session/leader_openrc.c b/gnome-session/leader_openrc.c
 new file mode 100644
 index 0000000..cd2e129
 --- /dev/null
-+++ b/leader_openrc.c
++++ b/gnome-session/leader_openrc.c
 @@ -0,0 +1,365 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 + *
