@@ -203,45 +203,17 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session-init gnome-session-openrc
 diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
 --- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,10 @@
 +#!/sbin/openrc-run
 +
-+_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++dbus_session="${RC_SVCNAME#*.}"
 +
++# supervisor=supervise-daemon
 +description="GNOME session dbus daemon"
 +command="/usr/libexec/gnome-session-service"
-+comand_args='--session="${_session}"'
++command_args='--session="${dbus_session}"'
 +command_background="true"
-+pidfile="${XDG_RUNTIME_DIR}/gnome-session-dbus.pid"
-+
-+# start() {
-+# 	ebegin "Starting ${description}"
-+# 	if [ -f /usr/libexec/gnome-session-service ]; then
-+# 		start-stop-daemon --start --exec /usr/local/libexec/gnome-session-service -b -- --session="${_session}"
-+# 	else
-+# 		echo nope
-+# 		#/usr/libexec/gnome-session-service --session=gnome
-+# 	fi
-+# 	eend $?
-+# }
-+
-+# stop() {
-+# 	ebegin "Stopping ${description}"
-+# 	# hack
-+# 	kill -15 `pgrep -f gnome-session-service` || true
-+# 	eend $?
-+# }
-diff -urN gnome-session-49.2/data/openrc/gnome-session-tty gnome-session-openrc/data/openrc/gnome-session-tty
---- gnome-session-49.2/data/openrc/gnome-session-tty	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session-tty	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,7 @@
-+#!/sbin/openrc-run
-+
-+description="GNOME Session (wayland)"
-+
-+depend() {
-+	need gnome-session
-+}
++pidfile="${XDG_RUNTIME_DIR}/gnome-session-dbus-${dbus_session}.pid"
 diff -urN gnome-session-49.2/data/openrc/gnome-session-x11 gnome-session-openrc/data/openrc/gnome-session-x11
 --- gnome-session-49.2/data/openrc/gnome-session-x11	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-x11	2026-02-22 14:46:12.457238116 -0600
