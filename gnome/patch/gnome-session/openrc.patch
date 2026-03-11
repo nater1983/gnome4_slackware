@@ -161,6 +161,29 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 +	need gnome-settings-daemon
 +	need "gnome-session-dbus.${_session}"
 +}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-monitor gnome-session-openrc/data/openrc/gnome-session-monitor
+--- gnome-session-49.2/data/openrc/gnome-session-monitor	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-monitor	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,8 @@
++#!/sbin/openrc-run
++
++# supervisor=supervise-daemon
++description="Gnome session monitor"
++command="/usr/libexec/gnome-session-ctl"
++command_args="--monitor"
++command_background="true"
++pidfile="${XDG_RUNTIME_DIR}/gnome-session-monitor.pid" #?
+diff -urN gnome-session-49.2/data/openrc/gnome-session-shutdown gnome-session-openrc/data/openrc/gnome-session-shutdown
+--- gnome-session-49.2/data/openrc/gnome-session-shutdown	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-shutdown	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,7 @@
++#!/sbin/openrc-run
++
++# supervisor=supervise-daemon
++description="Gnome session shutdown"
++command="/usr/libexec/gnome-session-ctl"
++command_args="--shutdown"
++pidfile="${XDG_RUNTIME_DIR}/gnome-session-shutdown.pid" #?
 diff -urN gnome-session-49.2/data/openrc/gnome-session-init gnome-session-openrc/data/openrc/gnome-session-init
 --- gnome-session-49.2/data/openrc/gnome-session-init	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-init	2026-02-22 14:46:12.457238116 -0600
