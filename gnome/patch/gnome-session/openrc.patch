@@ -705,9 +705,9 @@ index fecde253..0ff9dc6e 100644
  #include <glib-object.h>
  #include <gio/gio.h>
  
-+#ifdef USE_OPENRC
-+#       include <rc.h>
-+#endif
++
++#include <rc.h>
++
 +
  #include "gsm-manager.h"
  #include "org.gnome.SessionManager.h"
