@@ -724,7 +724,7 @@ index fecde253..0ff9dc6e 100644
          return quark_volatile;
  }
  
-+#ifdef USE_OPENRC
++# Make sure to use USE_OPENRC
 +static gboolean
 +async_run_cmd(gchar** argv, GError **error)
 +{
@@ -753,7 +753,7 @@ index fecde253..0ff9dc6e 100644
 +        gboolean res = async_run_cmd(argv, error);
 +        return res;
 +}
-+#endif
++
 +
  static gboolean
  start_app_or_warn (GsmManager *manager,
@@ -781,12 +781,12 @@ index fecde253..0ff9dc6e 100644
  
          G_OBJECT_CLASS (gsm_manager_parent_class)->dispose (object);
 +
-+#ifdef USE_OPENRC
++# Make sure to use USE_OPENRC
 +	g_debug ("Starting gnome-session-shutdown");
 +
 +	if (openrc_unit_action ("gnome-session-shutdown", "start", NULL))
 +                g_warning ("Failed to start gnome-session-shutdown.");
-+#endif
++
  }
  
  static void
