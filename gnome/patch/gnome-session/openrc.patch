@@ -1,3 +1,15 @@
+diff --git a/meson.build b/meson.build
+index 3623c8e..4d77d25 100644
+--- a/meson.build
++++ b/meson.build
+@@ -84,6 +84,7 @@ session_deps = [
+   gio_dep,
+   dependency('glib-2.0', version: glib_req_version),
+   dependency('gnome-desktop-4'),
++  dependency('openrc', required: true),
+ ]
+ 
+ libsystemd_dep = dependency('libsystemd', version: '>= 209', required: true)
 diff --git a/data/meson.build b/data/meson.build
 index 3e5401a0..b7b092a5 100644
 --- a/data/meson.build
