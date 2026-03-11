@@ -701,7 +701,200 @@ diff --git a/gnome-session/gsm-manager.c b/gnome-session/gsm-manager.c
 index fecde253..0ff9dc6e 100644
 --- a/gnome-session/gsm-manager.c
 +++ b/gnome-session/gsm-manager.c
-@@ -2201,28 +2201,23 @@ on_shell_end_session_dialog_canceled (GsmShell   *shell,
+@@ -37,6 +37,10 @@
+ #include <glib-object.h>
+ #include <gio/gio.h>
+ 
++#ifdef USE_OPENRC
++#       include <rc.h>
++#endif
++
+ #include "gsm-manager.h"
+ #include "org.gnome.SessionManager.h"
+ 
+@@ -60,7 +64,6 @@
+ 
+ #define SESSION_SCHEMA            "org.gnome.desktop.session"
+ #define KEY_IDLE_DELAY            "idle-delay"
+-#define KEY_SAVE_RESTORE          "save-restore"
+ 
+ #define GSM_MANAGER_SCHEMA        "org.gnome.SessionManager"
+ #define KEY_LOGOUT_PROMPT         "logout-prompt"
+@@ -161,6 +164,37 @@ gsm_manager_error_quark (void)
+         return quark_volatile;
+ }
+ 
++#ifdef USE_OPENRC
++static gboolean
++async_run_cmd(gchar** argv, GError **error)
++{
++        return g_spawn_async(NULL,
++                             argv,
++                             NULL,
++                             G_SPAWN_DEFAULT,
++                             NULL,
++                             NULL,
++                             NULL,
++                             error);
++}
++
++static gboolean
++openrc_unit_action (const char       *unit,
++                    const char       *action,
++                    GError          **error)
++{
++        g_autofree char *service = rc_service_resolve(unit);
++        if (!service)
++        {
++                g_debug("Couldn't resolve service '%s'", unit);
++                return FALSE;
++        }
++        gchar *argv[] = { service, "-U", action, NULL };
++        gboolean res = async_run_cmd(argv, error);
++        return res;
++}
++#endif
++
+ static gboolean
+ start_app_or_warn (GsmManager *manager,
+                    GsmApp     *app)
+@@ -791,6 +825,7 @@ start_phase (GsmManager *manager)
+                                  "PRIORITY=%d", 5,
+                                  "MESSAGE=Entering running state",
+                                  NULL);
++                              
+                 if (manager->pending_end_session_tasks != NULL)
+                         complete_end_session_tasks (manager);
+                 g_object_unref (manager->end_session_cancellable);
+@@ -860,9 +895,6 @@ _gsm_manager_set_active_session (GsmManager *manager,
+         if (!is_kiosk)
+                 manager->session_save = gsm_session_save_new (session_name);
+ 
+-        // TODO: For GNOME 50, we've disabled the save/restore feature.
+-        gsm_exported_manager_set_restore_supported (manager->skeleton, FALSE);
+-        //gsm_exported_manager_set_restore_supported (manager->skeleton, manager->session_save != NULL);
+         gsm_exported_manager_set_session_name (manager->skeleton, session_name);
+ }
+ 
+@@ -1277,6 +1309,13 @@ gsm_manager_dispose (GObject *object)
+         g_clear_object (&manager->connection);
+ 
+         G_OBJECT_CLASS (gsm_manager_parent_class)->dispose (object);
++
++#ifdef USE_OPENRC
++	g_debug ("Starting gnome-session-shutdown");
++
++	if (openrc_unit_action ("gnome-session-shutdown", "start", NULL))
++                g_warning ("Failed to start gnome-session-shutdown.");
++#endif
+ }
+ 
+ static void
+@@ -1426,68 +1465,26 @@ gsm_manager_reboot (GsmExportedManager    *skeleton,
+         return TRUE;
+ }
+ 
+-static gboolean
+-gsm_manager_suspend (GsmExportedManager    *skeleton,
+-                     GDBusMethodInvocation *invocation,
+-                     GsmManager            *manager)
+-{
+-        g_debug ("GsmManager: Suspend called");
+-        gsm_system_suspend (manager->system);
+-        gsm_exported_manager_complete_suspend (skeleton, invocation);
+-        return TRUE;
+-}
+-
+ static gboolean
+ gsm_manager_can_shutdown (GsmExportedManager    *skeleton,
+                           GDBusMethodInvocation *invocation,
+                           GsmManager            *manager)
+ {
+-        GsmActionAvailability availability;
++        gboolean shutdown_available;
+ 
+         g_debug ("GsmManager: CanShutdown called");
+ 
+-        if (!_log_out_is_locked_down (manager))
+-                availability = gsm_system_can_shutdown (manager->system);
+-        else
+-                availability = GSM_ACTION_UNAVAILABLE;
+-
+-        gsm_exported_manager_complete_can_shutdown (skeleton, invocation, availability);
+-        return TRUE;
+-}
+-
+-static gboolean
+-gsm_manager_can_reboot (GsmExportedManager    *skeleton,
+-                        GDBusMethodInvocation *invocation,
+-                        GsmManager            *manager)
+-{
+-        GsmActionAvailability availability;
++        shutdown_available = !_log_out_is_locked_down (manager) &&
++                (gsm_system_can_stop (manager->system)
++                 || gsm_system_can_restart (manager->system)
++                 || gsm_system_can_suspend (manager->system)
++                 || gsm_system_can_hibernate (manager->system));
+ 
+-        g_debug ("GsmManager: CanReboot called");
++        gsm_exported_manager_complete_can_shutdown (skeleton, invocation, shutdown_available);
+ 
+-        if (!_log_out_is_locked_down (manager))
+-                availability = gsm_system_can_restart (manager->system);
+-        else
+-                availability = GSM_ACTION_UNAVAILABLE;
+-
+-        gsm_exported_manager_complete_can_reboot (skeleton, invocation, availability);
+         return TRUE;
+ }
+ 
+-static gboolean
+-gsm_manager_can_suspend (GsmExportedManager    *skeleton,
+-                         GDBusMethodInvocation *invocation,
+-                         GsmManager            *manager)
+-{
+-        GsmActionAvailability availability;
+-
+-        g_debug ("GsmManager: CanSuspend called");
+-
+-        availability = gsm_system_can_suspend (manager->system);
+-        gsm_exported_manager_complete_can_suspend (skeleton, invocation, availability);
+-        return TRUE;
+-}
+-
+-
+ static gboolean
+ gsm_manager_can_reboot_to_firmware_setup (GsmExportedManager    *skeleton,
+                                           GDBusMethodInvocation *invocation,
+@@ -2076,10 +2073,6 @@ register_manager (GsmManager *manager)
+                           G_CALLBACK (gsm_manager_can_reboot_to_firmware_setup), manager);
+         g_signal_connect (skeleton, "handle-can-shutdown",
+                           G_CALLBACK (gsm_manager_can_shutdown), manager);
+-        g_signal_connect (skeleton, "handle-can-reboot",
+-                          G_CALLBACK (gsm_manager_can_reboot), manager);
+-        g_signal_connect (skeleton, "handle-can-suspend",
+-                          G_CALLBACK (gsm_manager_can_suspend), manager);
+         g_signal_connect (skeleton, "handle-get-inhibitors",
+                           G_CALLBACK (gsm_manager_get_inhibitors), manager);
+         g_signal_connect (skeleton, "handle-get-locale",
+@@ -2096,8 +2089,6 @@ register_manager (GsmManager *manager)
+                           G_CALLBACK (gsm_manager_logout_dbus), manager);
+         g_signal_connect (skeleton, "handle-reboot",
+                           G_CALLBACK (gsm_manager_reboot), manager);
+-        g_signal_connect (skeleton, "handle-suspend",
+-                          G_CALLBACK (gsm_manager_suspend), manager);
+         g_signal_connect (skeleton, "handle-register-client",
+                           G_CALLBACK (gsm_manager_register_client), manager);
+         g_signal_connect (skeleton, "handle-register-restore",
+@@ -2151,6 +2142,7 @@ idle_timeout_get_mapping (GValue *value,
+ static void
+ gsm_manager_init (GsmManager *manager)
+ {
++        rc_set_user();
+         manager->settings = g_settings_new (GSM_MANAGER_SCHEMA);
+         manager->session_settings = g_settings_new (SESSION_SCHEMA);
+         manager->lockdown_settings = g_settings_new (LOCKDOWN_SCHEMA);
+@@ -2251,28 +2243,19 @@ on_shell_end_session_dialog_canceled (GsmShell   *shell,
  
  static void
  handle_end_session_dialog_confirmation (GsmManager           *manager,
@@ -722,12 +915,12 @@ index fecde253..0ff9dc6e 100644
 -        else if (manager->logout_type != confirmed_logout_type)
 +        if (manager->logout_type != logout_type) {
                  g_warning ("GsmManager: Shell confirmed unexpected logout type");
+-
+-        if (manager->session_save &&
+-            !g_settings_get_boolean (manager->session_settings, KEY_SAVE_RESTORE))
+-                gsm_session_save_discard (manager->session_save);
 +                return; /* Make it obvious that something went wrong */
 +        }
- 
-         if (manager->session_save &&
-             !g_settings_get_boolean (manager->session_settings, KEY_SAVE_RESTORE))
-                 gsm_session_save_discard (manager->session_save);
  
          manager->logout_mode = GSM_MANAGER_LOGOUT_MODE_FORCE;
 -        manager->logout_type = confirmed_logout_type;
