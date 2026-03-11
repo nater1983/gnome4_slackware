@@ -161,6 +161,22 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 +	need gnome-settings-daemon
 +	need "gnome-session-dbus.${_session}"
 +}
+diff -urN gnome-session-49.2/data/openrc/gnome-session-init gnome-session-openrc/data/openrc/gnome-session-init
+--- gnome-session-49.2/data/openrc/gnome-session-init	1969-12-31 18:00:00.000000000 -0600
++++ gnome-session-openrc/data/openrc/gnome-session-init	2026-02-22 14:46:12.457238116 -0600
+@@ -0,0 +1,12 @@
++#!/sbin/openrc-run
++
++# HACK: Need better openrc env handling
++DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
++export DBUS_SESSION_BUS_ADDRESS
++
++supervisor=supervise-daemon
++description="Gnome session init signal"
++command="/usr/libexec/gnome-session-ctl"
++command_args="--signal-init"
++pidfile="${XDG_RUNTIME_DIR}/gnome-session-init.pid" #?
++# notify="socket:ready"
 diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
 --- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 14:46:12.457238116 -0600
