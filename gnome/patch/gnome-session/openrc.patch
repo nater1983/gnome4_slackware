@@ -802,14 +802,17 @@ index 8ccc06d3..cea48dad 100644
          setlocale (LC_ALL, "");
          bindtextdomain (GETTEXT_PACKAGE, LOCALE_DIR);
          bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/gnome-session/leader-openrc.c
---- gnome-session-49.2/gnome-session/leader-openrc.c	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/gnome-session/leader-openrc.c	2026-02-22 14:46:12.458999204 -0600
-@@ -0,0 +1,344 @@
+diff --git a/leader_openrc.c b/leader_openrc.c
+new file mode 100644
+index 0000000..cd2e129
+--- /dev/null
++++ b/leader_openrc.c
+@@ -0,0 +1,365 @@
 +/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*-
 + *
 + * Copyright (C) 2006 Novell, Inc.
 + * Copyright (C) 2008 Red Hat, Inc.
++ * Copyright (C) 2026 Hyland B. <me@ow.swag.toys>
 + *
 + * This program is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU General Public License as
@@ -825,21 +828,13 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 + * along with this program; if not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#include <config.h>
++#include <string.h>
 +
 +#include <glib.h>
 +#include <glib-unix.h>
 +#include <gio/gio.h>
 +#include <sys/syslog.h>
-+
-+#include "gsm-util.h"
-+
-+void
-+debug_logger(gchar const *log_domain,
-+             GLogLevelFlags log_level,
-+             gchar const *message,
-+             gpointer user_data);
-+
++#include <rc.h>
 +
 +typedef struct {
 +        GDBusConnection *session_bus;
@@ -860,11 +855,16 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (Leader, leader_clear);
 +
 +static gboolean
-+systemd_unit_is_active (GDBusConnection  *connection,
-+                        const char       *unit,
-+                        GError          **error)
++async_run_cmd (gchar **argv, GError **error)
 +{
-+	return FALSE;
++        return g_spawn_async(NULL,
++                             argv,
++                             NULL,
++                             G_SPAWN_DEFAULT,
++                             NULL,
++                             NULL,
++                             NULL,
++                             error);
 +}
 +
 +static gboolean
@@ -872,46 +872,29 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +                    const char       *action,
 +                    GError          **error)
 +{
-+	g_autofree char *str = g_strdup_printf("/etc/user/init.d/%s -U %s", unit, action);
-+	return g_spawn_command_line_async(str, error);
-+}
-+
-+static gboolean
-+start_gnome_pls (
-+                 GError          **error)
-+{
-+	return g_spawn_command_line_async("/usr/bin/gnome-shell --wayland", error);
++        g_autofree char *service = rc_service_resolve(unit);
++        if (!service)
++        {
++                g_debug ("Couldn't resolve service '%s'", unit);
++                return FALSE;
++        }
++        gchar *argv[] = { service, "-U", action, NULL };
++        gboolean res = async_run_cmd(argv, error);
++        return res;
 +}
 +
 +static gboolean
 +openrc_start_unit (const char       *unit,
-+                    GError          **error)
++                   GError          **error)
 +{
-+	return openrc_unit_action(unit, "start", error);
++        return openrc_unit_action (unit, "start", error);
 +}
 +
 +static gboolean
 +openrc_stop_unit (const char       *unit,
-+                    GError          **error)
++                  GError          **error)
 +{
-+	return openrc_unit_action(unit, "stop", error);
-+}
-+
-+static gboolean
-+systemd_reset_failed (GDBusConnection  *connection,
-+                      GError          **error)
-+{
-+        g_autoptr(GVariant) reply = NULL;
-+        reply = g_dbus_connection_call_sync (connection,
-+                                             "org.freedesktop.systemd1",
-+                                             "/org/freedesktop/systemd1",
-+                                             "org.freedesktop.systemd1.Manager",
-+                                             "ResetFailed",
-+                                             NULL,
-+                                             NULL,
-+                                             G_DBUS_CALL_FLAGS_NO_AUTO_START,
-+                                             -1, NULL, error);
-+        return reply != NULL;
++        return openrc_unit_action (unit, "stop", error);
 +}
 +
 +static gboolean
@@ -920,10 +903,6 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +        Leader *ctx = data;
 +
 +        g_debug ("Session termination requested");
-+
-+        /* Start a shutdown explicitly. */
-+        //systemd_start_unit (ctx->session_bus, "gnome-session-shutdown.target",
-+        //                    "replace-irreversibly", NULL);
 +
 +        if (write (ctx->fifo_fd, "S", 1) < 0) {
 +                g_warning ("Failed to signal shutdown to monitor: %m");
@@ -954,6 +933,7 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +        }
 +}
 +
++// TODO purge this code
 +static gboolean
 +monitor_hangup_cb (int          fd,
 +                   GIOCondition condition,
@@ -1028,14 +1008,14 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +        return G_SOURCE_REMOVE;
 +}
 +
-+void
-+debug_logger(gchar const *log_domain,
-+             GLogLevelFlags log_level,
-+             gchar const *message,
-+             gpointer user_data)
++static void
++debug_logger (gchar const *log_domain,
++              GLogLevelFlags log_level,
++              gchar const *message,
++              gpointer user_data)
 +{
-+        printf("%s\n", message);
-+        syslog(LOG_INFO, "%s", message);
++        printf ("%s\n", message);
++        syslog (LOG_INFO, "%s", message);
 +}
 +
 +/**
@@ -1074,31 +1054,60 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +int
 +main (int argc, char **argv)
 +{
-+#if 1
++        // Hook into syslog, as on an openrc system it's probably more convenient
 +        g_log_set_default_handler(debug_logger, NULL);
-+#endif
 +        g_autoptr (GError) error = NULL;
 +        g_auto (Leader) ctx = { .fifo_fd = -1 };
 +        const char *session_name = NULL;
 +        const char *debug_string = NULL;
 +        g_autofree char *target = NULL;
-+        //g_autofree char *fifo_path = NULL;
++        g_autofree char *fifo_path = NULL;
++        g_autofree char *home_dir = NULL;
++        g_autofree char *config_dir = NULL;
 +        struct stat statbuf;
-+
++        
 +        if (argc < 2)
 +            g_error ("No session name was specified");
 +        session_name = argv[1];
++        
++        // probably not rely on this
++        char const *user = g_getenv("USER");
++        if (!user)
++                user = "gdm-greeter"; // :/
++        g_info("User is: %s", user);
++        // strncmp because we also have gdm-greeter-{2,3,4,...}
++        if (strncmp(user, "gdm-greeter", sizeof("gdm-greeter")) == 0)
++        {
++                home_dir = g_strdup_printf("/var/lib/%s", user);
++
++                // Need to hijack the home to point to /var/lib because /var/run/... gets nuked on each gdm start
++                config_dir = g_strdup_printf("%s/.config", home_dir);
++                g_setenv("XDG_CONFIG_HOME", config_dir, TRUE);
++                g_setenv("HOME", home_dir, TRUE);
++        }
++        else
++                g_warning("The gdm-greeter-{1,2,3,4} user wasn't found. Expect stuff to break.");
++        
++        // Finally, let's get started
++        rc_set_user();
++        
++        char const *session_type = g_getenv("XDG_SESSION_TYPE");
++        char const *home         = g_getenv("HOME");
++        g_info("XDG_RUNTIME_DIR: %s", g_getenv("XDG_RUNTIME_DIR"));
++        
++        // TODO what about custom XDG config directory?
++        g_autofree char *gnome_runlevel_dir = g_strdup_printf("%s/.config/rc/runlevels/gnome-session", home);
++        if (!g_mkdir_with_parents(gnome_runlevel_dir, 0755))
++                g_debug("Directory exists. OK");
++
++        g_debug("runlevel dir: %s", gnome_runlevel_dir);
 +
 +        debug_string = g_getenv ("GNOME_SESSION_DEBUG");
 +        if (debug_string != NULL)
-+            g_log_set_debug_enabled (atoi (debug_string) == 1);
-+        g_log_set_debug_enabled(TRUE);
++                g_log_set_debug_enabled (atoi (debug_string) == 1);
++        else
++                g_log_set_debug_enabled(TRUE);
 +        g_debug("Hi! from leader-openrc.");
-+
-+        //gsm_util_export_user_environment (&error);
-+        //if (error)
-+        //        g_warning ("Failed to upload environment to systemd: %s", error->message);
-+        //g_clear_error (&error);
 +
 +        ctx.loop = g_main_loop_new (NULL, TRUE);
 +
@@ -1106,47 +1115,61 @@ diff -urN gnome-session-49.2/gnome-session/leader-openrc.c gnome-session-openrc/
 +        if (ctx.session_bus == NULL)
 +                g_error ("Failed to obtain session bus: %s", error->message);
 +
-+        /* We don't escape the name (i.e. we leave any '-' intact). */
-+	char const *session_type = g_getenv("XDG_SESSION_TYPE");
++        /* XDG_SESSION_TYPE from the console is TTY which isn't a service and doesn't make
++            too much sense anyway */
++        if (session_type && strcmp(session_type, "tty") == 0)
++                session_type = "wayland"; 
 +        target = g_strdup_printf ("gnome-session-%s.%s",
 +                                  session_type ? session_type : "wayland", session_name);
 +
-+        /* if (systemd_unit_is_active (ctx.session_bus, target, &error)) */
-+        /*         g_error ("Session manager is already running!"); */
-+        /* if (error != NULL) */
-+        /*         g_warning ("Failed to check if unit %s is active: %s", */
-+        /*                    target, error->message); */
-+        /* g_clear_error (&error); */
++        RC_SERVICE state = rc_service_state(target);
++        switch (state)
++        {
++        case RC_SERVICE_STARTED:
++        case RC_SERVICE_FAILED:
++                g_error("Service manager is already running!");
++                break;
++        case RC_SERVICE_STOPPED:
++                break;
++        default:
++                g_debug("Service in state: %d", state);
++        }
++        
++        if (!rc_runlevel_stack("gnome-session", "default"))
++                g_info("Couldn't set runlevel stack");
++        if (!rc_runlevel_exists("gnome-session"))
++                g_info("No runlevel \"gnome-session\" seen!"); // next function will fail now, but librc error reporting sucks so we check this specifically
++        if (!rc_service_add("gnome-session", target))
++        {
++                g_info("Couldn't add service to gnome-session runlevel: %s", strerror(errno));
++        }
 +
 +        g_message ("Starting GNOME session target: %s", target);
 +
-+	//if (strcmp(session_name, "gnome-login") == 0)
-+	//	start_gnome_pls(&error);
-+        if (!openrc_start_unit (target, &error))
-+                g_error ("Failed to start unit %s: %s", target, error->message);
-+		
-+	//	char const *fifo_path = "/tmp/gnome-shell.pid";
-+        /* fifo_path = g_build_filename (g_get_user_runtime_dir (), */
-+        /*                               "gnome-session-leader-fifo", */
-+        /*                               NULL); */
-+        /* if (mkfifo (fifo_path, 0666) < 0 && errno != EEXIST) */
-+        /*         g_warning ("Failed to create leader FIFO: %m"); */
-+	/* 	//fifo_path = g_strdup_printf("gnome-session-%s. */
++        // No way that i'm aware of to enter a user runlevel from librc :/
++        gchar *rl_argv[] = { "/usr/bin/openrc", "-U", "gnome-session", NULL };
++        if (!async_run_cmd(rl_argv, &error))
++                g_error("Failed to start unit %s: %s", target, error ? error->message : "(no message)");
++        
++        fifo_path = g_build_filename (g_get_user_runtime_dir (),
++                                      "gnome-session-leader-fifo",
++                                      NULL);
++        if (mkfifo (fifo_path, 0666) < 0 && errno != EEXIST)
++                g_warning ("Failed to create leader FIFO: %m");
 +
-+        /* ctx.fifo_fd = g_open (fifo_path, O_WRONLY | O_CLOEXEC, 0666); */
-+        /* if (ctx.fifo_fd < 0) */
-+        /*         g_error ("Failed to watch systemd session: open failed: %m"); */
-+        /* if (fstat (ctx.fifo_fd, &statbuf) < 0) */
-+        /*         g_error ("Failed to watch systemd session: fstat failed: %m"); */
-+        /* else if (!(statbuf.st_mode & S_IFIFO)) */
-+        /*         g_error ("Failed to watch systemd session: FD is not a FIFO"); */
++        ctx.fifo_fd = g_open (fifo_path, O_WRONLY | O_CLOEXEC, 0666);
++        if (ctx.fifo_fd < 0)
++                g_error ("Failed to watch openrc session: open failed: %m");
++        if (fstat (ctx.fifo_fd, &statbuf) < 0)
++                g_error ("Failed to watch openrc session: fstat failed: %m");
++        else if (!(statbuf.st_mode & S_IFIFO))
++                g_error ("Failed to watch openrc session: FD is not a FIFO");
 +
-+        /* g_unix_fd_add (ctx.fifo_fd, G_IO_HUP, (GUnixFDSourceFunc) monitor_hangup_cb, &ctx); */
-+        /* g_unix_signal_add (SIGHUP, leader_term_or_int_signal_cb, &ctx); */
-+        /* g_unix_signal_add (SIGTERM, leader_term_or_int_signal_cb, &ctx); */
-+        /* g_unix_signal_add (SIGINT, leader_term_or_int_signal_cb, &ctx); */
++        g_unix_fd_add (ctx.fifo_fd, G_IO_HUP, (GUnixFDSourceFunc) monitor_hangup_cb, &ctx);
++        g_unix_signal_add (SIGHUP, leader_term_or_int_signal_cb, &ctx);
++        g_unix_signal_add (SIGTERM, leader_term_or_int_signal_cb, &ctx);
++        g_unix_signal_add (SIGINT, leader_term_or_int_signal_cb, &ctx);
 +
-+        g_debug ("Waiting for session to shutdown");
 +        g_main_loop_run (ctx.loop);
 +        return 0;
 +}
