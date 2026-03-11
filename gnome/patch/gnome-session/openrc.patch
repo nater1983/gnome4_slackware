@@ -161,29 +161,6 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 +	need gnome-settings-daemon
 +	need "gnome-session-dbus.${_session}"
 +}
-diff -urN gnome-session-49.2/data/openrc/gnome-session-x11 gnome-session-openrc/data/openrc/gnome-session-x11
---- gnome-session-49.2/data/openrc/gnome-session-x11	1969-12-31 18:00:00.000000000 -0600
-+++ gnome-session-openrc/data/openrc/gnome-session-x11	2026-02-22 14:46:12.457238116 -0600
-@@ -0,0 +1,19 @@
-+#!/sbin/openrc-run
-+
-+description="GNOME Session (x11)"
-+
-+gs_x11_session="${RC_SVCNAME#*.}"
-+
-+depend() {
-+	need dbus
-+	if [ "${gs_x11_session}" = "gnome-login" ]; then
-+		need gnome-shell-x11.gnome-login
-+	else
-+		need gnome-shell-x11
-+	fi
-+	# need "gnome-session.${gs_x11_session}"
-+	need gnome-settings-daemon-x11
-+	need "gnome-session-dbus.${gs_x11_session}"
-+	need gnome-session-monitor
-+	need gnome-session-init
-+}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-dbus gnome-session-openrc/data/openrc/gnome-session-dbus
 --- gnome-session-49.2/data/openrc/gnome-session-dbus	1969-12-31 18:00:00.000000000 -0600
 +++ gnome-session-openrc/data/openrc/gnome-session-dbus	2026-02-22 14:46:12.457238116 -0600
