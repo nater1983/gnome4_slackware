@@ -1,1 +1,1 @@
-#patch -Np1 -i $CWD/patch/qemu/glibc-2.41.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/qemu/qemu-10.2.0-libnfs6.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
