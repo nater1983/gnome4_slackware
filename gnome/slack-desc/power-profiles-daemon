@@ -4,16 +4,15 @@
 # the '|' on the right side marks the last column you can put a character in.
 # You must make exactly 11 lines for the formatting to be correct.  It's also
 # customary to leave one space after the ':' except on otherwise blank lines.
-
-                     |-----handy-ruler-------------------------------------------------------------------|
-power-profiles-daemon: power-profiles-daemon (Makes power profiles handling available over D-Bus)
+                     |----------------------------------------------------------------------|
+power-profiles-daemon: power-profiles-daemon (power handling over d-bus)
 power-profiles-daemon:
-power-profiles-daemon: power-profiles-daemon offers to modify system behaviour based upon 
-power-profiles-daemon: user-selected power profiles. There are 3 different 
-power-profiles-daemon: power profiles, a "balanced" default mode. The first 2 of those
-power-profiles-daemon: are available on every system.The "performance"mode is only available
-power-profiles-daemon: on select systems and is implemented by
+power-profiles-daemon: power-profiles-daemon offers to modify system behavior based upon
+power-profiles-daemon: user-selected power profiles. There are 3 different power profiles,
+power-profiles-daemon: a "balanced" default mode, a "power-saver" mode, as well as a
+power-profiles-daemon: "performance" mode. The first 2 of those are available on every
+power-profiles-daemon: system. The "performance" mode is only available on select systems
+power-profiles-daemon: and is implemented by different "drivers" based on the system or
+power-profiles-daemon: systems it targets.
 power-profiles-daemon:
-power-profiles-daemon: different "drivers" based on the system or systems it targets.
-power-profiles-daemon: https://gitlab.freedesktop.org/hadess/power-profiles-daemon
-power-profiles-daemon:
+power-profiles-daemon: Homepage: https://gitlab.freedesktop.org/upower/power-profiles-daemon
