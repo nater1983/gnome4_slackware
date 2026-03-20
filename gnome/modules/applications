@@ -54,7 +54,7 @@ gstreamer-vaapi
 rygel
 totem
 python3-liblouis
-pyatspi
+pyatspi2
 python3-dasbus
 orca
 evince4
