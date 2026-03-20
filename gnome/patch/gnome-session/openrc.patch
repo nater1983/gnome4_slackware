@@ -159,19 +159,19 @@ diff -urN gnome-session-49.2/data/openrc/gnome-session gnome-session-openrc/data
 @@ -0,0 +1,16 @@
 +#!/sbin/openrc-run
 +
++supervisor=supervise-daemon
 +description="GNOME Session (base)"
++output_logger="logger"
++error_logger="logger"
 +
-+_session=$(echo "${RC_SVCNAME}" | sed -e "s|.*\.||g")
++gnome_session="${RC_SVCNAME#*.}"
 +
 +depend() {
 +	need dbus
-+	if [ "${_session}" == "gnome-login" ]; then
-+		need gnome-shell.gnome-login
-+	else
-+		need gnome-shell
-+	fi
 +	need gnome-settings-daemon
-+	need "gnome-session-dbus.${_session}"
++	need "gnome-session-dbus.${gnome_session}"
++	need gnome-session-monitor
++	need gnome-session-init
 +}
 diff -urN gnome-session-49.2/data/openrc/gnome-session-monitor gnome-session-openrc/data/openrc/gnome-session-monitor
 --- gnome-session-49.2/data/openrc/gnome-session-monitor	1969-12-31 18:00:00.000000000 -0600
