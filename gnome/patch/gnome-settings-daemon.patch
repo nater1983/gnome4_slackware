@@ -1,4 +1,4 @@
-#patch -Np1 -i $CWD/patch/gnome-settings-daemon/242752d489b40f7cac20fc244a76eac8572cd955.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/gnome-settings-daemon/242752d489b40f7cac20fc244a76eac8572cd955.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/keyboard-sync-input-sources-to-accountsservice.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/revert-gtk4-port.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 #patch -Np1 -i $CWD/patch/gnome-settings-daemon/429.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
