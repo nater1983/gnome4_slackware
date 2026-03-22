@@ -1,22 +1,36 @@
-diff --git a/js/ui/main.js b/js/ui/main.js
-index 76b917f48c..1fc75e130f 100644
---- a/js/ui/main.js
-+++ b/js/ui/main.js
-@@ -271,6 +271,7 @@ async function _initializeUI() {
-             timeLimitsManager.shutdown()
-                 .catch(e => console.warn(`Failed to stop time limits manager: ${e.message}`))
-                 .finally(() => loop.quit());
+From: Fix gnome-session registration placement
+Subject: [PATCH] main: Notify gnome-session when we're ready
+
+gnome-session's builtin service manager needs gnome-shell to call
+RegisterClient so it knows shell startup is complete. Without XSMP,
+this D-Bus call is the only way to signal readiness.
+
+Place the notification right after sd_notify() and notify_ready(),
+during initialization - not in the shutdown handler.
+---
+ js/ui/main.js | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
+
+--- a/js/ui/main.js	2026-03-15 11:01:20.000000000 +0000
++++ b/js/ui/main.js	2026-03-19 15:05:27.806379161 +0000
+@@ -314,6 +314,7 @@
+     GLib.idle_add_once(GLib.PRIORITY_DEFAULT, () => {
+         Shell.util_sd_notify();
+         global.context.notify_ready();
 +        _notifyGnomeSessionReady();
-             return GLib.SOURCE_REMOVE;
-         });
-         source.attach(loop.get_context());
-@@ -379,6 +380,20 @@ async function _initializeUI() {
+     });
+ 
+     _startDate = new Date();
+@@ -379,6 +380,23 @@
      });
  }
  
 +async function _notifyGnomeSessionReady() {
 +    try {
-+        let params = GLib.Variant.new('(ss)', ['org.gnome.Shell.desktop', '']);
++        let startupId = GLib.getenv('DESKTOP_AUTOSTART_ID');
++        if (!startupId)
++            startupId = '';
++        let params = GLib.Variant.new('(ss)', ['org.gnome.Shell.desktop', startupId]);
 +        await Gio.DBus.session.call(
 +            'org.gnome.SessionManager',
 +            '/org/gnome/SessionManager',
