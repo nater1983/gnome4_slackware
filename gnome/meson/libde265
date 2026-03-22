@@ -1,0 +1,9 @@
+mkdir cmake-build
+cd cmake-build
+  cmake .. \
+    "${GNOME_CMAKE_ARGS[@]}" \
+    "${GNOME_CMAKE_OPT_ARGS[@]}" \
+    -DENABLE_SHERLOCK265=OFF \
+    -DENABLE_ENCODER=ON
+make -C ../cmake-build
+make -C ../cmake-build install DESTDIR=$PKG
