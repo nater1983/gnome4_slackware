@@ -20,7 +20,6 @@ session  substack       system-auth
 session  required       pam_loginuid.so
 session  optional       pam_keyinit.so revoke
 session  optional       pam_elogind.so
-session  optional       pam_openrc.so
 session  optional       pam_gnome_keyring.so auto_start
 session  include        postlogin
 # End /etc/pam.d/gdm-autologin
