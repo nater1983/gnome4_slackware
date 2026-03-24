@@ -72,14 +72,13 @@ new file mode 100644
 index 000000000..3034e7125
 --- /dev/null
 +++ b/plugins/org.gnome.SettingsDaemon.Real.desktop.in
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,9 @@
 +[Desktop Entry]
 +Type=Application
 +Name=@description@
 +Exec=@libexecdir@/gsd-@pluginname@
 +OnlyShowIn=GNOME;
 +NoDisplay=true
-+X-GNOME-Autostart-Phase=Initialization
 +X-GNOME-Autostart-Notify=true
 +X-GNOME-AutoRestart=true
 +X-GNOME-HiddenUnderSystemd=@systemd_hidden@
