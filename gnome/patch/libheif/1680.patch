@@ -79,3 +79,27 @@ index 7993e3959a..393748e997 100644
           * svt_av1_enc_get_packet() hangs on the second call. As a workaround, we can leave the
           * loop when we got the image:
           */
+diff --git a/libheif/plugins/encoder_svt.cc b/libheif/plugins/encoder_svt.cc
+--- a/libheif/plugins/encoder_svt.cc.orig 2026-03-24 10:04:43 UTC
++++ b/libheif/plugins/encoder_svt.cc
+@@ -838,7 +838,19 @@ static heif_error svt_start_sequence_encoding_intern(v
+     // svt_config.force_key_frames = true; TODO: this does not seem to work (see all [1])
+
+ #if 1
+-#if SVT_AV1_CHECK_VERSION(4, 0, 0)
++#if SVT_AV1_CHECK_VERSION(4, 1, 0)
++    switch (options->gop_structure) {
++      case heif_sequence_gop_structure_intra_only:
++        //svt_config.pred_structure = 1; // LOW_DELAY
++        break;
++      case heif_sequence_gop_structure_lowdelay:
++        //svt_config.pred_structure = 1; // LOW_DELAY
++        break;
++      case heif_sequence_gop_structure_unrestricted:
++        svt_config.pred_structure = PredStructure::RANDOM_ACCESS;
++        break;
++    }
++#elif SVT_AV1_CHECK_VERSION(4, 0, 0)
+     switch (options->gop_structure) {
+       case heif_sequence_gop_structure_intra_only:
+         //svt_config.pred_structure = 1; // LOW_DELAY
