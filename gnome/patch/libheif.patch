@@ -1,1 +1,1 @@
-patch -Np1 -R -i $CWD/patch/libheif/56eeac1ae4223eda60235251085fa614cadbb6f7.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/libheif/1680.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
