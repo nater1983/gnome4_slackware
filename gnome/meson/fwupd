@@ -10,7 +10,7 @@ cd build
     -Dvendor_ids_dir=/usr/share/hwdata/ \
     -Db_lto=true \
     -Dbuild=all \
-    -Dlogind=libelogind \
+    -Dlogind=enabled \
     -Dfirmware-packager=true \
     -Dgcab:docs=false \
     -Dhsi=enabled \
