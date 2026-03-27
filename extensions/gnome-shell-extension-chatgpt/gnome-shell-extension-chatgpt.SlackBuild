@@ -53,7 +53,7 @@ git clone https://github.com/HorrorPills/ChatGPT-Gnome-Desktop-Extension.git
 cd $SRCNAM
 git checkout $_commit
 patch -Np1 -i $CWD/46.patch
-#sed -i -- 's/"46","47","48"/"46","47","48", "49"/g' chatgpt-gnome-desktop@chatgpt-gnome-desktop/metadata.json
+sed -i -- 's/"46","47","48", "49"/"46","47","48", "49", "50"/g' chatgpt-gnome-desktop@chatgpt-gnome-desktop/metadata.json
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
