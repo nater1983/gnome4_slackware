@@ -48,7 +48,7 @@ git clone https://github.com/dmo60/CoverflowAltTab.git
 cd $SRCNAM
 git checkout $_commit
 patch -Np1 -i $CWD/1.patch
-#sed -i -- 's/"48"/"48", "49"/g' metadata.json
+sed -i -- 's/"49"/"49", "50"/g' metadata.json
 make all
 
 mkdir -p "${PKG}"/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com
