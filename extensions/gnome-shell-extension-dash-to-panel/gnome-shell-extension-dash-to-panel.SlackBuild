@@ -30,7 +30,7 @@ VERSION=${VERSION:-72}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=01dcf21e811ef5a38461b132e1a16fc8dcbdb6e3
+_commit=b31cbe1f3c9fa997b954b71199563fbedc2f3446
 
 ARCH=noarch
 
