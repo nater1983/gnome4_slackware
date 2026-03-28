@@ -3,6 +3,6 @@
   "name": "Donation Button",
   "description": "Adds a donation button to the GNOME top bar",
   "version": 1,
-  "shell-version": ["49"],
+  "shell-version": ["49", "50"],
   "url": "https://www.patreon.com/slackwarelinux"
 }
