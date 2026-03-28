@@ -29,7 +29,7 @@ VERSION=${VERSION:-64}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=c934adc6c97363b8e6bb161ca8d1ac62d1da3d63
+_commit=5d276f3f90122bfa7385616dd4b747287d0602c7
 
 ARCH=noarch
 
@@ -51,10 +51,7 @@ rm -rf $PRGNAM
 git clone https://github.com/ubuntu/gnome-shell-extension-appindicator.git
 cd $PRGNAM
 git checkout $_commit
-sed -i '/"49"/{
-s/"49"/"49",/
-a\    "50"
-}' metadata.json
+
 chown -R root:root .
 find -L . \
  \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
