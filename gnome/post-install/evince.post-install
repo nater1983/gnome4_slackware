@@ -1,2 +1,2 @@
 rm -fr $PKG/usr/man/
-rm -fr $PKG/usr/share/
+find "$PKG/usr/share" -mindepth 1 ! -path "$PKG/usr/share/gir-1.0*" -exec rm -rf {} +
