@@ -1,4 +1,4 @@
-# GFS ( Gnome For Slackware )
+# GFS ( Gnome 5x For Slackware )
 
 
 > We\'re living the future so
