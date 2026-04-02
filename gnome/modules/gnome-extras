@@ -36,7 +36,7 @@ shotwell
 libbacktrace
 http-parser
 python3-pytest
-GPaste
+gpaste
 flite
 eog
 eog-plugins
