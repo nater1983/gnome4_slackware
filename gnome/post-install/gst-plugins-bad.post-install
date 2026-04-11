@@ -6,7 +6,7 @@ includedir=${prefix}/include/gstreamer-1.0
 
 Name: gstreamer-codecs-1.0
 Description: GStreamer Codecs library
-Version: ${PACKAGE_VERSION}
+Version: 1.28.2
 Requires: gstreamer-plugins-bad-1.0
 Libs: -L${libdir} -lgstcodecs-1.0
 Cflags: -I${includedir}
