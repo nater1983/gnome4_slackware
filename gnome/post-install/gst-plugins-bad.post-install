@@ -1,0 +1,13 @@
+cat > $PKG/usr/lib64/pkgconfig/gstreamer-codecs-1.0.pc << 'EOF'
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib64
+includedir=${prefix}/include/gstreamer-1.0
+
+Name: gstreamer-codecs-1.0
+Description: GStreamer Codecs library
+Version: ${MODULAR_PACKAGE_VERSION}
+Requires: gstreamer-plugins-bad-1.0
+Libs: -L${libdir} -lgstcodecs-1.0
+Cflags: -I${includedir}
+EOF
