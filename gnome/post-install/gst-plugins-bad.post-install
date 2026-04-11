@@ -1,13 +1,15 @@
-cat > $PKG/usr/lib64/pkgconfig/gstreamer-codecs-1.0.pc << 'EOF'
-prefix=/usr
-exec_prefix=${prefix}
-libdir=${prefix}/lib64
-includedir=${prefix}/include/gstreamer-1.0
+# Extract version dynamically from the already-installed library
+VERSION=$(grep "^Version:" $PKG/usr/lib64/pkgconfig/gstreamer-plugins-bad-1.0.pc | awk '{print $2}')
 
+cat > $PKG/usr/lib64/pkgconfig/gstreamer-codecs-1.0.pc << EOF
+prefix=/usr
+exec_prefix=\${prefix}
+libdir=\${prefix}/lib64
+includedir=\${prefix}/include/gstreamer-1.0
 Name: gstreamer-codecs-1.0
 Description: GStreamer Codecs library
-Version: 1.28.2
+Version: ${VERSION}
 Requires: gstreamer-plugins-bad-1.0
-Libs: -L${libdir} -lgstcodecs-1.0
-Cflags: -I${includedir}
+Libs: -L\${libdir} -lgstcodecs-1.0
+Cflags: -I\${includedir}
 EOF
