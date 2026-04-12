@@ -26,6 +26,7 @@ gtk4
 gtkmm4
 gtksourceview4
 gvfs
+jq
 libaom
 libdaemon
 libdisplay-info
