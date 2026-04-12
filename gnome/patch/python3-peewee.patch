@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/python3-peewee/3aadae7eb3602f3ab893343045aa30d427985534.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/python3-peewee/3aadae7eb3602f3ab893343045aa30d427985534.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
