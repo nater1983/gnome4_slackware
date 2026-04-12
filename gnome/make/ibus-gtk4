@@ -4,8 +4,8 @@ CXXFLAGS="$SLKCFLAGS" \
     "${GNOME_MAKE_ARGS[@]}" \
       --enable-python-library \
       --with-python=python3 \
-      --with-unicode-emoji-dir=../ibus-${MODULAR_PACKAGE_VERSION} \
-      --with-ucd-dir=../ibus-${MODULAR_PACKAGE_VERSION} \
+      --with-unicode-emoji-dir=$CWD/ \
+      --with-ucd-dir=.$CWD/ \
       --disable-systemd-services \
       --enable-gtk4
 make
