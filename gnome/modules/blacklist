@@ -40,6 +40,7 @@ nv-codec-headers
 pango
 pangomm2
 pygobject3
+python-attrs
 python-build
 python-docutils
 python-flit-core
