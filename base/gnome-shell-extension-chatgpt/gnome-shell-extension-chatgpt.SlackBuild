@@ -41,7 +41,7 @@ fi
 
 TMP=${TMP:-/tmp/gfs}
 PKG=$TMP/package-$PRGNAM
-OUTPUT=${OUTPUT:-$CWD}
+OUTPUT=${OUTPUT:-/home/build/gnome}
 
 set -e
 
