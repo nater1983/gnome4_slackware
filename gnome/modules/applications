@@ -25,7 +25,7 @@ gnome-font-viewer
 gnome-initial-setup
 libmediaart
 libdmapsharing
-totem-pl-parser
+# totem-pl-parser /* in modules gnome-extras */
 liboauth
 grilo
 grilo-plugins
