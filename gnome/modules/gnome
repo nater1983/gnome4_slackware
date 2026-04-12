@@ -78,7 +78,6 @@ gdm
 gnome-menus
 gnome-shell-extensions
 p7zip
-jq
 gnome-browser-connector
 ibus-gtk4
 cantarell-fonts
