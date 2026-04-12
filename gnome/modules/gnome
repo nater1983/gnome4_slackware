@@ -72,7 +72,6 @@ gnome-session
 libdaemon
 openrc-settingsd
 python3-langtable
-python3-attrs
 libfprint
 fprintd
 gdm
