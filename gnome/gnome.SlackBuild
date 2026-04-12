@@ -196,7 +196,7 @@ no_usr_dups() {
 
 no_systemd() {
   # Remove any systemd files if present:
-  for path in usr/lib/systemd usr/lib64/systemd; do
+  for path in usr/lib/systemd usr/lib64/systemd usr/lib/sysusers.d/ usr/lib/tmpfiles.d/; do
     if [ -d "$path" ]; then
       rm -rf "$path"
     fi
