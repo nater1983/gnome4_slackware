@@ -12,7 +12,7 @@ python3-freetype: Freetype Python provides bindings for the FreeType library. On
 python3-freetype: high-level API is bound.
 python3-freetype: 
 python3-freetype:
-python3-freetype: Homepage: https://github.com/rougier/freetype-pyv
+python3-freetype: Homepage: https://github.com/rougier/freetype-py/
 python3-freetype:
 python3-freetype:
 python3-freetype:
