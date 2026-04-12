@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/totem-pl-parser/totem-pl-parser-c99.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/totem-pl-parser/totem-pl-parser-c99.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
