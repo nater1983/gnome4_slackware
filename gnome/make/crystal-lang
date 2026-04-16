@@ -5,5 +5,10 @@
 
 #find -L $PKG -type d -exec chmod 755 {} \;
 #chmod 755 $PKG/usr/{bin,lib,share}/*
+export release=1
+export verbose=1
+export interpreter=1
+export CXXFLAGS="$SLKCFLAGS"
+export LLVM_CONFIG=$(find /usr/bin -name "llvm-config*" -print -quit)
 make
 make docs
