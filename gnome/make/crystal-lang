@@ -1,7 +1,9 @@
-mkdir -p $PKG/usr/
-chmod 755 {bin,lib,share}
+#mkdir -p $PKG/usr/
+#chmod 755 {bin,lib,share}
 
-mv {bin,lib,share} $PKG/usr/
+#mv {bin,lib,share} $PKG/usr/
 
-find -L $PKG -type d -exec chmod 755 {} \;
-chmod 755 $PKG/usr/{bin,lib,share}/*
+#find -L $PKG -type d -exec chmod 755 {} \;
+#chmod 755 $PKG/usr/{bin,lib,share}/*
+make
+make docs
