@@ -6,7 +6,7 @@ export LLVM_CONFIG=$(find /usr/bin -name "llvm-config*" -print -quit)
 make
 make docs
 
-install -D -m 755 bin/crystal $PKG/usr/bin/crystal
+install -D -m 755 .build/crystal $PKG/usr/bin/crystal
 install -vDm 644 man/crystal.1 $PKG/usr/man/man1/crystal.1
 mkdir -p $PKG/usr/share/crystal/
 cp -r src samples $PKG/usr/share/crystal
