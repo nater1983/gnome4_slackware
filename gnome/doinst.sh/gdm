@@ -10,8 +10,7 @@ config() {
 
 config etc/gdm/custom.conf.new
 
-# Set the wayland-session script and gdm wrapper executable:
-( cd etc/gdm ; chmod 0755 wayland-session )
+sed -i 's/^X-GNOME-Autostart-Phase=Initialization/#X-GNOME-Autostart-Phase=Initialization/' etc/xdg/autostart/*.desktop
 
 if [ -e usr/share/glib-2.0/schemas ]; then
   if [ -x /usr/bin/glib-compile-schemas ]; then
