@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/gnome-bluetooth/gnome-bluetooth-47.1-build_fix-1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gnome-bluetooth/gnome-bluetooth-47.1-build_fix-1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
