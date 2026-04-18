@@ -1,3 +1,5 @@
+sed -i 's/^#X-GNOME-Autostart-Phase=Initialization/X-GNOME-Autostart-Phase=Initialization/' etc/xdg/autostart/*.desktop
+
 # Remove pipewire-enable.sh block from rc.local if present
 if [ -f etc/rc.d/rc.local ]; then
   sed -i '/# Start Updating Pipewire:/,/^fi$/d' etc/rc.d/rc.local
