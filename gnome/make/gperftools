@@ -6,8 +6,8 @@ if [ ! -r configure ]; then
   fi
 fi
 
-CFLAGS="$SLKCFLAGS \
-CXXFLAGS="$SLKCFLAGS \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}"
 make
