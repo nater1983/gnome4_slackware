@@ -1,1 +1,15 @@
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+CFLAGS="$SLKCFLAGS \
+CXXFLAGS="$SLKCFLAGS \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}"
+sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
 make
+make install DESTDIR=$PKG
