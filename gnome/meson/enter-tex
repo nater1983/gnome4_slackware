@@ -1,5 +1,3 @@
-meson compile -C build1 src/gtex/Gtex-1.gir
-
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
@@ -9,6 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Dinstall=true \
     -Dtests=false
+meson compile -C build src/gtex/Gtex-1.gir
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
