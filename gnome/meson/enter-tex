@@ -1,5 +1,6 @@
+meson compile -C build1 src/gtex/Gtex-1.gir
+
 mkdir build
-meson compile -C build src/gtex/Gtex-1.gir
 cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
