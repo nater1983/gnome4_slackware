@@ -1,2 +1,3 @@
+echo "0.42" > .tarball-version
 rm -fr subprojects/*
 cp -av $CWD/pre-install/spice-gtk/*.wrap subprojects/
