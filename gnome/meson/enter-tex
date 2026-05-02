@@ -1,4 +1,5 @@
 mkdir build
+meson compile -C build src/gtex/Gtex-1.gir
 cd build
   CFLAGS="$SLKCFLAGS" \
   CXXFLAGS="$SLKCFLAGS" \
@@ -6,7 +7,6 @@ cd build
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
     -Dtests=false
-meson compile -C build src/gtex/Gtex-1.gir
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
 cd ..
