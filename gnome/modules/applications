@@ -58,8 +58,8 @@ orca
 evince4
 epiphany
 Fragments
-libgedit-gtksourceview
 libgedit-amtk
+libgedit-gtksourceview
 libgedit-gfls
 libgedit-tepl
 gedit
