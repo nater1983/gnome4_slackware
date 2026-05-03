@@ -1,0 +1,126 @@
+Submitted By:            Douglas R. Reno <renodr at linuxfromscratch dot org>
+Date:                    2026-04-29
+Initial Package Version: 3.25.0
+Upstream Status:         Applied
+Origin:                  Upstream Commits 8b9c6316 and 22f722f
+Description:             Fixes compatibility problems with gnome-connections
+                         that cause it to be unable to connect to systems. The
+                         errors cause authentication to instantaneously fail.
+                         The issue was known upstream and Pierre put the two
+                         commits that fix it in BLFS Ticket #23188.
+
+diff -Naurp FreeRDP-3.25.0.orig/include/freerdp/freerdp.h FreeRDP-3.25.0/include/freerdp/freerdp.h
+--- FreeRDP-3.25.0.orig/include/freerdp/freerdp.h	2026-04-22 12:51:09.000000000 -0500
++++ FreeRDP-3.25.0/include/freerdp/freerdp.h	2026-04-29 13:25:49.241652687 -0500
+@@ -95,6 +95,7 @@ extern "C"
+ 	typedef BOOL (*pConnectCallback)(freerdp* instance);
+ 	typedef void (*pPostDisconnect)(freerdp* instance);
+ 
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	/** \brief Authentication callback function pointer definition
+ 	 *
+ 	 * \param instance A pointer to the instance to work on
+@@ -110,6 +111,7 @@ extern "C"
+ 
+ 	typedef BOOL (*pAuthenticate)(freerdp* instance, char** username, char** password,
+ 	                              char** domain);
++#endif
+ 
+ 	/** @brief Extended authentication callback function pointer definition
+ 	 *
+@@ -220,7 +222,7 @@ extern "C"
+ 	 *  @return 1 to accept and store a certificate, 2 to accept
+ 	 *          a certificate only for this session, 0 otherwise.
+ 	 */
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	WINPR_DEPRECATED_VAR("Use pVerifyCertificateEx",
+ 	                     typedef DWORD (*pVerifyCertificate)(
+ 	                         freerdp* instance, const char* common_name, const char* subject,
+@@ -261,7 +263,7 @@ extern "C"
+ 	 *  @return 1 to accept and store a certificate, 2 to accept
+ 	 *          a certificate only for this session, 0 otherwise.
+ 	 */
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	WINPR_DEPRECATED_VAR("Use pVerifyChangedCertificateEx",
+ 	                     typedef DWORD (*pVerifyChangedCertificate)(
+ 	                         freerdp* instance, const char* common_name, const char* subject,
+@@ -504,7 +506,7 @@ owned by rdpRdp */
+ 		              Can be set before calling freerdp_connect() to have it executed after the
+ 		              actual connection has succeeded. Must be set to nullptr if not needed. */
+ 
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 		WINPR_DEPRECATED_VAR("[since 3.25.0] Use AuthenticateEx instead",
+ 		                     WINPR_ATTR_NODISCARD ALIGN64 pAuthenticate
+ 		                         Authenticate); /**< (offset 50)
+@@ -537,7 +539,7 @@ owned by rdpRdp */
+ 		                       This will be called before disconnecting and cleaning up the
+ 		                       channels.
+  */
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 		WINPR_DEPRECATED_VAR("[since 3.25.0] Use AuthenticateEx instead",
+ 		                     WINPR_ATTR_NODISCARD ALIGN64 pAuthenticate
+ 		                         GatewayAuthenticate); /**< (offset 56)
+diff -Naurp FreeRDP-3.25.0.orig/libfreerdp/core/utils.c FreeRDP-3.25.0/libfreerdp/core/utils.c
+--- FreeRDP-3.25.0.orig/libfreerdp/core/utils.c	2026-04-22 12:51:09.000000000 -0500
++++ FreeRDP-3.25.0/libfreerdp/core/utils.c	2026-04-29 13:25:51.119907155 -0500
+@@ -94,7 +94,7 @@ auth_status utils_authenticate_gateway(f
+ 		return AUTH_SKIP;
+ 	}
+ 
+-#if !defined(WITH_FREERDP_DEPRECATED)
++#if defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	if (!instance->AuthenticateEx)
+ 		return AUTH_NO_CREDENTIALS;
+ #else
+@@ -110,7 +110,7 @@ auth_status utils_authenticate_gateway(f
+ 		if (!proceed)
+ 			return AUTH_CANCELLED;
+ 	}
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	else
+ 	{
+ 		proceed =
+@@ -198,7 +198,7 @@ auth_status utils_authenticate(freerdp*
+ 	}
+ 
+ 	/* If no callback is specified still continue connection */
+-#if !defined(WITH_FREERDP_DEPRECATED)
++#if defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	if (!instance->AuthenticateEx)
+ 		return AUTH_NO_CREDENTIALS;
+ #else
+@@ -212,7 +212,7 @@ auth_status utils_authenticate(freerdp*
+ 		if (!proceed)
+ 			return AUTH_CANCELLED;
+ 	}
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 	else
+ 	{
+ 		proceed = instance->Authenticate(instance, &settings->Username, &settings->Password,
+diff -Naurp FreeRDP-3.25.0.orig/libfreerdp/crypto/tls.c FreeRDP-3.25.0/libfreerdp/crypto/tls.c
+--- FreeRDP-3.25.0.orig/libfreerdp/crypto/tls.c	2026-04-22 12:51:09.000000000 -0500
++++ FreeRDP-3.25.0/libfreerdp/crypto/tls.c	2026-04-29 13:25:51.120562279 -0500
+@@ -1864,7 +1864,7 @@ int tls_verify_certificate(rdpTls* tls,
+ 					if (!use_pem)
+ 						free(fp);
+ 				}
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 				else if (instance->VerifyCertificate)
+ 				{
+ 					char* fp = freerdp_certificate_get_fingerprint(cert);
+@@ -1939,7 +1939,7 @@ int tls_verify_certificate(rdpTls* tls,
+ 					if (fpIsAllocated)
+ 						free(fp);
+ 				}
+-#if defined(WITH_FREERDP_DEPRECATED)
++#if !defined(WITHOUT_FREERDP_3x_DEPRECATED)
+ 				else if (instance->VerifyChangedCertificate)
+ 				{
+ 					char* fp = freerdp_certificate_get_fingerprint(cert);
