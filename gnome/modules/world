@@ -159,7 +159,7 @@ python3-fonttools
 webfont-kit-generator
 # cozy
 python3-peewee
-libdazzle
+# libdazzle -- found in gnome-calendar section
 # gst-plugins-ugly - found in previous module
 cozy
 # giara
@@ -247,10 +247,79 @@ Endeavour
 # manuals
 foundry
 manuals
-# loupe
+# libportal
+libportal
+# tinysparql
+tinysparql
+# exempi
+exempi
+# libgxps
+libgxps
+# libiptcdata
+libiptcdata
+# osinfo-db
+osinfo-db-tools
+osinfo-db
+# libosinfo
+libosinfo
+# totem
+totem-pl-parser
+totem
+# localsearch
+localsearch
+# libcloudproviders
+libcloudproviders
+# nautilus
+nautilus
+# gnome-backgrounds
+gnome-backgrounds
+# gnome-tweaks
+gnome-tweaks
+# python3-dbusmock
+python3-dbusmock
+# yelp
+yelp-xsl
+yelp-tools
+yelp
+# Loupe and glycin-loaders
+glycin-loaders
 loupe
 # gnome-terminal
 gnome-terminal
+# Catch2
+Catch2
+# gnome-system-monitor
+gnome-system-monitor
+# gnome-clocks
+gnome-clocks
+# gnome-disk-utility
+gnome-disk-utility
+# baobab
+baobab
+# simple-scan
+simple-scan
+# libdazzle
+libdazzle
+# gnome-calendar
+gnome-calendar
+# gnome-calculator
+gnome-calculator
+# ptyxis
+ptyxis
+# jasmine-gjs
+jasmine-gjs
+# shotwell
+shotwell
+# libbacktrace
+libbacktrace
+# http-parser
+http-parser
+# python3-pytest
+python3-pytest
+# gpaste
+gpaste
+# flite
+flite
 # gnome-console
 gnome-console
 # sushi
