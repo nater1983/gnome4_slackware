@@ -2,8 +2,9 @@
 sed -e 's/libsystemd/libelogind/' \
     -i plugins/power/test.py
 
-sed -e 's/(backlight->logind_proxy)/(0)/' \
-    -i plugins/power/gsd-backlight.c
+# Don't know if we really need this but its here https://www.linuxfromscratch.org/blfs/view/svn/gnome/gnome-settings-daemon.html
+#sed -e 's/(backlight->logind_proxy)/(0)/' \
+#    -i plugins/power/gsd-backlight.c
 
 rm -fr subprojects/*
 cp -av $CWD/pre-install/gnome-settings-daemon/*.wrap subprojects/
