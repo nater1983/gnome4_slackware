@@ -281,8 +281,7 @@ python3-dbusmock
 yelp-xsl
 yelp-tools
 yelp
-# Loupe and glycin-loaders
-glycin-loaders
+# Loupe
 loupe
 # gnome-terminal
 gnome-terminal
