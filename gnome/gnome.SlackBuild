@@ -623,7 +623,6 @@ GNOMEVARS=/usr/lib${LIBDIRSUFFIX}/gnome ; export GNOMEVARS
 GNOMEMODS=" \
   blacklist \
   gnome \
-  gnome-extras \
   applications \
   "
 
