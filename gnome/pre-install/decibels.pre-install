@@ -3,3 +3,4 @@ tar --strip-components=1 -xzf $CWD/pre-install/decibels/gi-typescript-definition
 rm -fr $CWD/pre-install/decibels/gi-typescript-definitions-dbbaa0527556cd3ce5434c4a5072cd99348eff7a.tar.gz
 rm -fr $CWD/pre-install/decibels/
 sed -i '/"moduleResolution": "node",/a\  "ignoreDeprecations": "6.0",' tsconfig.json
+sed -i 's/"outDir"/"rootDir": ".",\n    "outDir"/' tsconfig.json
