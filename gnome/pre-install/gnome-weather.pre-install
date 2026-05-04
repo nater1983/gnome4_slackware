@@ -1,2 +1,2 @@
-sed -i '/"moduleResolution": "node",/a\  "ignoreDeprecations": "6.0",' tsconfig.json
-sed -i 's/"outDir"/"rootDir": "src",\n    "outDir"/' tsconfig.json
+sed -i 's/"moduleResolution": "bundler",/"moduleResolution": "bundler",\n        "ignoreDeprecations": "6.0",/' tsconfig.json
+sed -i 's/"ignoreDeprecations": "6.0",/"ignoreDeprecations": "6.0",\n        "rootDir": ".\/src",/' tsconfig.json
