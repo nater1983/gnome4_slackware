@@ -5,6 +5,7 @@ exiftool
 eyedropper
 # eog
 eog
+eog-plugins
 # Gaphor
 python3-poetry-core
 python3-generic
