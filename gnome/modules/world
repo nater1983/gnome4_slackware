@@ -3,11 +3,6 @@ cozy
 emblem
 exiftool
 eyedropper
-# gnome-weather
-gnome-weather
-# eog
-eog
-eog-plugins
 # Gaphor
 python3-poetry-core
 python3-generic
@@ -326,3 +321,8 @@ evince
 sushi
 # gnome-ssh-askpass
 gnome-ssh-askpass
+# gnome-weather
+gnome-weather
+# eog
+eog
+eog-plugins
