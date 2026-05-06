@@ -1,0 +1,2 @@
+patch -Np1 -i $CWD/patch/libnfs/89a795fee97a3da348c28dbd58500100a13dcec0.diff || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/libnfs/6a06cb6dba0065705179329729cca2f95a842a63.diff || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
