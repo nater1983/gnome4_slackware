@@ -1,1 +1,1 @@
-patch -Np1 -i $CWD/patch/freerdp3/FreeRDP-3.25.0-upstream_fixes-1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/freerdp3/FreeRDP-3.25.0-upstream_fixes-1.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
