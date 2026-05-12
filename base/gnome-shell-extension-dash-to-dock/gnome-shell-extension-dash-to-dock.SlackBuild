@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-dash-to-dock
 SRCNAM=dash-to-dock
-VERSION=${VERSION:-104}
+VERSION=${VERSION:-105}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=69c6ee5c7669b0a3b0077467cdbbcf3b39ddc44a
+_commit=b1478f10a3fca9eaa5dc9d2f9907c20427e269f6
 
 ARCH=noarch
 
