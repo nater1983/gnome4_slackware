@@ -1,3 +1,5 @@
+sed -i 's/set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")/set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}" --allow-no-checks)/' CMakeLists.txt
+
 mkdir cmake-build
 cd cmake-build
   cmake .. \
