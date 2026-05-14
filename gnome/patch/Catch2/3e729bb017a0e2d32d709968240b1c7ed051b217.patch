@@ -8,10 +8,10 @@ Subject: [PATCH] Change Catch2 library from static to shared
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/src/catch2/meson.build b/src/catch2/meson.build
-index 94e0496af3..0589d3f52a 100644
+index 94e0496af3..cabba263ea 100644
 --- a/src/catch2/meson.build
 +++ b/src/catch2/meson.build
-@@ -361,7 +361,7 @@ if ((host_machine.system() == 'android') or
+@@ -361,11 +361,13 @@ if ((host_machine.system() == 'android') or
    catch2_dependencies += log_dep
  endif
  
@@ -20,7 +20,13 @@ index 94e0496af3..0589d3f52a 100644
    'Catch2',
    sources,
    dependencies: catch2_dependencies,
-@@ -383,7 +383,7 @@ if get_option('install')
+   include_directories: '..',
++  version: meson.project_version(),
++  soversion: '3',
+   install: get_option('install'),
+ )
+ 
+@@ -383,11 +385,13 @@ if get_option('install')
    )
  endif
  
@@ -29,3 +35,9 @@ index 94e0496af3..0589d3f52a 100644
    'Catch2Main',
    'internal/catch_main.cpp',
    link_with: catch2,
+   include_directories: '..',
++  version: meson.project_version(),
++  soversion: '3',
+   install: get_option('install'),
+ )
+ 
