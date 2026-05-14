@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/Catch2/3e729bb017a0e2d32d709968240b1c7ed051b217.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
