@@ -28,9 +28,9 @@ fi
 
 if ! grep -q 'X-GNOME-Autostart-Phase' etc/rc.d/rc.local; then
   cat << EOF >> etc/rc.d/rc.local
-if grep -q '^X-GNOME-Autostart-Phase=' etc/xdg/autostart/*.desktop; then
+if grep -q '^X-GNOME-Autostart-Phase=' /etc/xdg/autostart/*.desktop; then
   echo "==> Patching autostart desktop files: disabling X-GNOME-Autostart-Phase..."
-  sed -i 's/^X-GNOME-Autostart-Phase=.*/#&/' etc/xdg/autostart/*.desktop
+  sed -i 's/^X-GNOME-Autostart-Phase=.*/#&/' /etc/xdg/autostart/*.desktop
 fi
 EOF
 fi
