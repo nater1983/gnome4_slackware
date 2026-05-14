@@ -1,4 +1,17 @@
-sed -i 's/^#\(X-GNOME-Autostart-Phase=.*\)/\1/' etc/xdg/autostart/*.desktop
+# Restore X-GNOME-Autostart-Phase in autostart desktop files if commented out
+if grep -q '^#X-GNOME-Autostart-Phase=' etc/xdg/autostart/*.desktop; then
+  echo "==> Restoring autostart desktop files: re-enabling X-GNOME-Autostart-Phase..."
+  sed -i 's/^#\(X-GNOME-Autostart-Phase=.*\)/\1/' etc/xdg/autostart/*.desktop
+fi
+
+# Remove X-GNOME-Autostart-Phase block from rc.local if present
+if [ -f etc/rc.d/rc.local ]; then
+  sed -i '/^if grep -q.*X-GNOME-Autostart-Phase/,/^fi$/d' etc/rc.d/rc.local
+  # If rc.local becomes empty, delete it
+  if ! grep -q '[^[:space:]]' etc/rc.d/rc.local; then
+    rm -f etc/rc.d/rc.local
+  fi
+fi
 
 # Remove pipewire-enable.sh block from rc.local if present
 if [ -f etc/rc.d/rc.local ]; then
