@@ -1,0 +1,31 @@
+From 3e729bb017a0e2d32d709968240b1c7ed051b217 Mon Sep 17 00:00:00 2001
+From: Nathaniel Russell <46272571+nater1983@users.noreply.github.com>
+Date: Thu, 14 May 2026 18:38:45 -0500
+Subject: [PATCH] Change Catch2 library from static to shared
+
+---
+ src/catch2/meson.build | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/catch2/meson.build b/src/catch2/meson.build
+index 94e0496af3..0589d3f52a 100644
+--- a/src/catch2/meson.build
++++ b/src/catch2/meson.build
+@@ -361,7 +361,7 @@ if ((host_machine.system() == 'android') or
+   catch2_dependencies += log_dep
+ endif
+ 
+-catch2 = static_library(
++catch2 = shared_library(
+   'Catch2',
+   sources,
+   dependencies: catch2_dependencies,
+@@ -383,7 +383,7 @@ if get_option('install')
+   )
+ endif
+ 
+-catch2_with_main = static_library(
++catch2_with_main = shared_library(
+   'Catch2Main',
+   'internal/catch_main.cpp',
+   link_with: catch2,
