@@ -1,0 +1,9 @@
+find "$PKG" ! \( \
+    -path "$PKG/usr/bin/adwaita-1-demo" \
+    -o -path "$PKG/usr/share/applications/org.gnome.Adwaita1.Demo.desktop" \
+    -o -path "$PKG/usr/share/icons/hicolor/scalable/apps/org.gnome.Adwaita1.Demo.svg" \
+    -o -path "$PKG/usr/share/icons/hicolor/symbolic/apps/org.gnome.Adwaita1.Demo-symbolic.svg" \
+    -o -path "$PKG/usr/share/metainfo/org.gnome.Adwaita1.Demo.metainfo.xml" \
+    -o -type d \
+\) -delete
+find "$PKG" -type d -empty -delete
