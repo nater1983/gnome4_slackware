@@ -1,8 +1,0 @@
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
-./configure \
-    "${GNOME_MAKE_ARGS[@]}" \
-    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
-    --enable-sherlock265=no
-make
-make install DESTDIR=$PKG
