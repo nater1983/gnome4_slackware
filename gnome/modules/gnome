@@ -8,10 +8,7 @@ libgweather4
 gnome-settings-daemon
 colord-gtk
 gsound
-libxmlb
 libfyaml
-libstemmer
-libadwaita
 gnome-bluetooth
 xdg-dbus-proxy
 libwpe
