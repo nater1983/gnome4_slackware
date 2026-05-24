@@ -58,3 +58,5 @@ python-wheel
 vala
 vte
 xdg-desktop-portal
+libxmlb
+libadwaita
