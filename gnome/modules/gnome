@@ -8,7 +8,7 @@ libgweather4
 gnome-settings-daemon
 colord-gtk
 gsound
-libdawaita-demo
+libadwaita-demo
 libfyaml
 gnome-bluetooth
 xdg-dbus-proxy
