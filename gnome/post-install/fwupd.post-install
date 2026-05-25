@@ -31,6 +31,14 @@ mkdir -p $PKG/usr/share/dbus-1/system-services
 sed 's|@libexecdir@|/usr/libexec|' data/org.freedesktop.fwupd.service.in > $PKG/usr/share/dbus-1/system-services/org.freedesktop.fwupd.service
 sed -i '/@systemd_service@/d' $PKG/usr/share/dbus-1/system-services/org.freedesktop.fwupd.service
 
+mkdir -p $PKG/etc/modprobe.d
+cat << EOF > $PKG/etc/modprobe.d/fwupd-msr.conf
+msr
+EOF
+cat << EOF > $PKG/etc/modprobe.d/fwupd-i2c.conf
+i2c_dev
+EOF
+
 mkdir -p $PKG/usr/doc
 mv $PKG/usr/share/doc/libfwupd/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
 mv $PKG/usr/share/doc/libfwupdplugin/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
