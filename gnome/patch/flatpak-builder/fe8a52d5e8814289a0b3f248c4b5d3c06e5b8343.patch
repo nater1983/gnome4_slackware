@@ -1,0 +1,41 @@
+diff --git a/src/builder-utils.c b/src/builder-utils.c
+index c069f69a..26031935 100644
+--- a/src/builder-utils.c
++++ b/src/builder-utils.c
+@@ -51,6 +51,10 @@ G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (yaml_parser_t, yaml_parser_delete)
+ G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC (yaml_document_t, yaml_document_delete)
+ #endif
+ 
++#ifndef DEBUGEDIT
++#define DEBUGEDIT "eu-strip"  /* or "strip" if eu-strip isn’t installed */
++#endif
++
+ char *
+ builder_uri_to_filename (const char *uri)
+ {
+diff --git a/meson.build b/meson.build
+index ef324d27..317d17ff 100644
+--- a/meson.build
++++ b/meson.build
+@@ -37,9 +37,6 @@ foreach arg : project_c_args
+   endif
+ endforeach
+ 
+-# The debugedit program is a hard dependency
+-debugedit = find_program('debugedit', version: '>= 5.0')
+-
+ # Require appstream with compose plugin installed
+ appstreamcli = find_program('appstreamcli', version: '>= 0.15.0')
+ appstreamcli_compose = run_command(appstreamcli, ['compose', '--help'], check: true)
+diff --git a/src/meson.build b/src/meson.build
+index 91798347..99aeea5a 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -29,7 +29,6 @@ yaml_dep = dependency('yaml-0.1', required: get_option('yaml'))
+ 
+ config_data = configuration_data()
+ config_data.set('FLATPAK_BUILDER_ENABLE_YAML', yaml_dep.found())
+-config_data.set_quoted('DEBUGEDIT', debugedit.full_path())
+ config_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+ config_data.set_quoted('PACKAGE_VERSION', meson.project_version())
+ config_data.set_quoted('PACKAGE_STRING', '@0@-@1@'.format(meson.project_name(), meson.project_version()))
