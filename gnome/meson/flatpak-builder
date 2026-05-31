@@ -1,4 +1,5 @@
 rm -f {configure.ac,configure,Makefile*}
+sed -i '/debugedit = find_program('debugedit', version: '>= 5.0')/d' meson.build
 
 mkdir build
 cd build
