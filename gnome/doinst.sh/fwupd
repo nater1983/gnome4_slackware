@@ -31,3 +31,21 @@ if [ -x /usr/libexec/fwupd/fwupd ]; then
 fi
 EOF
 fi
+
+# Load fwupd modules
+if [ -f etc/rc.d/rc.modules.local ]; then
+  grep -q 'modprobe i2c_dev' etc/rc.d/rc.modules.local || \
+    echo '/sbin/modprobe i2c_dev' >> etc/rc.d/rc.modules.local
+  grep -q 'modprobe msr' etc/rc.d/rc.modules.local || \
+    echo '/sbin/modprobe msr' >> etc/rc.d/rc.modules.local
+else
+  cat << 'EOF' > etc/rc.d/rc.modules.local
+/sbin/modprobe i2c_dev
+/sbin/modprobe msr
+EOF
+  chmod +x etc/rc.d/rc.modules.local
+fi
+
+# Load immediately if running
+/sbin/modprobe i2c_dev 2>/dev/null
+/sbin/modprobe msr 2>/dev/null
