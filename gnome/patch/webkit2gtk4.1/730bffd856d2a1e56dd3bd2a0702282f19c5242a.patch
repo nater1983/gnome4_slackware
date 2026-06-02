@@ -1,73 +1,47 @@
-From fae54da171d3fdee238c33418c4779bccc9d5ecb Mon Sep 17 00:00:00 2001
-From: Claudio Saavedra <csaavedra@igalia.com>
-Date: Fri, 27 Mar 2026 22:09:02 +0200
-Subject: [PATCH] [GTK3] Fix the dom bindings build
- https://bugs.webkit.org/show_bug.cgi?id=310915
+From d991109bd72cd94266631d2249c131287376db24 Mon Sep 17 00:00:00 2001
+From: WebKit Revert Bot <revert-bot@webkit.org>
+Date: Tue, 2 Jun 2026 09:07:02 -0700
+Subject: [PATCH] Unreviewed, reverting 314364@main.
+ https://bugs.webkit.org/show_bug.cgi?id=316103
 
-Reviewed by NOBODY (OOPS!).
+this is not an issue on main branch
 
-305877.279@webkitglib/2.52 changed the signature of
-UserMessageHandler::postMessage. Fix that so that
-webkit_dom_dom_window_webkit_message_handlers_post_message() continues
-to work as usual.
+Reverted changeset:
 
-* Source/WebCore/page/UserMessageHandler.cpp:
-(WebCore::UserMessageHandler::postMessage):
-* Source/WebCore/page/UserMessageHandler.h:
+"REGRESSION(313606@main): Fails to build with system malloc"
+
+https://bugs.webkit.org/show_bug.cgi?id=316083
+https://commits.webkit.org/314364@main
+Canonical link: https://commits.webkit.org/314372@main
 ---
- Source/WebCore/page/UserMessageHandler.cpp | 16 +++++++++++-----
- Source/WebCore/page/UserMessageHandler.h   |  2 +-
- 2 files changed, 12 insertions(+), 6 deletions(-)
+ Source/JavaScriptCore/CMakeLists.txt | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/Source/WebCore/page/UserMessageHandler.cpp b/Source/WebCore/page/UserMessageHandler.cpp
-index a82c2d47b263..1fa69a2e145f 100644
---- a/Source/WebCore/page/UserMessageHandler.cpp
-+++ b/Source/WebCore/page/UserMessageHandler.cpp
-@@ -63,16 +63,20 @@ static bool passesSameOriginCheck(JSC::JSGlobalObject& globalObject, RefPtr<Loca
-     return securityOrigin->isSameOriginAs(frameSecurityOrigin);
- }
+diff --git a/Source/JavaScriptCore/CMakeLists.txt b/Source/JavaScriptCore/CMakeLists.txt
+index 2de9aa7792e8..e65f1d4237d9 100644
+--- a/Source/JavaScriptCore/CMakeLists.txt
++++ b/Source/JavaScriptCore/CMakeLists.txt
+@@ -427,10 +427,8 @@ set(LLIntSettingsExtractor_DEPENDENCIES
+     JavaScriptCore_CopyHeaders
+     JavaScriptCore_CopyPrivateHeaders
+     WTF_CopyHeaders
++    bmalloc_CopyHeaders
+ )
+-if (NOT USE_SYSTEM_MALLOC)
+-    list(APPEND LLIntSettingsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+-endif ()
+ WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
  
--void UserMessageHandler::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue value, Ref<DeferredPromise>&& promise)
-+ExceptionOr<void> UserMessageHandler::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue value, Ref<DeferredPromise>&& promise)
- {
-     // Check to see if the descriptor has been removed. This can happen if the host application has
-     // removed the named message handler at the WebKit2 API level.
-     RefPtr descriptor = m_descriptor;
--    if (!descriptor)
--        return promise->reject(Exception { ExceptionCode::InvalidAccessError });
-+    if (!descriptor) {
-+        promise->reject(Exception { ExceptionCode::InvalidAccessError });
-+        return Exception { ExceptionCode::InvalidAccessError };
-+    }
+ # LLIntSettingsExtractor target needs to have a direct or indirect
+@@ -456,10 +454,8 @@ set(LLIntOffsetsExtractor_DEPENDENCIES
+     JavaScriptCore_CopyHeaders
+     JavaScriptCore_CopyPrivateHeaders
+     WTF_CopyHeaders
++    bmalloc_CopyHeaders
+ )
+-if (NOT USE_SYSTEM_MALLOC)
+-    list(APPEND LLIntOffsetsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+-endif ()
+ WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
  
--    if (!passesSameOriginCheck(globalObject, m_frame.get()))
--        return promise->reject(Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_s });
-+    if (!passesSameOriginCheck(globalObject, m_frame.get())) {
-+        promise->reject(Exception { ExceptionCode::InvalidAccessError, "Failed same-origin check."_s });
-+        return Exception { ExceptionCode::InvalidAccessError };
-+    }
- 
-     descriptor->didPostMessage(*this, globalObject, value, [promise = WTF::move(promise)](JSC::JSValue result, const String& errorMessage) {
-         if (errorMessage.isNull())
-@@ -84,6 +88,8 @@ void UserMessageHandler::postMessage(JSC::JSGlobalObject& globalObject, JSC::JSV
-         JSC::JSLockHolder lock(globalObject);
-         promise->reject<IDLAny>(JSC::createError(globalObject, errorMessage));
-     });
-+
-+    return { };
- }
- 
- ExceptionOr<JSC::JSValue> UserMessageHandler::postLegacySynchronousMessage(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
-diff --git a/Source/WebCore/page/UserMessageHandler.h b/Source/WebCore/page/UserMessageHandler.h
-index ae49b223c2d6..4f59318abb25 100644
---- a/Source/WebCore/page/UserMessageHandler.h
-+++ b/Source/WebCore/page/UserMessageHandler.h
-@@ -52,7 +52,7 @@ class UserMessageHandler : public RefCounted<UserMessageHandler>, public FrameDe
-     void ref() const final { RefCounted::ref(); }
-     void deref() const final { RefCounted::deref(); }
- 
--    void postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
-+    ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue, Ref<DeferredPromise>&&);
-     ExceptionOr<JSC::JSValue> postLegacySynchronousMessage(JSC::JSGlobalObject&, JSC::JSValue);
- 
-     const UserMessageHandlerDescriptor* descriptor() const { return m_descriptor.get(); }
+ # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
