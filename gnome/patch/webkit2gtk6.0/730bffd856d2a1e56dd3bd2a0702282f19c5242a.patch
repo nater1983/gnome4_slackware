@@ -1,27 +1,47 @@
-From 730bffd856d2a1e56dd3bd2a0702282f19c5242a Mon Sep 17 00:00:00 2001
-From: Adrian Perez de Castro <aperez@igalia.com>
-Date: Thu, 20 Nov 2025 00:52:19 +0200
-Subject: [PATCH] Unreviewed build fix after 298234.287@webkitglib/2.50
+From d991109bd72cd94266631d2249c131287376db24 Mon Sep 17 00:00:00 2001
+From: WebKit Revert Bot <revert-bot@webkit.org>
+Date: Tue, 2 Jun 2026 09:07:02 -0700
+Subject: [PATCH] Unreviewed, reverting 314364@main.
+ https://bugs.webkit.org/show_bug.cgi?id=316103
 
-* Source/WebCore/Modules/credentialmanagement/BasicCredential.idl:
-Remove the CustomToJSObject flag to avoid a link error due to an
-undefined toJS() symbol, letting the binding generator write the
-function is enough for the Google Accounts quirk to work.
+this is not an issue on main branch
 
-Canonical link: https://commits.webkit.org/298234.297@webkitglib/2.50
+Reverted changeset:
+
+"REGRESSION(313606@main): Fails to build with system malloc"
+
+https://bugs.webkit.org/show_bug.cgi?id=316083
+https://commits.webkit.org/314364@main
+Canonical link: https://commits.webkit.org/314372@main
 ---
- Source/WebCore/Modules/credentialmanagement/BasicCredential.idl | 1 -
- 1 file changed, 1 deletion(-)
+ Source/JavaScriptCore/CMakeLists.txt | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/Source/WebCore/Modules/credentialmanagement/BasicCredential.idl b/Source/WebCore/Modules/credentialmanagement/BasicCredential.idl
-index 42114f65fff97..9643b59bf6909 100644
---- a/Source/WebCore/Modules/credentialmanagement/BasicCredential.idl
-+++ b/Source/WebCore/Modules/credentialmanagement/BasicCredential.idl
-@@ -25,7 +25,6 @@
+diff --git a/Source/JavaScriptCore/CMakeLists.txt b/Source/JavaScriptCore/CMakeLists.txt
+index 2de9aa7792e8..e65f1d4237d9 100644
+--- a/Source/JavaScriptCore/CMakeLists.txt
++++ b/Source/JavaScriptCore/CMakeLists.txt
+@@ -427,10 +427,8 @@ set(LLIntSettingsExtractor_DEPENDENCIES
+     JavaScriptCore_CopyHeaders
+     JavaScriptCore_CopyPrivateHeaders
+     WTF_CopyHeaders
++    bmalloc_CopyHeaders
+ )
+-if (NOT USE_SYSTEM_MALLOC)
+-    list(APPEND LLIntSettingsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+-endif ()
+ WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
  
- [
-     InterfaceName=Credential,
--    CustomToJSObject,
-     EnabledByQuirk=shouldExposeCredentialsContainer,
-     Exposed=Window,
-     SecureContext
+ # LLIntSettingsExtractor target needs to have a direct or indirect
+@@ -456,10 +454,8 @@ set(LLIntOffsetsExtractor_DEPENDENCIES
+     JavaScriptCore_CopyHeaders
+     JavaScriptCore_CopyPrivateHeaders
+     WTF_CopyHeaders
++    bmalloc_CopyHeaders
+ )
+-if (NOT USE_SYSTEM_MALLOC)
+-    list(APPEND LLIntOffsetsExtractor_DEPENDENCIES bmalloc_CopyHeaders)
+-endif ()
+ WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
+ 
+ # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
