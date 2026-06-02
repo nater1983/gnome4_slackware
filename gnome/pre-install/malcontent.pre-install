@@ -1,0 +1,1 @@
+sed -i 's/revision = 0\.3\.0/revision = bd02d0c5f0df2f734facc8753592ec6289d1a813/' ubprojects/libgsystemservice.wrap
