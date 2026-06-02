@@ -1,0 +1,10 @@
+# Remove fwupd module lines
+if [ -f etc/rc.d/rc.modules.local ]; then
+  sed -i '/\/sbin\/modprobe i2c_dev$/d' etc/rc.d/rc.modules.local
+  sed -i '/\/sbin\/modprobe msr$/d' etc/rc.d/rc.modules.local
+
+  # Remove file if now empty (or only whitespace)
+  if ! grep -q '[^[:space:]]' etc/rc.d/rc.modules.local; then
+    rm -f etc/rc.d/rc.modules.local
+  fi
+fi
