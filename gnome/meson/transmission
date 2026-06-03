@@ -8,6 +8,7 @@ cd cmake-build
     -DENABLE_CLI=ON \
     -DENABLE_QT=OFF \
     -DENABLE_GTK=ON \
+		-DENABLE_TESTS=OFF \
     -DREBUILD_WEB=OFF \
     -DENABLE_DAEMON=ON \
     -DENABLE_CLI=ON \
