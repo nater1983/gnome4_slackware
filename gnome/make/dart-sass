@@ -1,3 +1,7 @@
 sed -i "s/\/src\//\/..\/lib$LIBDIRSUFFIX\/$PRGNAM\//g" sass
 install -D -t $PKG/usr/bin/ sass
 install -D -t $PKG/usr/lib$LIBDIRSUFFIX/$PRGNAM/ src/dart src/sass.snapshot
+
+mkdir -p $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+wget -P usr/share/doc/$PKGNAME https://raw.githubusercontent.com/sass/dart-sass/refs/heads/main/{README.md,CONTRIBUTING.md,AUTHORS,CHANGELOG.md,CODE_OF_CONDUCT.md}
+mv usr/share/doc/$PKGNAME/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
