@@ -3,6 +3,6 @@ rm usr/bin/{pandoc-lua,pandoc-server}
 cp usr/bin/pandoc $PKG/usr/bin/
 rm usr/share/man/man1/{pandoc-lua,pandoc-server}.1.gz
 mv usr/share/man $PKG/usr/
-mkdir -p $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+mkdir -p $PKG/usr/doc/$PKGNAME-$PKGVERSION
 wget -P usr/share/doc/pandoc https://raw.githubusercontent.com/jgm/pandoc/refs/heads/main/{README.md,CONTRIBUTING.md,AUTHORS.md,SECURITY.md,changelog.md}
-mv usr/share/doc/pandoc/* $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
+mv usr/share/doc/pandoc/* $PKG/usr/doc/$PKGNAME-$PKGVERSION
