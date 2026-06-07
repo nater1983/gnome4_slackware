@@ -1,6 +1,7 @@
 git clone https://github.com/fulalas/gnome-session-sysvinit tmp
 cp -av tmp/* tmp/.* . 2>/dev/null
 rm -rf tmp
+patch -Np1 -i $CWD/patch/gnome-session/4dbf3f5d27543a508d37ccfba3ffad55439e3122.patch
 
 mkdir build
 cd build
