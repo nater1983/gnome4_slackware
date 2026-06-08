@@ -21,7 +21,7 @@ if [ -e usr/share/icons/hicolor/icon-theme.cache ]; then
   fi
 fi
 
-if ! grep -q '/usr/libexec/fwupd/fwupd' etc/rc.d/rc.local; then
+if ! grep -q 'Start Firmware update daemon' etc/rc.d/rc.local; then
   cat << 'EOF' >> etc/rc.d/rc.local
 
 # Start Firmware update daemon:
