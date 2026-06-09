@@ -162,6 +162,7 @@ cozy
 # blueprint-compiler -- found in a previous application
 python3-websocket-client
 python3-prawcore
+python3-uv_build
 python3-update-checker
 python3-praw
 # python3-dateutil -- found in a previous application
