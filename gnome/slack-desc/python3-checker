@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+               |-----handy-ruler------------------------------------------------------|
+python3-checker: python3-checker (A tool for checking system configuration.)
+python3-checker:
+python3-checker: This is a cross-platform, pluggable tool for comparing the
+python3-checker: configuration of a machine with a known configuration stored in text
+python3-checker: files in a source control system.
+python3-checker:
+python3-checker: Homepage: https://pypi.org/project/checker/
+python3-checker:
+python3-checker:
+python3-checker:
+python3-checker:
