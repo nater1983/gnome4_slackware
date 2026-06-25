@@ -4,13 +4,13 @@ Date: Sun, 30 Jun 2024 01:24:54 +0000
 Subject: [PATCH] Revert GNOME Version to show the correct version of Gnome Shell and not just the major version number.
 
 ---
- .../system/about/cc-system-details-window.c   | 48 ++++++++++++++++++-
+ .../system/about/cc-about-page.c   | 48 ++++++++++++++++++-
  1 file changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/panels/system/about/cc-system-details-window.c b/panels/system/about/cc-system-details-window.c
+diff --git a/panels/system/about/cc-about-page.c b/panels/system/about/cc-about-page.c
 index 0fc21f7d31..dbbb506c2c 100644
---- a/panels/system/about/cc-system-details-window.c
-+++ b/panels/system/about/cc-system-details-window.c
+--- a/panels/system/about/cc-about-page.c
++++ b/panels/system/about/cc-about-page.c
 @@ -639,6 +639,47 @@ get_ram_size_dmi (void)
    return ram_total;
  }
