@@ -11,8 +11,8 @@ diff --git a/panels/system/about/cc-about-page.c b/panels/system/about/cc-about-
 index 0fc21f7d31..dbbb506c2c 100644
 --- a/panels/system/about/cc-about-page.c
 +++ b/panels/system/about/cc-about-page.c
-@@ -639,6 +639,47 @@ get_ram_size_dmi (void)
-   return ram_total;
+@@ -676,6 +676,47 @@ get_ram_size_dmi (void)
+     return ram_total;
  }
  
 +static char *
@@ -59,40 +59,38 @@ index 0fc21f7d31..dbbb506c2c 100644
  static void
  system_details_window_title_print_padding (const gchar *title, GString *dst_string, gsize maxlen)
  {
-@@ -671,6 +712,7 @@ on_copy_button_clicked_cb (GtkWidget              *widget,
-   g_autofree char *os_type_text = NULL;
-   g_autofree char *os_name_text = NULL;
-   g_autofree char *os_build_text = NULL;
-+  g_autofree char *gnome_version_text = NULL;
-   g_autofree char *hardware_model_text = NULL;
-   g_autofree char *firmware_version_text = NULL;
-   g_autofree char *windowing_system_text = NULL;
-@@ -767,7 +809,7 @@ on_copy_button_clicked_cb (GtkWidget              *widget,
+@@ -707,6 +748,7 @@ on_copy_row_activated_cb (GtkWidget *widget, CcAboutPage *self)
+     g_autofree char *os_type_text = NULL;
+     g_autofree char *os_name_text = NULL;
+     g_autofree char *os_build_text = NULL;
++    g_autofree char *gnome_version_text = NULL;
+     g_autofree char *hardware_model_text = NULL;
+     g_autofree char *firmware_version_text = NULL;
+     g_autofree char *kernel_version_text = NULL;
+@@ -802,7 +844,7 @@ on_copy_row_activated_cb (GtkWidget *widget, CcAboutPage *self)
  
-   g_string_append (result_str, "- ");
-   system_details_window_title_print_padding ("**GNOME Version:**", result_str, 0);
--  g_string_append_printf (result_str, "%s\n", MAJOR_VERSION);
-+  g_string_append_printf (result_str, "%s\n", gnome_version_text);
+     g_string_append (result_str, "- ");
+     system_details_window_title_print_padding ("**GNOME Version:**", result_str, 0);
+-    g_string_append_printf (result_str, "%s\n", MAJOR_VERSION);
++    g_string_append_printf (result_str, "%s\n", gnome_version_text);
  
-   g_string_append (result_str, "- ");
-   system_details_window_title_print_padding (_("**Windowing System:**"), result_str, 0);
-@@ -798,6 +840,7 @@ system_details_window_setup_overview (CcSystemDetailsWindow *self)
-   g_autofree char *os_type_text = NULL;
-   g_autofree char *os_name_text = NULL;
-   g_autofree char *os_build_text = NULL;
-+  g_autofree char *gnome_version_text = NULL;
-   g_autofree char *hardware_model_text = NULL;
-   g_autofree char *firmware_version_text = NULL;
-   g_autofree char *kernel_version_text = NULL;
-@@ -839,7 +882,8 @@ system_details_window_setup_overview (CcSystemDetailsWindow *self)
-   os_type_text = get_os_type ();
-   cc_info_entry_set_value (self->os_type_row, os_type_text);
+     g_string_append (result_str, "- ");
+     system_details_window_title_print_padding ("**Kernel Version:**", result_str, 0);
+@@ -829,6 +871,7 @@ cc_about_page_setup_overview (CcAboutPage *self)
+     g_autofree char *os_type_text = NULL;
+     g_autofree char *os_name_text = NULL;
+     g_autofree char *os_build_text = NULL;
++    g_autofree char *gnome_version_text = NULL;
+     g_autofree char *hardware_model_text = NULL;
+     g_autofree char *firmware_version_text = NULL;
+     g_autofree char *kernel_version_text = NULL;
+@@ -870,7 +913,8 @@ cc_about_page_setup_overview (CcAboutPage *self)
+     os_type_text = get_os_type ();
+     adw_action_row_set_subtitle (self->os_type_row, os_type_text);
  
--  cc_info_entry_set_value (self->gnome_version_row, MAJOR_VERSION);
-+  gnome_version_text = get_gnome_version ();
-+  cc_info_entry_set_value (self->gnome_version_row, gnome_version_text);
+-    adw_action_row_set_subtitle (self->gnome_version_row, MAJOR_VERSION);
++    gnome_version_text = get_gnome_version ();
++    adw_action_row_set_subtitle (self->gnome_version_row, gnome_version_text);
  
-   cc_info_entry_set_value (self->windowing_system_row, get_windowing_system ());
- 
--- 
-GitLab
+     kernel_version_text = get_kernel_version_string ();
+     adw_action_row_set_subtitle (self->kernel_row, kernel_version_text);
