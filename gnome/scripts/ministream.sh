@@ -24,13 +24,13 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/sp1rit/"
+GNOMEGITURI="https://gitlab.gnome.org/sp1rit"
 
 # Default list of modules to checkout:
 DEFMODS="ministream"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-#DEFBRANCH="aa91a0ff44424f74a190abc083b62f7d3b0b2ca7"
+#DEFBRANCH="upstream"
 DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
@@ -104,7 +104,8 @@ echo ">> Checking out the sources..."
 for LOC in $MODS; do
   # Clone the repository:
   echo ">>   Fetching ${LOC} from ${GNOMEGITURI}..."
-  git clone ${GNOMEGITURI}${LOC}.git ${LOC}-temp
+  git -c http.postBuffer=524288000 -c core.compression=0 clone --depth 1 ${GNOMEGITURI}${LOC}.git ${LOC}-temp
+  #git clone ${GNOMEGITURI}${LOC}.git ${LOC}-temp
   if [ $? -ne 0 ]; then
     echo ">>     Failed to checkout ${LOC}."
     continue
@@ -112,12 +113,11 @@ for LOC in $MODS; do
 
   # Get the latest commit date and hash
   cd ${LOC}-temp || continue
-  git checkout ${DEFBRANCH}
   COMMIT_INFO=$(git log --date=format:%Y%m%d --pretty=format:%cd.%h -n1)
   cd ..
 
   # Rename the directory with commit info
-  NEW_DIR="gnome-boxes-50.alpha"
+  NEW_DIR="${LOC}-${COMMIT_INFO}"
   mv ${LOC}-temp ${NEW_DIR}
 
   echo ">>   Checked out ${LOC} as ${NEW_DIR}"
@@ -132,7 +132,7 @@ for LOC in $MODS; do
       git checkout $(git rev-list -n 1 --before="`date -d $THEDATE`" $BRANCH)
     fi
   popd
-  
+
   # Remove git metadata if SHRINK is enabled:
   if [ "$SHRINK" = "YES" ]; then
     echo ">>     Removing git metadata..."
@@ -157,3 +157,4 @@ done
 
 cd $CWD
 # Done!
+
