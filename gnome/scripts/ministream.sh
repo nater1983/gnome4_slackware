@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/sp1rit"
+GNOMEGITURI="https://gitlab.gnome.org/sp1rit/"
 
 # Default list of modules to checkout:
 DEFMODS="ministream"
