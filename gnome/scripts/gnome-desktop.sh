@@ -24,7 +24,7 @@ FORCE="NO"
 MYDIR="${CWD}/src"
 
 # GNOME Git repositories:
-GNOMEGITURI="https://gitlab.gnome.org/GNOME/gnome-desktop"
+GNOMEGITURI="https://gitlab.gnome.org/GNOME/"
 
 # Default list of modules to checkout:
 DEFMODS="gnome-desktop"
