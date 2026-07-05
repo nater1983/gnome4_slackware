@@ -1,1 +1,2 @@
 patch -Np1 -i $CWD/patch/gnome-control-center/system-details.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/gnome-control-center/0005-replace-absolute-paths.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
