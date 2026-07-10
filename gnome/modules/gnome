@@ -9,7 +9,6 @@ gnome-settings-daemon
 colord-gtk
 gsound
 libadwaita-demo
-libfyaml
 gnome-bluetooth
 xdg-dbus-proxy
 libwpe
