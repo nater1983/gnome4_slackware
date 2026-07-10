@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/totem/girepository-2.0.patch  || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
