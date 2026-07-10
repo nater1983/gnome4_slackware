@@ -70,6 +70,7 @@ fprintd
 gdm
 gnome-menus
 gnome-shell-extensions
+gnome-extensions-app
 p7zip
 gnome-browser-connector
 ibus-gtk4
