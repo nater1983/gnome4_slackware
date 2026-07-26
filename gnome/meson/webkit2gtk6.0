@@ -1,8 +1,8 @@
 mkdir cmake-build
 cd cmake-build
   cmake .. \
-    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
-    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -fcf-protection=none" \
+    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS -DNDEBUG -g0 -fcf-protection=none" \
+    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS -DNDEBUG -g0 -fcf-protection=none" \
     "${GNOME_CMAKE_ARGS[@]}" \
     -DPORT=GTK \
     -DLIBEXEC_INSTALL_DIR=/usr/lib${LIBDIRSUFFIX}/webkitgtk-6.0 \
@@ -14,6 +14,7 @@ cd cmake-build
     -DUSE_GTK4=ON \
     -DCMAKE_SKIP_RPATH=ON \
     -DUSE_JPEGXL=ON \
+    -DUSE_GSTREAMER_WEBRTC=ON \
     -Wno-dev \
     -G Ninja \
     ..
