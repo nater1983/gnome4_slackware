@@ -5,6 +5,8 @@ EOF
 
 install -vDm 0644 build/src/disks/libgnome_disks.so -t $PKG/usr/lib${LIBDIRSUFFIX}/gnome_disks
 
+mkdir -p $PKG/etc/xdg/autostart
+
 cat << 'EOF' > $PKG/etc/xdg/autostart/org.gnome.SettingsDaemon.DiskUtilityNotify.desktop
 [Desktop Entry]
 Type=Application
