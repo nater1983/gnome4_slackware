@@ -4,3 +4,14 @@ cat <<EOF > $PKG/etc/ld.so.conf.d/gdu.conf
 EOF
 
 install -vDm 0644 build/src/disks/libgnome_disks.so -t $PKG/usr/lib${LIBDIRSUFFIX}/gnome_disks
+
+cat << 'EOF' > $PKG/etc/xdg/autostart/org.gnome.SettingsDaemon.DiskUtilityNotify.desktop
+[Desktop Entry]
+Type=Application
+Name=gnome-disk-utility notification plugin for GNOME Settings Daemon
+Exec=@libexecdir@/gnome-disk-utility-notify
+OnlyShowIn=GNOME;
+NoDisplay=true
+EOF
+
+sed -i "s|@libexecdir@|/usr/libexec|g" $PKG/etc/xdg/autostart/org.gnome.SettingsDaemon.DiskUtilityNotify.desktop
