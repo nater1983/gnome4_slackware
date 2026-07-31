@@ -1,4 +1,4 @@
 # Revert: Switch to systemd service
 #patch -Np1 -i $CWD/patch/gnome-disk-utility/224.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
 
-patch -Np1 -i $CWD/patch/gnome-disk-utility/228.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+#patch -Np1 -i $CWD/patch/gnome-disk-utility/228.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
