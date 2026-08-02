@@ -331,3 +331,33 @@ eog-plugins
 transmission
 # resources
 resources
+# showtime
+showtime
+# papers
+papers
+# gnote
+gnote
+# dart-sass
+dart-sass
+# rhythmbox
+rhythmbox
+# gthumb
+gthumb
+# enter-tex
+enter-tex
+# goffice
+goffice
+gnumeric
+# gnome-usage
+gnome-usage
+# gnome-network-displays
+gnome-network-displays
+# extension-manager
+text-engine
+extension-manager
+# polari
+polari
+# devhelp
+devhelp
+# gnome-power-manager
+gnome-power-manager
