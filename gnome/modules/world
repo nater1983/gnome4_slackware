@@ -318,6 +318,7 @@ flite
 # gnome-console
 gnome-console
 # sushi
+papers
 evince
 sushi
 # gnome-ssh-askpass
@@ -333,8 +334,6 @@ transmission
 resources
 # showtime
 showtime
-# papers
-papers
 # gnote
 gnote
 # dart-sass
