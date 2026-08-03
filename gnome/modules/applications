@@ -54,6 +54,7 @@ totem
 python3-liblouis
 pyatspi
 python3-dasbus
+python3-mathcat
 orca
 evince4
 epiphany
