@@ -1,0 +1,5 @@
+CARGO_HOME=.cargo \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
+cargo build --release $CARGOTARGET
+cargo install --no-track --root "${PKG}/usr" --path="."
