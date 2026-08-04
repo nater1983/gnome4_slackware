@@ -5,6 +5,6 @@ cargo build --release $CARGOTARGET
 cargo install --no-track --root "${PKG}/usr" --path="."
 
 sed -i 's/"License :: OSI Approved :: GNU General Public License v2"/"License :: OSI Approved :: GNU General Public License v2 (GPLv2)"/' pyproject.toml
-sed -i 's/"Topic :: Accessibility"/"Desktop Environment :: Accessibility"/' pyproject.toml
+sed -i 's/"Topic :: Accessibility"/"Topic :: Adaptive Technologies"/' pyproject.toml
 python3 -m build --wheel --no-isolation
 python3 -m installer --destdir "$PKG" dist/*.whl
