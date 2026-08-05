@@ -60,6 +60,7 @@ libgdata
 evolution-data-server
 gnome-autoar
 gnome-shell
+gnome-session-sysvinit
 gnome-session
 libdaemon
 openrc-settingsd
