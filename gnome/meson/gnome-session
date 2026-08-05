@@ -1,9 +1,3 @@
-git clone https://github.com/fulalas/gnome-session-sysvinit tmp
-cd tmp ; git checkout 0753f174892b2931eca3f9c79f6ff341e7286215 ; cd ..
-cp -av tmp/* tmp/.* . 2>/dev/null
-rm -rf tmp
-patch -Np1 -i $CWD/patch/gnome-session/4dbf3f5d27543a508d37ccfba3ffad55439e3122.patch
-
 mkdir build
 cd build
   CFLAGS="$SLKCFLAGS" \
@@ -11,6 +5,7 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
+    -Dsystemd=false \
     -Ddocbook=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
