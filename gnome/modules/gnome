@@ -15,7 +15,7 @@ libwpe
 wpebackend-fdo
 bubblewrap
 webkit2gtk4.1
-webkit2gtk6.0
+webkitgtk6.0
 gtest
 gflags
 gperftools
