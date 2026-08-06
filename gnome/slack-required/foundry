@@ -6,7 +6,7 @@ sysprof
 libgit2
 flatpak
 libcmark
-webkit2gtk6.0
+webkitgtk6.0
 gtksourceview5
 libspelling
 template-glib
