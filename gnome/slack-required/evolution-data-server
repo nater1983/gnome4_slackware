@@ -1,7 +1,7 @@
 gnome-online-accounts
 libgweather4
 libgdata
-webkit2gtk6.0
+webkitgtk6.0
 libwpe
 xdg-dbus-proxy
 wpebackend-fdo
