@@ -2,6 +2,6 @@ blueprint-compiler
 vala-language-server
 biome
 gtkcsslanguageserver
-webkit2gtk6.0
+webkitgtk6.0
 libshumate
 gtksourceview5
