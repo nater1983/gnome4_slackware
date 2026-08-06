@@ -2,7 +2,7 @@ gtksourceview5
 jsonrpc-glib
 libpeas2
 template-glib
-webkit2gtk6.0
+webkitgtk6.0
 libdex
 libgit2-glib
 sysprof
