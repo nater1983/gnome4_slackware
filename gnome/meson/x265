@@ -54,3 +54,5 @@ done
 make install DESTDIR=$PKG
 
 cd ..
+
+find $PKG -name "*.a" -delete

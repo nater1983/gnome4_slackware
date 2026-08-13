@@ -17,7 +17,7 @@ index 5df76856..8818270a 100644
    set_target_properties( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
  endif()
  
-+set_target_properties   ( ${ly_lib_shared} PROPERTIES VERSION "0.0.1922" SOVERSION 0 )
++set_target_properties   ( ${ly_lib_shared} PROPERTIES VERSION "0.0.1949" SOVERSION 0 )
 +
  # this creates the cpuid tool
  add_executable      ( cpuid ${ly_base_dir}/util/cpuid.c )

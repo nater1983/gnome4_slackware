@@ -1,0 +1,143 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ball=C3=B3=20Gy=C3=B6rgy?= <ballogyor@gmail.com>
+Date: Sat, 2 Aug 2025 08:37:57 +0200
+Subject: [PATCH] Fix search provider
+
+- Set inactivity timeout in service mode to avoid quit while typing search
+terms.
+
+- Initialize search during startup
+
+- Instead of creating a new hidden KeyManager, activate the app before
+showing the result to avoid keep running in the background after the window
+is closed.
+
+- Release the app even if the identifier is invalid.
+
+- Notify "loaded" property from the SSH backend, so the search provider
+will be notified when it's loaded.
+---
+ src/application.vala     | 10 ++++++++--
+ src/search-provider.vala | 19 +++++++++++--------
+ ssh/backend.vala         |  1 +
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/src/application.vala b/src/application.vala
+index 9b5d7c178c77..0203119252a0 100644
+--- a/src/application.vala
++++ b/src/application.vala
+@@ -70,7 +70,8 @@ public class Seahorse.Application : Gtk.Application {
+         GLib.Object (
+             application_id: Config.APPLICATION_ID,
+             resource_base_path: "/org/gnome/Seahorse",
+-            flags: ApplicationFlags.HANDLES_OPEN
++            flags: ApplicationFlags.HANDLES_OPEN,
++            inactivity_timeout: 10000
+         );
+         this.search_provider = new SearchProvider(this);
+ 
+@@ -116,11 +117,16 @@ public class Seahorse.Application : Gtk.Application {
+ #if WITH_PKCS11
+         Pkcs11.Backend.initialize();
+ #endif
++
++        // Initialize search provider
++        this.initialize_search();
+     }
+ 
+     public override void activate() {
+-        if (get_active_window() == null)
++        if (get_active_window() == null) {
+             this.key_mgr = new Seahorse.KeyManager(this);
++            set_inactivity_timeout (0);
++        }
+ 
+         this.key_mgr.present();
+     }
+diff --git a/src/search-provider.vala b/src/search-provider.vala
+index 6873f1912c37..78917fb209d8 100644
+--- a/src/search-provider.vala
++++ b/src/search-provider.vala
+@@ -25,12 +25,12 @@ public class Seahorse.SearchProvider : GLib.Object {
+         = new HashTable<string, weak GLib.Object>.full(str_hash, str_equal, free, null);
+ 
+     private Gcr.FilterCollection collection;
+-    private GLib.Application app;
++    private Gtk.Application app;
+     private int n_loading = 0;
+     private RWLock n_loading_lock = RWLock();
+-    private bool loaded = false;
++    protected bool loaded { get; set; default = false; }
+ 
+-    public SearchProvider(GLib.Application app) {
++    public SearchProvider(Gtk.Application app) {
+         this.app = app;
+         this.collection = new Gcr.FilterCollection.with_callback(this.union_collection, filter_objects);
+     }
+@@ -83,33 +83,35 @@ public class Seahorse.SearchProvider : GLib.Object {
+                 });
+             } else {
+                 change_n_loading(-1);
++                if (get_n_loading() == 0)
++                    this.loaded = true;
+             }
+ 
+             backend.added.connect(on_place_added);
+             backend.removed.connect(on_place_removed);
+ 
+             foreach (GLib.Object place in backend.get_objects())
+                 on_place_added(backend, place);
+         }
+     }
+ 
+     private int get_n_loading() {
+         this.n_loading_lock.reader_lock();
+         var retval = this.n_loading;
+         this.n_loading_lock.reader_unlock();
+         return retval;
+     }
+ 
+     private void change_n_loading(int diff) {
+         this.n_loading_lock.writer_lock();
+         this.n_loading += diff;
+         this.n_loading_lock.writer_unlock();
+     }
+ 
+     public async string[] GetInitialResultSet(string[] terms) throws GLib.Error {
+         this.app.hold();
+ 
+-        if (get_n_loading() >= 0)
++        if (!this.loaded)
+             yield load();
+ 
+         string?[] results = {};
+@@ -189,12 +191,13 @@ public class Seahorse.SearchProvider : GLib.Object {
+         unowned GLib.Object? object = null;
+         identifier.scanf("%p", &object);
+         object = this.handles.lookup(identifier);
+-        if (object == null || !(object in this.collection) || !(object is Viewable))
++        if (object == null || !(object in this.collection) || !(object is Viewable)) {
++            this.app.release ();
+             return; // Bogus value
++        }
+ 
+-        KeyManager key_manager = new KeyManager(GLib.Application.get_default() as Application);
+-        /* key_manager.show(timestamp); */
+-        Viewable.view(object, (Gtk.Window) key_manager);
++        this.app.activate ();
++        Viewable.view (object, this.app.get_active_window());
+ 
+         this.app.release ();
+     }
+diff --git a/ssh/backend.vala b/ssh/backend.vala
+index 84ea529a5c5b..df32b96eb9ec 100644
+--- a/ssh/backend.vala
++++ b/ssh/backend.vala
+@@ -39,6 +39,7 @@ public class Seahorse.Ssh.Backend : GLib.Object, Gcr.Collection, Seahorse.Backen
+             } catch (GLib.Error e) {
+                 warning("Failed to initialize SSH backend: %s", e.message);
+             }
++            notify_property("loaded");
+         });
+     }
+ 

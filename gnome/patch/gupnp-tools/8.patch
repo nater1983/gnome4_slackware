@@ -1,0 +1,42 @@
+From bdf669b02ec9bcd5640af009f7977309474c36ae Mon Sep 17 00:00:00 2001
+From: Jan Tojnar <jtojnar@gmail.com>
+Date: Sun, 12 Apr 2026 13:30:19 +0200
+Subject: [PATCH] common: Do not use deprecated `xmlIndentTreeOutput`
+
+`xmlDocDumpFormatMemoryEnc` already controls this with the last format option.
+
+Fixes: https://gitlab.gnome.org/GNOME/gupnp-tools/-/issues/29
+---
+ src/common/pretty-print.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/common/pretty-print.c b/src/common/pretty-print.c
+index 1519cb0..03b66d3 100644
+--- a/src/common/pretty-print.c
++++ b/src/common/pretty-print.c
+@@ -31,7 +31,6 @@ char *
+ pretty_print_xml (const char *xml)
+ {
+         xmlDocPtr doc;
+-        int old_value;
+         char *text;
+         int length;
+ 
+@@ -44,14 +43,11 @@ pretty_print_xml (const char *xml)
+         if (!doc)
+                 return NULL;
+ 
+-        old_value = xmlIndentTreeOutput;
+-        xmlIndentTreeOutput = 1;
+         xmlDocDumpFormatMemoryEnc (doc,
+                                    (xmlChar **) &text,
+                                    &length,
+                                    "UTF-8",
+                                    1);
+-        xmlIndentTreeOutput = old_value;
+         xmlFreeDoc (doc);
+ 
+         return text;
+-- 
+GitLab
+

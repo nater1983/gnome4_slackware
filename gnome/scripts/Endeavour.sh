@@ -30,8 +30,8 @@ GNOMEGITURI="https://gitlab.gnome.org/World/"
 DEFMODS="Endeavour"
 
 # Preferred branch to check out from if it exists (HEAD otherwise):
-DEFBRANCH="d3795f642c55ab3754bebcfc941df9603d873872"
-#DEFBRANCH="main"
+#DEFBRANCH="d3795f642c55ab3754bebcfc941df9603d873872"
+DEFBRANCH="main"
 
 # Shrink the tarball by removing git repository metadata:
 SHRINK="YES"

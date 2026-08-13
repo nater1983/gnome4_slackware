@@ -1,0 +1,52 @@
+From 69ed2fc42fead70dca5b2dd68f406b0d8171e127 Mon Sep 17 00:00:00 2001
+From: Simo Sorce <simo@redhat.com>
+Date: Fri, 17 Apr 2026 14:34:32 -0400
+Subject: [PATCH] Update OpenSSL API compatibility
+
+Replace direct access to ASN1_STRING data members with the
+ASN1_STRING_get0_data() accessor function, as modern OpenSSL versions use
+opaque structures. Additionally, add const qualifiers to X509_NAME pointers to
+ensure const-correctness with newer OpenSSL APIs.
+
+Co-authored-by: Gemini <gemini@google.com>
+Signed-off-by: Simo Sorce <simo@redhat.com>
+---
+ src/tss2-fapi/ifapi_curl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/tss2-fapi/ifapi_curl.c b/src/tss2-fapi/ifapi_curl.c
+index 976f36d..09a9b0d 100644
+--- a/src/tss2-fapi/ifapi_curl.c
++++ b/src/tss2-fapi/ifapi_curl.c
+@@ -88,7 +88,7 @@ get_crl_from_cert(X509 *cert, X509_CRL **crl)
+                 GENERAL_NAME *gen_name = sk_GENERAL_NAME_value(distpoint->name.fullname, j);
+                 ASN1_IA5STRING *asn1_str = gen_name->d.uniformResourceIdentifier;
+                 SAFE_FREE(url);
+-                url = (unsigned char *)strdup((char *)asn1_str->data);
++                url = (unsigned char *)strdup((char *)ASN1_STRING_get0_data(asn1_str));
+                 goto_if_null2(url, "Out of memory", r, TSS2_FAPI_RC_MEMORY, cleanup);
+             }
+         }
+@@ -122,8 +122,8 @@ cleanup:
+ 
+ static bool
+ is_self_signed(X509 *cert) {
+-    X509_NAME *issuer = X509_get_issuer_name(cert);
+-    X509_NAME *subject = X509_get_subject_name(cert);
++    const X509_NAME *issuer = X509_get_issuer_name(cert);
++    const X509_NAME *subject = X509_get_subject_name(cert);
+ 
+     /* Compare the issuer and subject names */
+     if (X509_NAME_cmp(issuer, subject) == 0) {
+@@ -189,7 +189,7 @@ ifapi_curl_verify_ek_cert(
+                 continue;
+             }
+             uri = ad->location->d.uniformResourceIdentifier;
+-            url = uri->data;
++            url = (unsigned char *)ASN1_STRING_get0_data(uri);
+             curl_rc = ifapi_get_curl_buffer(url, &cert_buffer, &cert_buffer_size);
+             if (curl_rc != 0) {
+                 goto_error(r, TSS2_FAPI_RC_NO_CERT, "Get certificate.", cleanup);
+-- 
+2.53.0
+

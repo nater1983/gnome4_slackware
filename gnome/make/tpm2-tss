@@ -1,20 +1,27 @@
 ./configure \
-    "${GNOME_MAKE_ARGS[@]}" > /dev/null 2>&1
-#Do this so that we can use automake-1.17 and newer.
+   "${GNOME_MAKE_ARGS[@]}" > /dev/null 2>&1
 make distclean > /dev/null 2>&1
 rm -f aclocal.m4 ltmain.sh libtool > /dev/null 2>&1
-aclocal > /dev/null 2>&1
-automake --add-missing > /dev/null 2>&1
-autoconf > /dev/null 2>&1
-libtoolize > /dev/null 2>&1
+libtoolize --force --copy
+aclocal -I m4
+automake --add-missing --copy
+autoconf
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
     --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+	--disable-tcti-libtpms \
+	--disable-tcti-spi-ltt2go \
+	--disable-tcti-spi-ftdi \
+	--disable-tcti-i2c-ftdi \
+	--disable-defaultflags \
+	--disable-weakcrypto \
+	--with-runstatedir=/run \
     --with-udevrulesdir=/lib/udev/rules.d \
     --with-udevrulesprefix=60- \
-    --with-tmpfilesdir=/etc/tmpfiles.d \
-    --with-sysusersdir=/etc/sysusers.d
+    --with-tmpfilesdir=/usr/lib/systemd/tmpfiles.d \
+    --with-sysusersdir=/usr/lib/systemd/sysusers.d
 make
 make install DESTDIR=$PKG
