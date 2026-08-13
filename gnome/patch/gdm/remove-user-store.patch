@@ -392,3 +392,15 @@ diff -ru a/daemon/gdm-manager.c b/daemon/gdm-manager.c
          manager->display_store = gdm_display_store_new ();
          manager->user_sessions = NULL;
          manager->open_reauthentication_requests = g_hash_table_new_full (NULL,
+diff -ru a/data/gnome-greeter.desktop.in b/data/gnome-greeter.desktop.in
+--- a/data/gnome-greeter.desktop.in	2025-01-01 00:00:00.000000000 +0000
++++ b/data/gnome-greeter.desktop.in	2026-03-23 00:00:00.000000000 +0000
+@@ -1,7 +1,7 @@
+ [Desktop Entry]
+ Name=GNOME Greeter
+ Comment=The default GNOME Greeter session
+-Exec=gnome-session
++Exec=gnome-session --session=gnome-login
+ TryExec=gnome-session
+ Type=Application
+ DesktopNames=GNOME-Greeter:GNOME

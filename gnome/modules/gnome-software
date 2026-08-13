@@ -6,7 +6,7 @@ libsmbios
 gcab
 xdg-desktop-portal-gtk
 libostree
-flatpak
+# flatpak in the main module
 flatpak-builder
 gnome-software
 gnome-app-list
