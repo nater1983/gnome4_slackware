@@ -7,6 +7,7 @@ cd build
     $GNOME_OPT_ARGS \
     -Ddbus-sys="/usr/share/dbus-1/system.d" \
     -Ddefault-pam-config=none \
+    -Dpam-prefix=/etc \
     -Dpam-services-dir=/etc/pam.d \
     -Dpam-mod-dir="/lib${LIBDIRSUFFIX}/security" \
     -Drun-dir=/run/gdm \
