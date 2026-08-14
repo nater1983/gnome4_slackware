@@ -56,6 +56,23 @@ index 64ac6a314..da73749a3 100644
  have_x11_support = get_option('x11-support')
  # Common variables
  config_h_dir = include_directories('.')
+@@ -206,6 +207,7 @@ conf.set_quoted('GNOMELOCALEDIR', gdm_prefix / get_option('localedir'))
+ conf.set_quoted('AT_SPI_REGISTRYD_DIR', at_spi_registryd_dir)
+ conf.set_quoted('GDM_PID_FILE', gdm_pid_file)
+ conf.set_quoted('LANG_CONFIG_FILE', lang_config_file)
++conf.set_quoted('PAM_SYS_SERVICES_DIR', pam_sys_services_dir[0] == '/' ? pam_sys_services_dir : '/' + pam_sys_services_dir)
+ conf.set_quoted('PAM_CONFIG_SERVICES_DIR', pam_config_services_dir[0] == '/' ? pam_config_services_dir : '/' + pam_config_services_dir)
+ conf.set('HAVE_ADT', have_adt)
+ conf.set('HAVE_LIBAUDIT', libaudit_dep.found())
+@@ -290,6 +292,8 @@ summary({
+     'GDM Runtime config': gdm_runtime_conf,
+     'GDM Session default path': get_option('default-path'),
+     'GDM Working dir': working_dir,
++    'PAM Services dir': pam_sys_services_dir,
++    'PAM Services config dir': pam_config_services_dir,
+     'GNOME locale': gdm_prefix / get_option('localedir'),
+     'AT SPI registryd': at_spi_registryd_dir,
+     'Lang config file': lang_config_file,
 diff --git a/utils/gdm-config.c b/utils/gdm-config.c
 index c8fbbca23..ded899445 100644
 --- a/utils/gdm-config.c
