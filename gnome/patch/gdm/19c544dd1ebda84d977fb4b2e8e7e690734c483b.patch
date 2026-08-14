@@ -1,0 +1,107 @@
+From 19c544dd1ebda84d977fb4b2e8e7e690734c483b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marco=20Trevisan=20=28Trevi=C3=B1o=29?= <mail@3v1n0.net>
+Date: Sun, 19 Jul 2026 12:03:56 +0200
+Subject: [PATCH] build: Install the gdm service files in the system pam config
+ path
+
+Installing service files in /etc/pam.d it's not something that we should
+do since such path is meant to be used for configuration files and so
+potential sys admin overrides.
+
+As per this, install the service files in /usr/lib/pam.d by default and
+fallback to the /etc ones if none is found.
+
+Part-of: <https://gitlab.gnome.org/GNOME/gdm/-/merge_requests/380>
+---
+ data/meson.build   |  4 ++--
+ meson.build        |  8 ++++++--
+ utils/gdm-config.c | 16 +++++++++++++---
+ 3 files changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/data/meson.build b/data/meson.build
+index 2fced1089..9c2496fa8 100644
+--- a/data/meson.build
++++ b/data/meson.build
+@@ -96,7 +96,7 @@ pam_data_files = pam_data_files_map.get(default_pam_config, [])
+ foreach _pam_filename : pam_data_files
+   install_data('pam-@0@/@1@.pam'.format(default_pam_config, _pam_filename),
+     rename: _pam_filename,
+-    install_dir: pam_config_services_dir,
++    install_dir: pam_sys_services_dir,
+   )
+ endforeach
+ 
+@@ -115,7 +115,7 @@ if default_pam_config == 'redhat'
+       output: 'gdm-@0@-substack'.format(service),
+       configuration: pam_conf,
+       install: true,
+-      install_dir: pam_config_services_dir,
++      install_dir: pam_sys_services_dir,
+     )
+   endforeach
+ endif
+diff --git a/meson.build b/meson.build
+index 64ac6a314..da73749a3 100644
+--- a/meson.build
++++ b/meson.build
+@@ -33,8 +33,9 @@ gdm_pid_file = (get_option('pid-file') != '')? get_option('pid-file') : gdm_run_
+ working_dir = (get_option('working-dir') != '')? get_option('working-dir') : gdm_prefix / get_option('localstatedir') / 'lib' / 'gdm'
+ gdm_private_dbus_dir = (get_option('private-dbus-dir') != '')? get_option('private-dbus-dir') : gdm_run_dir / 'dbus'
+ gdm_dyn_home_dir = (get_option('dyn-home-dir') != '')? get_option('dyn-home-dir') : gdm_run_dir / 'home'
+-pam_prefix = get_option('pam-prefix')
+-pam_config_services_dir = (pam_prefix != '' ? pam_prefix : gdm_prefix / get_option('sysconfdir')) / 'pam.d'
++pam_prefix = (get_option('pam-prefix') != '')? get_option('pam-prefix') : gdm_prefix
++pam_sys_services_dir = pam_prefix / 'lib' / 'pam.d'
++pam_config_services_dir = pam_prefix / get_option('sysconfdir') / 'pam.d'
+ have_x11_support = get_option('x11-support')
+ # Common variables
+ config_h_dir = include_directories('.')
+@@ -206,6 +207,7 @@ conf.set_quoted('GNOMELOCALEDIR', gdm_prefix / get_option('localedir'))
+ conf.set_quoted('AT_SPI_REGISTRYD_DIR', at_spi_registryd_dir)
+ conf.set_quoted('GDM_PID_FILE', gdm_pid_file)
+ conf.set_quoted('LANG_CONFIG_FILE', lang_config_file)
++conf.set_quoted('PAM_SYS_SERVICES_DIR', pam_sys_services_dir[0] == '/' ? pam_sys_services_dir : '/' + pam_sys_services_dir)
+ conf.set_quoted('PAM_CONFIG_SERVICES_DIR', pam_config_services_dir[0] == '/' ? pam_config_services_dir : '/' + pam_config_services_dir)
+ conf.set('HAVE_ADT', have_adt)
+ conf.set('HAVE_LIBAUDIT', libaudit_dep.found())
+@@ -290,6 +292,8 @@ summary({
+     'GDM Runtime config': gdm_runtime_conf,
+     'GDM Session default path': get_option('default-path'),
+     'GDM Working dir': working_dir,
++    'PAM Services dir': pam_sys_services_dir,
++    'PAM Services config dir': pam_config_services_dir,
+     'GNOME locale': gdm_prefix / get_option('localedir'),
+     'AT SPI registryd': at_spi_registryd_dir,
+     'Lang config file': lang_config_file,
+diff --git a/utils/gdm-config.c b/utils/gdm-config.c
+index c8fbbca23..ded899445 100644
+--- a/utils/gdm-config.c
++++ b/utils/gdm-config.c
+@@ -1438,11 +1438,21 @@ static gboolean
+ have_pam_module (GdmAuthType auth_type)
+ {
+         g_autofree char *pam_service = NULL;
++        g_autofree char *pam_service_name = NULL;
+ 
+-        pam_service = g_strdup_printf (PAM_CONFIG_SERVICES_DIR "/gdm-%s",
+-                auth_type_to_string (auth_type));
++        pam_service_name = g_strdup_printf ("/gdm-%s",
++                                            auth_type_to_string (auth_type));
++        pam_service = g_build_filename (PAM_CONFIG_SERVICES_DIR, pam_service_name, NULL);
+ 
+-        g_debug ("Checking for PAM profile “%s” existance", pam_service);
++        g_debug ("Checking for PAM profile “%s” existence", pam_service);
++
++        if (g_file_test (pam_service, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)) {
++                return TRUE;
++        }
++
++        g_set_str (&pam_service, g_build_filename (PAM_SYS_SERVICES_DIR, pam_service_name, NULL));
++
++        g_debug ("Checking for PAM profile “%s” existence", pam_service);
+ 
+         return g_file_test (pam_service, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR);
+ }
+-- 
+GitLab
+
