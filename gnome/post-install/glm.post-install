@@ -1,0 +1,10 @@
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig
+cat > $PKG/usr/lib${LIBDIRSUFFIX}/pkgconfig/glm.pc << EOF
+prefix=/usr
+includedir=\${prefix}/include
+
+Name: GLM
+Description: OpenGL Mathematics
+Version: 1.0.3
+Cflags: -I\${includedir}
+EOF
