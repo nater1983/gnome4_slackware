@@ -1,2 +1,2 @@
-# Add Gnome Shell 49 to the extension.
-sed -i 's/\("shell-version": \[.*\)\]/\1, "49"]/g' src/gnome-shell/metadata.json.in
+mv $PKG/usr/libexec/gpaste/gpaste-daemon $PKG/usr/libexec/gpaste/gpaste-daemon-bin
+install -vDm 0755 $CWD/post-install/gpaste/gpaste-daemon -t $PKG/usr/libexec/gpaste/
