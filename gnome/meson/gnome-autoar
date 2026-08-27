@@ -5,7 +5,6 @@ cd build
   meson setup ..\
     "${GNOME_BUILD_ARGS[@]}" \
     $GNOME_OPT_ARGS \
-    -Dgtk=true \
     -Dintrospection=enabled \
     -Dvapi=true \
     -Dtests=false \
