@@ -8,6 +8,7 @@ cairo
 cairomm1
 cargo-c
 colord
+dconf
 dconf-editor
 dav1d
 gcr4
