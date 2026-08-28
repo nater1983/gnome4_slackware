@@ -11,4 +11,4 @@ if [ -r ChangeLog ]; then
 fi
 
 mkdir -p $PKG/install
-cat $CWD/doinst.sh/doinst.sh | sed "s,@LIBDIR@,/usr/lib${LIBDIRSUFFIX}," > $PKG/install/doinst.sh
+cat $CWD/post-install/dconf/doinst.sh | sed "s,@LIBDIR@,/usr/lib${LIBDIRSUFFIX}," > $PKG/install/doinst.sh
