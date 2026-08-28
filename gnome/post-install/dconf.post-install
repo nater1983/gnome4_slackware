@@ -3,3 +3,12 @@ mkdir -p $PKG/usr/share/bash-completion/completions
 cp -a bin/completion/dconf $PKG/usr/share/bash-completion/completions/dconf
 chown root:root $PKG/usr/share/bash-completion/completions/dconf
 chmod 644 $PKG/usr/share/bash-completion/completions/dconf
+
+if [ -r ChangeLog ]; then
+  DOCSDIR=$(echo $PKG/usr/doc/*-$VERSION)
+  cat ChangeLog | head -n 1000 > $DOCSDIR/ChangeLog
+  touch -r ChangeLog $DOCSDIR/ChangeLog
+fi
+
+mkdir -p $PKG/install
+cat $CWD/doinst.sh/doinst.sh | sed "s,@LIBDIR@,/usr/lib${LIBDIRSUFFIX}," > $PKG/install/doinst.sh
