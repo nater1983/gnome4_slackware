@@ -1,0 +1,5 @@
+# bash-completion is not available at build time, so install the file manually:
+mkdir -p $PKG/usr/share/bash-completion/completions
+cp -a bin/completion/dconf $PKG/usr/share/bash-completion/completions/dconf
+chown root:root $PKG/usr/share/bash-completion/completions/dconf
+chmod 644 $PKG/usr/share/bash-completion/completions/dconf
