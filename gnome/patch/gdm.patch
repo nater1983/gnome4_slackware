@@ -1,1 +1,1 @@
-#patch -Np1 -i $CWD/patch/gdm/remove-user-store.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
+patch -Np1 -i $CWD/patch/gdm/remove-user-store.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
