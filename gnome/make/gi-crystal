@@ -9,5 +9,5 @@ make
 install -D -m 755 bin/gi-crystal $PKG/usr/bin/gi-crystal
 mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal
 cp -r src $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal
-https://github.com/hugopl/libadwaita.cr.git ; cd libadwaita.cr
+git clone https://github.com/hugopl/libadwaita.cr.git ; cd libadwaita.cr
 cp -r src $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal
