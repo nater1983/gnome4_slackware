@@ -1,0 +1,10 @@
+export release=1
+export verbose=1
+export interpreter=1
+export CXXFLAGS="$SLKCFLAGS"
+export LLVM_CONFIG=$(find /usr/bin -name "llvm-config*" -print -quit)
+make
+
+install -D -m 755 bin/shards $PKG/usr/bin/shards
+install -D -m 644  man/shards.1 $PKG/usr/man1
+install -D -m 644  man/shard.yml.5 $PKG/usr/man5
