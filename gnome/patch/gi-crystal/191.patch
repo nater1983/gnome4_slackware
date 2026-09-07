@@ -1,0 +1,154 @@
+From 35310ae61adb2fce91f6538965acd549c16f62e5 Mon Sep 17 00:00:00 2001
+From: Paul Scarrone <paul@scarrone.co>
+Date: Tue, 17 Mar 2026 07:20:28 -0400
+Subject: [PATCH 1/2] fix: Use separate variable for nullable parameter
+ transformation
+
+Fixes the "can't use variable name inside assignment to variable" error
+that occurs when generating bindings for functions with nullable
+parameters.
+---
+ src/generator/arg_strategy.cr | 13 +++++++++++++
+ src/generator/method_gen.cr   |  5 +++--
+ src/generator/wrapper_util.cr |  5 +++--
+ 3 files changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/src/generator/arg_strategy.cr b/src/generator/arg_strategy.cr
+index 8018d76..310881a 100644
+--- a/src/generator/arg_strategy.cr
++++ b/src/generator/arg_strategy.cr
+@@ -25,6 +25,8 @@ module Generator
+ 
+     property? remove_from_declaration : Bool = false
+     property? capture_block : Bool = false
++    # When true, the C call should use _varname instead of varname
++    property? uses_transformed_var : Bool = false
+     getter method : CallableInfo
+     getter arg : ArgInfo
+ 
+@@ -76,6 +78,12 @@ module Generator
+       @arg.type_info
+     end
+ 
++    # Returns the variable name to use in C calls (may be prefixed with _ if transformed)
++    def c_call_var_name : String
++      name = to_identifier(arg.name)
++      uses_transformed_var? ? "_#{name}" : name
++    end
++
+     def render_declaration(io : IO)
+       return if remove_from_declaration?
+ 
+@@ -208,6 +216,11 @@ module Generator
+       arg_type = arg.type_info
+       arg_name = to_identifier(arg.name)
+ 
++      # Mark that this arg uses a transformed variable name in the C call
++      if arg.nullable?
++        strategy.uses_transformed_var = true
++      end
++
+       generate_null_guard(io, arg_name, arg_type, nullable: arg.nullable?) do
+         if arg_type.array? && !arg_type.param_type.tag.u_int8?
+           generate_array_to_unsafe(io, arg_name, arg_type)
+diff --git a/src/generator/method_gen.cr b/src/generator/method_gen.cr
+index 758744e..67ca757 100644
+--- a/src/generator/method_gen.cr
++++ b/src/generator/method_gen.cr
+@@ -122,11 +122,12 @@ module Generator
+     private def method_c_call_args : String
+       args = Array(String).new(@method.args.size + 2) # +2, just in case we need space for `self` and `error`.
+       args << "to_unsafe" if @method.method?
+-      @method.args.each do |arg|
++      @args_strategies.each do |strategy|
++        arg = strategy.arg
+         if arg.direction.out? && arg_used_by_return_type?(arg)
+           args << "pointerof(#{to_identifier(arg.name)})"
+         else
+-          args << to_identifier(arg.name)
++          args << strategy.c_call_var_name
+         end
+       end
+       args << "pointerof(_error)" if throws?
+diff --git a/src/generator/wrapper_util.cr b/src/generator/wrapper_util.cr
+index 104cb45..2270799 100644
+--- a/src/generator/wrapper_util.cr
++++ b/src/generator/wrapper_util.cr
+@@ -1,14 +1,15 @@
+ module Generator
+   module WrapperUtil
+     def generate_null_guard(io : IO, identifier : String, type : TypeInfo, nullable : Bool = true, &) : Nil
+-      io << identifier << " = "
+       if nullable
+-        io << "if " << identifier << ".nil?\n"
++        # Use a different variable name to avoid "can't use variable in its own assignment" error
++        io << "_" << identifier << " = if " << identifier << ".nil?\n"
+         io << to_lib_type(type, structs_as_void: true) << ".null\n"
+         io << "else\n"
+         yield(io)
+         io << "\nend\n"
+       else
++        io << identifier << " = "
+         yield(io)
+       end
+     end
+
+From 8b074cdfb3aba2f8e2dbe12460a7d34d69183e36 Mon Sep 17 00:00:00 2001
+From: Paul Scarrone <paul@scarrone.co>
+Date: Tue, 17 Mar 2026 07:25:14 -0400
+Subject: [PATCH 2/2] test: Add regression test for nullable parameter code
+ generation
+
+Verifies the generator produces `_nullable = if nullable.nil?` instead
+of the broken `nullable = if nullable.nil?` pattern that Crystal rejects
+with "can't use variable name inside assignment".
+---
+ spec/generator_regression_spec.cr | 39 +++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 spec/generator_regression_spec.cr
+
+diff --git a/spec/generator_regression_spec.cr b/spec/generator_regression_spec.cr
+new file mode 100644
+index 0000000..c5f2364
+--- /dev/null
++++ b/spec/generator_regression_spec.cr
+@@ -0,0 +1,39 @@
++require "spec"
++
++# These tests verify the generator produces valid Crystal code.
++# They read the generated binding files and check for known bug patterns.
++describe "Generator regression tests" do
++  describe "nullable parameter transformation" do
++    # This test guards against the bug where NullableArrayPlan generated:
++    #   nullable = if nullable.nil?
++    # Which Crystal rejects with "can't use variable name inside assignment"
++    #
++    # The fix generates:
++    #   _nullable = if nullable.nil?
++    # And uses _nullable in the C call.
++    it "uses transformed variable name for nullable parameters" do
++      # Read the generated code for Subject#receive_nullable_object
++      generated_file = File.join(__DIR__, "..", "src", "generated", "test-1.0", "subject.cr")
++      content = File.read(generated_file)
++
++      # Find the receive_nullable_object method
++      method_start = content.index("def receive_nullable_object")
++      method_start.should_not be_nil
++
++      # Extract the method body (until next def or end of class)
++      method_end = content.index(/\n    def /, method_start.not_nil! + 1) || content.size
++      method_body = content[method_start.not_nil!...method_end]
++
++      # Verify it uses _nullable (the fixed pattern)
++      method_body.should contain("_nullable = if nullable.nil?")
++
++      # Verify the C call uses _nullable
++      method_body.should contain("_nullable)")
++
++      # Verify it does NOT use the broken pattern (variable assigned to itself)
++      # This pattern would cause: "can't use variable name 'nullable' inside assignment to variable 'nullable'"
++      # Note: We check for the exact broken pattern as a string
++      (method_body =~ /\bnullable = if nullable\.nil\?/).should be_nil
++    end
++  end
++end
