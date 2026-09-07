@@ -1,0 +1,22 @@
+diff --git a/src/generator/main.cr b/src/generator/main.cr
+index 8fbe9e5..8e84c30 100644
+--- a/src/generator/main.cr
++++ b/src/generator/main.cr
+@@ -29,7 +29,7 @@ private def parse_options(argv)
+       puts "Gi Crystal version #{VERSION} built with Crystal #{Crystal::VERSION}."
+       exit
+     end
+-    parser.on("-o=DIRECTORY", "Output directory, default: \"lib/gi-crystal/src/auto\"") do |dir|
++    parser.on("-o=DIRECTORY", "Output directory, default: \"lib@LIBDIRSUFFIX@/gi-crystal/src/auto\"") do |dir|
+       output_dir = Path.new(dir).expand.to_s
+     end
+     parser.on("--doc", "Enable documentation generation on generated code") { doc_gen = true }
+@@ -43,7 +43,7 @@ private def parse_options(argv)
+     end
+   end
+ 
+-  output_dir = Path.new(project_dir, "lib/gi-crystal/src/auto").normalize if output_dir.nil?
++  output_dir = Path.new(project_dir, "lib@LIBDIRSUFFIX@/gi-crystal/src/auto").normalize if output_dir.nil?
+   extra_bindings = argv.map { |path| Path.new(path).expand.to_s }
+ 
+   {output_dir:     output_dir,
