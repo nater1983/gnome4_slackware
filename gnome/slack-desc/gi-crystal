@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+          |-----handy-ruler------------------------------------------------------|
+gi-crystal: gi-crystal (generate Crystal bindings for gobject-based libraries)
+gi-crystal:
+gi-crystal: GI Crystal is a binding generator used to create Crystal programming
+gi-crystal: language bindings for GObject-based libraries via GObject
+gi-crystal: Introspection.
+gi-crystal:
+gi-crystal: Homepage: https://github.com/hugopl/gi-crystal
+gi-crystal:
+gi-crystal:
+gi-crystal:
+gi-crystal:
