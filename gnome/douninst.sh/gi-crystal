@@ -1,0 +1,3 @@
+for d in usr/lib64/gi-crystal usr/lib/gi-crystal; do
+  [ -d "$d" ] && rm -rf "$d"
+done
