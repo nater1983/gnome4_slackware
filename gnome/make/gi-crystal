@@ -5,4 +5,4 @@ export CXXFLAGS="$SLKCFLAGS"
 export LLVM_CONFIG=$(find /usr/bin -name "llvm-config*" -print -quit)
 make
 
-install -D -m 755 .build/gi-crystal $PKG/usr/bin/gi-crystal
+install -D -m 755 bin/gi-crystal $PKG/usr/bin/gi-crystal
