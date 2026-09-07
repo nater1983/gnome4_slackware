@@ -11,3 +11,5 @@ mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal
 cp -r src $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal
 git clone https://github.com/hugopl/libadwaita.cr.git
 cp -r libadwaita.cr/src/* $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal/src
+git clone https://github.com/hugopl/gtk4.cr
+cp -r gtk4.cr/src/* $PKG/usr/lib${LIBDIRSUFFIX}/gi-crystal/src
