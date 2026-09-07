@@ -1,3 +1,5 @@
+sed -i 's|\./bin/gi-crystal|/usr/bin/gi-crystal|g' Makefile
+
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 make
