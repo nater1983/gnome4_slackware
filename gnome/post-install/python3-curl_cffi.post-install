@@ -1,2 +1,4 @@
 rm -fr $PKG/usr/bin
 mv $PKG/usr/LICENSE* $PKG/usr/doc/python3-curl_cffi-0.16.3
+rm -f $PKG/usr/lib64/libcurl-impersonate.a
+rm -fr $PKG/usr/include/
