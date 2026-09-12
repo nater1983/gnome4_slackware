@@ -8,7 +8,22 @@ rm -fr $CWD/pre-install/python3-curl_cffi/curl-8.22.0.tar.gz
 rm -fr $CWD/pre-install/python3-curl_cffi/
 
 mv curl-8.22.0 8.22.0
-export LIBCURL_IMPERSONATE_PATH=$CWD/
+
+cd curl-impersonate-2.2.2
+mkdir -p build
+cd build
+  cmake \
+    -DCMAKE_C_FLAGS:STRING="$SLKCFLAGS" \
+    -DCMAKE_CXX_FLAGS:STRING="$SLKCFLAGS" \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DLIB_SUFFIX=${LIBDIRSUFFIX} \
+    -DMAN_INSTALL_DIR=/usr/man \
+    -DCMAKE_BUILD_TYPE=Release ..
+  make
+  make install/strip DESTDIR=$PKG
+cd ../..
+
+export LIBCURL_IMPERSONATE_PATH=$PKG/
 
   sed \
     -e "s/@CURL_IMPERSONATE_VERSION@/2.2.2/" \
