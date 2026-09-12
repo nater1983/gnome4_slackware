@@ -8,8 +8,6 @@ rm -fr $CWD/pre-install/python3-curl_cffi/curl-8.21.0.tar.gz
 rm -fr $CWD/pre-install/python3-curl_cffi/
 
 mv curl-8.21.0 8.21.0
-mv "$CWD/curl-impersonate" "curl-impersonate-2.2.2"
-export LIBCURL_IMPERSONATE_PATH=$CWD/
 
   sed \
     -e "s/@CURL_IMPERSONATE_VERSION@/2.2.2/" \
