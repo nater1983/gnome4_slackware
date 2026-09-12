@@ -1,0 +1,2 @@
+rm -fr $PKG/usr/bin
+mv $PKG/usr/LICENSE* $PKG/usr/doc/python3-curl_cffi-0.16.3
