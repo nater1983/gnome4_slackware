@@ -1,7 +1,7 @@
 wget -c -P "$CWD/pre-install/python3-curl_cffi" https://github.com/lexiforest/curl-impersonate/releases/download/v2.2.2/libcurl-impersonate-v2.2.2.x86_64-linux-gnu.tar.gz
 wget -c -P "$CWD/pre-install/python3-curl_cffi" https://github.com/curl/curl/releases/download/curl-8_21_0/curl-8.21.0.tar.gz
 tar -xzf $CWD/pre-install/python3-curl_cffi/curl-8.21.0.tar.gz
-tar -xzf $CWD/pre-install/python3-curl_cffi/libcurl-impersonate-v2.2.2.x86_64-linux-gnu.tar.gz
+mkdir -p curl-impersonate-2.2.2 && tar -xzf "$CWD/pre-install/python3-curl_cffi/libcurl-impersonate-v2.2.2.x86_64-linux-gnu.tar.gz" -C curl-impersonate-2.2.2
 
 rm -fr $CWD/pre-install/python3-curl_cffi/libcurl-impersonate-v2.2.2.x86_64-linux-gnu.tar.gz
 rm -fr $CWD/pre-install/python3-curl_cffi/curl-8.21.0.tar.gz
