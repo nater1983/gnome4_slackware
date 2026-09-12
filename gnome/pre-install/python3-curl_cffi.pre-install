@@ -24,7 +24,7 @@ cd build
   make install/strip DESTDIR=$PKG
 cd ../..
 
-export LIBCURL_IMPERSONATE_PATH=$PKG/
+export LIBRARY_PATH="$PKG/usr/lib64:$LIBRARY_PATH"
 
   sed \
     -e "s/@CURL_IMPERSONATE_VERSION@/2.2.2/" \
