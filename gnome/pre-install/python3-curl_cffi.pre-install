@@ -10,6 +10,7 @@ rm -fr $CWD/pre-install/python3-curl_cffi/
 mv curl-8.22.0 8.22.0
 
 cd curl-impersonate-2.2.2
+make prepare-libidn2
 mkdir -p build
 cd build
   cmake \
