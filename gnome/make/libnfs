@@ -1,15 +1,15 @@
 NOCONFIGURE=1 ./autogen.sh
 autoreconf -vif
 
-CFLAGS="$SLKCFLAGS" \
-CXXFLAGS="$SLKCFLAGS" \
+CFLAGS="$SLKCFLAGS -Wno-error=discarded-qualifiers" \
+CXXFLAGS="$SLKCFLAGS -Wno-error=discarded-qualifiers" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
---disable-dependency-tracking \
-  --disable-silent-rules \
-  --enable-static=no \
-  --enable-utils \
-  --enable-examples
+    --disable-dependency-tracking \
+    --disable-silent-rules \
+    --enable-static=no \
+    --enable-utils \
+    --enable-examples
 make clean
 make
 make install DESTDIR=$PKG
