@@ -1,0 +1,3 @@
+mkdir -p $PKG/etc/httpd/extra
+sed "s%@baselibdir@%lib${LIBDIRSUFFIX}%" $CWD/post-install/mod_dnssd/mod_dnssd.conf > \
+  $PKG/etc/httpd/extra/mod_dnssd.conf.new
