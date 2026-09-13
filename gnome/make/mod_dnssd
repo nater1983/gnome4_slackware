@@ -1,0 +1,6 @@
+CFLAGS="$SLKCFLAGS" ./configure
+make
+
+mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/httpd/modules
+cp -a src/.libs/mod_dnssd.so $PKG/usr/lib${LIBDIRSUFFIX}/httpd/modules
+strip --strip-unneeded $PKG/usr/lib${LIBDIRSUFFIX}/httpd/modules/mod_dnssd.so
