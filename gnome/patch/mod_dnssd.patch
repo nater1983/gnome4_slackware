@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/mod_dnssd/use-ap_unixd_setup_child.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
