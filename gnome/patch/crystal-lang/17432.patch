@@ -1,0 +1,105 @@
+From 329c1b1850a5fb4283b0c900e96601d797190ae5 Mon Sep 17 00:00:00 2001
+From: Quinton Miller <nicetas.c@gmail.com>
+Date: Thu, 17 Sep 2026 09:12:18 +0800
+Subject: [PATCH 1/2] Support LLVM 23.1 and 24.0
+
+---
+ .github/workflows/llvm.yml     |  1 +
+ src/llvm/ext/llvm-versions.txt |  2 +-
+ src/llvm/lib_llvm.cr           |  4 +++-
+ src/llvm/type.cr               | 14 ++++++++++----
+ 4 files changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/.github/workflows/llvm.yml b/.github/workflows/llvm.yml
+index 1c285a48119a..95704999b0d7 100644
+--- a/.github/workflows/llvm.yml
++++ b/.github/workflows/llvm.yml
+@@ -47,6 +47,7 @@ jobs:
+           - {llvm_version: 20, runs-on: ubuntu-24.04, codename: noble}
+           - {llvm_version: 21, runs-on: ubuntu-24.04, codename: noble}
+           - {llvm_version: 22, runs-on: ubuntu-24.04, codename: noble}
++          - {llvm_version: 23, runs-on: ubuntu-24.04, codename: noble}
+           - {runs-on: ubuntu-24.04, codename: noble}
+     name: "LLVM ${{ matrix.llvm_version || 'Nightly' }}"
+     steps:
+diff --git a/src/llvm/ext/llvm-versions.txt b/src/llvm/ext/llvm-versions.txt
+index 7c2357236ffc..0935ef994e05 100644
+--- a/src/llvm/ext/llvm-versions.txt
++++ b/src/llvm/ext/llvm-versions.txt
+@@ -1 +1 @@
+-23.0 22.1 21.1 20.1 19.1 18.1 17.0 16.0 15.0 14.0 13.0 12.0 11.1 11.0 10.0 9.0 8.0
++24.0 23.1 22.1 21.1 20.1 19.1 18.1 17.0 16.0 15.0 14.0 13.0 12.0 11.1 11.0 10.0 9.0 8.0
+diff --git a/src/llvm/lib_llvm.cr b/src/llvm/lib_llvm.cr
+index d907be9fbeeb..382ab1e1b1fb 100644
+--- a/src/llvm/lib_llvm.cr
++++ b/src/llvm/lib_llvm.cr
+@@ -56,7 +56,7 @@
+ 
+ # Supported library versions:
+ #
+-# * LLVM (8-22; aarch64 requires 13+)
++# * LLVM (8-23; aarch64 requires 13+)
+ #
+ # See https://crystal-lang.org/reference/man/required_libraries.html#other-stdlib-libraries
+ {% begin %}
+@@ -74,6 +74,8 @@
+     IS_LT_190 = {{compare_versions(LibLLVM::VERSION, "19.0.0") < 0}}
+     IS_LT_200 = {{compare_versions(LibLLVM::VERSION, "20.0.0") < 0}}
+     IS_LT_210 = {{compare_versions(LibLLVM::VERSION, "21.0.0") < 0}}
++    IS_LT_220 = {{compare_versions(LibLLVM::VERSION, "22.0.0") < 0}}
++    IS_LT_230 = {{compare_versions(LibLLVM::VERSION, "23.0.0") < 0}}
+   end
+ {% end %}
+ 
+diff --git a/src/llvm/type.cr b/src/llvm/type.cr
+index fb7667a8af5e..a2e93fedcd2a 100644
+--- a/src/llvm/type.cr
++++ b/src/llvm/type.cr
+@@ -145,11 +145,17 @@ struct LLVM::Type
+   end
+ 
+   def const_int(value) : Value
+-    if !value.is_a?(Int128) && !value.is_a?(UInt128) && int_width != 128
+-      Value.new LibLLVM.const_int(self, value, 0)
+-    else
+-      encoded_value = UInt64[value & UInt64::MAX, (value >> 64) & UInt64::MAX]
++    int_width = self.int_width
++
++    if int_width <= 64
++      mask = ~(UInt64::MAX << int_width)
++      Value.new LibLLVM.const_int(self, mask & value, 0)
++    elsif int_width <= 128
++      mask = ~(UInt64::MAX << (int_width - 64))
++      encoded_value = UInt64[value.to_u64!, mask & (value >> 64)]
+       Value.new LibLLVM.const_int_of_arbitrary_precision(self, encoded_value.size, encoded_value)
++    else
++      raise NotImplementedError.new("LLVM::Type#const_int")
+     end
+   end
+ 
+
+From f1aca1df151589204d027809564ffe12d79b5ceb Mon Sep 17 00:00:00 2001
+From: Quinton Miller <nicetas.c@gmail.com>
+Date: Thu, 17 Sep 2026 10:29:35 +0800
+Subject: [PATCH 2/2] fixup
+
+---
+ .github/workflows/llvm.yml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/.github/workflows/llvm.yml b/.github/workflows/llvm.yml
+index 95704999b0d7..c89871599633 100644
+--- a/.github/workflows/llvm.yml
++++ b/.github/workflows/llvm.yml
+@@ -76,7 +76,10 @@ jobs:
+         run: make -B deps
+ 
+       - name: Test compiler_spec
+-        run: make compiler_spec junit_output=.junit/compiler_spec.xml
++        run: |
++          # patch for ubuntu-22.04 whose PCRE2 doesn't support binary Unicode properties
++          sed -i 's/\\p{Emoji_Presentation}//g' lib/markd/src/markd/rule.cr
++          make compiler_spec junit_output=.junit/compiler_spec.xml
+ 
+       - name: Integration test
+         run: make crystal std_spec threads=1 junit_output=.junit/std_spec.xml
