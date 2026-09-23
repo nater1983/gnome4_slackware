@@ -11,7 +11,7 @@ make CRYSTAL="$CRYSTAL"
 # Stage 2: rebuild using the compiler we just built
 make CRYSTAL="$(pwd)/.build/crystal"
 make docs
-make doc/man
+make man/
 
 install -D -m 755 .build/crystal $PKG/usr/bin/crystal
 install -vDm 644 doc/man/crystal.1 $PKG/usr/man/man1/crystal.1
