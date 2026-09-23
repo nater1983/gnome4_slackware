@@ -13,7 +13,7 @@ make CRYSTAL="$(pwd)/.build/crystal"
 make docs
 
 install -D -m 755 .build/crystal $PKG/usr/bin/crystal
-install -vDm 644 man/crystal.1 $PKG/usr/man/man1/crystal.1
+install -vDm 644 doc/man/crystal.1 $PKG/usr/man/man1/crystal.1
 mkdir -p $PKG/usr/share/crystal/
 cp -r src samples $PKG/usr/share/crystal
 install -D -m 644 etc/completion.bash $PKG/usr/share/bash-completion/completions/crystal
