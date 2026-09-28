@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-coverflow-alt-tab
 SRCNAM=CoverflowAltTab
-VERSION=${VERSION:-83}
+VERSION=${VERSION:-88}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=c70133d4da9198948d5f0c96825e6c6164b004b6
+_commit=f84929758fdcc2d3cfd0ef5550dfcc3e3b57964c
 
 ARCH=noarch
 
@@ -48,7 +48,7 @@ git clone https://github.com/dmo60/CoverflowAltTab.git
 cd $SRCNAM
 git checkout $_commit
 patch -Np1 -i $CWD/1.patch
-sed -i -- 's/"49"/"49", "50"/g' metadata.json
+sed -i -- 's/"50"/"50", "51"/g' metadata.json
 make all
 
 mkdir -p "${PKG}"/usr/share/gnome-shell/extensions/CoverflowAltTab@palatis.blogspot.com
