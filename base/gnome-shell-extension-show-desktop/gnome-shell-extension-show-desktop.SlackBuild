@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-show-desktop
 SRCNAM=Show-Desktop-Button
-VERSION=${VERSION:-54}
+VERSION=${VERSION:-57}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=309aeb0f68fff633618473ff5939c32f386ce27d
+_commit=b65db25a58727d0acb821ef9f0df6f25f76b80a8
 
 ARCH=noarch
 
@@ -52,6 +52,7 @@ rm -rf $SRCNAM
 git clone https://github.com/amivaleo/Show-Desktop-Button.git
 cd $SRCNAM
 git checkout $_commit
+sed -i 's/"shell-version": \["48", "49", "50"\]/"shell-version": ["48", "49", "50", "51"]/' metadata.json
 mkdir -p $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo
 cp -r * $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/
 mkdir -p $PKG/usr/share/glib-2.0
