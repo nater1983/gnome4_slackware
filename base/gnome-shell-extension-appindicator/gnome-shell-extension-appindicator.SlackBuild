@@ -25,11 +25,11 @@
 cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-appindicator
-VERSION=${VERSION:-64}
+VERSION=${VERSION:-66}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=d96341d34c9abcb01f33d7f63289007ba70f430a
+_commit=52da5222a17f7a862e8a47d2bc523f29abf59964
 
 ARCH=noarch
 
