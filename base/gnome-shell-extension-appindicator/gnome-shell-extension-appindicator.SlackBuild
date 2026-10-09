@@ -45,7 +45,7 @@ OUTPUT=${OUTPUT:-/home/build/gnome}
 set -e
 
 rm -rf $PKG
-mkdir -p $TMP $PKG
+mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
 rm -rf $PRGNAM
 git clone https://github.com/ubuntu/gnome-shell-extension-appindicator.git
