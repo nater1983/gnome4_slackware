@@ -19,6 +19,7 @@ cd cmake-build
      -DWITH_GLADE_CATALOG=OFF \
      -DWITH_OPENLDAP=ON \
      -DWITH_STATIC_LDAP=OFF \
+     -DWITH_MSPACK=ON \
      -G Ninja
       "${NINJA:=ninja}"
       DESTDIR=$PKG $NINJA install
