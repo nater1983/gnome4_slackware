@@ -8,9 +8,10 @@ if [ ! -r configure ]; then
   fi
 fi
 
-CFLAGS="$SLKCFLAGS -flto=auto" \
-CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}"
+sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
 make
 make install DESTDIR=$PKG
