@@ -60,8 +60,8 @@ evince4
 epiphany
 Fragments
 libgedit-amtk
-libgedit-gtksourceview
 libgedit-gfls
+libgedit-gtksourceview
 libgedit-tepl
 gedit
 gedit-plugins
