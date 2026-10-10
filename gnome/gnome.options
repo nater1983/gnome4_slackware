@@ -88,6 +88,7 @@ export GNOME_CMAKE_ARGS=(
    -DLIBEXEC_INSTALL_DIR=/usr/libexec
    -DBUILD_SHARED_LIBS:BOOL=ON
    -Wno-dev
+   -Wno-author
 )
 
 # Double-quoting required because $SLKCFLAGS contains spaces:
