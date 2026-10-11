@@ -11,9 +11,7 @@ cd build
     -Dtests=false
   "${NINJA:=ninja}"
   DESTDIR=$PKG $NINJA install
-cd ..
-
-cd subprojects/xpm-pixbuf
+cd ../subprojects/xpm-pixbuf
 
 mkdir build
 cd build
