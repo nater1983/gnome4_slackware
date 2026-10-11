@@ -1,0 +1,19 @@
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+CFLAGS="$SLKCFLAGS -flto=auto" \
+CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --docdir=/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION \
+    --with-swig \
+    --with-cairo \
+    --with-python \
+    --disable-gnome
+make
+make install DESTDIR=$PKG
