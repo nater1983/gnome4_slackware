@@ -1,6 +1,5 @@
-diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
---- a/daemon/gdm-launch-environment.c	2026-03-23 21:05:37.260201059 +0100
-+++ b/daemon/gdm-launch-environment.c	2026-03-23 21:05:37.261201059 +0100
+--- a/daemon/gdm-launch-environment.c
++++ b/daemon/gdm-launch-environment.c
 @@ -27,6 +27,8 @@
  #include <fcntl.h>
  #include <unistd.h>
@@ -10,7 +9,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
  #include <sys/types.h>
  #include <sys/wait.h>
  #include <errno.h>
-@@ -69,15 +66,8 @@
+@@ -69,15 +71,8 @@
          char           *session_name;
          GPid            pid;
  
@@ -21,35 +20,37 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
 -        char                *dyn_user_name;
 -        uid_t                dyn_uid;
 -        char                *dyn_user_home;
-+        char           *user_name;
- 
+-
 -        char           *dconf_profile;
++        char           *user_name;
++
          char           *session_id;
          char           *display_seat_id;
          char           *display_hostname;
-@@ -93,6 +93,7 @@
+@@ -93,6 +88,7 @@
          PROP_USER_DISP_NAME,
          PROP_USER_MEMBER_OF,
          PROP_DCONF_PROFILE,
 +        PROP_USER_NAME,
          PROP_SESSION_NAME,
+         N_PROPS
  };
- 
-@@ -297,10 +284,10 @@
+@@ -300,10 +296,10 @@
                                       g_strdup (g_getenv (optional_environment[i])));
          }
  
 -        if (launch_environment->dconf_profile != NULL) {
 -                g_hash_table_insert (hash, g_strdup ("DCONF_PROFILE"), g_strdup (launch_environment->dconf_profile));
+-
+-                is_initial_setup = strcmp (launch_environment->dconf_profile, INITIAL_SETUP_DCONF_PROFILE) == 0;
 +        if (launch_environment->user_name != NULL) {
 +                g_hash_table_insert (hash, g_strdup ("DCONF_PROFILE"), g_strdup (launch_environment->user_name));
- 
--                is_initial_setup = strcmp (launch_environment->dconf_profile, INITIAL_SETUP_DCONF_PROFILE) == 0;
++
 +                is_initial_setup = g_strcmp0 (launch_environment->session_name, INITIAL_SETUP_SESSION) == 0;
  
                  if (!is_initial_setup) {
  			/* gvfs is needed for fetching remote avatars in the initial setup. Disable it otherwise. */
-@@ -314,16 +301,28 @@
+@@ -317,16 +313,28 @@
          if (debug)
                  g_hash_table_insert (hash, g_strdup ("GNOME_SESSION_DEBUG"), g_strdup ("1"));
  
@@ -84,7 +85,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
  
          if (start_session && launch_environment->display_seat_id != NULL) {
                  char *seat_id;
-@@ -334,10 +333,17 @@
+@@ -337,10 +345,17 @@
  
                  g_hash_table_insert (hash, g_strdup ("GDM_SEAT_ID"), g_strdup (seat_id));
  
@@ -106,7 +107,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                  }
          }
  
-@@ -381,10 +387,15 @@
+@@ -379,10 +394,15 @@
          g_autofree char *environment_conf = NULL;
          g_autoptr(GFile) file = NULL;
          g_autoptr(GFileOutputStream) file_stream = NULL;
@@ -124,16 +125,19 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
          if (!gdm_ensure_dir (config_dir, uid, gid, 0700, FALSE, error))
                  return NULL;
  
-@@ -507,7 +518,7 @@
+@@ -505,7 +525,7 @@
  
          gdm_session_setup_for_program (launch_environment->session,
-                                        "gdm-launch-environment",
+                                        GDM_SESSION_LAUNCH_ENVIRONMENT_SERVICE,
 -                                       launch_environment->dyn_user_name,
 +                                       launch_environment->user_name,
                                         log_path);
  }
  
-@@ -541,20 +548,1 @@
+@@ -536,26 +556,7 @@
+                                    uid_t                 *uid,
+                                    GError               **error)
+ {
 -        if (launch_environment->dyn_uid != 0) {
 -                *uid = launch_environment->dyn_uid;
 -                return TRUE;
@@ -155,7 +159,10 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
 -        *uid = launch_environment->dyn_uid;
 -        return TRUE;
 +        return FALSE;
-@@ -569,15 +552,22 @@
+ }
+ 
+ /**
+@@ -567,15 +568,22 @@
  gboolean
  gdm_launch_environment_start (GdmLaunchEnvironment *launch_environment)
  {
@@ -181,7 +188,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                                                         launch_environment->display_hostname,
                                                         NULL,
                                                         launch_environment->display_seat_id,
-@@ -645,12 +635,6 @@
+@@ -643,12 +651,6 @@
                  g_clear_object (&launch_environment->session);
          }
  
@@ -194,7 +201,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
          g_signal_emit (G_OBJECT (launch_environment), signals [STOPPED], 0);
  
          return TRUE;
-@@ -696,35 +680,11 @@
+@@ -694,35 +696,11 @@
  }
  
  static void
@@ -208,9 +215,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
 -static void
 -_gdm_launch_environment_set_user_disp_name (GdmLaunchEnvironment *launch_environment,
 -                                            const char           *disp_name)
-+_gdm_launch_environment_set_user_name (GdmLaunchEnvironment *launch_environment,
-+                                       const char           *name)
- {
+-{
 -        g_free (launch_environment->user_disp_name);
 -        launch_environment->user_disp_name = g_strdup (disp_name);
 -}
@@ -229,12 +234,15 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
 -{
 -        g_free (launch_environment->dconf_profile);
 -        launch_environment->dconf_profile = g_strdup (profile);
++_gdm_launch_environment_set_user_name (GdmLaunchEnvironment *launch_environment,
++                                       const char           *name)
++{
 +        g_free (launch_environment->user_name);
 +        launch_environment->user_name = g_strdup (name);
  }
  
  static void
-@@ -754,17 +714,8 @@
+@@ -752,17 +730,8 @@
          case PROP_DISPLAY_IS_LOCAL:
                  _gdm_launch_environment_set_display_is_local (self, g_value_get_boolean (value));
                  break;
@@ -254,7 +262,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                  break;
          case PROP_SESSION_NAME:
                  _gdm_launch_environment_set_session_name (self, g_value_get_string (value));
-@@ -795,17 +746,8 @@
+@@ -793,17 +762,8 @@
          case PROP_DISPLAY_IS_LOCAL:
                  g_value_set_boolean (value, self->display_is_local);
                  break;
@@ -274,45 +282,18 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                  break;
          case PROP_SESSION_NAME:
                  g_value_set_string (value, self->session_name);
-@@ -847,32 +789,11 @@
-                                                                FALSE,
-                                                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
-         g_object_class_install_property (object_class,
--                                         PROP_PREFERRED_USER_NAME,
--                                         g_param_spec_string ("preferred-user-name",
--                                                              "preferred user name",
--                                                              "preferred user name",
--                                                              NULL,
--                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
--        g_object_class_install_property (object_class,
--                                         PROP_USER_DISP_NAME,
--                                         g_param_spec_string ("user-display-name",
--                                                              "user display name",
--                                                              "user display name",
--                                                              NULL,
--                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
--        g_object_class_install_property (object_class,
--                                         PROP_USER_MEMBER_OF,
--                                         g_param_spec_string ("user-member-of",
--                                                              "user member of",
--                                                              "user member of",
--                                                              NULL,
--                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
--        g_object_class_install_property (object_class,
--                                         PROP_DCONF_PROFILE,
--                                         g_param_spec_string ("dconf-profile",
--                                                              "dconf profile",
--                                                              "dconf profile",
--                                                              NULL,
-+                                         PROP_USER_NAME,
-+                                         g_param_spec_string ("user-name",
-+                                                              "user name",
-+                                                              "greeter user name",
-+                                                              GDM_GROUPNAME,
-                                                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS));
-         g_object_class_install_property (object_class,
-                                          PROP_SESSION_NAME,
-@@ -959,18 +880,11 @@
+@@ -852,6 +812,10 @@
+                                                          NULL,
+                                                          G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS);
+         props[PROP_SESSION_NAME] = g_param_spec_string ("session-name",
++                                                        NULL, NULL,
++                                                        NULL,
++                                                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
++        props[PROP_USER_NAME] = g_param_spec_string ("user-name",
+                                                         NULL, NULL,
+                                                         NULL,
+                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS);
+@@ -935,17 +899,10 @@
          }
  
          g_free (launch_environment->session_name);
@@ -326,13 +307,12 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
          g_free (launch_environment->display_seat_id);
          g_free (launch_environment->display_hostname);
          g_free (launch_environment->session_id);
- 
--        g_clear_object (&launch_environment->dyn_user_store);
 -
+-        g_clear_object (&launch_environment->dyn_user_store);
+ 
          G_OBJECT_CLASS (gdm_launch_environment_parent_class)->finalize (object);
  }
- 
-@@ -981,10 +895,7 @@
+@@ -957,10 +914,7 @@
  {
          return g_object_new (GDM_TYPE_LAUNCH_ENVIRONMENT,
                               "session-name", GDM_GREETER_SESSION,
@@ -344,7 +324,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                               "display-seat-id", seat_id,
                               "display-hostname", display_hostname,
                               "display-is-local", display_is_local,
-@@ -998,10 +909,7 @@
+@@ -974,10 +928,7 @@
  {
          return g_object_new (GDM_TYPE_LAUNCH_ENVIRONMENT,
                               "session-name", INITIAL_SETUP_SESSION,
@@ -356,7 +336,7 @@ diff -ru a/daemon/gdm-launch-environment.c b/daemon/gdm-launch-environment.c
                               "display-seat-id", seat_id,
                               "display-hostname", display_hostname,
                               "display-is-local", display_is_local,
-diff -ru a/daemon/gdm-manager.c b/daemon/gdm-manager.c
+
 --- a/daemon/gdm-manager.c	2026-03-23 21:05:37.265201059 +0100
 +++ b/daemon/gdm-manager.c	2026-03-23 21:05:37.266201059 +0100
 @@ -1266,15 +1264,21 @@
