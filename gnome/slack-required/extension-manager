@@ -2,4 +2,3 @@ appstream-glib
 libbacktrace
 blueprint-compiler
 text-engine
-http-parser
