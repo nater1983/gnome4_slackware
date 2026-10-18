@@ -3,7 +3,6 @@ libdex
 jsonrpc-glib
 libpeas2
 sysprof
-libgit2
 flatpak
 libcmark
 webkitgtk6.0
