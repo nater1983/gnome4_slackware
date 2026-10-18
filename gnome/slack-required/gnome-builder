@@ -4,6 +4,7 @@ libpeas2
 template-glib
 webkitgtk6.0
 libdex
+libgit2-glib
 sysprof
 libpanel
 flatpak
