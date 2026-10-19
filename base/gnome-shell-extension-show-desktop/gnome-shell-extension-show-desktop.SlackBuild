@@ -52,7 +52,7 @@ rm -rf $SRCNAM
 git clone https://github.com/amivaleo/Show-Desktop-Button.git
 cd $SRCNAM
 git checkout $_commit
-sed -i 's/"shell-version": \["48", "49", "50"\]/"shell-version": ["48", "49", "50", "51"]/' metadata.json
+#sed -i 's/"shell-version": \["48", "49", "50"\]/"shell-version": ["48", "49", "50", "51"]/' metadata.json
 mkdir -p $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo
 cp -r * $PKG/usr/share/gnome-shell/extensions/show-desktop-button@amivaleo/
 mkdir -p $PKG/usr/share/glib-2.0
