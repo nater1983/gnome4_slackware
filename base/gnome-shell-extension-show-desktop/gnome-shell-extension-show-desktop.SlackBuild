@@ -26,11 +26,11 @@ cd $(dirname $0) ; CWD=$(pwd)
 
 PRGNAM=gnome-shell-extension-show-desktop
 SRCNAM=Show-Desktop-Button
-VERSION=${VERSION:-57}
+VERSION=${VERSION:-61}
 TAG=_gfs
 BUILD=${BUILD:-1}
 PKGTYPE=${PKGTYPE:-txz}
-_commit=b65db25a58727d0acb821ef9f0df6f25f76b80a8
+_commit=db6c358322107aa13f5d63d32ea2f79213cdd05c
 
 ARCH=noarch
 
