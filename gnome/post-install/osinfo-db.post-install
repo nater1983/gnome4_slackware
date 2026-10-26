@@ -1,5 +1,8 @@
 wget -c -P "$CWD/post-install/osinfo-db" https://harrier.slackbuilds.org/misc/osinfo-db-slackware-20220214.tar.xz
 osinfo-db-import --root $PKG --dir /usr/share/osinfo $CWD/post-install/osinfo-db/osinfo-db-slackware-20220214.tar.xz
+
+# Add snukware.com into osinfo-db
+install -Dm644 $CWD/post-install/osinfo-db/snukware-rolling.xml $PKG/usr/share/osinfo/os/snukware.com/snukware-rolling.xml
 sleep 5
 rm -fr $CWD/post-install/osinfo-db/osinfo-db-slackware-20220214.tar.xz
 cp -a $PKG/usr/share/osinfo/{LICENSE,VERSION} $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION
