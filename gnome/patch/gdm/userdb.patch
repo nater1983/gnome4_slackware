@@ -1,8 +1,7 @@
 diff --git a/meson.build b/meson.build
-index 0000000..0000000 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -1,17 +1,28 @@
+@@ -1,17 +1,27 @@
  if logind_provider == 'systemd'
    libsystemd_dep = dependency('libsystemd')
    logind_dep = libsystemd_dep
@@ -18,12 +17,9 @@ index 0000000..0000000 100644
 -  have_userdb = false
 -  greeter_uid_min = 0
 -  greeter_uid_max = 0
-+
-+  have_userdb = cc.has_header('systemd/sd-varlink.h',
-+    dependencies: elogind_dep) and \
-+    cc.has_header('systemd/sd-json.h',
-+    dependencies: elogind_dep)
-+
++  cc = meson.get_compiler('c')
++  have_userdb = cc.has_header('systemd/sd-varlink.h', dependencies: elogind_dep) and \
++                cc.has_header('systemd/sd-json.h', dependencies: elogind_dep)
 +  if have_userdb
 +    greeter_uid_min = '60578'
 +    greeter_uid_max = '60705'
