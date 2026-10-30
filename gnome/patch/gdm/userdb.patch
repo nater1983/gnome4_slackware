@@ -1,7 +1,7 @@
 diff --git a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build
-@@ -84,7 +84,30 @@
+@@ -84,7 +84,45 @@
  else
    elogind_dep = dependency('libelogind')
    logind_dep = elogind_dep
@@ -9,23 +9,38 @@ diff --git a/meson.build b/meson.build
 -  greeter_uid_min = 0
 -  greeter_uid_max = 0
 +
-+  # Check that elogind provides the Varlink and JSON APIs required by GDM.
-+  have_userdb = cc.links('''
-+    #include <systemd/sd-varlink.h>
-+    #include <systemd/sd-json.h>
++  # Check that elogind provides the Varlink and JSON headers required by GDM.
++  have_sd_varlink = cc.has_header(
++    'systemd/sd-varlink.h',
++    dependencies: elogind_dep
++  )
 +
-+    int main(void) {
-+      sd_varlink_server *server = NULL;
-+      sd_json_variant *json = NULL;
++  have_sd_json = cc.has_header(
++    'systemd/sd-json.h',
++    dependencies: elogind_dep
++  )
 +
-+      sd_varlink_server_new(&server, SD_VARLINK_SERVER_INHERIT_USERDATA);
-+      sd_json_buildo(&json, SD_JSON_BUILD_PAIR_BOOLEAN("test", 1));
++  have_userdb = have_sd_varlink and have_sd_json
 +
-+      sd_varlink_server_unref(server);
-+      sd_json_variant_unref(json);
-+      return 0;
-+    }
-+  ''', dependencies: elogind_dep)
++  # Check that the required Varlink and JSON API can be linked.
++  if have_userdb
++    have_userdb = cc.links('''
++      #include <systemd/sd-varlink.h>
++      #include <systemd/sd-json.h>
++
++      int main(void) {
++        sd_varlink_server *server = NULL;
++        sd_json_variant *json = NULL;
++
++        sd_varlink_server_new(&server, SD_VARLINK_SERVER_INHERIT_USERDATA);
++        sd_json_buildo(&json, SD_JSON_BUILD_PAIR_BOOLEAN("test", 1));
++
++        sd_varlink_server_unref(server);
++        sd_json_variant_unref(json);
++        return 0;
++      }
++    ''', dependencies: elogind_dep)
++  endif
 +
 +  if have_userdb
 +    greeter_uid_min = 60578
