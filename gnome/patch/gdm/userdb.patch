@@ -1,0 +1,35 @@
+
+diff --git a/meson.build b/meson.build
+index 0000000..0000000 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,17 +1,28 @@
+ if logind_provider == 'systemd'
+   libsystemd_dep = dependency('libsystemd')
+   logind_dep = libsystemd_dep
+
+   have_userdb = libsystemd_dep.version().version_compare('>= 257')
+
+   # Our range is documented at https://systemd.io/UIDS-GIDS/
+   greeter_uid_min = systemd_dep.get_variable('greeter_uid_min', default_value: '60578')
+   greeter_uid_max = systemd_dep.get_variable('greeter_uid_max', default_value: '60705')
+ else
+   elogind_dep = dependency('libelogind')
+   logind_dep = elogind_dep
+-  have_userdb = false
+-  greeter_uid_min = 0
+-  greeter_uid_max = 0
++
++  have_userdb = cc.has_header('systemd/sd-varlink.h',
++    dependencies: elogind_dep) and \
++    cc.has_header('systemd/sd-json.h',
++    dependencies: elogind_dep)
++
++  if have_userdb
++    greeter_uid_min = '60578'
++    greeter_uid_max = '60705'
++  else
++    greeter_uid_min = 0
++    greeter_uid_max = 0
++  endif
+ endif
