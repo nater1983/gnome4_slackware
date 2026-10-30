@@ -1,7 +1,7 @@
 diff --git a/meson.build b/meson.build
 --- a/meson.build
 +++ b/meson.build
-@@ -84,7 +84,25 @@
+@@ -84,7 +84,30 @@
  else
    elogind_dep = dependency('libelogind')
    logind_dep = elogind_dep
@@ -19,7 +19,7 @@ diff --git a/meson.build b/meson.build
 +      sd_json_variant *json = NULL;
 +
 +      sd_varlink_server_new(&server, SD_VARLINK_SERVER_INHERIT_USERDATA);
-+      sd_json_buildo(&json, SD_JSON_BUILD_PAIR_BOOLEAN(\"test\", 1));
++      sd_json_buildo(&json, SD_JSON_BUILD_PAIR_BOOLEAN("test", 1));
 +
 +      sd_varlink_server_unref(server);
 +      sd_json_variant_unref(json);
@@ -35,8 +35,3 @@ diff --git a/meson.build b/meson.build
 +    greeter_uid_max = 0
 +  endif
  endif
-"""
-path = "/mnt/data/gdm-51.1.1-elogind-userdb.patch"
-with open(path, "w", newline="\n") as f:
-    f.write(patch)
-print(path)
