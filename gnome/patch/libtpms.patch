@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/libtpms/fc8820cfaa8b5e17328f731df93911f6ab92443b.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
