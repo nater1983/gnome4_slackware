@@ -1,0 +1,11 @@
+for new in swtpm_setup.conf swtpm-localca.conf swtpm-localca.options; do
+  mv $PKG/etc/$new $PKG/etc/$new.new
+done
+
+mkdir -p $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION/readmes
+(
+cd src
+for dir in swtpm_bios swtpm_cert swtpm_ioctl swtpm_setup; do
+  cp -a $dir/README $PKG/usr/doc/$PKGNAME-$MODULAR_PACKAGE_VERSION/readmes/$dir.readme
+done
+)
