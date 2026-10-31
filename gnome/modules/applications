@@ -3,7 +3,6 @@ libspelling
 libshumate
 gnome-maps
 seahorse
-zenity
 callaudiod
 umockdev
 feedbackd
@@ -30,6 +29,8 @@ liboauth
 grilo
 grilo-plugins
 gnome-music
+libtpms
+swtpm
 tpm2-tss
 libfdk-aac
 freerdp3
