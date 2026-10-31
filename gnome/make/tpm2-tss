@@ -7,6 +7,7 @@ aclocal > /dev/null 2>&1
 automake --add-missing > /dev/null 2>&1
 autoconf > /dev/null 2>&1
 libtoolize > /dev/null 2>&1
+autoconf > /dev/null 2>&1
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
 ./configure \
