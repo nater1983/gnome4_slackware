@@ -1,0 +1,18 @@
+if [ ! -r configure ]; then
+  if [ -x ./autogen.sh ]; then
+    NOCONFIGURE=1 ./autogen.sh
+  else
+    autoreconf -vif
+  fi
+fi
+
+CFLAGS="$SLKCFLAGS -flto=auto" \
+CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
+./configure \
+    "${GNOME_MAKE_ARGS[@]}" \
+    --with-tpm1 \
+    --with-tpm2 \
+    --enable-static=no \
+    --with-selinux=no
+make
+make install DESTDIR=$PKG
