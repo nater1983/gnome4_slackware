@@ -7,11 +7,10 @@ if [ ! -r configure ]; then
 fi
 
 CFLAGS="$SLKCFLAGS -flto=auto" \
-CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
+CXXFLAGS="$SLKCFLAGS -flto=auto" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}" \
     --disable-tests \
-    --without-cuse \
-    --with_gnutls=no
+    --without-cuse
 make
 make install DESTDIR=$PKG
