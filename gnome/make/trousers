@@ -7,8 +7,8 @@ if [ ! -r configure ]; then
 fi
 
 ./bootstrap.sh
-CFLAGS="$SLKCFLAGS -flto=auto" \
-CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
+CFLAGS="$SLKCFLAGS" \
+CXXFLAGS="$SLKCFLAGS" \
 ./configure \
     "${GNOME_MAKE_ARGS[@]}"
 make
