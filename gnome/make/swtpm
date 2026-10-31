@@ -12,6 +12,6 @@ CXXFLAGS="$SLKCFLAGS -std=c++17 -flto=auto" \
     "${GNOME_MAKE_ARGS[@]}" \
     --disable-tests \
     --without-cuse \
-    --with-selinux=no
+    --with_gnutls=no
 make
 make install DESTDIR=$PKG
