@@ -1,0 +1,2 @@
+# We don't want to have anything to relate to systemd
+rm -fr $PKG/etc/{sysuser.d,tmpfiles.d}
