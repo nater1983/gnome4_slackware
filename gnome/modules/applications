@@ -30,6 +30,7 @@ grilo
 grilo-plugins
 gnome-music
 libtpms
+trousers
 swtpm
 tpm2-tss
 libfdk-aac
