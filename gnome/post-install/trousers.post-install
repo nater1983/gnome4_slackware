@@ -1,0 +1,1 @@
+chown tss:tss $PKG/usr/sbin/tcsd
