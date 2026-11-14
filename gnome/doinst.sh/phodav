@@ -1,0 +1,27 @@
+if ! grep -q 'Start Spice WebDAV daemon' etc/rc.d/rc.local; then
+  cat << 'EOF' >> etc/rc.d/rc.local
+
+# Start Spice WebDAV daemon:
+if [ -x /etc/rc.d/rc.spice-webdavd ]; then
+  /etc/rc.d/rc.spice-webdavd start
+fi
+EOF
+fi
+
+if [ -f etc/rc.d/rc.local_shutdown ] && ! grep -q 'Stop Spice WebDAV daemon' etc/rc.d/rc.local_shutdown; then
+  cat << 'EOF' >> etc/rc.d/rc.local_shutdown
+
+# Stop Spice WebDAV daemon:
+if [ -x /etc/rc.d/rc.spice-webdavd ]; then
+  /etc/rc.d/rc.spice-webdavd stop
+fi
+EOF
+fi
+
+if ! getent group spice-webdavd >/dev/null 2>&1; then
+  groupadd -r spice-webdavd
+fi
+
+if ! getent passwd spice-webdavd >/dev/null 2>&1; then
+  useradd -r -g spice-webdavd -d /var/empty -s /bin/false spice-webdavd
+fi
