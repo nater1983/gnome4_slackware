@@ -1,0 +1,27 @@
+#!/bin/sh
+# rc.spice-webdavd
+
+PIDFILE=/var/run/spice-webdavd.pid
+[ -r /etc/default/spice-webdavd ] && . /etc/default/spice-webdavd
+
+start() {
+  echo "Starting spice-webdavd"
+  umask 0077
+  setpriv --reuid=spice-webdavd --regid=spice-webdavd --clear-groups \
+          --bounding-set=-all --no-new-privs \
+          /usr/sbin/spice-webdavd -p 9843 $SPICE_WEBDAVD_EXTRA_ARGS >/dev/null 2>&1 &
+  echo $! > $PIDFILE
+}
+
+stop() {
+  echo "Stopping spice-webdavd"
+  [ -s $PIDFILE ] && kill "$(cat $PIDFILE)"
+  rm -f $PIDFILE
+}
+
+case "$1" in
+  start) start ;;
+  stop) stop ;;
+  restart) stop; sleep 1; start ;;
+  *) echo "usage: $0 {start|stop|restart}" ;;
+esac
