@@ -1,2 +1,2 @@
-install -vDm 0644 $CWD/post-install/phodav/spice-webdavd -t $PKG/etc/default/spice-webdavd
-install -vDm 0755 $CWD/post-install/phodav/rc.spice-webdavd  -t $PKG/etc/rc.d/rc.spice-webdavd
+install -vDm 0644 $CWD/post-install/phodav/spice-webdavd -t $PKG/etc/default
+install -vDm 0755 $CWD/post-install/phodav/rc.spice-webdavd  -t $PKG/etc/rc.d
