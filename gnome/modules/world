@@ -343,6 +343,12 @@ rhythmbox
 # gthumb
 gthumb
 # enter-tex
+libgedit-amtk
+libgedit-gfls
+libgedit-gtksourceview
+libgedit-tepl
+gedit
+gedit-plugins
 enter-tex
 # goffice
 goffice
