@@ -1,0 +1,1 @@
+patch -Np1 -i $CWD/patch/gnome-calendar/0001-libical-4.x.patch || { touch ${SLACK_GNOME_BUILD_DIR}/${PKGNAME}.failed ; continue ; }
