@@ -1,7 +1,7 @@
-diff --git a/scripts/build.py b/scripts/build.py
-index e807ea8..89d804a 100644
---- a/scripts/build.py
-+++ b/scripts/build.py
+diff --git a/build.py b/build.py
+index e807ea8..06c22ff 100644
+--- a/build.py
++++ b/build.py
 @@ -1,273 +1,31 @@
 -import json
 -import os
@@ -21,8 +21,8 @@ index e807ea8..89d804a 100644
  from cffi import FFI
  
  # this is the upstream libcurl-impersonate version
--__version__ = "2.3.1"
--
+ __version__ = "2.3.1"
+ 
 -
 -def is_android_env() -> bool:
 -    return bool(
@@ -222,8 +222,7 @@ index e807ea8..89d804a 100644
 -    # could select the shared library shipped alongside it.
 -    return [flag for flag in shlex.split(flags) if flag != "-lcurl-impersonate"]
 -
-+__version__ = "@CURL_IMPERSONATE_VERSION@"
- 
+-
  ffibuilder = FFI()
 -system = platform.system()
  root_dir = Path(__file__).parent.parent
