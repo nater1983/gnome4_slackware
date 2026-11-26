@@ -102,9 +102,9 @@ index e807ea8..06c22ff 100644
 -        return "libcurl-impersonate.a"
 -    if arch["system"] == "Darwin":
 -        return "libcurl-impersonate.dylib"
--    if arch["system"] == "Windows":
--        return "libcurl-impersonate.dll"
--    return "libcurl-impersonate.so"
+-    if arch["system"] == "Linux":
+-        return "libcurl-impersonate.so"
+-    return "libcurl-impersonate.dll"
 -
 -
 -arch = detect_arch()
@@ -281,3 +281,8 @@ index e807ea8..06c22ff 100644
  )
  
  with open(root_dir / "ffi/cdef.c") as f:
+@@ -277,3 +35,4 @@
+ 
+ if __name__ == "__main__":
+     ffibuilder.compile(verbose=False)
++
