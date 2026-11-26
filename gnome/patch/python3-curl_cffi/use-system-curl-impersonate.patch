@@ -1,7 +1,7 @@
-diff --git a/build.py b/build.py
+diff --git a/scripts/build.py b/scripts/build.py
 index e807ea8..06c22ff 100644
---- a/build.py
-+++ b/build.py
+--- a/scripts/build.py
++++ b/scripts/build.py
 @@ -1,273 +1,31 @@
 -import json
 -import os
