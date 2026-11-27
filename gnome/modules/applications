@@ -51,6 +51,7 @@ gst-plugins-bad
 gst-plugins-ugly
 gst-rtsp-server
 gstreamer-vaapi
+gst-python
 rygel
 totem
 python3-liblouis
